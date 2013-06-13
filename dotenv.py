@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 
 def read_dotenv(dotenv=None):
     """
@@ -12,10 +13,7 @@ def read_dotenv(dotenv=None):
         frame = sys._getframe()
         dotenv = os.path.join(os.path.dirname(frame.f_back.f_code.co_filename), '.env')
         if not os.path.exists(dotenv):
-            raise EnvironmentError("%s doesn't exist. You may need to "
-                                   "explicitly pass the path to .env to "
-                                   "read_dotenv()." % dotenv)
-
+            warnings.warn("not reading %s - it doesn't exist." % dotenv)
     for k, v in parse_dotenv(dotenv):
         os.environ.setdefault(k, v)
 

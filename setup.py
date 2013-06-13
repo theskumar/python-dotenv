@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name = "django-dotenv",
     description = "foreman reads from .env. manage.py doesn't. Let's fix that.",
-    version = "1.0",
+    version = "1.1",
     author = "Jacob Kaplan-Moss",
     author_email = "jacob@jacobian.org",
     url = "http://github.com/jacobian/django-dotenv",
