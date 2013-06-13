@@ -14,6 +14,7 @@ def read_dotenv(dotenv=None):
         dotenv = os.path.join(os.path.dirname(frame.f_back.f_code.co_filename), '.env')
         if not os.path.exists(dotenv):
             warnings.warn("not reading %s - it doesn't exist." % dotenv)
+            return
     for k, v in parse_dotenv(dotenv):
         os.environ.setdefault(k, v)
 
