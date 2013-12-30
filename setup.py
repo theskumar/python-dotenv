@@ -1,15 +1,15 @@
 from setuptools import setup
 
 setup(
-    name = "django-dotenv",
-    description = "foreman reads from .env. manage.py doesn't. Let's fix that.",
-    version = "1.2",
-    author = "Jacob Kaplan-Moss",
-    author_email = "jacob@jacobian.org",
-    url = "http://github.com/jacobian/django-dotenv",
+    name = "django-dotenv-rw",
+    description = ".env file settings for non-heroku setups",
+    version = "0.1",
+    author = "Ted Tieken",
+    author_email = "ted@sittingaround.com",
+    url = "http://github.com/tedtieken/django-dotenv-rw",
     py_modules = ['dotenv'],
     classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
