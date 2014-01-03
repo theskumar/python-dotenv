@@ -15,8 +15,20 @@ def load_dotenv(dotenv_path):
     return True
 
 
-def read_dotenv(dotenv_path):
+def read_dotenv(dotenv_path=None):
+    """
+    Prior name of load_dotenv function.
+
+    Deprecated and pending removal
+    
+    If not given a path to a dotenv path, does filthy magic stack backtracking
+    to find manage.py and then find the dotenv.
+    """    
     warnings.warn("read_dotenv deprecated, use load_dotenv instead")
+    if dotenv_path is None:
+        warnings.warn("read_dotenv without an explicit path is deprecated and will be removed soon")
+        frame = sys._getframe()
+        dotenv_path = os.path.join(os.path.dirname(frame.f_back.f_code.co_filename), '.env')    
     return load_dotenv(dotenv_path)
 
 

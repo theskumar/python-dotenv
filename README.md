@@ -1,11 +1,11 @@
 # django-dotenv-rw
 
-Forked from the simpler [django-dotenv](https://github.com/jacobian/django-dotenv).  Removes black magic, changes a few things, adds remote .env file management capabilities.  Works as a drop-in replacement for django-dotenv (if you weren't using the black magic trick).
+Forked from awesome but simpler [django-dotenv](https://github.com/jacobian/django-dotenv).  Removes black magic, makes loading .env in settings.py easier, adds remote .env file management capabilities.  Works as a drop-in replacement for django-dotenv.
 
 [foreman](https://github.com/ddollar/foreman) reads from `.env`. `manage.py`
 doesn't. Let's fix that.
 
-[heroku config](https://devcenter.heroku.com/articles/config-vars)Lets you add/delete env variables on your remote server from your local command line.  django-dotenv-rw  when used with fabric lets you do the same ```heroku config:set DJANGO_ENV="PRODUCTION" ``` becomes ```fab config:set,DJANGO_ENV,PRODUCTION```
+[heroku config](https://devcenter.heroku.com/articles/config-vars) Lets you add/delete env variables on your remote server from your local command line.  django-dotenv-rw  when used with fabric lets you do the same ```heroku config:set DJANGO_ENV="PRODUCTION" ``` becomes ```fab config:set,DJANGO_ENV,PRODUCTION```
 
 ## Installation
 
@@ -13,7 +13,7 @@ doesn't. Let's fix that.
 pip install pip install git+ssh://git@github.com/tedtieken/django-dotenv-rw.git
 ```
 
-## Usage: loading settins from a .env file into your django environment
+## Usage: loading settings from a .env file into your django environment
 
 Option 1 (suggested):  Near the top of `settings.py`. Add:
 
