@@ -1,3 +1,5 @@
+### *[This repo is archived](https://github.com/jacobian-archive/about/blob/master/README.md), and will no longer be maintained.*
+
 # django-dotenv
 
 [foreman](https://github.com/ddollar/foreman) reads from `.env`. `manage.py`
