@@ -4,6 +4,7 @@ python:
   - '3.3'
   - pypy
 install:
-  - pip install -q -r .travis-requirements.txt
+  - pip install -q -r requirements.txt
   - pip install --editable .
 before_script: flake8
+script: py.test

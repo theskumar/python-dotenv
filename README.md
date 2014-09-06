@@ -37,15 +37,18 @@ This is a first pass, will likely change.
 
 Put the `dotenv.py` file in the same folder on your server as the `.env` file and `manage.py`.  Then you can add a config task to your local fabfile:
 ```
+from fabric.api import task, local, env
+
+env.dotenv_path = '/etc/project_name/.env'
+
 @task
 def config(action=None,key=None,value=None):
-    command = env.django_path + "dotenv.py "
-    command += env.django_path + ".env "
-    command += action + " " if action else ""
-    command += key + " " if key else ""
-    command += value + " " if value else ""
-    python(command)
-
+    command = 'dotenv'
+    command += ' -f %s' % env.dotenv_path)
+    command += action if action else " "
+    command += key if key else " "
+    command += value if value else ""
+    run(command)
 ```
 
 Usage is designed to mirror the heroku config api very closely.

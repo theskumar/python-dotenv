@@ -8,7 +8,13 @@ setup(
     author_email="ted@sittingaround.com",
     url="http://github.com/tedtieken/django-dotenv-rw",
     py_modules=['dotenv'],
-    scripts=['dotenv.py'],
+    install_requires=[
+        'click>=3.0',
+    ],
+    entry_points='''
+        [console_scripts]
+        dotenv=dotenv:cli
+    ''',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',

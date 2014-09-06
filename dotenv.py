@@ -3,6 +3,8 @@ import sys
 import warnings
 from collections import OrderedDict
 
+import click
+
 
 def load_dotenv(dotenv_path):
     """
@@ -110,54 +112,58 @@ def flatten_and_write(dotenv_path, dotenv_as_dict):
             f.write('%s="%s"\r\n' % (k, v))
     return True
 
-if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("file_path", help="the absolute path of the .env file you want to use")
-    parser.add_argument("action", help="what you want to do with the .env file (get, set, unset)", nargs='?')
-    parser.add_argument("key", help="the environment key you want to set", nargs='?')
-    parser.add_argument("value", help="the value you want to set 'key' to", nargs='?')
-    parser.add_argument("--force", help="force writing even if the file at the given path doesn't end in .env")
-    args = parser.parse_args()
 
-    if not os.path.exists(args.file_path):
-        warnings.warn("there doesn't appear to be a file at %s" % args.file_path)
-        exit(1)
-    if not args.force:
-        if not args.file_path.endswith(".env"):
-            warnings.warn("the file %s doesn't appear to be a .env file, use --force to proceed" % args.file_path)
-            exit(1)
+@click.command()
+@click.argument('action', type=click.Choice(['get', 'set', 'unset']), required=False)
+@click.argument('key', required=False)
+@click.argument('value', required=False)
+@click.option('--force', is_flag=True)
+@click.option('-f', '--file', default='.env', type=click.Path(exists=True))
+def cli(file, action, key, value, force):
 
-    if not args.action:
-        with open(args.file_path) as f:
-            print(f.read())
-        exit(0)
-    elif args.action == "get":
-        stored_value = get_key(args.file_path, args.key)
-        if stored_value is not None:
-            print(args.key)
-            print(stored_value)
-        else:
+    if not action:
+        dotenv_as_dict = parse_dotenv(file)
+        for k, v in dotenv_as_dict:
+            click.echo("%s=%s" % (k, v))
+
+    if action == 'get':
+        stored_value = get_key(file, key)
+        if stored_value:
+            click.echo("%s=%s" % (key, stored_value))
             exit(1)
-    elif args.action == "set":
-        success, key, value = set_key(args.file_path, args.key, args.value)
-        if success is not None:
-            print("%s: %s" % (key, value))
         else:
+            click.echo("%s doesn't seems to have been set yet.")
+            exit(0)
+
+    elif action == 'set':
+        if not value:
+            click.echo("Error: value is missing.")
+            exit(0)
+        success, key, value = set_key(file, key, value)
+        if success:
+            click.echo("%s=%s" % (key, value))
             exit(1)
-    elif args.action == "unset":
-        success, key = unset_key(args.file_path, args.key)
-        if success is not None:
-            print("unset %s" % key)
         else:
+            exit(0)
+
+    elif action == 'unset':
+        success, key = unset_key(file, key)
+        if success:
+            click.echo("Successfully removed %s" % key)
             exit(1)
+        else:
+            exit(0)
+
     # Need to investigate if this can actually work or if the scope of the new environ variables
     # Expires when python exits
-    #
-    # elif args.action == "load":
-    #     success = load_dotenv(args.file_path)
+
+    # elif action == "load":
+    #     success = load_dotenv(file)
     #     if success != None:
-    #         print("loaded %s into environment" % args.file_path)
+    #         click.echo("loaded %s into environment" % file)
     #     else:
     #         exit(1)
-    exit(0)
+
+
+if __name__ == "__main__":
+    cli()
