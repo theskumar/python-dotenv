@@ -93,47 +93,15 @@ def flatten_and_write(dotenv_path, dotenv_as_dict):
     return True
 
 
-@click.command()
-@click.argument('action', type=click.Choice(['get', 'set', 'unset']), required=False)
-@click.argument('key', required=False)
-@click.argument('value', required=False)
-@click.option('--force', is_flag=True)
+@click.group()
 @click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
-              type=click.Path(exists=True))
-def cli(file, action, key, value, force):
-
-    if not action:
-        dotenv_as_dict = parse_dotenv(file)
-        for k, v in dotenv_as_dict:
-            click.echo("%s=%s" % (k, v))
-
-    if action == 'get':
-        stored_value = get_key(file, key)
-        if stored_value:
-            click.echo('%s="%s"' % (key, stored_value))
-            exit(0)
-        else:
-            click.echo("%s doesn't seems to have been set yet.")
-            exit(1)
-
-    elif action == 'set':
-        if not value:
-            click.echo("Error: value is missing.")
-            exit(1)
-        success, key, value = set_key(file, key, value)
-        if success:
-            click.echo('%s="%s"' % (key, value))
-            exit(0)
-        else:
-            exit(1)
-
-    elif action == 'unset':
-        success, key = unset_key(file, key)
-        if success:
-            click.echo("Successfully removed %s" % key)
-            exit(1)
-        else:
-            exit(0)
+              type=click.Path(exists=True),
+              help="Location of the .env file, defaults to .env file in current working directory.")
+@click.pass_context
+def cli(ctx, file):
+    '''This script is used to set, get or unset values from a .env file.'''
+    ctx.obj = {}
+    ctx.obj['FILE'] = file
 
     # Need to investigate if this can actually work or if the scope of the new environ variables
     # Expires when python exits
@@ -144,6 +112,56 @@ def cli(file, action, key, value, force):
     #         click.echo("loaded %s into environment" % file)
     #     else:
     #         exit(1)
+
+
+@cli.command()
+@click.pass_context
+def list(ctx):
+    '''Display all the stored key/value.'''
+    file = ctx.obj['FILE']
+    dotenv_as_dict = parse_dotenv(file)
+    for k, v in dotenv_as_dict:
+        click.echo('%s="%s"' % (k, v))
+
+
+@cli.command()
+@click.pass_context
+@click.argument('key', required=True)
+@click.argument('value', required=True)
+def set(ctx, key, value):
+    '''Store the given key/value.'''
+    file = ctx.obj['FILE']
+    success, key, value = set_key(file, key, value)
+    if success:
+        click.echo('%s="%s"' % (key, value))
+    else:
+        exit(1)
+
+
+@cli.command()
+@click.pass_context
+@click.argument('key', required=True)
+def get(ctx, key):
+    '''Retrive the value for the given key.'''
+    file = ctx.obj['FILE']
+    stored_value = get_key(file, key)
+    if stored_value:
+        click.echo('%s="%s"' % (key, stored_value))
+    else:
+        exit(1)
+
+
+@cli.command()
+@click.pass_context
+@click.argument('key', required=True)
+def unset(ctx, key):
+    '''Removes the given key.'''
+    file = ctx.obj['FILE']
+    success, key = unset_key(file, key)
+    if success:
+        click.echo("Successfully removed %s" % key)
+    else:
+        exit(1)
 
 
 if __name__ == "__main__":

@@ -17,8 +17,8 @@ def test_read_write():
 
 def test_console_script():
     sh.touch(dotenv_path)
-    sh.dotenv('set', 'HELLO', 'WORLD', '-f', dotenv_path)
-    output = sh.dotenv('get', 'HELLO', '-f', dotenv_path)
+    sh.dotenv('-f', dotenv_path, 'set', 'HELLO', 'WORLD')
+    output = sh.dotenv('-f', dotenv_path, 'get', 'HELLO', )
     assert output == 'HELLO="WORLD"\n'
     sh.rm(dotenv_path)
 

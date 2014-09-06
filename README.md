@@ -9,17 +9,19 @@ doesn't. Let's fix that.
 
 [heroku config](https://devcenter.heroku.com/articles/config-vars) Lets you add/delete env variables on your remote server from your local command line.  django-dotenv-rw  when used with fabric lets you do the same ```heroku config:set DJANGO_ENV="PRODUCTION" ``` becomes ```fab config:set,DJANGO_ENV,PRODUCTION```
 
-<!-- MarkdownTOC -->
+<!-- MarkdownTOC depth=3-->
 
 - [Installation](#installation)
 - [Usage](#usage)
+    - [Command-line interface](#command-line-interface)
     - [Loading settings from a `.env` file into your django environment](#loading-settings-from-a-.env-file-into-your-django-environment)
     - [Setting remote config](#setting-remote-config)
+- [Contributing](#contributing)
 
 <!-- /MarkdownTOC -->
 
 
-## Installation
+# Installation
 
 ```
 pip install git+ssh://git@github.com/theskumar/python-dotenv.git
@@ -27,11 +29,31 @@ pip install git+ssh://git@github.com/theskumar/python-dotenv.git
 
 # Usage
 
+## Command-line interface
+
+<pre>
+$ dotenv
+Usage: dotenv [OPTIONS] COMMAND [ARGS]...
+
+  This script is used to set, get or unset values from a .env file.
+
+Options:
+  -f, --file PATH  Location of the .env file, defaults to .env file in current
+                   working directory.
+  --help           Show this message and exit.
+
+Commands:
+  get    Retrive the value for the given key.
+  list   Display all the stored key/value.
+  set    Store the given key/value.
+  unset  Removes the given key.
+</pre>
+
 ## Loading settings from a `.env` file into your django environment
 
 Option 1 (suggested):  Near the top of `settings.py`. Add:
 
-```
+```python
 import os
 import dotenv
 PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
@@ -39,7 +61,8 @@ dotenv.load_dotenv(os.path.join(PROJECT_PATH, ".env"))
 ```
 
 Option 2: If you want your server to set the env variables and only use `dotenv` when you're using `manage.py`: in `manage.py` add:
-```
+
+```python
 import dotenv
 dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 ```
@@ -68,9 +91,9 @@ Usage is designed to mirror the heroku config api very closely.
 
 Get all your remote config info with `fab config`
 ```
-$ fab config
+$ fab config:list
 [...example.com] Executing task 'config'
-[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env 
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env list
 [...example.com] out: DJANGO_DEBUG="true"
 [...example.com] out: DJANGO_ENV="test"
 ```
@@ -114,3 +137,7 @@ $ fab config:set,hello,world config:set,foo,bar config:set,fizz,buzz
 ```
 
 That's it. example.com, or whoever your non-paas host is, is now 1 facor closer to an easy 12 factor app.
+
+# Contributing
+
+You can either open an issue or send a pull request.
