@@ -118,7 +118,8 @@ def flatten_and_write(dotenv_path, dotenv_as_dict):
 @click.argument('key', required=False)
 @click.argument('value', required=False)
 @click.option('--force', is_flag=True)
-@click.option('-f', '--file', default='.env', type=click.Path(exists=True))
+@click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
+              type=click.Path(exists=True))
 def cli(file, action, key, value, force):
 
     if not action:
@@ -129,7 +130,7 @@ def cli(file, action, key, value, force):
     if action == 'get':
         stored_value = get_key(file, key)
         if stored_value:
-            click.echo("%s=%s" % (key, stored_value))
+            click.echo('%s="%s"' % (key, stored_value))
             exit(0)
         else:
             click.echo("%s doesn't seems to have been set yet.")
@@ -141,7 +142,7 @@ def cli(file, action, key, value, force):
             exit(1)
         success, key, value = set_key(file, key, value)
         if success:
-            click.echo("%s=%s" % (key, value))
+            click.echo('%s="%s"' % (key, value))
             exit(0)
         else:
             exit(1)
