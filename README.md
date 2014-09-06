@@ -37,7 +37,7 @@ dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 This is a first pass, will likely change.
 
-Put the `dotenv.py` file in the same folder on your server as the `.env` file and `manage.py`.  Then you can add a config task to your local fabfile:
+Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of '.env' on the remote server.
 ```
 from fabric.api import task, local, env
 
@@ -59,7 +59,7 @@ Get all your remote config info with `fab config`
 ```
 $ fab config
 [...webfactional.com] Executing task 'config'
-[...webfactional.com] run: python2.7 /home/me/webapps/myapp/myapp/dotenv.py /home/me/webapps/myapp/myapp/.env 
+[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env 
 [...webfactional.com] out: DJANGO_DEBUG="true"
 [...webfactional.com] out: DJANGO_ENV="test"
 ```
@@ -68,24 +68,23 @@ Set remote config variables with `fab config:set,[key],[value]`
 ```
 $ fab config:set,hello,world
 [...webfactional.com] Executing task 'config'
-[...webfactional.com] run: python2.7 /home/me/webapps/myapp/myapp/dotenv.py /home/me/webapps/myapp/myapp/.env set hello world 
-[...webfactional.com] out: hello: world
+[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
+[...webfactional.com] out: hello="world"
 ```
 
 Get a single remote config variables with `fab config:get,[key]`
 ```
-$ fab config:get,hello,world
+$ fab config:get,hello
 [...webfactional.com] Executing task 'config'
-[...webfactional.com] run: python2.7 /home/me/webapps/myapp/myapp/dotenv.py /home/me/webapps/myapp/myapp/.env get hello  
-[...webfactional.com] out: hello
-[...webfactional.com] out: world
+[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env get hello  
+[...webfactional.com] out: hello="world"
 ```
 
 Delete a remote config variables with `fab config:unset,[key]`
 ```
 $ fab config:unset,hello
 [...webfactional.com] Executing task 'config'
-[...webfactional.com] run: python2.7 /home/me/webapps/myapp/myapp/dotenv.py /home/me/webapps/myapp/myapp/.env unset hello  
+[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env unset hello  
 [...webfactional.com] out: unset hello
 ```
 
@@ -93,14 +92,14 @@ Thanks entirely to fabric and not one bit to this project, you can chain command
 ```
 $ fab config:set,hello,world config:set,foo,bar config:set,fizz,buzz
 [...webfactional.com] Executing task 'config'
-[...webfactional.com] run: python2.7 /home/me/webapps/myapp/myapp/dotenv.py /home/me/webapps/myapp/myapp/.env set hello world 
-[...webfactional.com] out: hello: world
+[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
+[...webfactional.com] out: hello="world"
 [...webfactional.com] Executing task 'config'
-[...webfactional.com] run: python2.7 /home/me/webapps/myapp/myapp/dotenv.py /home/me/webapps/myapp/myapp/.env set foo bar 
-[...webfactional.com] out: foo: bar
+[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set foo bar 
+[...webfactional.com] out: foo="bar"
 [...webfactional.com] Executing task 'config'
-[...webfactional.com] run: python2.7 /home/me/webapps/myapp/myapp/dotenv.py /home/me/webapps/myapp/myapp/.env set fizz buzz 
-[...webfactional.com] out: fizz: buzz
+[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set fizz buzz 
+[...webfactional.com] out: fizz="buzz"
 ```
 
 That's it. Webfaction, or whoever your non-paas host is, is now 1 facor closer to an easy 12 factor app.
