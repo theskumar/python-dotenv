@@ -1,6 +1,6 @@
-# django-dotenv-rw
+# python-dotenv
 
-[![Build Status](https://travis-ci.org/theskumar/django-dotenv-rw.svg?branch=master)](https://travis-ci.org/theskumar/django-dotenv-rw)
+[![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/django-dotenv-rw)
 
 Forked from awesome but simpler [django-dotenv](https://github.com/jacobian/django-dotenv).  Removes black magic, makes loading .env in settings.py easier, adds remote .env file management capabilities.  Works as a drop-in replacement for django-dotenv.
 
@@ -22,7 +22,7 @@ doesn't. Let's fix that.
 ## Installation
 
 ```
-pip install git+ssh://git@github.com/theskumar/django-dotenv-rw.git
+pip install git+ssh://git@github.com/theskumar/python-dotenv.git
 ```
 
 # Usage
@@ -69,48 +69,48 @@ Usage is designed to mirror the heroku config api very closely.
 Get all your remote config info with `fab config`
 ```
 $ fab config
-[...webfactional.com] Executing task 'config'
-[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env 
-[...webfactional.com] out: DJANGO_DEBUG="true"
-[...webfactional.com] out: DJANGO_ENV="test"
+[...example.com] Executing task 'config'
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env 
+[...example.com] out: DJANGO_DEBUG="true"
+[...example.com] out: DJANGO_ENV="test"
 ```
 
 Set remote config variables with `fab config:set,[key],[value]`
 ```
 $ fab config:set,hello,world
-[...webfactional.com] Executing task 'config'
-[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
-[...webfactional.com] out: hello="world"
+[...example.com] Executing task 'config'
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
+[...example.com] out: hello="world"
 ```
 
 Get a single remote config variables with `fab config:get,[key]`
 ```
 $ fab config:get,hello
-[...webfactional.com] Executing task 'config'
-[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env get hello  
-[...webfactional.com] out: hello="world"
+[...example.com] Executing task 'config'
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env get hello  
+[...example.com] out: hello="world"
 ```
 
 Delete a remote config variables with `fab config:unset,[key]`
 ```
 $ fab config:unset,hello
-[...webfactional.com] Executing task 'config'
-[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env unset hello  
-[...webfactional.com] out: unset hello
+[...example.com] Executing task 'config'
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env unset hello  
+[...example.com] out: unset hello
 ```
 
 Thanks entirely to fabric and not one bit to this project, you can chain commands like so`fab config:set,[key1],[value1] config:set,[key2],[value2]`
 ```
 $ fab config:set,hello,world config:set,foo,bar config:set,fizz,buzz
-[...webfactional.com] Executing task 'config'
-[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
-[...webfactional.com] out: hello="world"
-[...webfactional.com] Executing task 'config'
-[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set foo bar 
-[...webfactional.com] out: foo="bar"
-[...webfactional.com] Executing task 'config'
-[...webfactional.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set fizz buzz 
-[...webfactional.com] out: fizz="buzz"
+[...example.com] Executing task 'config'
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
+[...example.com] out: hello="world"
+[...example.com] Executing task 'config'
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set foo bar 
+[...example.com] out: foo="bar"
+[...example.com] Executing task 'config'
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set fizz buzz 
+[...example.com] out: fizz="buzz"
 ```
 
-That's it. Webfaction, or whoever your non-paas host is, is now 1 facor closer to an easy 12 factor app.
+That's it. example.com, or whoever your non-paas host is, is now 1 facor closer to an easy 12 factor app.
