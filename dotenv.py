@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     if not args.action:
         with open(args.file_path) as f:
-            print f.read()
+            print(f.read())
         exit(0)
     elif args.action == "get":
         stored_value = get_key(args.file_path, args.key)
