@@ -3,6 +3,7 @@ import sys
 import warnings
 from collections import OrderedDict
 
+
 def load_dotenv(dotenv_path):
     """
     Read a .env file and load into os.environ.
@@ -20,42 +21,44 @@ def read_dotenv(dotenv_path=None):
     Prior name of load_dotenv function.
 
     Deprecated and pending removal
-    
+
     If not given a path to a dotenv path, does filthy magic stack backtracking
     to find manage.py and then find the dotenv.
-    """    
+    """
     warnings.warn("read_dotenv deprecated, use load_dotenv instead")
     if dotenv_path is None:
-        warnings.warn("read_dotenv without an explicit path is deprecated and will be removed soon")
+        warnings.warn(
+            "read_dotenv without an explicit path is deprecated and will be removed soon")
         frame = sys._getframe()
-        dotenv_path = os.path.join(os.path.dirname(frame.f_back.f_code.co_filename), '.env')    
+        dotenv_path = os.path.join(
+            os.path.dirname(frame.f_back.f_code.co_filename), '.env')
     return load_dotenv(dotenv_path)
 
 
 def get_key(dotenv_path, key_to_get):
     """
-    Gets the value of a given key from the given .env 
-    
+    Gets the value of a given key from the given .env
+
     If the .env path given doesn't exist, fails
-    """    
+    """
     key_to_get = str(key_to_get)
     if not os.path.exists(dotenv_path):
         warnings.warn("can't read %s - it doesn't exist." % dotenv_path)
         return None
     dotenv_as_dict = OrderedDict(parse_dotenv(dotenv_path))
-    if dotenv_as_dict.has_key(key_to_get):
+    if key_to_get in dotenv_as_dict:
         return dotenv_as_dict[key_to_get]
     else:
         warnings.warn("key %s not found in %s." % (key_to_get, dotenv_path))
         return None
-    
-        
+
+
 def set_key(dotenv_path, key_to_set, value_to_set):
     """
-    Adds or Updates a key/value to the given .env 
-    
+    Adds or Updates a key/value to the given .env
+
     If the .env path given doesn't exist, fails instead of risking creating
-    an orphan .env somewhere in the filesystem 
+    an orphan .env somewhere in the filesystem
     """
     key_to_set = str(key_to_set)
     value_to_set = str(value_to_set).strip("'").strip('"')
@@ -70,23 +73,24 @@ def set_key(dotenv_path, key_to_set, value_to_set):
 
 def unset_key(dotenv_path, key_to_unset):
     """
-    Removes a given key from the given .env 
-    
+    Removes a given key from the given .env
+
     If the .env path given doesn't exist, fails
-    If the given key doesn't exist in the .env, fails 
+    If the given key doesn't exist in the .env, fails
     """
     key_to_unset = str(key_to_unset)
     if not os.path.exists(dotenv_path):
         warnings.warn("can't delete from %s - it doesn't exist." % dotenv_path)
         return None
     dotenv_as_dict = OrderedDict(parse_dotenv(dotenv_path))
-    if dotenv_as_dict.has_key(key_to_unset):
+    if key_to_unset in dotenv_as_dict:
         dotenv_as_dict.pop(key_to_unset, None)
-    else: 
-        warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))
+    else:
+        warnings.warn(
+            "key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))
         return None
     success = flatten_and_write(dotenv_path, dotenv_as_dict)
-    return success, key_to_unset 
+    return success, key_to_unset
 
 
 def parse_dotenv(dotenv_path):
@@ -98,14 +102,14 @@ def parse_dotenv(dotenv_path):
             k, v = line.split('=', 1)
             v = v.strip("'").strip('"')
             yield k, v
-        
+
 
 def flatten_and_write(dotenv_path, dotenv_as_dict):
     with open(dotenv_path, "w") as f:
         for k, v in dotenv_as_dict.items():
             f.write('%s="%s"\r\n' % (k, v))
     return True
-            
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -115,7 +119,7 @@ if __name__ == "__main__":
     parser.add_argument("value", help="the value you want to set 'key' to", nargs='?')
     parser.add_argument("--force", help="force writing even if the file at the given path doesn't end in .env")
     args = parser.parse_args()
-    
+
     if not os.path.exists(args.file_path):
         warnings.warn("there doesn't appear to be a file at %s" % args.file_path)
         exit(1)
@@ -123,27 +127,27 @@ if __name__ == "__main__":
         if not args.file_path.endswith(".env"):
             warnings.warn("the file %s doesn't appear to be a .env file, use --force to proceed" % args.file_path)
             exit(1)
-      
-    if args.action == None:
+
+    if not args.action:
         with open(args.file_path) as f:
             print f.read()
-        exit(0)    
+        exit(0)
     elif args.action == "get":
         stored_value = get_key(args.file_path, args.key)
-        if stored_value != None:
+        if stored_value is not None:
             print(args.key)
             print(stored_value)
         else:
             exit(1)
     elif args.action == "set":
         success, key, value = set_key(args.file_path, args.key, args.value)
-        if success != None:
+        if success is not None:
             print("%s: %s" % (key, value))
         else:
             exit(1)
     elif args.action == "unset":
         success, key = unset_key(args.file_path, args.key)
-        if success != None:
+        if success is not None:
             print("unset %s" % key)
         else:
             exit(1)
