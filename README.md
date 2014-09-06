@@ -9,13 +9,25 @@ doesn't. Let's fix that.
 
 [heroku config](https://devcenter.heroku.com/articles/config-vars) Lets you add/delete env variables on your remote server from your local command line.  django-dotenv-rw  when used with fabric lets you do the same ```heroku config:set DJANGO_ENV="PRODUCTION" ``` becomes ```fab config:set,DJANGO_ENV,PRODUCTION```
 
+<!-- MarkdownTOC -->
+
+- [Installation](#installation)
+- [Usage](#usage)
+    - [Loading settings from a `.env` file into your django environment](#loading-settings-from-a-.env-file-into-your-django-environment)
+    - [Setting remote config](#setting-remote-config)
+
+<!-- /MarkdownTOC -->
+
+
 ## Installation
 
 ```
 pip install git+ssh://git@github.com/theskumar/django-dotenv-rw.git
 ```
 
-## Usage: loading settings from a .env file into your django environment
+# Usage
+
+## Loading settings from a `.env` file into your django environment
 
 Option 1 (suggested):  Near the top of `settings.py`. Add:
 
@@ -32,8 +44,7 @@ import dotenv
 dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 ```
 
-
-## Usage: setting remote config
+## Setting remote config
 
 This is a first pass, will likely change.
 
