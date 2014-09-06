@@ -1,5 +1,7 @@
 # django-dotenv-rw
 
+[![Build Status](https://travis-ci.org/theskumar/django-dotenv-rw.svg?branch=master)](https://travis-ci.org/theskumar/django-dotenv-rw)
+
 Forked from awesome but simpler [django-dotenv](https://github.com/jacobian/django-dotenv).  Removes black magic, makes loading .env in settings.py easier, adds remote .env file management capabilities.  Works as a drop-in replacement for django-dotenv.
 
 [foreman](https://github.com/ddollar/foreman) reads from `.env`. `manage.py`
@@ -10,7 +12,7 @@ doesn't. Let's fix that.
 ## Installation
 
 ```
-pip install git+ssh://git@github.com/tedtieken/django-dotenv-rw.git
+pip install git+ssh://git@github.com/theskumar/django-dotenv-rw.git
 ```
 
 ## Usage: loading settings from a .env file into your django environment

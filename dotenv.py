@@ -130,21 +130,21 @@ def cli(file, action, key, value, force):
         stored_value = get_key(file, key)
         if stored_value:
             click.echo("%s=%s" % (key, stored_value))
-            exit(1)
+            exit(0)
         else:
             click.echo("%s doesn't seems to have been set yet.")
-            exit(0)
+            exit(1)
 
     elif action == 'set':
         if not value:
             click.echo("Error: value is missing.")
-            exit(0)
+            exit(1)
         success, key, value = set_key(file, key, value)
         if success:
             click.echo("%s=%s" % (key, value))
-            exit(1)
-        else:
             exit(0)
+        else:
+            exit(1)
 
     elif action == 'unset':
         success, key = unset_key(file, key)
