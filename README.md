@@ -10,7 +10,7 @@ doesn't. Let's fix that.
 ## Installation
 
 ```
-pip install pip install git+ssh://git@github.com/tedtieken/django-dotenv-rw.git
+pip install git+ssh://git@github.com/tedtieken/django-dotenv-rw.git
 ```
 
 ## Usage: loading settings from a .env file into your django environment
