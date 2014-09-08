@@ -1,3 +1,4 @@
 flake8>=2.2.3
 pytest>=2.6.2
 sh>=1.09
+bumpversion
