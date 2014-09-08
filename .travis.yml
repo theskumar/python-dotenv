@@ -8,3 +8,8 @@ install:
   - pip install --editable .
 before_script: flake8
 script: py.test
+deploy:
+  provider: pypi
+  user: 'theskumar'
+  password:
+    secure: xe5yaUqAb0jam6epvEGSUMYt9L5gSRyFLaahTmCDEULP7msj8D45vswV/uEvnjdWdBw5CPuBkhLJXj2vsVMjkWVSa6bBfz79sEdd//70lE07bJA9sBSsXwbB4hxY+jWgW1KTFUNCPFP59L0ZosgYHJMbLcyr8iH2ZI+QzyUrO1U=
