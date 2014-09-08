@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="python-dotenv",
     description="Add .env support to your django/flask apps in development and deployments",
-    version="0.1.0",
+    version="0.1.1",
     author="Saurabh Kumar",
     author_email="me+github@saurabh-kumar.com",
     url="http://github.com/theskumar/python-dotenv",
