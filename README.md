@@ -1,6 +1,6 @@
 # python-dotenv
 
-[![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv)
+[![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv)
 
 Forked from awesome but simpler [django-dotenv](https://github.com/jacobian/django-dotenv).  Removes black magic, makes loading .env in settings.py easier, adds remote .env file management capabilities.  Works as a drop-in replacement for django-dotenv.
 
@@ -24,7 +24,7 @@ doesn't. Let's fix that.
 # Installation
 
 ```
-pip install git+ssh://git@github.com/theskumar/python-dotenv.git
+pip install python-dotenv --upgrade
 ```
 
 # Usage
@@ -103,7 +103,7 @@ Set remote config variables with `fab config:set,[key],[value]`
 ```
 $ fab config:set,hello,world
 [...example.com] Executing task 'config'
-[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world
 [...example.com] out: hello="world"
 ```
 
@@ -111,7 +111,7 @@ Get a single remote config variables with `fab config:get,[key]`
 ```
 $ fab config:get,hello
 [...example.com] Executing task 'config'
-[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env get hello  
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env get hello
 [...example.com] out: hello="world"
 ```
 
@@ -119,7 +119,7 @@ Delete a remote config variables with `fab config:unset,[key]`
 ```
 $ fab config:unset,hello
 [...example.com] Executing task 'config'
-[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env unset hello  
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env unset hello
 [...example.com] out: unset hello
 ```
 
@@ -127,13 +127,13 @@ Thanks entirely to fabric and not one bit to this project, you can chain command
 ```
 $ fab config:set,hello,world config:set,foo,bar config:set,fizz,buzz
 [...example.com] Executing task 'config'
-[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world 
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world
 [...example.com] out: hello="world"
 [...example.com] Executing task 'config'
-[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set foo bar 
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set foo bar
 [...example.com] out: foo="bar"
 [...example.com] Executing task 'config'
-[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set fizz buzz 
+[...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set fizz buzz
 [...example.com] out: fizz="buzz"
 ```
 
