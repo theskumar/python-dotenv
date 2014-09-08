@@ -13,9 +13,9 @@ doesn't. Let's fix that.
 
 - [Installation](#installation)
 - [Usage](#usage)
-    - [Command-line interface](#command-line-interface)
-    - [Loading settings from a `.env` file into your django environment](#loading-settings-from-a-.env-file-into-your-django-environment)
-    - [Setting remote config](#setting-remote-config)
+  - [Command-line interface](#command-line-interface)
+  - [Loading settings from a `.env` file into your django environment](#loading-settings-from-a-.env-file-into-your-django-environment)
+  - [Setting remote config](#setting-remote-config)
 - [Contributing](#contributing)
 
 <!-- /MarkdownTOC -->
@@ -75,7 +75,8 @@ Add a config task to your local fabfile, `dotenv_path` is the location of the ab
 ```
 from fabric.api import task, local, env
 
-env.dotenv_path = '/etc/project_name/.env'
+# absolute path to the location of .env on remote server
+env.dotenv_path = '/home/me/webapps/myapp/myapp/.env'
 
 @task
 def config(action=None,key=None,value=None):
