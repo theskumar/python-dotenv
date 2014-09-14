@@ -1,6 +1,6 @@
 # python-dotenv
 
-[![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv)
+[![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Downloads](https://pypip.in/download/python-dotenv/badge.svg)](https://pypi.python.org/pypi/python-dotenv/)
 
 Forked from awesome but simpler [django-dotenv](https://github.com/jacobian/django-dotenv).  Removes black magic, makes loading .env in settings.py easier, adds remote .env file management capabilities.  Works as a drop-in replacement for django-dotenv.
 
@@ -14,7 +14,7 @@ doesn't. Let's fix that.
 - [Installation](#installation)
 - [Usage](#usage)
   - [Command-line interface](#command-line-interface)
-  - [Loading settings from a `.env` file into your django environment](#loading-settings-from-a-.env-file-into-your-django-environment)
+  - [Loading settings from a `.env` file into your django environment](#loading-settings-from-a-env-file-into-your-django-environment)
   - [Setting remote config](#setting-remote-config)
 - [Contributing](#contributing)
 
