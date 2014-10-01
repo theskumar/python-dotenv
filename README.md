@@ -73,17 +73,23 @@ This is a first pass, will likely change.
 
 Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of '.env' on the remote server.
 ```
-from fabric.api import task, local, env
+from fabric.api import task, run, env
 
 # absolute path to the location of .env on remote server
 env.dotenv_path = '/home/me/webapps/myapp/myapp/.env'
 
 @task
-def config(action=None,key=None,value=None):
+def config(action=None, key=None, value=None):
+    '''Manage project configuration via .env
+
+    see: https://github.com/theskumar/python-dotenv
+    e.g: fab config:set,[key],[value]
+    '''
+    run('touch %(dotenv_path)s' % env)
     command = 'dotenv'
-    command += ' -f %s' % env.dotenv_path)
-    command += action if action else " "
-    command += key if key else " "
+    command += ' -f %s ' % env.dotenv_path
+    command += action + " " if action else " "
+    command += key + " " if key else " "
     command += value if value else ""
     run(command)
 ```
