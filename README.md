@@ -1,5 +1,8 @@
 # django-dotenv
 
+[![Build Status](https://travis-ci.org/jpadilla/django-dotenv.svg)](https://travis-ci.org/jpadilla/django-dotenv)
+[![PyPI Version](https://pypip.in/version/django-dotenv/badge.svg)](https://pypi.python.org/pypi/django-dotenv)
+
 [foreman](https://github.com/ddollar/foreman) reads from `.env`. `manage.py`
 doesn't. Let's fix that.
 
