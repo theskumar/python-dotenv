@@ -4,6 +4,9 @@ import sys
 import warnings
 
 
+__version__ = '1.2'
+
+
 line_re = re.compile(r"""
     ^
     (?:export\s+)?      # optional export
@@ -39,52 +42,65 @@ def read_dotenv(dotenv=None):
     to find manage.py and then find the dotenv.
     """
     if dotenv is None:
-        frame = sys._getframe()
-        dotenv = os.path.join(os.path.dirname(frame.f_back.f_code.co_filename), '.env')
+        frame_filename = sys._getframe().f_back.f_code.co_filename
+        dotenv = os.path.join(os.path.dirname(frame_filename), '.env')
+
     if os.path.exists(dotenv):
-        file = open(dotenv)
-        for k, v in parse_dotenv(file.read()).items():
-            os.environ.setdefault(k, v)
-        file.close()
+        with open(dotenv) as f:
+            for k, v in parse_dotenv(f.read()).items():
+                os.environ.setdefault(k, v)
     else:
-        warnings.warn("not reading %s - it doesn't exist." % dotenv)
+        warnings.warn("Not reading {0} - it doesn't exist.".format(dotenv))
 
 
 def parse_dotenv(content):
     env = {}
+
     for line in content.splitlines():
         m1 = line_re.search(line)
+
         if m1:
             key, value = m1.groups()
+
             if value is None:
                 value = ''
 
-            # remove leading/trailing whitespace
+            # Remove leading/trailing whitespace
             value = value.strip()
 
-            # remove surrounding quotes
+            # Remove surrounding quotes
             m2 = re.match(r'^([\'"])(.*)\1$', value)
+
             if m2:
                 quotemark, value = m2.groups()
             else:
                 quotemark = None
 
-            # unescape all characters except $ so variables can be escaped properly
+            # Unescape all chars except $ so variables can be escaped properly
             if quotemark == '"':
                 value = re.sub(r'\\([^$])', '\1', value)
 
             if quotemark != "'":
-                # substitute variables in a value
+                # Substitute variables in a value
                 for parts in variable_re.findall(value):
                     if parts[0] == '\\':
-                        # variable is escaped, don't replace it
+                        # Variable is escaped, don't replace it
                         replace = ''.join(parts[1:-1])
                     else:
-                        # replace it with the value from the environment
-                        replace = env.get(parts[-1], os.environ.get(parts[-1], ''))
+                        # Replace it with the value from the environment
+                        replace = env.get(
+                            parts[-1],
+                            os.environ.get(parts[-1], '')
+                        )
+
                     value = value.replace(''.join(parts[0:-1]), replace)
 
             env[key] = value
-        elif not re.search(r'^\s*(?:#.*)?$', line):  # not comment or blank line
-            warnings.warn("Line %s doesn't match format" % repr(line), SyntaxWarning)
+
+        elif not re.search(r'^\s*(?:#.*)?$', line):  # not comment or blank
+            warnings.warn(
+                "Line {0} doesn't match format".format(repr(line)),
+                SyntaxWarning
+            )
+
     return env
