@@ -8,6 +8,7 @@ setup(
     author_email = "jacob@jacobian.org",
     url = "http://github.com/jacobian/django-dotenv",
     py_modules = ['dotenv'],
+    test_suite = 'tests',
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
