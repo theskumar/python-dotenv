@@ -6,6 +6,8 @@
 [foreman](https://github.com/ddollar/foreman) reads from `.env`. `manage.py`
 doesn't. Let's fix that.
 
+Tested on Python 2.6, 2.7, 3.2, 3.3, and 3.4.
+
 ## Installation
 
 ```
