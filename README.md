@@ -47,7 +47,7 @@ Add the following line at the start of the file, from your program starts:
 
 ```python
 import dotenv
-DOTENV_PATH = '/path/to/.env`
+DOTENV_PATH = "/path/to/.env"
 dotenv.load_dotenv(DOTENV_PATH)
 ```
 
@@ -62,12 +62,13 @@ NOTE: If you use [django-configurations], support for reading `.env` file is com
 [django-configurations]: https://github.com/jezdez/django-configurations
 
 
-## Setting remote config
+## Setting config on remote servers
 
-This is a first pass, will likely change.
+We make use of excellent [Fabric] to acomplish this. Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of `.env` file on the remote server.
 
-Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of '.env' on the remote server.
 ```
+# fabfile.py
+
 from fabric.api import task, run, env
 
 # absolute path to the location of .env on remote server
