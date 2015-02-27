@@ -2,9 +2,16 @@
 
 [![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Downloads](https://pypip.in/download/python-dotenv/badge.svg)](https://pypi.python.org/pypi/python-dotenv/)
 
+# Features
+
+The original work is based on [django-dotenv](https://github.com/jacobian/django-dotenv) by jacobian. 
+
+- read values from .env file and loads them as environment variable.
+- use it any python project not just django. 
+- commandline interface to read/write `.env` file on your local and remote servers.
 
 <!-- MarkdownTOC depth=3-->
-- [Features](#features)
+
 - [Installation](#installation)
 - [Usage](#usage)
   - [Command-line interface](#command-line-interface)
@@ -14,13 +21,7 @@
 
 <!-- /MarkdownTOC -->
 
-# Features
 
-The original work is based on [django-dotenv](https://github.com/jacobian/django-dotenv) by jacobian. 
-
-- read values from .env file and loads them as environment variable.
-- use it any python project not just django. 
-- commandline interface to read/write `.env` file on your local and remote servers.
 
 # Installation
 
