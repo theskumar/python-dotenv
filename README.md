@@ -2,15 +2,9 @@
 
 [![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Downloads](https://pypip.in/download/python-dotenv/badge.svg)](https://pypi.python.org/pypi/python-dotenv/)
 
-Forked from awesome but simpler [django-dotenv](https://github.com/jacobian/django-dotenv).  Removes black magic, makes loading .env in settings.py easier, adds remote .env file management capabilities.  Works as a drop-in replacement for django-dotenv.
-
-[foreman](https://github.com/ddollar/foreman) reads from `.env`. `manage.py`
-doesn't. Let's fix that.
-
-[heroku config](https://devcenter.heroku.com/articles/config-vars) Lets you add/delete env variables on your remote server from your local command line.  django-dotenv-rw  when used with fabric lets you do the same ```heroku config:set DJANGO_ENV="PRODUCTION" ``` becomes ```fab config:set,DJANGO_ENV,PRODUCTION```
 
 <!-- MarkdownTOC depth=3-->
-
+- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Command-line interface](#command-line-interface)
@@ -20,6 +14,13 @@ doesn't. Let's fix that.
 
 <!-- /MarkdownTOC -->
 
+# Features
+
+The original work is based on [django-dotenv](https://github.com/jacobian/django-dotenv) by jacobian. 
+
+- read values from .env file and loads them as environment variable.
+- use it any python project not just django. 
+- commandline interface to read/write `.env` file on your local and remote servers.
 
 # Installation
 
@@ -49,23 +50,28 @@ Commands:
   unset  Removes the given key.
 </pre>
 
-## Loading settings from a `.env` file into your django environment
+## Loading variables from a `.env` file into your python project
 
-Option 1 (suggested):  Near the top of `settings.py`. Add:
+### Any Python Project
 
-```python
-import os
-import dotenv
-PROJECT_PATH = os.path.dirname(os.path.dirname(__file__))
-dotenv.load_dotenv(os.path.join(PROJECT_PATH, ".env"))
-```
-
-Option 2: If you want your server to set the env variables and only use `dotenv` when you're using `manage.py`: in `manage.py` add:
+Add the following line at the start of the file, from your program starts:
 
 ```python
 import dotenv
-dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+DOTENV_PATH = '/path/to/.env`
+dotenv.load_dotenv(DOTENV_PATH)
 ```
+
+### Django
+
+If you are using django you should add the above loader script at the top of `settings.py` and `manage.py`. 
+
+NOTE: If you use [django-configurations], support for reading `.env` file is coming soon[1]!
+
+[1] https://github.com/jezdez/django-configurations/commit/01e3f5837f3d0fed215d
+
+[django-configurations]: https://github.com/jezdez/django-configurations
+
 
 ## Setting remote config
 
@@ -147,4 +153,6 @@ That's it. example.com, or whoever your non-paas host is, is now 1 facor closer 
 
 # Contributing
 
-You can either open an issue or send a pull request.
+Please open [an issue] or send us a pull request.
+
+[an issue]: https://github.com/theskumar/python-dotenv/issues/new
