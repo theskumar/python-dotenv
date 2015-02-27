@@ -66,6 +66,8 @@ NOTE: If you use [django-configurations], support for reading `.env` file is com
 
 We make use of excellent [Fabric] to acomplish this. Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of `.env` file on the remote server.
 
+[Fabric]: http://www.fabfile.org/
+
 ```
 # fabfile.py
 
