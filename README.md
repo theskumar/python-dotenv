@@ -10,18 +10,6 @@ The original work is based on [django-dotenv](https://github.com/jacobian/django
 - use it any python project not just django. 
 - commandline interface to read/write `.env` file on your local and remote servers.
 
-<!-- MarkdownTOC depth=3-->
-
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Command-line interface](#command-line-interface)
-  - [Loading settings from a `.env` file into your django environment](#loading-settings-from-a-env-file-into-your-django-environment)
-  - [Setting remote config](#setting-remote-config)
-- [Contributing](#contributing)
-
-<!-- /MarkdownTOC -->
-
-
 
 # Installation
 
