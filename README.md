@@ -19,6 +19,26 @@ pip install python-dotenv --upgrade
 
 # Usage
 
+## Format
+You define your environment variables with a simple key=value list.
+
+<pre>
+SECRET_KEY="your_secret_key"
+DATABASE_PASSWORD="your_database_password"
+...
+</pre>
+
+When using django-configurations, the environment variables have a default
+preposition DJANGO_ .
+This is only true for **default configuration**, which you can overwrite 
+with *environ_prefix* and *environ_name* parameters.
+
+<pre>
+DJANGO_SECRET_KEY="your_secret_key"
+DJANGO_DATABASE_PASSWORD="your_database_password"
+...
+</pre>
+
 ## Command-line interface
 
 <pre>
