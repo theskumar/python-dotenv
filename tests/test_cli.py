@@ -10,12 +10,27 @@ here = dirname(__file__)
 dotenv_path = join(here, '.env')
 
 
-def test_read_write():
+def test_get_key():
     sh.touch(dotenv_path)
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
     stored_value = dotenv.get_key(dotenv_path, 'HELLO')
     assert stored_value == 'WORLD'
     sh.rm(dotenv_path)
+    assert dotenv.get_key(dotenv_path, 'HELLO') is None
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
+    assert success is None
+
+
+def test_unset():
+    sh.touch(dotenv_path)
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
+    stored_value = dotenv.get_key(dotenv_path, 'HELLO')
+    assert stored_value == 'WORLD'
+    success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
+    assert dotenv.get_key(dotenv_path, 'HELLO') is None
+    sh.rm(dotenv_path)
+    success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
+    assert success is None
 
 
 def test_console_script():

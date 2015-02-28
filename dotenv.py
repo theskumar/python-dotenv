@@ -49,7 +49,7 @@ def set_key(dotenv_path, key_to_set, value_to_set):
     value_to_set = str(value_to_set).strip("'").strip('"')
     if not os.path.exists(dotenv_path):
         warnings.warn("can't write to %s - it doesn't exist." % dotenv_path)
-        return None
+        return None, key_to_set, value_to_set
     dotenv_as_dict = OrderedDict(parse_dotenv(dotenv_path))
     dotenv_as_dict[key_to_set] = value_to_set
     success = flatten_and_write(dotenv_path, dotenv_as_dict)
@@ -66,14 +66,13 @@ def unset_key(dotenv_path, key_to_unset):
     key_to_unset = str(key_to_unset)
     if not os.path.exists(dotenv_path):
         warnings.warn("can't delete from %s - it doesn't exist." % dotenv_path)
-        return None
+        return None, key_to_unset
     dotenv_as_dict = OrderedDict(parse_dotenv(dotenv_path))
     if key_to_unset in dotenv_as_dict:
         dotenv_as_dict.pop(key_to_unset, None)
     else:
-        warnings.warn(
-            "key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))
-        return None
+        warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))
+        return None, key_to_unset
     success = flatten_and_write(dotenv_path, dotenv_as_dict)
     return success, key_to_unset
 
