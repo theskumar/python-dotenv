@@ -1,14 +1,15 @@
 # python-dotenv
 
-[![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Downloads](https://pypip.in/download/python-dotenv/badge.svg)](https://pypi.python.org/pypi/python-dotenv/)
+[![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![Coverage Status](https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master)](https://coveralls.io/r/theskumar/python-dotenv?branch=master) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Downloads](https://pypip.in/download/python-dotenv/badge.svg)](https://pypi.python.org/pypi/python-dotenv/)
 
 # Features
 
-The original work is based on [django-dotenv](https://github.com/jacobian/django-dotenv) by jacobian. 
+The original work is based on [django-dotenv](https://github.com/jacobian/django-dotenv) by jacobian.
 
 - read values from .env file and loads them as environment variable.
-- use it any python project not just django. 
+- use it any python project not just django.
 - commandline interface to read/write `.env` file on your local and remote servers.
+- python 2 and 3 support
 
 
 # Installation
@@ -19,23 +20,35 @@ pip install python-dotenv --upgrade
 
 # Usage
 
-## Format
-You define your environment variables with a simple key=value list.
+## Loading variables from a `.env` file into your python project
+
+### Any Python Project
+
+Add the following line at the start of the file, from your program starts:
+
+```python
+import dotenv
+dotenv.load_dotenv("/path/to/.env")
+```
+
+### Django
+
+If you are using django you should add the above loader script at the top of `settings.py` and `manage.py`.
+
+NOTE: If you use [django-configurations], support for reading `.env` file is coming soon[1]!
+
+[1] https://github.com/jezdez/django-configurations/commit/01e3f5837f3d0fed215d
+
+[django-configurations]: https://github.com/jezdez/django-configurations
+
+
+## Format of `.env` file
+
+`.env` is a simple text file. With each environment variables listed per line, in the format of `KEY="Value"`
 
 <pre>
 SECRET_KEY="your_secret_key"
 DATABASE_PASSWORD="your_database_password"
-...
-</pre>
-
-When using django-configurations, the environment variables have a default
-preposition DJANGO_ .
-This is only true for **default configuration**, which you can overwrite 
-with *environ_prefix* and *environ_name* parameters.
-
-<pre>
-DJANGO_SECRET_KEY="your_secret_key"
-DJANGO_DATABASE_PASSWORD="your_database_password"
 ...
 </pre>
 
@@ -59,36 +72,13 @@ Commands:
   unset  Removes the given key.
 </pre>
 
-## Loading variables from a `.env` file into your python project
-
-### Any Python Project
-
-Add the following line at the start of the file, from your program starts:
-
-```python
-import dotenv
-DOTENV_PATH = "/path/to/.env"
-dotenv.load_dotenv(DOTENV_PATH)
-```
-
-### Django
-
-If you are using django you should add the above loader script at the top of `settings.py` and `manage.py`. 
-
-NOTE: If you use [django-configurations], support for reading `.env` file is coming soon[1]!
-
-[1] https://github.com/jezdez/django-configurations/commit/01e3f5837f3d0fed215d
-
-[django-configurations]: https://github.com/jezdez/django-configurations
-
-
 ## Setting config on remote servers
 
 We make use of excellent [Fabric] to acomplish this. Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of `.env` file on the remote server.
 
 [Fabric]: http://www.fabfile.org/
 
-```
+```python
 # fabfile.py
 
 from fabric.api import task, run, env
