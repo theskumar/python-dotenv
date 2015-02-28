@@ -1,24 +1,25 @@
 language: python
 sudo: false
 python:
-  - '2.7'
-  - '3.3'
-  - '3.4'
-  - pypy
+- '2.7'
+- '3.3'
+- '3.4'
+- pypy
 install:
-  - pip install python-coveralls
-  - pip install -q -r requirements.txt
-  - pip install --editable .
+- pip install python-coveralls
+- pip install -q -r requirements.txt
+- pip install --editable .
 before_script: flake8
 script:
-  - coverage run --source=dotenv.py --omit='*tests*' -m py.test tests/ -v --tb=native
-  - coverage report
+- coverage run --source=dotenv.py --omit='*tests*' -m py.test tests/ -v --tb=native
+- coverage report
 after_script:
-  - coveralls
+- coveralls
 deploy:
   provider: pypi
-  user: 'theskumar'
+  user: theskumar
   password:
-    secure: xe5yaUqAb0jam6epvEGSUMYt9L5gSRyFLaahTmCDEULP7msj8D45vswV/uEvnjdWdBw5CPuBkhLJXj2vsVMjkWVSa6bBfz79sEdd//70lE07bJA9sBSsXwbB4hxY+jWgW1KTFUNCPFP59L0ZosgYHJMbLcyr8iH2ZI+QzyUrO1U=
+    secure: VdULnucEUBZB0qZFKrP0kGdxYOY02QrvJBvVAHDc4CBhvPWcfF5HpEWD1CDNr2wdvg5Wwi5WGgX66Rthkrsw6akPwB+aPA++bFZ0uMHy392Nu4hxusX915R3JGnQ7L53aYrohOsJ7JsrZ7n12I38LJSewfkyQydAxjhJA+3hAtw=
   on:
     tags: true
+    repo: theskumar/python-dotenv
