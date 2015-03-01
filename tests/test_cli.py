@@ -33,18 +33,32 @@ def test_unset():
     assert success is None
 
 
-def test_console_script():
-    sh.touch(dotenv_path)
-    sh.dotenv('-f', dotenv_path, 'set', 'HELLO', 'WORLD')
-    output = sh.dotenv('-f', dotenv_path, 'get', 'HELLO', )
-    assert output == 'HELLO="WORLD"\n'
-    sh.rm(dotenv_path)
+def test_console_script(cli):
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        sh.dotenv('-f', dotenv_path, 'set', 'HELLO', 'WORLD')
+        output = sh.dotenv('-f', dotenv_path, 'get', 'HELLO', )
+        assert output == 'HELLO="WORLD"\n'
+        sh.rm(dotenv_path)
+
+    # should fail for not existing file
+    result = cli.invoke(dotenv.set, ['my_key', 'my_value'])
+    assert result.exit_code != 0
+
+    # should fail for not existing file
+    result = cli.invoke(dotenv.get, ['my_key'])
+    assert result.exit_code != 0
+
+    # should fail for not existing file
+    result = cli.invoke(dotenv.list, [])
+    assert result.exit_code != 0
 
 
-def test_default_path():
-    sh.touch(dotenv_path)
-    sh.cd(here)
-    sh.dotenv('set', 'HELLO', 'WORLD')
-    output = sh.dotenv('get', 'HELLO')
-    assert output == 'HELLO="WORLD"\n'
-    sh.rm(dotenv_path)
+def test_default_path(cli):
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        sh.cd(here)
+        sh.dotenv('set', 'HELLO', 'WORLD')
+        output = sh.dotenv('get', 'HELLO')
+        assert output == 'HELLO="WORLD"\n'
+        sh.rm(dotenv_path)
