@@ -20,6 +20,7 @@ Reads the key,value pair from `.env` and adds them to environment variable. It i
 - [Installation](#installation)
 - [Command-line interface](#command-line-interface)
   - [Setting config on remote servers](#setting-config-on-remote-servers)
+- [Releated Projects](#releated-projects)
 - [Contributing](#contributing)
 
 <!-- /MarkdownTOC -->
@@ -178,6 +179,13 @@ $ fab config:set,hello,world config:set,foo,bar config:set,fizz,buzz
 ```
 
 That's it. example.com, or whoever your non-paas host is, is now 1 facor closer to an easy 12 factor app.
+
+# Releated Projects
+
+- [Hencho](https://github.com/nickstenning/honcho) - For managing Procfile-based applications.
+- [django-dotenv](https://github.com/jpadilla/django-dotenv)
+- [django-environ](https://github.com/joke2k/django-environ)
+- [django-configuration](https://github.com/jezdez/django-configurations)
 
 # Contributing
 
