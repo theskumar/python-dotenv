@@ -45,6 +45,9 @@ def read_dotenv(dotenv=None):
         frame_filename = sys._getframe().f_back.f_code.co_filename
         dotenv = os.path.join(os.path.dirname(frame_filename), '.env')
 
+    if os.path.isdir(dotenv) and os.path.isfile(os.path.join(dotenv, '.env')):
+        dotenv = os.path.join(dotenv, '.env')
+
     if os.path.exists(dotenv):
         with open(dotenv) as f:
             for k, v in parse_dotenv(f.read()).items():

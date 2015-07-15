@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 import warnings
 
@@ -130,3 +131,24 @@ class ReadDotenvTestCase(unittest.TestCase):
                 str(w[0].message),
                 "Not reading .does_not_exist - it doesn't exist."
             )
+
+
+class ParseDotenvDirectoryTestCase(unittest.TestCase):
+    """Test parsing a dotenv file given the directory where it lives"""
+
+    def setUp(self):
+        # Define our dotenv directory
+        self.dotenv_dir = os.path.join(
+            os.path.dirname(__file__), 'dotenv_dir')
+        # Create the directory
+        os.mkdir(self.dotenv_dir)
+        # Copy the test .env file to our new directory
+        shutil.copy2(os.path.abspath('.env'), self.dotenv_dir)
+
+    def tearDown(self):
+        if os.path.exists(self.dotenv_dir):
+            shutil.rmtree(self.dotenv_dir)
+
+    def test_can_read_dotenv_given_its_directory(self):
+        read_dotenv(self.dotenv_dir)
+        self.assertEqual(os.environ.get('DOTENV'), 'true')
