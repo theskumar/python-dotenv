@@ -38,6 +38,14 @@ DATABASE_PASSWORD="your_database_password"
 ...
 </pre>
 
+If you want to be really fancy with your env file you can do comments (below is a valid env file)
+
+```shell
+# I am a comment and that is OK
+SOME_VAR=someval
+FOO=BAR
+```
+
 Assuming you have created the `.env` file along-side your settings module.
 ```
 .
