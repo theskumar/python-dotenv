@@ -14,7 +14,7 @@ setup(
               'configurations', 'python'],
     py_modules=['dotenv'],
     install_requires=[
-        'click>=3.0',
+        'click>=5.0',
     ],
     entry_points='''
         [console_scripts]
