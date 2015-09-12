@@ -190,7 +190,7 @@ That's it. example.com, or whoever your non-paas host is, is now 1 facor closer 
 
 # Releated Projects
 
-- [Hencho](https://github.com/nickstenning/honcho) - For managing Procfile-based applications.
+- [Honcho](https://github.com/nickstenning/honcho) - For managing Procfile-based applications.
 - [django-dotenv](https://github.com/jpadilla/django-dotenv)
 - [django-environ](https://github.com/joke2k/django-environ)
 - [django-configuration](https://github.com/jezdez/django-configurations)
