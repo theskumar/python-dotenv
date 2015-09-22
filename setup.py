@@ -15,6 +15,7 @@ setup(
     py_modules=['dotenv'],
     install_requires=[
         'click>=5.0',
+        'ordereddict'
     ],
     entry_points='''
         [console_scripts]
