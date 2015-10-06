@@ -109,7 +109,7 @@ Commands:
 
 ## Setting config on remote servers
 
-We make use of excellent [Fabric] to acomplish this. Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of `.env` file on the remote server.
+We make use of excellent [Fabric] to accomplish this. Add a config task to your local fabfile, `dotenv_path` is the location of the absolute path of `.env` file on the remote server.
 
 [Fabric]: http://www.fabfile.org/
 
