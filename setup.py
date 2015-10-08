@@ -3,9 +3,13 @@ from __future__ import unicode_literals
 
 from setuptools import setup
 
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
+
 setup(
     name="python-dotenv",
     description="Add .env support to your django/flask apps in development and deployments",
+    long_description=readme,
     version="0.1.3",
     author="Saurabh Kumar",
     author_email="me+github@saurabh-kumar.com",
