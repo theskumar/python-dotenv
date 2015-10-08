@@ -1,13 +1,12 @@
-.. raw:: html
+::
 
-   <pre>
         _______ .__   __. ____    ____
        |   ____||  \ |  | \   \  /   /
        |  |__   |   \|  |  \   \/   /
        |   __|  |  . `  |   \      /
     __ |  |____ |  |\   |    \    /
    (__)|_______||__| \__|     \__/
-   </pre>
+
 
 python-dotenv
 =============
@@ -20,10 +19,6 @@ production using `12-factor <http://12factor.net/>`__ principles.
 
     Do one thing, do it well!
 
-.. raw:: html
-
-   <!-- MarkdownTOC -->
-
 -  `Usages <#usages>`__
 -  `Installation <#installation>`__
 -  `Command-line interface <#command-line-interface>`__
@@ -32,23 +27,17 @@ production using `12-factor <http://12factor.net/>`__ principles.
 -  `Releated Projects <#releated-projects>`__
 -  `Contributing <#contributing>`__
 
-.. raw:: html
-
-   <!-- /MarkdownTOC -->
-
 Usages
 ======
 
 ``.env`` is a simple text file. With each environment variables listed
 per line, in the format of ``KEY="Value"``
 
-.. raw:: html
+::
 
-   <pre>
    SECRET_KEY="your_secret_key"
    DATABASE_PASSWORD="your_database_password"
    ...
-   </pre>
 
 If you want to be really fancy with your env file you can do comments
 (below is a valid env file)
