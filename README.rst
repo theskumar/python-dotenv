@@ -245,4 +245,4 @@ us a pull request.
 .. |PyPI version| image:: https://badge.fury.io/py/python-dotenv.svg
    :target: http://badge.fury.io/py/python-dotenv
 .. |PyPI| image:: https://img.shields.io/pypi/dm/python-dotenv.svg
-   :target: 
+   :target: http://badge.fury.io/py/python-dotenv
