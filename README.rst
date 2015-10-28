@@ -90,7 +90,7 @@ Installation
 
 ::
 
-    pip install python-dotenv --upgrade
+    pip install -U python-dotenv
 
 Command-line interface
 ======================
@@ -132,18 +132,20 @@ server.
 
     # fabfile.py
 
-    from fabric.api import task, run, env
     import dotenv
+    from fabric.api import task, run, env
 
     # absolute path to the location of .env on remote server.
-    env.dotenv_path = '/home/me/webapps/myapp/myapp/.env'
+    env.dotenv_path = '/opt/myapp/.env'
 
     @task
     def config(action=None, key_value=None):
         '''Manage project configuration via .env
 
-        see: https://github.com/theskumar/python-dotenv
-        e.g: fab config:set[,key][=value]
+        e.g: fab config:set,<key>=<value>
+             fab config:get,<key>
+             fab config:unset,<key>
+             fab config:list
         '''
         run('touch %(dotenv_path)s' % env)
         command = dotenv.get_cli_string(env.dotenv_path, action, key_value)
@@ -155,57 +157,33 @@ Get all your remote config info with ``fab config``
 
 ::
 
-    $ fab config:list
-    [...example.com] Executing task 'config'
-    [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env list
-    [...example.com] out: DJANGO_DEBUG="true"
-    [...example.com] out: DJANGO_ENV="test"
+    $ fab config
 
-Set remote config variables with ``fab config:set,[key],[value]``
+Set remote config variables with ``fab config:set,<key>=<value>``
 
 ::
 
     $ fab config:set,hello=world
-    [...example.com] Executing task 'config'
-    [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world
-    [...example.com] out: hello="world"
 
-Get a single remote config variables with ``fab config:get,[key]``
+Get a single remote config variables with ``fab config:get,<key>``
 
 ::
 
     $ fab config:get,hello
-    [...example.com] Executing task 'config'
-    [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env get hello
-    [...example.com] out: hello="world"
 
-Delete a remote config variables with ``fab config:unset,[key]``
+Delete a remote config variables with ``fab config:unset,<key>``
 
 ::
 
     $ fab config:unset,hello
-    [...example.com] Executing task 'config'
-    [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env unset hello
-    [...example.com] out: unset hello
 
 Thanks entirely to fabric and not one bit to this project, you can chain
-commands like so ``fab config:set,[key1][=value1] config:set,[key2][=value2]``
+commands like so ``fab config:set,<key1>=<value1> config:set,<key2>=<value2>``
 
 ::
 
     $ fab config:set,hello=world config:set,foo=bar config:set,fizz=buzz
-    [...example.com] Executing task 'config'
-    [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world
-    [...example.com] out: hello="world"
-    [...example.com] Executing task 'config'
-    [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set foo bar
-    [...example.com] out: foo="bar"
-    [...example.com] Executing task 'config'
-    [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set fizz buzz
-    [...example.com] out: fizz="buzz"
 
-That's it. example.com, or whoever your non-paas host is, is now 1 facor
-closer to an easy 12 factor app.
 
 Releated Projects
 =================
