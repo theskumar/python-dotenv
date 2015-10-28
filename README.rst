@@ -133,23 +133,20 @@ server.
     # fabfile.py
 
     from fabric.api import task, run, env
+    import dotenv
 
-    # absolute path to the location of .env on remote server
+    # absolute path to the location of .env on remote server.
     env.dotenv_path = '/home/me/webapps/myapp/myapp/.env'
 
     @task
-    def config(action=None, key=None, value=None):
+    def config(action=None, key_value=None):
         '''Manage project configuration via .env
 
         see: https://github.com/theskumar/python-dotenv
-        e.g: fab config:set,[key],[value]
+        e.g: fab config:set[,key][=value]
         '''
         run('touch %(dotenv_path)s' % env)
-        command = 'dotenv'
-        command += ' -f %s ' % env.dotenv_path
-        command += action + " " if action else " "
-        command += key + " " if key else " "
-        command += value if value else ""
+        command = dotenv.get_cli_string(env.dotenv_path, action, key_value)
         run(command)
 
 Usage is designed to mirror the heroku config api very closely.
@@ -168,7 +165,7 @@ Set remote config variables with ``fab config:set,[key],[value]``
 
 ::
 
-    $ fab config:set,hello,world
+    $ fab config:set,hello=world
     [...example.com] Executing task 'config'
     [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world
     [...example.com] out: hello="world"
@@ -192,12 +189,11 @@ Delete a remote config variables with ``fab config:unset,[key]``
     [...example.com] out: unset hello
 
 Thanks entirely to fabric and not one bit to this project, you can chain
-commands like
-so\ ``fab config:set,[key1],[value1] config:set,[key2],[value2]``
+commands like so ``fab config:set,[key1][=value1] config:set,[key2][=value2]``
 
 ::
 
-    $ fab config:set,hello,world config:set,foo,bar config:set,fizz,buzz
+    $ fab config:set,hello=world config:set,foo=bar config:set,fizz=buzz
     [...example.com] Executing task 'config'
     [...example.com] run: dotenv -f /home/me/webapps/myapp/myapp/.env set hello world
     [...example.com] out: hello="world"

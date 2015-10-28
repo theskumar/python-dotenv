@@ -168,5 +168,24 @@ def unset(ctx, key):
         exit(1)
 
 
+def get_cli_string(path=None, action=None, key_value=None):
+    """Returns a string suitable for running as a shell script.
+
+    Useful for converting a arguments passed to a fabric task
+    to be passed to a `local` or `run` command.
+    """
+    command = ['dotenv']
+    if path:
+        command.append('-f %s' % path)
+    if action:
+        command.append(action)
+        if key_value:
+            if '=' in key_value:
+                command += key_value.split('=', 1)
+            else:
+                command.append(key_value)
+
+    return ' '.join(command).strip()
+
 if __name__ == "__main__":
     cli()
