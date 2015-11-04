@@ -93,7 +93,7 @@ def parse_dotenv(dotenv_path):
 def flatten_and_write(dotenv_path, dotenv_as_dict):
     with open(dotenv_path, "w") as f:
         for k, v in dotenv_as_dict.items():
-            f.write('%s="%s"\r\n' % (k, v))
+            f.write('%s="%s"\n' % (k, v))
     return True
 
 
