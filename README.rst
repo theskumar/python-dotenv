@@ -139,16 +139,16 @@ server.
     env.dotenv_path = '/opt/myapp/.env'
 
     @task
-    def config(action=None, key_value=None):
+    def config(action=None, key=None, value=None):
         '''Manage project configuration via .env
 
-        e.g: fab config:set,<key>=<value>
+        e.g: fab config:set,<key>,<value>
              fab config:get,<key>
              fab config:unset,<key>
              fab config:list
         '''
         run('touch %(dotenv_path)s' % env)
-        command = dotenv.get_cli_string(env.dotenv_path, action, key_value)
+        command = dotenv.get_cli_string(env.dotenv_path, action, key, value)
         run(command)
 
 Usage is designed to mirror the heroku config api very closely.
@@ -159,11 +159,11 @@ Get all your remote config info with ``fab config``
 
     $ fab config
 
-Set remote config variables with ``fab config:set,<key>=<value>``
+Set remote config variables with ``fab config:set,<key>,<value>``
 
 ::
 
-    $ fab config:set,hello=world
+    $ fab config:set,hello,world
 
 Get a single remote config variables with ``fab config:get,<key>``
 
@@ -178,11 +178,11 @@ Delete a remote config variables with ``fab config:unset,<key>``
     $ fab config:unset,hello
 
 Thanks entirely to fabric and not one bit to this project, you can chain
-commands like so ``fab config:set,<key1>=<value1> config:set,<key2>=<value2>``
+commands like so ``fab config:set,<key1>,<value1> config:set,<key2>,<value2>``
 
 ::
 
-    $ fab config:set,hello=world config:set,foo=bar config:set,fizz=buzz
+    $ fab config:set,hello,world config:set,foo,bar config:set,fizz=buzz
 
 
 Releated Projects

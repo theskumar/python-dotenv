@@ -168,7 +168,7 @@ def unset(ctx, key):
         exit(1)
 
 
-def get_cli_string(path=None, action=None, key_value=None):
+def get_cli_string(path=None, action=None, key=None, value=None):
     """Returns a string suitable for running as a shell script.
 
     Useful for converting a arguments passed to a fabric task
@@ -179,11 +179,13 @@ def get_cli_string(path=None, action=None, key_value=None):
         command.append('-f %s' % path)
     if action:
         command.append(action)
-        if key_value:
-            if '=' in key_value:
-                command += key_value.split('=', 1)
-            else:
-                command.append(key_value)
+        if key:
+            command.append(key)
+            if value:
+                if ' ' in value:
+                    command.append('"%s"' % value)
+                else:
+                    command.append(value)
 
     return ' '.join(command).strip()
 
