@@ -70,7 +70,7 @@ Add the following code to your ``settings.py``
 
 Now, you can access the variables either from existing environment
 variable or loaded from ``.env`` file. ``.env`` file gets higher
-precedence, and it's adviced not to include it in version control.
+precedence, and it's advised not to include it in version control.
 
 .. code:: python
 
