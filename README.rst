@@ -194,6 +194,10 @@ All the contributions are welcome! Please open `an
 issue <https://github.com/theskumar/python-dotenv/issues/new>`__ or send
 us a pull request.
 
+This project is currently maintained by `Saurabh Kumar <https://saurabh-kumar.com>`__ and 
+would not have been possible without the support of these `awesome people <https://github.com/theskumar/python-dotenv/graphs/contributors>`__.
+
+
 .. |Build Status| image:: https://travis-ci.org/theskumar/python-dotenv.svg?branch=master
    :target: https://travis-ci.org/theskumar/python-dotenv
 .. |Coverage Status| image:: https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master
