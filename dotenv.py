@@ -15,7 +15,7 @@ def load_dotenv(dotenv_path):
     Read a .env file and load into os.environ.
     """
     if not os.path.exists(dotenv_path):
-        warnings.warn("can't read %s - it doesn't exist." % dotenv_path)
+        warnings.warn("Not loading %s - it doesn't exist." % dotenv_path)
         return None
     for k, v in parse_dotenv(dotenv_path):
         os.environ.setdefault(k, v)

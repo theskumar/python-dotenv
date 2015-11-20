@@ -19,3 +19,14 @@ release: clean
 sdist: clean
 	python setup.py sdist
 	ls -l dist
+
+test:
+	pip install -e .
+	py.test tests/
+
+coverage:
+	coverage run --source=dotenv.py --omit='*tests*' -m py.test tests/ -v --tb=native
+	coverage report
+
+coverage-html: coverage
+	coverage html
