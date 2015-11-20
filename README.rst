@@ -30,24 +30,6 @@ production using `12-factor <http://12factor.net/>`__ principles.
 Usages
 ======
 
-``.env`` is a simple text file. With each environment variables listed
-per line, in the format of ``KEY="Value"``
-
-::
-
-   SECRET_KEY="your_secret_key"
-   DATABASE_PASSWORD="your_database_password"
-   ...
-
-If you want to be really fancy with your env file you can do comments
-(below is a valid env file)
-
-.. code:: shell
-
-    # I am a comment and that is OK
-    SOME_VAR=someval
-    FOO=BAR
-
 Assuming you have created the ``.env`` file along-side your settings
 module.
 
@@ -68,9 +50,9 @@ Add the following code to your ``settings.py``
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
 
-Now, you can access the variables either from existing environment
-variable or loaded from ``.env`` file. ``.env`` file gets higher
-precedence, and it's advised not to include it in version control.
+Now, you can access the variables either from system environment
+variable or loaded from ``.env`` file. **System environment variables
+gets higher precedence** and it's advised not to include it in version control.
 
 .. code:: python
 
@@ -78,6 +60,17 @@ precedence, and it's advised not to include it in version control.
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
     DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
+
+
+``.env`` is a simple text file. With each environment variables listed
+per line, in the format of ``KEY="Value"``, lines starting with `#` is 
+ignored.
+
+.. code:: shell
+
+    SOME_VAR=someval
+    # I am a comment and that is OK
+    FOO="BAR"
 
 Django
 ------
