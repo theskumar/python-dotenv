@@ -86,12 +86,12 @@ def parse_dotenv(dotenv_path):
             if not line or line.startswith('#') or '=' not in line:
                 continue
             k, v = line.split('=', 1)
-            v = str(v).replace("'","").replace('"','').replace(" ","")
+            v = str(v).replace("'", "").replace('"', '').replace(" ", "")
             if v.lower() == 'true':
                 v = True
             elif v.lower() == 'false':
                 v = False
-            k = str(k).replace("'","").replace('"','').replace(" ","")
+            k = str(k).replace("'", "").replace('"', '').replace(" ", "")
             yield k, v
 
 
