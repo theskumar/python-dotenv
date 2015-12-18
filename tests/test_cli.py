@@ -5,7 +5,7 @@ from os.path import dirname, join
 
 import sh
 import dotenv
-import pytest
+import warnings
 
 here = dirname(__file__)
 dotenv_path = join(here, '.env')
@@ -79,8 +79,14 @@ def test_unset():
 def test_unset_warnings():
     sh.touch(dotenv_path)
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
-    with pytest.warns(UserWarning):
-        dotenv.unset_key(dotenv_path, 'DOESNOTEXIST')
+    with warnings.catch_warnings(record=True) as w:
+            dotenv.unset_key(dotenv_path, 'DOESNOTEXIST')
+
+            assert len(w) == 1
+            assert w[0].category == UserWarning
+            error_message = "key DOESNOTEXIST not removed from %s - key doesn't exist." % (dotenv_path)
+            assert str(w[0].message) == error_message
+
     sh.rm(dotenv_path)
 
 
