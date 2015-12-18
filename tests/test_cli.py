@@ -37,7 +37,7 @@ def test_commented_line():
     HELLO = WORLD
     #this is another comment
     """
-    with open (dotenv_path,'w') as f:
+    with open(dotenv_path, 'w') as f:
         f.write(my_line)
 
     stored_value = dotenv.get_key(dotenv_path, 'HELLO')
@@ -52,16 +52,17 @@ def test_boolean_values():
     WORLD = False
     """
 
-    with open (dotenv_path,'w') as f:
+    with open(dotenv_path, 'w') as f:
         f.write(my_line)
 
     stored_value = dotenv.get_key(dotenv_path, 'HELLO')
-    assert stored_value == True
+    assert stored_value
     stored_value = dotenv.get_key(dotenv_path, 'WORLD')
-    assert stored_value == False
+    assert not stored_value
     sh.rm(dotenv_path)
     assert dotenv.get_key(dotenv_path, 'HELLO') is None
     assert dotenv.get_key(dotenv_path, 'WORLD') is None
+
 
 def test_unset():
     sh.touch(dotenv_path)
@@ -81,6 +82,7 @@ def test_unset_warnings():
     with pytest.warns(UserWarning):
         dotenv.unset_key(dotenv_path, 'DOESNOTEXIST')
     sh.rm(dotenv_path)
+
 
 def test_console_script(cli):
     with cli.isolated_filesystem():
