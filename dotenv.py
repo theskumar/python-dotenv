@@ -78,7 +78,7 @@ def parse_dotenv(content):
 
             # Unescape all chars except $ so variables can be escaped properly
             if quotemark == '"':
-                value = re.sub(r'\\([^$])', '\1', value)
+                value = re.sub(r'\\([^$])', r'\1', value)
 
             if quotemark != "'":
                 # Substitute variables in a value

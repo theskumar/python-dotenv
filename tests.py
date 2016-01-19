@@ -26,7 +26,7 @@ class ParseDotenvTestCase(unittest.TestCase):
         self.assertEqual(env, {'FOO': 'bar'})
 
     def test_parses_escaped_double_quotes(self):
-        env = parse_dotenv('FOO="escaped\"bar"')
+        env = parse_dotenv('FOO="escaped\\"bar"')
         self.assertEqual(env, {'FOO': 'escaped"bar'})
 
     def test_parses_empty_values(self):
