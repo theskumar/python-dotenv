@@ -9,4 +9,5 @@ def test_to_cli_string():
     assert c(action='get', key='DEBUG') == 'dotenv get DEBUG'
     assert c(action='set', key='DEBUG', value='True') == 'dotenv set DEBUG True'
     assert c(action='set', key='SECRET', value='=@asdfasf') == 'dotenv set SECRET =@asdfasf'
+    assert c(action='set', key='SECRET', value='"=@asdfasf"') == 'dotenv set SECRET "=@asdfasf"'
     assert c(action='set', key='SECRET', value='a b') == 'dotenv set SECRET "a b"'
