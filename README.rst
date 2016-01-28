@@ -181,7 +181,7 @@ commands like so ``fab config:set,<key1>,<value1> config:set,<key2>,<value2>``
 Releated Projects
 =================
 
--  `Hencho <https://github.com/nickstenning/honcho>`__ - For managing
+-  `Honcho <https://github.com/nickstenning/honcho>`__ - For managing
    Procfile-based applications.
 -  `django-dotenv <https://github.com/jpadilla/django-dotenv>`__
 -  `django-environ <https://github.com/joke2k/django-environ>`__
