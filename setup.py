@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from setuptools import setup
 
 with open('README.rst') as readme_file:
@@ -16,14 +14,14 @@ setup(
     url="http://github.com/theskumar/python-dotenv",
     keywords=['environment variables', 'deployments', 'settings', 'env', 'dotenv',
               'configurations', 'python'],
-    py_modules=['dotenv'],
+    packages=['dotenv'],
     install_requires=[
         'click>=5.0',
         'ordereddict'
     ],
     entry_points='''
         [console_scripts]
-        dotenv=dotenv:cli
+        dotenv=dotenv:cli.cli
     ''',
     classifiers=[
         # As from https://pypi.python.org/pypi?%3Aaction=list_classifiers

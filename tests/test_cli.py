@@ -3,8 +3,9 @@ from __future__ import unicode_literals
 
 from os.path import dirname, join
 
-import sh
 import dotenv
+
+import sh
 
 here = dirname(__file__)
 dotenv_path = join(here, '.env')
@@ -42,15 +43,15 @@ def test_console_script(cli):
         sh.rm(dotenv_path)
 
     # should fail for not existing file
-    result = cli.invoke(dotenv.set, ['my_key', 'my_value'])
+    result = cli.invoke(dotenv.cli.set, ['my_key', 'my_value'])
     assert result.exit_code != 0
 
     # should fail for not existing file
-    result = cli.invoke(dotenv.get, ['my_key'])
+    result = cli.invoke(dotenv.cli.get, ['my_key'])
     assert result.exit_code != 0
 
     # should fail for not existing file
-    result = cli.invoke(dotenv.list, [])
+    result = cli.invoke(dotenv.cli.list, [])
     assert result.exit_code != 0
 
 
