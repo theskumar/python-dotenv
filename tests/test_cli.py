@@ -50,7 +50,6 @@ def test_console_script(cli):
             assert output == expected_result
             sh.rm(dotenv_path)
 
-
     # should fail for not existing file
     result = cli.invoke(dotenv.cli.set, ['my_key', 'my_value'])
     assert result.exit_code != 0
