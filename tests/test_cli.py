@@ -43,7 +43,7 @@ def test_console_script(cli):
         ("auto", "HELLO", "HELLO WORLD", 'HELLO="HELLO WORLD"\n'),
     )
     with cli.isolated_filesystem():
-        for quote_mode,variable,value,expected_result in TEST_COMBINATIONS:
+        for quote_mode, variable, value, expected_result in TEST_COMBINATIONS:
             sh.touch(dotenv_path)
             sh.dotenv('-f', dotenv_path, '-q', quote_mode, 'set', variable, value)
             output = sh.cat(dotenv_path)
