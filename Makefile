@@ -22,6 +22,7 @@ sdist: clean
 
 test:
 	pip install -e .
+	flake8 .
 	py.test tests/
 
 coverage:
