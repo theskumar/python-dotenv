@@ -63,7 +63,7 @@ gets higher precedence** and it's advised not to include it in version control.
 
 
 ``.env`` is a simple text file. With each environment variables listed
-per line, in the format of ``KEY="Value"``, lines starting with `#` is 
+per line, in the format of ``KEY="Value"``, lines starting with `#` is
 ignored.
 
 .. code:: shell
@@ -93,25 +93,25 @@ the ``.env`` file without manually opening it. The same cli installed on
 remote machine combined with fabric (discussed later) will enable you to
 update your settings on remote server, handy isn't it!
 
-.. raw:: html
+::
 
-   <pre>
-   $ dotenv
-   Usage: dotenv [OPTIONS] COMMAND [ARGS]...
+    Usage: dotenv [OPTIONS] COMMAND [ARGS]...
 
-     This script is used to set, get or unset values from a .env file.
+      This script is used to set, get or unset values from a .env file.
 
-   Options:
-     -f, --file PATH  Location of the .env file, defaults to .env file in current
-                      working directory.
-     --help           Show this message and exit.
+    Options:
+      -f, --file PATH                 Location of the .env file, defaults to .env
+                                      file in current working directory.
+      -q, --quote [always|never|auto]
+                                      Whether to quote or not the variable values.
+                                      Default mode is always.
+      --help                          Show this message and exit.
 
-   Commands:
-     get    Retrive the value for the given key.
-     list   Display all the stored key/value.
-     set    Store the given key/value.
-     unset  Removes the given key.
-   </pre>
+    Commands:
+      get    Retrive the value for the given key.
+      list   Display all the stored key/value.
+      set    Store the given key/value.
+      unset  Removes the given key.
 
 Setting config on remote servers
 --------------------------------
@@ -194,9 +194,18 @@ All the contributions are welcome! Please open `an
 issue <https://github.com/theskumar/python-dotenv/issues/new>`__ or send
 us a pull request.
 
-This project is currently maintained by `Saurabh Kumar <https://saurabh-kumar.com>`__ and 
+This project is currently maintained by `Saurabh Kumar <https://saurabh-kumar.com>`__ and
 would not have been possible without the support of these `awesome people <https://github.com/theskumar/python-dotenv/graphs/contributors>`__.
 
+Changelog
+=========
+
+0.4.0
+-----
+- cli: Added `-q/--quote` option to control the behaviour of quotes around values in .env. (Thanks `@hugochinchilla`_).
+- Improved test coverage.
+
+.. _@hugochinchilla: https://github.com/hugochinchilla
 
 .. |Build Status| image:: https://travis-ci.org/theskumar/python-dotenv.svg?branch=master
    :target: https://travis-ci.org/theskumar/python-dotenv
