@@ -1,4 +1,4 @@
-.PHONY: clean-pyc clean-build
+.PHONY: clean-pyc clean-build test
 
 clean: clean-build clean-pyc
 
@@ -22,6 +22,7 @@ sdist: clean
 
 test:
 	pip install -e .
+	flake8 .
 	py.test tests/
 
 coverage:

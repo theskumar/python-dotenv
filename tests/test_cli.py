@@ -35,12 +35,20 @@ def test_unset():
 
 
 def test_console_script(cli):
+    TEST_COMBINATIONS = (
+        # quote_mode, var_name, var_value, expected_result
+        ("always", "HELLO", "WORLD", 'HELLO="WORLD"\n'),
+        ("never", "HELLO", "WORLD", 'HELLO=WORLD\n'),
+        ("auto", "HELLO", "WORLD", 'HELLO=WORLD\n'),
+        ("auto", "HELLO", "HELLO WORLD", 'HELLO="HELLO WORLD"\n'),
+    )
     with cli.isolated_filesystem():
-        sh.touch(dotenv_path)
-        sh.dotenv('-f', dotenv_path, 'set', 'HELLO', 'WORLD')
-        output = sh.dotenv('-f', dotenv_path, 'get', 'HELLO', )
-        assert output == 'HELLO="WORLD"\n'
-        sh.rm(dotenv_path)
+        for quote_mode, variable, value, expected_result in TEST_COMBINATIONS:
+            sh.touch(dotenv_path)
+            sh.dotenv('-f', dotenv_path, '-q', quote_mode, 'set', variable, value)
+            output = sh.cat(dotenv_path)
+            assert output == expected_result
+            sh.rm(dotenv_path)
 
     # should fail for not existing file
     result = cli.invoke(dotenv.cli.set, ['my_key', 'my_value'])

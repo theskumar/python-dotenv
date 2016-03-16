@@ -9,11 +9,15 @@ from .main import get_key, parse_dotenv, set_key, unset_key
 @click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
               type=click.Path(exists=True),
               help="Location of the .env file, defaults to .env file in current working directory.")
+@click.option('-q', '--quote', default='always',
+              type=click.Choice(['always', 'never', 'auto']),
+              help="Whether to quote or not the variable values. Default mode is always.")
 @click.pass_context
-def cli(ctx, file):
+def cli(ctx, file, quote):
     '''This script is used to set, get or unset values from a .env file.'''
     ctx.obj = {}
     ctx.obj['FILE'] = file
+    ctx.obj['QUOTE'] = quote
 
     # Need to investigate if this can actually work or if the scope of the new environ variables
     # Expires when python exits
@@ -43,7 +47,8 @@ def list(ctx):
 def set(ctx, key, value):
     '''Store the given key/value.'''
     file = ctx.obj['FILE']
-    success, key, value = set_key(file, key, value)
+    quote = ctx.obj['QUOTE']
+    success, key, value = set_key(file, key, value, quote)
     if success:
         click.echo('%s="%s"' % (key, value))
     else:
@@ -69,7 +74,8 @@ def get(ctx, key):
 def unset(ctx, key):
     '''Removes the given key.'''
     file = ctx.obj['FILE']
-    success, key = unset_key(file, key)
+    quote = ctx.obj['QUOTE']
+    success, key = unset_key(file, key, quote)
     if success:
         click.echo("Successfully removed %s" % key)
     else:

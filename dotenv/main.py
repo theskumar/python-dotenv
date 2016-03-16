@@ -36,7 +36,7 @@ def get_key(dotenv_path, key_to_get):
         return None
 
 
-def set_key(dotenv_path, key_to_set, value_to_set):
+def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     """
     Adds or Updates a key/value to the given .env
 
@@ -50,11 +50,11 @@ def set_key(dotenv_path, key_to_set, value_to_set):
         return None, key_to_set, value_to_set
     dotenv_as_dict = OrderedDict(parse_dotenv(dotenv_path))
     dotenv_as_dict[key_to_set] = value_to_set
-    success = flatten_and_write(dotenv_path, dotenv_as_dict)
+    success = flatten_and_write(dotenv_path, dotenv_as_dict, quote_mode)
     return success, key_to_set, value_to_set
 
 
-def unset_key(dotenv_path, key_to_unset):
+def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     """
     Removes a given key from the given .env
 
@@ -71,7 +71,7 @@ def unset_key(dotenv_path, key_to_unset):
     else:
         warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))
         return None, key_to_unset
-    success = flatten_and_write(dotenv_path, dotenv_as_dict)
+    success = flatten_and_write(dotenv_path, dotenv_as_dict, quote_mode)
     return success, key_to_unset
 
 
@@ -86,8 +86,12 @@ def parse_dotenv(dotenv_path):
             yield k, v
 
 
-def flatten_and_write(dotenv_path, dotenv_as_dict):
+def flatten_and_write(dotenv_path, dotenv_as_dict, quote_mode="always"):
     with open(dotenv_path, "w") as f:
         for k, v in dotenv_as_dict.items():
-            f.write('%s="%s"\n' % (k, v))
+            _mode = quote_mode
+            if _mode == "auto" and " " in v:
+                _mode = "always"
+            str_format = '%s="%s"\n' if _mode == "always" else '%s=%s\n'
+            f.write(str_format % (k, v))
     return True
