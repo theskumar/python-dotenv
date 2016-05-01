@@ -214,11 +214,11 @@ Changelog
 
 Unreleased
 ----------
-- Add `find_dotenv` method that will try to find a .env file (Thanks `@isms`_)
+- Add ``find_dotenv`` method that will try to find a ``.env`` file. (Thanks `@isms`_)
 
 0.4.0
 -----
-- cli: Added `-q/--quote` option to control the behaviour of quotes around values in .env. (Thanks `@hugochinchilla`_).
+- cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
 .. _@hugochinchilla: https://github.com/hugochinchilla
