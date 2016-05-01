@@ -50,6 +50,18 @@ Add the following code to your ``settings.py``
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
 
+Alternatively, you can use ``find_dotenv()`` method that will try to find a
+``.env`` file by (a) guessing where to start using ``__file__`` or the working
+directory -- allowing this to work in non-file contexts such as IPython notebooks
+and the REPL, and then (b) walking up the directory tree looking for the
+specified file -- called ``.env`` by default. It does filthy magic stack backtracking
+to find the dotenv.
+
+.. code:: python
+
+    from dotenv import load_dotenv, find_dotenv
+    load_dotenv(find_dotenv())
+
 Now, you can access the variables either from system environment
 variable or loaded from ``.env`` file. **System environment variables
 gets higher precedence** and it's advised not to include it in version control.
@@ -200,12 +212,17 @@ would not have been possible without the support of these `awesome people <https
 Changelog
 =========
 
+Unreleased
+----------
+- Add `find_dotenv` method that will try to find a .env file (Thanks `@isms`_)
+
 0.4.0
 -----
 - cli: Added `-q/--quote` option to control the behaviour of quotes around values in .env. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
 .. _@hugochinchilla: https://github.com/hugochinchilla
+.. _@isms: https://github.com/isms
 
 .. |Build Status| image:: https://travis-ci.org/theskumar/python-dotenv.svg?branch=master
    :target: https://travis-ci.org/theskumar/python-dotenv
