@@ -26,6 +26,7 @@ production using `12-factor <http://12factor.net/>`__ principles.
    servers <#setting-config-on-remote-servers>`__
 -  `Releated Projects <#releated-projects>`__
 -  `Contributing <#contributing>`__
+-  `Changelog <#changelog>`__
 
 Usages
 ======
@@ -212,7 +213,7 @@ would not have been possible without the support of these `awesome people <https
 Changelog
 =========
 
-Unreleased
+0.5.0
 ----------
 - Add ``find_dotenv`` method that will try to find a ``.env`` file. (Thanks `@isms`_)
 

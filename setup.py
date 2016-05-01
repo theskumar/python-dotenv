@@ -8,7 +8,7 @@ setup(
     name="python-dotenv",
     description="Add .env support to your django/flask apps in development and deployments",
     long_description=readme,
-    version="0.4.0",
+    version="0.5.0",
     author="Saurabh Kumar",
     author_email="me+github@saurabh-kumar.com",
     url="http://github.com/theskumar/python-dotenv",
