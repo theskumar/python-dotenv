@@ -55,8 +55,7 @@ Alternatively, you can use ``find_dotenv()`` method that will try to find a
 ``.env`` file by (a) guessing where to start using ``__file__`` or the working
 directory -- allowing this to work in non-file contexts such as IPython notebooks
 and the REPL, and then (b) walking up the directory tree looking for the
-specified file -- called ``.env`` by default. It does filthy magic stack backtracking
-to find the dotenv.
+specified file -- called ``.env`` by default.
 
 .. code:: python
 
