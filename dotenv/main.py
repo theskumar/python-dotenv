@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import warnings
 
 from .compat import OrderedDict
@@ -125,7 +126,8 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
         path = os.getcwd()
     else:
         # will work for .py files
-        path = os.path.dirname(os.path.abspath(__file__))
+        frame_filename = sys._getframe().f_back.f_code.co_filename
+        path = os.path.dirname(os.path.abspath(frame_filename))
 
     for dirname in _walk_to_root(path):
         check_path = os.path.join(dirname, filename)

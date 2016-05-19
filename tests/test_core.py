@@ -29,7 +29,7 @@ def test_find_dotenv():
 
     Then try to automatically `find_dotenv` starting in `child4`
     """
-    tmpdir = tempfile.mkdtemp()
+    tmpdir = os.path.realpath(tempfile.mkdtemp())
 
     curr_dir = tmpdir
     dirs = []
