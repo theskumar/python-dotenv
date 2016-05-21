@@ -121,7 +121,8 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
 
     Returns path to the file if found, or an empty string otherwise
     """
-    if usecwd or '__file__' not in globals():
+    ipython_notebook_check = 'ipython' in sys._getframe().f_code.co_filename
+    if usecwd or ipython_notebook_check or '__file__' not in globals():
         # should work without __file__, e.g. in REPL or IPython notebook
         path = os.getcwd()
     else:
