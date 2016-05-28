@@ -212,6 +212,10 @@ would not have been possible without the support of these `awesome people <https
 Changelog
 =========
 
+0.5.1
+----------
+- Fix `find_dotenv` - it now start search from the file where this function is called from.
+
 0.5.0
 ----------
 - Add ``find_dotenv`` method that will try to find a ``.env`` file. (Thanks `@isms`_)
