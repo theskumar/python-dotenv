@@ -2,8 +2,15 @@
 import os
 import sys
 import warnings
+import codecs
 
 from .compat import OrderedDict
+
+__escape_decoder = codecs.getdecoder('unicode_escape')
+
+
+def decode_escaped(escaped):
+    return __escape_decoder(escaped)[0]
 
 
 def load_dotenv(dotenv_path):
@@ -82,7 +89,12 @@ def parse_dotenv(dotenv_path):
             if not line or line.startswith('#') or '=' not in line:
                 continue
             k, v = line.split('=', 1)
-            v = v.strip("'").strip('"')
+            if len(v) > 0:
+                quoted = v[0] == v[len(v) - 1] == '"'
+
+                if quoted:
+                    v = decode_escaped(v[1:-1])
+
             yield k, v
 
 
