@@ -82,7 +82,13 @@ def parse_dotenv(dotenv_path):
             if not line or line.startswith('#') or '=' not in line:
                 continue
             k, v = line.split('=', 1)
-            v = v.strip("'").strip('"')
+            if len(v) > 0:
+                quoted = v[0] == v[len(v) - 1] == '"'
+
+                if quoted:
+                    v = v[1:-1]
+                    v = v.decode('string_escape')
+
             yield k, v
 
 
