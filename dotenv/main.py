@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+
 import os
 import sys
 import warnings
@@ -89,8 +91,10 @@ def parse_dotenv(dotenv_path):
             if not line or line.startswith('#') or '=' not in line:
                 continue
             k, v = line.split('=', 1)
-            k = k.strip()
-            v = v.strip()
+
+            # Remove any leading and trailing spaces in key, value
+            k, v = k.strip(), v.strip()
+
             if len(v) > 0:
                 quoted = v[0] == v[len(v) - 1] == '"'
 

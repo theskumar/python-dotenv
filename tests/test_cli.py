@@ -22,6 +22,18 @@ def test_get_key():
     assert success is None
 
 
+def test_key_value_without_quotes():
+    with open(dotenv_path, 'w') as f:
+        f.write("TEST = value \n")
+    assert dotenv.get_key(dotenv_path, 'TEST') == "value"
+    sh.rm(dotenv_path)
+
+    with open(dotenv_path, 'w') as f:
+        f.write('TEST = " with spaces " \n')
+    assert dotenv.get_key(dotenv_path, 'TEST') == " with spaces "
+    sh.rm(dotenv_path)
+
+
 def test_unset():
     sh.touch(dotenv_path)
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')

@@ -212,6 +212,11 @@ would not have been possible without the support of these `awesome people <https
 Changelog
 =========
 
+dev
+----------
+- Handle escaped charaters and newlines in quoted values
+- Remove any spaces around unquoted key/value
+
 0.5.1
 ----------
 - Fix `find_dotenv` - it now start search from the file where this function is called from.
