@@ -215,8 +215,8 @@ Changelog
 dev
 ----------
 - Drop support for Python 2.6
-- Handle escaped charaters and newlines in quoted values
-- Remove any spaces around unquoted key/value
+- Handle escaped charaters and newlines in quoted values. (Thanks `@iameugenejo`_)
+- Remove any spaces around unquoted key/value. (Thanks `@paulochf`_)
 
 0.5.1
 ----------
@@ -233,6 +233,9 @@ dev
 
 .. _@hugochinchilla: https://github.com/hugochinchilla
 .. _@isms: https://github.com/isms
+.. _@iameugenejo: https://github.com/iameugenejo
+.. _@paulochf: https://github.com/paulochf
+
 
 .. |Build Status| image:: https://travis-ci.org/theskumar/python-dotenv.svg?branch=master
    :target: https://travis-ci.org/theskumar/python-dotenv
