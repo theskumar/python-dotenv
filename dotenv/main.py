@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import codecs
 import os
 import sys
 import warnings
-import codecs
-
-from .compat import OrderedDict
+from collections import OrderedDict
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
 

@@ -214,6 +214,7 @@ Changelog
 
 dev
 ----------
+- Drop support for Python 2.6
 - Handle escaped charaters and newlines in quoted values
 - Remove any spaces around unquoted key/value
 

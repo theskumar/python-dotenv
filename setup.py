@@ -37,7 +37,7 @@ setup(
         # 'Programming Language :: Python :: 2.3',
         # 'Programming Language :: Python :: 2.4',
         # 'Programming Language :: Python :: 2.5',
-        'Programming Language :: Python :: 2.6',
+        # 'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.0',
@@ -45,6 +45,8 @@ setup(
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: pypi',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: BSD License',
@@ -52,7 +54,6 @@ setup(
         'Topic :: System :: Systems Administration',
         'Topic :: Utilities',
         'Environment :: Web Environment',
-        # 'Framework :: Django',
     ]
 )
 
