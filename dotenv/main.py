@@ -5,9 +5,11 @@ import codecs
 import os
 import sys
 import warnings
+import re
 from collections import OrderedDict
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
+__posix_variable = re.compile('\$\{[^\}]*\}')
 
 
 def decode_escaped(escaped):
@@ -21,7 +23,7 @@ def load_dotenv(dotenv_path):
     if not os.path.exists(dotenv_path):
         warnings.warn("Not loading %s - it doesn't exist." % dotenv_path)
         return None
-    for k, v in parse_dotenv(dotenv_path):
+    for k, v in dotenv_values(dotenv_path).items():
         os.environ.setdefault(k, v)
     return True
 
@@ -36,7 +38,7 @@ def get_key(dotenv_path, key_to_get):
     if not os.path.exists(dotenv_path):
         warnings.warn("can't read %s - it doesn't exist." % dotenv_path)
         return None
-    dotenv_as_dict = OrderedDict(parse_dotenv(dotenv_path))
+    dotenv_as_dict = dotenv_values(dotenv_path)
     if key_to_get in dotenv_as_dict:
         return dotenv_as_dict[key_to_get]
     else:
@@ -73,7 +75,7 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     if not os.path.exists(dotenv_path):
         warnings.warn("can't delete from %s - it doesn't exist." % dotenv_path)
         return None, key_to_unset
-    dotenv_as_dict = OrderedDict(parse_dotenv(dotenv_path))
+    dotenv_as_dict = dotenv_values(dotenv_path)
     if key_to_unset in dotenv_as_dict:
         dotenv_as_dict.pop(key_to_unset, None)
     else:
@@ -81,6 +83,12 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
         return None, key_to_unset
     success = flatten_and_write(dotenv_path, dotenv_as_dict, quote_mode)
     return success, key_to_unset
+
+
+def dotenv_values(dotenv_path):
+    values = OrderedDict(parse_dotenv(dotenv_path))
+    values = resolve_nested_variables(values)
+    return values
 
 
 def parse_dotenv(dotenv_path):
@@ -101,6 +109,29 @@ def parse_dotenv(dotenv_path):
                     v = decode_escaped(v[1:-1])
 
             yield k, v
+
+
+def resolve_nested_variables(values):
+    def _replacement(name):
+        """
+        get appropiate value for a variable name.
+        first search in environ, if not found,
+        then look into the dotenv variables
+        """
+        ret = os.getenv(name, values.get(name, ""))
+        return ret
+
+    def _re_sub_callback(match_object):
+        """
+        From a match object gets the variable name and returns
+        the correct replacement
+        """
+        return _replacement(match_object.group()[2:-1])
+
+    for k, v in values.items():
+        values[k] = __posix_variable.sub(_re_sub_callback, v)
+
+    return values
 
 
 def flatten_and_write(dotenv_path, dotenv_as_dict, quote_mode="always"):
