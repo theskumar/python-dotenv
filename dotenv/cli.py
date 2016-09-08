@@ -19,16 +19,6 @@ def cli(ctx, file, quote):
     ctx.obj['FILE'] = file
     ctx.obj['QUOTE'] = quote
 
-    # Need to investigate if this can actually work or if the scope of the new environ variables
-    # Expires when python exits
-
-    # elif action == "load":
-    #     success = load_dotenv(file)
-    #     if success != None:
-    #         click.echo("loaded %s into environment" % file)
-    #     else:
-    #         exit(1)
-
 
 @cli.command()
 @click.pass_context
