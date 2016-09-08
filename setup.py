@@ -17,7 +17,6 @@ setup(
     packages=['dotenv'],
     install_requires=[
         'click>=5.0',
-        'ordereddict'
     ],
     entry_points='''
         [console_scripts]
@@ -46,7 +45,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: pypi',
+        'Programming Language :: Python :: Implementation :: PyPy',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: BSD License',
