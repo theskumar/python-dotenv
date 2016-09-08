@@ -231,6 +231,10 @@ Executing the tests:
 Changelog
 =========
 
+dev
+----------
+- ...
+
 0.6.0
 ----------
 - Drop support for Python 2.6
