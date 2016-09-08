@@ -86,7 +86,8 @@ ignored.
 
 ``.env`` can interpolate variables using POSIX variable expansion, variables
 are replaced from the environment first or from other values in the ``.env``
-file if the variable is not present in the environment.
+file if the variable is not present in the environment. (``Note``: Default Value
+Expansion is not support as of yet, see `#30 <https://github.com/theskumar/python-dotenv/pull/30#issuecomment-244036604>`__.)
 
 .. code:: shell
 
@@ -230,12 +231,12 @@ Executing the tests:
 Changelog
 =========
 
-dev
+0.6.0
 ----------
 - Drop support for Python 2.6
 - Handle escaped charaters and newlines in quoted values. (Thanks `@iameugenejo`_)
 - Remove any spaces around unquoted key/value. (Thanks `@paulochf`_)
-- Added POSIX variable expansion.
+- Added POSIX variable expansion. (Thanks `@hugochinchilla`_)
 
 0.5.1
 ----------
