@@ -8,10 +8,8 @@
    (__)|_______||__| \__|     \__/
 
 
-python-dotenv
-=============
-
-|Build Status| |Coverage Status| |PyPI version| |PyPI|
+python-dotenv | |Build Status| |Coverage Status| |PyPI version| |PyPI|
+=================================
 
 Reads the key,value pair from ``.env`` and adds them to environment
 variable. It is great of managing app settings during development and in
