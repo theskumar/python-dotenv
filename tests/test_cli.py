@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from os import environ
 from os.path import dirname, join
 
 import dotenv
@@ -82,4 +83,38 @@ def test_default_path(cli):
         sh.dotenv('set', 'HELLO', 'WORLD')
         output = sh.dotenv('get', 'HELLO')
         assert output == 'HELLO="WORLD"\n'
+        sh.rm(dotenv_path)
+
+
+def test_get_key_with_interpolation(cli):
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
+        dotenv.set_key(dotenv_path, 'FOO', '${HELLO}')
+        dotenv.set_key(dotenv_path, 'BAR', 'CONCATENATED_${HELLO}_POSIX_VAR')
+
+        # test replace from variable in file
+        stored_value = dotenv.get_key(dotenv_path, 'FOO')
+        assert stored_value == 'WORLD'
+        stored_value = dotenv.get_key(dotenv_path, 'BAR')
+        assert stored_value == 'CONCATENATED_WORLD_POSIX_VAR'
+        # test replace from environ taking precedence over file
+        environ["HELLO"] = "TAKES_PRECEDENCE"
+        stored_value = dotenv.get_key(dotenv_path, 'FOO')
+        assert stored_value == "TAKES_PRECEDENCE"
+        sh.rm(dotenv_path)
+
+
+def test_get_key_with_interpolation_of_unset_variable(cli):
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        dotenv.set_key(dotenv_path, 'FOO', '${NOT_SET}')
+        # test unavailable replacement returns empty string
+        stored_value = dotenv.get_key(dotenv_path, 'FOO')
+        assert stored_value == ''
+        # unless present in environment
+        environ['NOT_SET'] = 'BAR'
+        stored_value = dotenv.get_key(dotenv_path, 'FOO')
+        assert stored_value == 'BAR'
+        del(environ['NOT_SET'])
         sh.rm(dotenv_path)

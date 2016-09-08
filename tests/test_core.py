@@ -3,8 +3,9 @@ import os
 import pytest
 import tempfile
 import warnings
+import sh
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv, set_key
 
 
 def test_warns_if_file_does_not_exist():
@@ -55,3 +56,16 @@ def test_find_dotenv():
     with open(filename, 'w') as f:
         f.write("TEST=test\n")
     assert find_dotenv(usecwd=True) == filename
+
+
+def test_load_dotenv(cli):
+    dotenv_path = '.test_load_dotenv'
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        set_key(dotenv_path, 'DOTENV', 'WORKS')
+        assert 'DOTENV' not in os.environ
+        success = load_dotenv(dotenv_path)
+        assert success
+        assert 'DOTENV' in os.environ
+        assert os.environ['DOTENV'] == 'WORKS'
+        sh.rm(dotenv_path)

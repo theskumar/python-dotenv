@@ -2,7 +2,7 @@ import os
 
 import click
 
-from .main import get_key, parse_dotenv, set_key, unset_key
+from .main import get_key, dotenv_values, set_key, unset_key
 
 
 @click.group()
@@ -35,7 +35,7 @@ def cli(ctx, file, quote):
 def list(ctx):
     '''Display all the stored key/value.'''
     file = ctx.obj['FILE']
-    dotenv_as_dict = parse_dotenv(file)
+    dotenv_as_dict = dotenv_values(file)
     for k, v in dotenv_as_dict:
         click.echo('%s="%s"' % (k, v))
 

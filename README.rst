@@ -84,6 +84,17 @@ ignored.
     # I am a comment and that is OK
     FOO="BAR"
 
+``.env`` can interpolate variables using POSIX variable expansion, variables
+are replaced from the environment first or from other values in the ``.env``
+file if the variable is not present in the environment.
+
+.. code:: shell
+
+    CONFIG_PATH=${HOME}/.config/foo
+    DOMAIN=example.org
+    EMAIL=admin@${DOMAIN}
+
+
 Django
 ------
 
@@ -209,6 +220,13 @@ us a pull request.
 This project is currently maintained by `Saurabh Kumar <https://saurabh-kumar.com>`__ and
 would not have been possible without the support of these `awesome people <https://github.com/theskumar/python-dotenv/graphs/contributors>`__.
 
+Executing the tests:
+
+::
+
+    $ flake8
+    $ pytest
+
 Changelog
 =========
 
@@ -217,6 +235,7 @@ dev
 - Drop support for Python 2.6
 - Handle escaped charaters and newlines in quoted values. (Thanks `@iameugenejo`_)
 - Remove any spaces around unquoted key/value. (Thanks `@paulochf`_)
+- Added POSIX variable expansion.
 
 0.5.1
 ----------
