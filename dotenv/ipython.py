@@ -1,5 +1,4 @@
 from __future__ import print_function
-import os
 from .main import load_dotenv, find_dotenv
 
 
