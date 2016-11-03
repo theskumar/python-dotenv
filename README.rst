@@ -8,7 +8,7 @@
    (__)|_______||__| \__|     \__/
 
 
-python-dotenv | |Build Status| |Coverage Status| |PyPI version| |PyPI| 
+python-dotenv | |Build Status| |Coverage Status| |PyPI version| |PyPI|
 =================================
 
 Reads the key,value pair from ``.env`` and adds them to environment
@@ -20,8 +20,8 @@ production using `12-factor <http://12factor.net/>`__ principles.
 -  `Usages <#usages>`__
 -  `Installation <#installation>`__
 -  `Command-line interface <#command-line-interface>`__
+-  `iPython Support <#ipython-support>`__
 -  `Setting config on remote
-   servers <#setting-config-on-remote-servers>`__
 -  `Releated Projects <#releated-projects>`__
 -  `Contributing <#contributing>`__
 -  `Changelog <#changelog>`__
@@ -135,6 +135,21 @@ update your settings on remote server, handy isn't it!
       set    Store the given key/value.
       unset  Removes the given key.
 
+iPython Support
+---------------
+
+You can use dotenv with iPython. You can either let the dotenv search for .env with `%dotenv` or provide the path to .env file explicitly, see below for usuages.
+
+```
+%load_ext dotenv
+
+# Use find_dotenv to locate the file
+%dotenv
+
+# Specify a particular file
+%dotenv relative/or/absolute/path/to/.env
+```
+
 Setting config on remote servers
 --------------------------------
 
@@ -231,7 +246,7 @@ Changelog
 
 dev
 ----------
-- ...
+- Add iPython Suport (@tillahoffmann)
 
 0.6.0
 ----------
@@ -253,6 +268,7 @@ dev
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@tillahoffmann: https://github.com/tillahoffmann
 .. _@hugochinchilla: https://github.com/hugochinchilla
 .. _@isms: https://github.com/isms
 .. _@iameugenejo: https://github.com/iameugenejo
