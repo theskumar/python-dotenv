@@ -12,7 +12,7 @@ def _magic(dotenv_path):
     # Locate the .env file
     dotenv_path = dotenv_path or '.env'
     try:
-        dotenv_path = find_dotenv(dotenv_path, True)
+        dotenv_path = find_dotenv(dotenv_path, True, True)
     except IOError:
         print("cannot find .env file")
         return
