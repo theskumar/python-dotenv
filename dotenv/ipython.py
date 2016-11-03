@@ -6,7 +6,7 @@ from .main import load_dotenv, find_dotenv
 def _magic(dotenv_path):
     """
     dotenv [dotenv_path]
-    
+
     Search in increasingly higher folders for the `dotenv_path`
     """
     # Locate the .env file
@@ -16,7 +16,7 @@ def _magic(dotenv_path):
     except IOError:
         print("cannot find .env file")
         return
-    
+
     # Load the .env file
     load_dotenv(dotenv_path)
 
