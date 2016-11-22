@@ -93,5 +93,6 @@ def get_cli_string(path=None, action=None, key=None, value=None):
 
     return ' '.join(command).strip()
 
+
 if __name__ == "__main__":
     cli()

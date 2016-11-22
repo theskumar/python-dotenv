@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 import os
+import sys
 import pytest
 import tempfile
 import warnings
@@ -68,4 +69,18 @@ def test_load_dotenv(cli):
         assert success
         assert 'DOTENV' in os.environ
         assert os.environ['DOTENV'] == 'WORKS'
+        sh.rm(dotenv_path)
+
+
+def test_load_dotenv_pythonpath_support(cli):
+    dotenv_path = '.test_load_dotenv'
+    test_path_1 = '/my/first/test/path'
+    test_path_2 = './some/second/test/path'
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        set_key(dotenv_path, 'PYTHONPATH', '{}:{}'.format(test_path_1, test_path_2))
+        success = load_dotenv(dotenv_path)
+        assert success
+        assert test_path_1 == sys.path[0]
+        assert test_path_2 == sys.path[1]
         sh.rm(dotenv_path)
