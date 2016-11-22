@@ -25,6 +25,9 @@ def load_dotenv(dotenv_path):
         return None
     for k, v in dotenv_values(dotenv_path).items():
         os.environ.setdefault(k, v)
+        # Update evaluated sys.path
+        if k == 'PYTHONPATH':
+            sys.path = v.split(':') + sys.path
     return True
 
 
