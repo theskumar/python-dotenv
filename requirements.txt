@@ -1,6 +1,7 @@
 flake8>=2.2.3
-pytest>=2.6.2
+pytest>=3.0.5
 sh>=1.09
 bumpversion
-coverage==3.7.1
 wheel
+pytest-cov
+pytest-flake8

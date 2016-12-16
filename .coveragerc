@@ -1,0 +1,6 @@
+[run]
+source = dotenv/
+omit =
+    tests/*
+    venv/*
+    *conftest*

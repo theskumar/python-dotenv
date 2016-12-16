@@ -1,21 +1,19 @@
 language: python
 sudo: false
 python:
-- '2.7'
-- '3.3'
-- '3.4'
-- '3.5'
-- pypy
+  - '2.7'
+  - '3.3'
+  - '3.4'
+  - '3.5'
+  - pypy
 install:
-- pip install python-coveralls
-- pip install -q -r requirements.txt
-- pip install --editable .
-before_script: flake8
+  - pip install python-coveralls
+  - pip install -q -r requirements.txt
+  - pip install --editable .
 script:
-- coverage run --source=dotenv.py --omit='*tests*' -m py.test tests/ -v --tb=native
-- coverage report
+  - pytest -v --tb=native --cov --flake8
 after_script:
-- coveralls
+  - coveralls
 deploy:
   provider: pypi
   user: theskumar
