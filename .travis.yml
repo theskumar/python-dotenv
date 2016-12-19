@@ -12,7 +12,7 @@ install:
   - pip install --editable .
 script:
   - pytest -v --tb=native --cov --flake8
-after_script:
+after_success:
   - coveralls
 deploy:
   provider: pypi
