@@ -26,7 +26,7 @@ def list(ctx):
     '''Display all the stored key/value.'''
     file = ctx.obj['FILE']
     dotenv_as_dict = dotenv_values(file)
-    for k, v in dotenv_as_dict:
+    for k, v in dotenv_as_dict.items():
         click.echo('%s="%s"' % (k, v))
 
 

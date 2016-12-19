@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from os import environ
 from os.path import dirname, join
 
@@ -21,6 +19,19 @@ def test_get_key():
     assert dotenv.get_key(dotenv_path, 'HELLO') is None
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
     assert success is None
+
+
+def test_list(cli, dotenv_file):
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'HELLO', 'WORLD')
+    result = cli.invoke(dotenv.cli.cli, ['--file', dotenv_file, 'list'])
+    assert result.exit_code == 0, result.output
+    assert result.output == 'HELLO="WORLD"\n'
+
+
+def test_list_wo_file(cli):
+    result = cli.invoke(dotenv.cli.cli, ['--file', 'doesnotexists', 'list'])
+    assert result.exit_code == 2, result.output
+    assert 'Invalid value for "-f"' in result.output
 
 
 def test_key_value_without_quotes():
