@@ -246,6 +246,7 @@ Changelog
 
 dev
 ----------
+- Fix `dotenv list` command (@ticosax)
 - Add iPython Suport (@tillahoffmann)
 
 0.6.0
@@ -268,6 +269,7 @@ dev
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@ticosax: https://github.com/ticosax
 .. _@tillahoffmann: https://github.com/tillahoffmann
 .. _@hugochinchilla: https://github.com/hugochinchilla
 .. _@isms: https://github.com/isms
