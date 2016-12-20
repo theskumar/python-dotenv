@@ -246,8 +246,8 @@ Changelog
 
 dev
 ----------
-- Fix `dotenv list` command (@ticosax)
-- Add iPython Suport (@tillahoffmann)
+- Fix `dotenv list` command (`@ticosax`_)
+- Add iPython Suport (`@tillahoffmann`_)
 
 0.6.0
 ----------
