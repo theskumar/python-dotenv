@@ -9,7 +9,7 @@
 
 
 python-dotenv | |Build Status| |Coverage Status| |PyPI version| |PyPI|
-=================================
+======================================================================
 
 Reads the key,value pair from ``.env`` and adds them to environment
 variable. It is great of managing app settings during development and in
@@ -21,8 +21,8 @@ production using `12-factor <http://12factor.net/>`__ principles.
 -  `Installation <#installation>`__
 -  `Command-line interface <#command-line-interface>`__
 -  `iPython Support <#ipython-support>`__
--  `Setting config on remote
--  `Releated Projects <#releated-projects>`__
+-  `Setting config on remote servers <#setting-config-on-remote-servers>`__
+-  `Related Projects <#releated-projects>`__
 -  `Contributing <#contributing>`__
 -  `Changelog <#changelog>`__
 
@@ -138,17 +138,18 @@ update your settings on remote server, handy isn't it!
 iPython Support
 ---------------
 
-You can use dotenv with iPython. You can either let the dotenv search for .env with `%dotenv` or provide the path to .env file explicitly, see below for usuages.
+You can use dotenv with iPython. You can either let the dotenv search for .env with `%dotenv` or provide the path to .env file explicitly, see below for usages.
 
-```
-%load_ext dotenv
+::
 
-# Use find_dotenv to locate the file
-%dotenv
+    %load_ext dotenv
 
-# Specify a particular file
-%dotenv relative/or/absolute/path/to/.env
-```
+    # Use find_dotenv to locate the file
+    %dotenv
+
+    # Specify a particular file
+    %dotenv relative/or/absolute/path/to/.env
+
 
 Setting config on remote servers
 --------------------------------
@@ -245,23 +246,23 @@ Changelog
 =========
 
 dev
-----------
+----
 - Fix `dotenv list` command (`@ticosax`_)
 - Add iPython Suport (`@tillahoffmann`_)
 
 0.6.0
-----------
+-----
 - Drop support for Python 2.6
 - Handle escaped charaters and newlines in quoted values. (Thanks `@iameugenejo`_)
 - Remove any spaces around unquoted key/value. (Thanks `@paulochf`_)
 - Added POSIX variable expansion. (Thanks `@hugochinchilla`_)
 
 0.5.1
-----------
+-----
 - Fix `find_dotenv` - it now start search from the file where this function is called from.
 
 0.5.0
-----------
+-----
 - Add ``find_dotenv`` method that will try to find a ``.env`` file. (Thanks `@isms`_)
 
 0.4.0
