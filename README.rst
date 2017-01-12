@@ -245,7 +245,7 @@ Executing the tests:
 Changelog
 =========
 
-dev
+0.6.2
 ----
 - Fix `dotenv list` command (`@ticosax`_)
 - Add iPython Suport (`@tillahoffmann`_)
