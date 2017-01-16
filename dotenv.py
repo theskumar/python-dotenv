@@ -53,7 +53,7 @@ def read_dotenv(dotenv=None):
             for k, v in parse_dotenv(f.read()).items():
                 os.environ.setdefault(k, v)
     else:
-        warnings.warn("Not reading {0} - it doesn't exist.".format(dotenv))
+        warnings.warn("Not reading {0} - it doesn't exist.".format(dotenv), stacklevel=2)
 
 
 def parse_dotenv(content):
