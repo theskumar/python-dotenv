@@ -245,7 +245,7 @@ Executing the tests:
 Changelog
 =========
 
-0.6.2
+0.6.3
 ----
 - Handle unicode exception in setup.py (`#46 <https://github.com/theskumar/python-dotenv/issues/45>`__)
 0.6.2
