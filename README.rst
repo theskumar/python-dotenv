@@ -247,6 +247,9 @@ Changelog
 
 0.6.2
 ----
+- Handle unicode exception in setup.py (`#46 <https://github.com/theskumar/python-dotenv/issues/45>`__)
+0.6.2
+----
 - Fix `dotenv list` command (`@ticosax`_)
 - Add iPython Suport (`@tillahoffmann`_)
 

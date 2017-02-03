@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-with open('README.rst') as readme_file:
-    readme = readme_file.read()
+# https://github.com/theskumar/python-dotenv/issues/45#issuecomment-277135416
+try:
+    with open('README.rst') as readme_file:
+        readme = readme_file.read()
+except:
+    readme = 'Checkout http://github.com/theskumar/python-dotenv for more details.'
 
 setup(
     name="python-dotenv",
