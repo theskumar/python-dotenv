@@ -39,9 +39,9 @@ def list(ctx):
 def run(ctx, commandline):
     '''Run commandline with specified .env file.'''
     if commandline:
-        args = map(str, commandline)
+        args = [str(arg) for arg in commandline]
         file = ctx.obj['FILE']
-        dotenv_as_dict = dotenv_values(file)
+        dotenv_as_dict = dict(dotenv_values(file))
         call(args, env=dotenv_as_dict)
     else:
         click.echo(ctx.get_help())
