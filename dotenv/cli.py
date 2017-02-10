@@ -3,7 +3,7 @@ import os
 import click
 
 from .main import get_key, dotenv_values, set_key, unset_key
-
+from subprocess import call
 
 @click.group()
 @click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
@@ -28,6 +28,22 @@ def list(ctx):
     dotenv_as_dict = dotenv_values(file)
     for k, v in dotenv_as_dict.items():
         click.echo('%s="%s"' % (k, v))
+
+
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+))
+@click.pass_context
+@click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
+def run(ctx, commandline):
+    '''Run commandline with specified .env file.'''
+    if commandline:
+        args = map(str, commandline)
+        file = ctx.obj['FILE']
+        dotenv_as_dict = dotenv_values(file)
+        call(args, env=dotenv_as_dict)
+    else:
+        click.echo(ctx.get_help())
 
 
 @cli.command()
