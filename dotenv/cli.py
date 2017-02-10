@@ -5,6 +5,7 @@ import click
 from .main import get_key, dotenv_values, set_key, unset_key
 from subprocess import call
 
+
 @click.group()
 @click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
               type=click.Path(exists=True),
