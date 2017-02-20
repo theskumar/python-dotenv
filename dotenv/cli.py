@@ -2,7 +2,7 @@ import os
 
 import click
 
-from .main import get_key, dotenv_values, set_key, unset_key
+from .main import get_key, dotenv_values, set_key, unset_key, load_dotenv
 from subprocess import call
 
 
@@ -41,8 +41,8 @@ def run(ctx, commandline):
     if commandline:
         args = [str(arg) for arg in commandline]
         file = ctx.obj['FILE']
-        dotenv_as_dict = dict(dotenv_values(file))
-        call(args, env=dotenv_as_dict)
+        load_dotenv(file)
+        call(args, env=os.environ)
     else:
         click.echo(ctx.get_help())
 

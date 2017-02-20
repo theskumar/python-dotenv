@@ -38,10 +38,15 @@ def test_list_wo_file(cli):
 
 def test_run(cli, dotenv_file):
     with mock.patch("dotenv.cli.call") as call_mock:
-        dotenv.set_key(dotenv_file, 'HELLO', 'WORLD')
-        result = cli.invoke(dotenv.cli.cli, ['--file', dotenv_file, 'run', 'python', '-m', 'json.tool'])
-        assert result.exit_code == 0, result.output
-        call_mock.assert_called_with(['python', '-m', 'json.tool'], env={"HELLO": "WORLD"})
+        with mock.patch("os.environ", {"foo": "bar"}):
+            dotenv.set_key(dotenv_file, 'HELLO', 'WORLD')
+
+            result = cli.invoke(dotenv.cli.cli, [
+                '--file', dotenv_file, 'run', 'python', '-m', 'json.tool'])
+            assert result.exit_code == 0, result.output
+            call_mock.assert_called_with(
+                ['python', '-m', 'json.tool'],
+                env={"foo": "bar", "HELLO": "WORLD"})
 
 
 def test_key_value_without_quotes():
