@@ -104,6 +104,13 @@ def test_get_key_with_interpolation(cli):
         dotenv.set_key(dotenv_path, 'FOO', '${HELLO}')
         dotenv.set_key(dotenv_path, 'BAR', 'CONCATENATED_${HELLO}_POSIX_VAR')
 
+        lines = list(open(dotenv_path, "r").readlines())
+        assert lines == [
+            'HELLO="WORLD"\n',
+            'FOO="${HELLO}"\n',
+            'BAR="CONCATENATED_${HELLO}_POSIX_VAR"\n',
+        ]
+
         # test replace from variable in file
         stored_value = dotenv.get_key(dotenv_path, 'FOO')
         assert stored_value == 'WORLD'
