@@ -246,9 +246,14 @@ Executing the tests:
 Changelog
 =========
 
+0.6.4
+----
+- Fix issue with single quotes (`@Flimm`) (`#52 <https://github.com/theskumar/python-dotenv/issues/52>`__)
+
 0.6.3
 ----
-- Handle unicode exception in setup.py (`#46 <https://github.com/theskumar/python-dotenv/issues/45>`__)
+- Handle unicode exception in setup.py (`#46 <https://github.com/theskumar/python-dotenv/issues/46>`__)
+
 0.6.2
 ----
 - Fix `dotenv list` command (`@ticosax`_)
@@ -274,6 +279,7 @@ Changelog
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@Flimm: https://github.com/Flimm
 .. _@ticosax: https://github.com/ticosax
 .. _@tillahoffmann: https://github.com/tillahoffmann
 .. _@hugochinchilla: https://github.com/hugochinchilla
