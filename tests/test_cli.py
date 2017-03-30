@@ -46,6 +46,18 @@ def test_key_value_without_quotes():
     sh.rm(dotenv_path)
 
 
+def test_value_with_quotes():
+    with open(dotenv_path, 'w') as f:
+        f.write('TEST="two words"\n')
+    assert dotenv.get_key(dotenv_path, 'TEST') == 'two words'
+    sh.rm(dotenv_path)
+
+    with open(dotenv_path, 'w') as f:
+        f.write("TEST='two words'\n")
+    assert dotenv.get_key(dotenv_path, 'TEST') == 'two words'
+    sh.rm(dotenv_path)
+
+
 def test_unset():
     sh.touch(dotenv_path)
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
