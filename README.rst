@@ -126,7 +126,8 @@ update your settings on remote server, handy isn't it!
                                       file in current working directory.
       -q, --quote [always|never|auto]
                                       Whether to quote or not the variable values.
-                                      Default mode is always.
+                                      Default mode is always. This does not affect
+                                      parsing.
       --help                          Show this message and exit.
 
     Commands:

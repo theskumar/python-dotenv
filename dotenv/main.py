@@ -103,7 +103,7 @@ def parse_dotenv(dotenv_path):
             k, v = k.strip(), v.strip()
 
             if len(v) > 0:
-                quoted = v[0] == v[len(v) - 1] == '"'
+                quoted = v[0] == v[len(v) - 1] in ['"', "'"]
 
                 if quoted:
                     v = decode_escaped(v[1:-1])
