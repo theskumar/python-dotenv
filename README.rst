@@ -133,8 +133,10 @@ update your settings on remote server, handy isn't it!
     Commands:
       get    Retrive the value for the given key.
       list   Display all the stored key/value.
+      run    Run commandline with specified .env file.
       set    Store the given key/value.
       unset  Removes the given key.
+
 
 iPython Support
 ---------------

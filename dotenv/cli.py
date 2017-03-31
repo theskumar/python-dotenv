@@ -2,7 +2,8 @@ import os
 
 import click
 
-from .main import get_key, dotenv_values, set_key, unset_key
+from .main import get_key, dotenv_values, set_key, unset_key, load_dotenv
+from subprocess import call
 
 
 @click.group()
@@ -28,6 +29,22 @@ def list(ctx):
     dotenv_as_dict = dotenv_values(file)
     for k, v in dotenv_as_dict.items():
         click.echo('%s="%s"' % (k, v))
+
+
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+))
+@click.pass_context
+@click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
+def run(ctx, commandline):
+    '''Run commandline with specified .env file.'''
+    if commandline:
+        args = [str(arg) for arg in commandline]
+        file = ctx.obj['FILE']
+        load_dotenv(file)
+        call(args, env=os.environ)
+    else:
+        click.echo(ctx.get_help())
 
 
 @cli.command()
