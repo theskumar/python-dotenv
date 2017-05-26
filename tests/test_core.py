@@ -10,7 +10,7 @@ from dotenv import load_dotenv, find_dotenv, set_key
 
 def test_warns_if_file_does_not_exist():
     with warnings.catch_warnings(record=True) as w:
-        load_dotenv('.does_not_exist')
+        load_dotenv('.does_not_exist', verbose=True)
 
         assert len(w) == 1
         assert w[0].category is UserWarning
