@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
-
+from dotenv import __version__
 # https://github.com/theskumar/python-dotenv/issues/45#issuecomment-277135416
 try:
     with open('README.rst') as readme_file:
@@ -12,7 +12,7 @@ setup(
     name="python-dotenv",
     description="Add .env support to your django/flask apps in development and deployments",
     long_description=readme,
-    version="0.6.4",
+    version=__version__,
     author="Saurabh Kumar",
     author_email="me+github@saurabh-kumar.com",
     url="http://github.com/theskumar/python-dotenv",

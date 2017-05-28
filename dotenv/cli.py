@@ -2,6 +2,7 @@ import os
 
 import click
 
+from . import __version__
 from .main import get_key, dotenv_values, set_key, unset_key
 
 
@@ -12,6 +13,7 @@ from .main import get_key, dotenv_values, set_key, unset_key
 @click.option('-q', '--quote', default='always',
               type=click.Choice(['always', 'never', 'auto']),
               help="Whether to quote or not the variable values. Default mode is always. This does not affect parsing.")
+@click.version_option(version=__version__)
 @click.pass_context
 def cli(ctx, file, quote):
     '''This script is used to set, get or unset values from a .env file.'''
