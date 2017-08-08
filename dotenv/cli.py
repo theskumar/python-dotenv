@@ -49,7 +49,7 @@ def set(ctx, key, value):
 @click.pass_context
 @click.argument('key', required=True)
 def get(ctx, key):
-    '''Retrive the value for the given key.'''
+    '''Retrieve the value for the given key.'''
     file = ctx.obj['FILE']
     stored_value = get_key(file, key)
     if stored_value:
