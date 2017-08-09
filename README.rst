@@ -246,6 +246,10 @@ Executing the tests:
 Changelog
 =========
 
+0.6.5
+----
+- Add support for special characters `\` (`@pjona`) (`#60 <https://github.com/theskumar/python-dotenv/issues/60>`__)
+
 0.6.4
 ----
 - Fix issue with single quotes (`@Flimm`) (`#52 <https://github.com/theskumar/python-dotenv/issues/52>`__)
@@ -279,6 +283,7 @@ Changelog
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@pjona: https://github.com/pjona
 .. _@Flimm: https://github.com/Flimm
 .. _@ticosax: https://github.com/ticosax
 .. _@tillahoffmann: https://github.com/tillahoffmann
