@@ -58,6 +58,18 @@ def test_value_with_quotes():
     sh.rm(dotenv_path)
 
 
+def test_value_with_special_characters():
+    with open(dotenv_path, 'w') as f:
+        f.write(r'TEST="}=&~{,(\5%{&;"')
+    assert dotenv.get_key(dotenv_path, 'TEST') == r'}=&~{,(\5%{&;'
+    sh.rm(dotenv_path)
+
+    with open(dotenv_path, 'w') as f:
+        f.write(r"TEST='}=&~{,(\5%{&;'")
+    assert dotenv.get_key(dotenv_path, 'TEST') == r'}=&~{,(\5%{&;'
+    sh.rm(dotenv_path)
+
+
 def test_unset():
     sh.touch(dotenv_path)
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')

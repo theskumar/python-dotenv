@@ -100,7 +100,7 @@ def parse_dotenv(dotenv_path):
             k, v = line.split('=', 1)
 
             # Remove any leading and trailing spaces in key, value
-            k, v = k.strip(), v.strip()
+            k, v = k.strip(), v.strip().encode('unicode-escape').decode('ascii')
 
             if len(v) > 0:
                 quoted = v[0] == v[len(v) - 1] in ['"', "'"]
@@ -114,7 +114,7 @@ def parse_dotenv(dotenv_path):
 def resolve_nested_variables(values):
     def _replacement(name):
         """
-        get appropiate value for a variable name.
+        get appropriate value for a variable name.
         first search in environ, if not found,
         then look into the dotenv variables
         """
