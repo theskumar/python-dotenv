@@ -62,7 +62,7 @@ def test_load_dotenv(cli):
     dotenv_path = '.test_load_dotenv'
     with cli.isolated_filesystem():
         sh.touch(dotenv_path)
-        set_key(dotenv_path, 'DOTENV', 'WORKS')
+        set_key(dotenv_path, 'export DOTENV', 'WORKS')
         assert 'DOTENV' not in os.environ
         success = load_dotenv(dotenv_path)
         assert success

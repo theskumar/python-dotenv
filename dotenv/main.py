@@ -100,7 +100,9 @@ def parse_dotenv(dotenv_path):
             k, v = line.split('=', 1)
 
             # Remove any leading and trailing spaces in key, value
-            k, v = k.strip(), v.strip().encode('unicode-escape').decode('ascii')
+            # Remove export, set -e (any shell commands) in key
+            k = k.strip().split(' ')[-1]
+            v = v.strip().encode('unicode-escape').decode('ascii')
 
             if len(v) > 0:
                 quoted = v[0] == v[len(v) - 1] in ['"', "'"]
