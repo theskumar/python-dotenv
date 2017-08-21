@@ -69,3 +69,18 @@ def test_load_dotenv(cli):
         assert 'DOTENV' in os.environ
         assert os.environ['DOTENV'] == 'WORKS'
         sh.rm(dotenv_path)
+
+
+def test_load_dotenv_override(cli):
+    dotenv_path = '.test_load_dotenv_override'
+    key_name = "DOTENV_OVER"
+
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        os.environ[key_name] = "OVERRIDE"
+        set_key(dotenv_path, key_name, 'WORKS')
+        success = load_dotenv(dotenv_path, override=True)
+        assert success
+        assert key_name in os.environ
+        assert os.environ[key_name] == 'WORKS'
+        sh.rm(dotenv_path)
