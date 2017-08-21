@@ -6,3 +6,4 @@ wheel
 pytest-cov
 pytest-flake8
 click
+ipython
