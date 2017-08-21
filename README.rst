@@ -60,6 +60,12 @@ specified file -- called ``.env`` by default.
     from dotenv import load_dotenv, find_dotenv
     load_dotenv(find_dotenv())
 
+You can also set _load_dotenv_ to override existing variables:
+.. code:: python
+
+    from dotenv import load_dotenv, find_dotenv
+    load_dotenv(find_dotenv(), override=True)
+
 Now, you can access the variables either from system environment
 variable or loaded from ``.env`` file. **System environment variables
 gets higher precedence** and it's advised not to include it in version control.
