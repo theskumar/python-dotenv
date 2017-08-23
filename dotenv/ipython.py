@@ -14,6 +14,10 @@ class IPythonDotEnv(Magics):
         '-o', '--override', action='store_true',
         help="Indicate to override existing variables"
     )
+    @argument(
+        '-v', '--verbose', action='store_true',
+        help="Indicate function calls to be verbose"
+    )
     @argument('dotenv_path', nargs='?', type=str, default='.env',
               help='Search in increasingly higher folders for the `dotenv_path`')
     @line_magic
@@ -28,7 +32,7 @@ class IPythonDotEnv(Magics):
             return
 
         # Load the .env file
-        load_dotenv(dotenv_path, override=args.override)
+        load_dotenv(dotenv_path, verbose=args.verbose, override=args.override)
 
 
 def load_ipython_extension(ipython):
