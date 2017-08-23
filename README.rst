@@ -232,7 +232,7 @@ commands like so ``fab config:set,<key1>,<value1> config:set,<key2>,<value2>``
     $ fab config:set,hello,world config:set,foo,bar config:set,fizz=buzz
 
 
-Releated Projects
+Related Projects
 =================
 
 -  `Honcho <https://github.com/nickstenning/honcho>`__ - For managing
