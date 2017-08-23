@@ -49,6 +49,9 @@ Add the following code to your ``settings.py``
     dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
 
+    # OR, the same with increased verbosity:
+    load_dotenv(dotenv_path, verbose=True)
+
 Alternatively, you can use ``find_dotenv()`` method that will try to find a
 ``.env`` file by (a) guessing where to start using ``__file__`` or the working
 directory -- allowing this to work in non-file contexts such as IPython notebooks
