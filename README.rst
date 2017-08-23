@@ -160,6 +160,12 @@ You can use dotenv with iPython. You can either let the dotenv search for .env w
     # Specify a particular file
     %dotenv relative/or/absolute/path/to/.env
 
+    # Use _-o_ to indicate override of existing variables
+    %dotenv -o
+
+    # Use _-v_ to turn verbose mode on
+    %dotenv -v
+
 
 Setting config on remote servers
 --------------------------------
