@@ -249,6 +249,11 @@ Executing the tests:
 Changelog
 =========
 
+dev
+---
+- Disable ".env not found" warning by default (#57)(`@maxkoryukov`) (`#57 <https://github.com/theskumar/python-dotenv/issues/57>`__)
+
+
 0.6.5
 ----
 - Add support for special characters `\` (`@pjona`) (`#60 <https://github.com/theskumar/python-dotenv/issues/60>`__)
@@ -286,6 +291,7 @@ Changelog
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@maxkoryukov: https://github.com/maxkoryukov
 .. _@pjona: https://github.com/pjona
 .. _@Flimm: https://github.com/Flimm
 .. _@ticosax: https://github.com/ticosax
