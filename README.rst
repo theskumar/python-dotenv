@@ -262,7 +262,8 @@ Changelog
 =========
 
 0.7.0
----
+----
+
 - Add support to override system environment variable via .env. (`@maxkoryukov`) (`#63 <https://github.com/theskumar/python-dotenv/issues/63>`__)
 - Disable ".env not found" warning by default (`@maxkoryukov`) (`#57 <https://github.com/theskumar/python-dotenv/issues/57>`__)
 
