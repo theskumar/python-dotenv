@@ -261,10 +261,15 @@ Executing the tests:
 Changelog
 =========
 
+0.7.1
+----
+
+- Remove hard dependency on iPython (`@theskumar`_)
+
 0.7.0
 ----
 
-- Add support to override system environment variable via .env. (`@maxkoryukov`_) (`#63`_)
+- Add support to override system environment variable via .env. (`@milonimrod`_) (`#63`_)
 - Disable ".env not found" warning by default (`@maxkoryukov`_) (`#57`_)
 
 0.6.5
@@ -304,6 +309,7 @@ Changelog
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@maxkoryukov: https://github.com/milonimrod
 .. _@maxkoryukov: https://github.com/maxkoryukov
 .. _@pjona: https://github.com/pjona
 .. _@Flimm: https://github.com/Flimm
@@ -313,6 +319,7 @@ Changelog
 .. _@isms: https://github.com/isms
 .. _@iameugenejo: https://github.com/iameugenejo
 .. _@paulochf: https://github.com/paulochf
+.. _@paulochf: https://github.com/theskumar
 
 .. _#63: https://github.com/theskumar/python-dotenv/issues/63
 .. _#60: https://github.com/theskumar/python-dotenv/issues/60
