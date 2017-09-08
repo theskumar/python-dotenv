@@ -248,7 +248,7 @@ All the contributions are welcome! Please open `an
 issue <https://github.com/theskumar/python-dotenv/issues/new>`__ or send
 us a pull request.
 
-This project is currently maintained by `Saurabh Kumar <https://saurabh-kumar.com>`__ and
+This project is currently maintained by `Saurabh Kumar`_ and
 would not have been possible without the support of these `awesome people <https://github.com/theskumar/python-dotenv/graphs/contributors>`__.
 
 Executing the tests:
@@ -264,20 +264,20 @@ Changelog
 0.7.0
 ----
 
-- Add support to override system environment variable via .env. (`@maxkoryukov`) (`#63 <https://github.com/theskumar/python-dotenv/issues/63>`__)
-- Disable ".env not found" warning by default (`@maxkoryukov`) (`#57 <https://github.com/theskumar/python-dotenv/issues/57>`__)
+- Add support to override system environment variable via .env. (`@maxkoryukov`_) (`#63`_)
+- Disable ".env not found" warning by default (`@maxkoryukov`_) (`#57`_)
 
 0.6.5
 ----
-- Add support for special characters `\` (`@pjona`) (`#60 <https://github.com/theskumar/python-dotenv/issues/60>`__)
+- Add support for special characters `\` (`@pjona`_) (`#60`_)
 
 0.6.4
 ----
-- Fix issue with single quotes (`@Flimm`) (`#52 <https://github.com/theskumar/python-dotenv/issues/52>`__)
+- Fix issue with single quotes (`@Flimm`_) (`#52`_)
 
 0.6.3
 ----
-- Handle unicode exception in setup.py (`#46 <https://github.com/theskumar/python-dotenv/issues/46>`__)
+- Handle unicode exception in setup.py (`#46`_)
 
 0.6.2
 ----
@@ -314,6 +314,13 @@ Changelog
 .. _@iameugenejo: https://github.com/iameugenejo
 .. _@paulochf: https://github.com/paulochf
 
+.. _#63: https://github.com/theskumar/python-dotenv/issues/63
+.. _#60: https://github.com/theskumar/python-dotenv/issues/60
+.. _#57: https://github.com/theskumar/python-dotenv/issues/57
+.. _#52: https://github.com/theskumar/python-dotenv/issues/52
+.. _#46: https://github.com/theskumar/python-dotenv/issues/46
+
+.. Saurabh Kumar: https://saurabh-kumar.com
 
 .. |Build Status| image:: https://travis-ci.org/theskumar/python-dotenv.svg?branch=master
    :target: https://travis-ci.org/theskumar/python-dotenv
