@@ -16,7 +16,7 @@ def decode_escaped(escaped):
     return __escape_decoder(escaped)[0]
 
 
-def load_dotenv(dotenv_path, verbose=False):
+def load_dotenv(dotenv_path, verbose=False, override=False):
     """
     Read a .env file and load into os.environ.
     """
@@ -25,7 +25,10 @@ def load_dotenv(dotenv_path, verbose=False):
             warnings.warn("Not loading %s - it doesn't exist." % dotenv_path)
         return None
     for k, v in dotenv_values(dotenv_path).items():
-        os.environ.setdefault(k, v)
+        if override:
+            os.environ[k] = v
+        else:
+            os.environ.setdefault(k, v)
     return True
 
 

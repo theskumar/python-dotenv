@@ -26,7 +26,7 @@ test:
 	py.test tests/
 
 coverage:
-	coverage run --source=dotenv.py --omit='*tests*' -m py.test tests/ -v --tb=native
+	coverage run --source=dotenv --omit='*tests*' -m py.test tests/ -v --tb=native
 	coverage report
 
 coverage-html: coverage

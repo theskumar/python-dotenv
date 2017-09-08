@@ -63,6 +63,12 @@ specified file -- called ``.env`` by default.
     from dotenv import load_dotenv, find_dotenv
     load_dotenv(find_dotenv())
 
+You can also set _load_dotenv_ to override existing variables:
+.. code:: python
+
+    from dotenv import load_dotenv, find_dotenv
+    load_dotenv(find_dotenv(), override=True)
+
 Now, you can access the variables either from system environment
 variable or loaded from ``.env`` file. **System environment variables
 gets higher precedence** and it's advised not to include it in version control.
@@ -154,6 +160,12 @@ You can use dotenv with iPython. You can either let the dotenv search for .env w
     # Specify a particular file
     %dotenv relative/or/absolute/path/to/.env
 
+    # Use _-o_ to indicate override of existing variables
+    %dotenv -o
+
+    # Use _-v_ to turn verbose mode on
+    %dotenv -v
+
 
 Setting config on remote servers
 --------------------------------
@@ -220,7 +232,7 @@ commands like so ``fab config:set,<key1>,<value1> config:set,<key2>,<value2>``
     $ fab config:set,hello,world config:set,foo,bar config:set,fizz=buzz
 
 
-Releated Projects
+Related Projects
 =================
 
 -  `Honcho <https://github.com/nickstenning/honcho>`__ - For managing

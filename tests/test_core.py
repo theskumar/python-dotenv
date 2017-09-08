@@ -6,6 +6,7 @@ import warnings
 import sh
 
 from dotenv import load_dotenv, find_dotenv, set_key
+from IPython.terminal.embed import InteractiveShellEmbed
 
 
 def test_warns_if_file_does_not_exist():
@@ -69,3 +70,43 @@ def test_load_dotenv(cli):
         assert 'DOTENV' in os.environ
         assert os.environ['DOTENV'] == 'WORKS'
         sh.rm(dotenv_path)
+
+
+def test_load_dotenv_override(cli):
+    dotenv_path = '.test_load_dotenv_override'
+    key_name = "DOTENV_OVER"
+
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        os.environ[key_name] = "OVERRIDE"
+        set_key(dotenv_path, key_name, 'WORKS')
+        success = load_dotenv(dotenv_path, override=True)
+        assert success
+        assert key_name in os.environ
+        assert os.environ[key_name] == 'WORKS'
+        sh.rm(dotenv_path)
+
+
+def test_ipython():
+    tmpdir = os.path.realpath(tempfile.mkdtemp())
+    os.chdir(tmpdir)
+    filename = os.path.join(tmpdir, '.env')
+    with open(filename, 'w') as f:
+        f.write("MYNEWVALUE=q1w2e3\n")
+    ipshell = InteractiveShellEmbed()
+    ipshell.magic("load_ext dotenv")
+    ipshell.magic("dotenv")
+    assert os.environ["MYNEWVALUE"] == 'q1w2e3'
+
+
+def test_ipython_override():
+    tmpdir = os.path.realpath(tempfile.mkdtemp())
+    os.chdir(tmpdir)
+    filename = os.path.join(tmpdir, '.env')
+    os.environ["MYNEWVALUE"] = "OVERRIDE"
+    with open(filename, 'w') as f:
+        f.write("MYNEWVALUE=q1w2e3\n")
+    ipshell = InteractiveShellEmbed()
+    ipshell.magic("load_ext dotenv")
+    ipshell.magic("dotenv -o")
+    assert os.environ["MYNEWVALUE"] == 'q1w2e3'
