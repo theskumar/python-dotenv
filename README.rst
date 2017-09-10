@@ -63,7 +63,8 @@ specified file -- called ``.env`` by default.
     from dotenv import load_dotenv, find_dotenv
     load_dotenv(find_dotenv())
 
-You can also set _load_dotenv_ to override existing variables:
+You can also set ``load_dotenv`` to override existing variables:
+
 .. code:: python
 
     from dotenv import load_dotenv, find_dotenv
@@ -262,54 +263,54 @@ Changelog
 =========
 
 0.7.1
-----
+----------------------------
 
 - Remove hard dependency on iPython (`@theskumar`_)
 
 0.7.0
-----
+----------------------------
 
 - Add support to override system environment variable via .env. (`@milonimrod`_) (`#63`_)
 - Disable ".env not found" warning by default (`@maxkoryukov`_) (`#57`_)
 
 0.6.5
-----
-- Add support for special characters `\` (`@pjona`_) (`#60`_)
+----------------------------
+- Add support for special characters ``\``. (`@pjona`_) (`#60`_)
 
 0.6.4
-----
+----------------------------
 - Fix issue with single quotes (`@Flimm`_) (`#52`_)
 
 0.6.3
-----
+----------------------------
 - Handle unicode exception in setup.py (`#46`_)
 
 0.6.2
-----
+----------------------------
 - Fix `dotenv list` command (`@ticosax`_)
 - Add iPython Suport (`@tillahoffmann`_)
 
 0.6.0
------
+----------------------------
 - Drop support for Python 2.6
 - Handle escaped charaters and newlines in quoted values. (Thanks `@iameugenejo`_)
 - Remove any spaces around unquoted key/value. (Thanks `@paulochf`_)
 - Added POSIX variable expansion. (Thanks `@hugochinchilla`_)
 
 0.5.1
------
+----------------------------
 - Fix `find_dotenv` - it now start search from the file where this function is called from.
 
 0.5.0
------
+----------------------------
 - Add ``find_dotenv`` method that will try to find a ``.env`` file. (Thanks `@isms`_)
 
 0.4.0
------
+----------------------------
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
-.. _@maxkoryukov: https://github.com/milonimrod
+.. _@milonimrod: https://github.com/milonimrod
 .. _@maxkoryukov: https://github.com/maxkoryukov
 .. _@pjona: https://github.com/pjona
 .. _@Flimm: https://github.com/Flimm
@@ -319,7 +320,7 @@ Changelog
 .. _@isms: https://github.com/isms
 .. _@iameugenejo: https://github.com/iameugenejo
 .. _@paulochf: https://github.com/paulochf
-.. _@paulochf: https://github.com/theskumar
+.. _@theskumar: https://github.com/theskumar
 
 .. _#63: https://github.com/theskumar/python-dotenv/issues/63
 .. _#60: https://github.com/theskumar/python-dotenv/issues/60
