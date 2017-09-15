@@ -48,6 +48,7 @@ class TestBaseField(object):
             value = model.value
             value = model.value
             value = model.value
+        assert value == "Hi"
         assert mocked_update.call_count == 1
 
     def test_should_raise_error_if_value_is_bad(self, set_base_env):
@@ -66,7 +67,7 @@ class TestBaseField(object):
         model = NewField(field_name)
 
         with pytest.raises(orm.ConvertError) as exception:
-            value = model.value
+            model.value
         assert exception.value.name == field_name
         assert exception.value.raw_value == "Result"
         assert exception.value.expected_type == "new_field"
@@ -82,7 +83,7 @@ class TestBaseField(object):
         model = NewField(field_name, required=True)
 
         with pytest.raises(orm.ValueRequired) as exception:
-            value = model.value
+            model.value
         assert exception.value.name == field_name
 
     def test_should_update_raise_error_if_value_is_bad(self, set_base_env):
@@ -112,7 +113,7 @@ class TestIntField(object):
     def test_should_non_int_raise_error(self, set_base_env):
         model = orm.IntField("STRING_EXAMPLE")
         with pytest.raises(orm.ConvertError):
-            value = model.value
+            model.value
 
     def test_should_return_int(self, set_base_env):
         model = orm.IntField("INT_EXAMPLE")
@@ -123,7 +124,7 @@ class TestFloatField(object):
     def test_should_non_int_raise_error(self, set_base_env):
         model = orm.FloatField("STRING_EXAMPLE")
         with pytest.raises(orm.ConvertError):
-            value = model.value
+            model.value
 
     def test_should_return_int(self, set_base_env):
         model = orm.FloatField("FLOAT_EXAMPLE")
@@ -134,7 +135,7 @@ class TestBooleanField(object):
     def test_should_non_int_raise_error(self, set_base_env):
         model = orm.BooleanField("STRING_EXAMPLE")
         with pytest.raises(orm.ConvertError):
-            value = model.value
+            model.value
 
     def test_should_return_int(self, set_base_env):
         model = orm.BooleanField("BOOLEAN_EXAMPLE")

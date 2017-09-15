@@ -149,4 +149,3 @@ class EnvModel(object):
         Update values from env again.
         """
         self._build_data()
-
