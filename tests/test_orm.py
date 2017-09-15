@@ -19,6 +19,8 @@ def set_base_env(request):
 
     def finalizer():
         for key, value in values:
+            if key in os.environ:
+                del os.environ[key]
             os.unsetenv(key)
 
     request.addfinalizer(finalizer=finalizer)
