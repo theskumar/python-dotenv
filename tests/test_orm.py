@@ -150,7 +150,7 @@ class TestEnvModel(object):
 
         class Model(orm.EnvModel):
             example = orm.StringField(
-                 "STRING_EXAMPLE",
+                "STRING_EXAMPLE",
             )
 
         settings = Model()
