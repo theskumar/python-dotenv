@@ -168,6 +168,44 @@ You can use dotenv with iPython. You can either let the dotenv search for .env w
     %dotenv -v
 
 
+ORM-like setting module
+-----------------------
+
+An ORM-like setting-module has been add for better user-experience while using environment variables as config.
+
+.. code:: python
+
+    # We assume INT_EXAMPLE=1, STRING_EXAMPLE=HI
+    from dotenv import orm
+
+    class Model(orm.EnvModel):
+        example = orm.IntField(
+            "INT_EXAMPLE",
+            required=False,
+            default=None,
+        )
+
+    settings = Model()
+
+    print(type(settings.example.value))     # int
+    print(settings.example.name)        # INT_EXAMPLE
+    print(settings.is_valid())          # True
+
+    # update (if new env is set)
+    settings.update()
+
+    # visit errors
+    print(settings.errors)
+
+
+Current supported types:
+
+-  `StringField`
+-  `IntField`
+-  `FloatField`
+-  `BooleanField`
+
+
 Setting config on remote servers
 --------------------------------
 
