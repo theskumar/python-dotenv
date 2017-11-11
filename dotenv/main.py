@@ -7,6 +7,7 @@ import sys
 import warnings
 import re
 from collections import OrderedDict
+from io import open
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
 __posix_variable = re.compile('\$\{[^\}]*\}')
