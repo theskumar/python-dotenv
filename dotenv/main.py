@@ -145,7 +145,7 @@ def flatten_and_write(dotenv_path, dotenv_as_dict, quote_mode="always"):
             _mode = quote_mode
             if _mode == "auto" and " " in v:
                 _mode = "always"
-            str_format = '%s="%s"\n' if _mode == "always" else '%s=%s\n'
+            str_format = u'%s="%s"\n' if _mode == "always" else u'%s=%s\n'
             f.write(str_format % (k, v))
     return True
 
