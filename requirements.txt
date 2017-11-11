@@ -1,5 +1,5 @@
 flake8>=2.2.3
-pytest>=3.0.5
+pytest>=3.2
 sh>=1.09
 bumpversion
 wheel
