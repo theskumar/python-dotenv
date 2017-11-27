@@ -5,7 +5,7 @@ from setuptools import setup
 try:
     with open('README.rst') as readme_file:
         readme = readme_file.read()
-except:
+except Exception:
     readme = 'Checkout http://github.com/theskumar/python-dotenv for more details.'
 
 setup(
