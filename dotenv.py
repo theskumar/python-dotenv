@@ -34,12 +34,17 @@ variable_re = re.compile(r"""
 """, re.IGNORECASE | re.VERBOSE)
 
 
-def read_dotenv(dotenv=None):
+def read_dotenv(dotenv=None, overwrite=False):
     """
     Read a .env file into os.environ.
 
     If not given a path to a dotenv path, does filthy magic stack backtracking
     to find manage.py and then find the dotenv.
+
+    If tests rely on .env files, setting the overwrite flag to True is a safe way to ensure tests run consistently
+    across all environments.
+
+    :param overwrite: True if values in .env should overwrite export environment variables.
     """
     if dotenv is None:
         frame_filename = sys._getframe().f_back.f_code.co_filename
@@ -51,7 +56,10 @@ def read_dotenv(dotenv=None):
     if os.path.exists(dotenv):
         with open(dotenv) as f:
             for k, v in parse_dotenv(f.read()).items():
-                os.environ.setdefault(k, v)
+                if overwrite:
+                    os.environ[k] = v
+                else:
+                    os.environ.setdefault(k, v)
     else:
         warnings.warn("Not reading {0} - it doesn't exist.".format(dotenv),
                       stacklevel=2)
