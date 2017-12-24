@@ -22,7 +22,7 @@ production using `12-factor <http://12factor.net/>`__ principles.
 -  `Command-line interface <#command-line-interface>`__
 -  `iPython Support <#ipython-support>`__
 -  `Setting config on remote servers <#setting-config-on-remote-servers>`__
--  `Related Projects <#releated-projects>`__
+-  `Related Projects <#related-projects>`__
 -  `Contributing <#contributing>`__
 -  `Changelog <#changelog>`__
 
@@ -241,6 +241,7 @@ Related Projects
 -  `django-dotenv <https://github.com/jpadilla/django-dotenv>`__
 -  `django-environ <https://github.com/joke2k/django-environ>`__
 -  `django-configuration <https://github.com/jezdez/django-configurations>`__
+-  `dump-env <https://github.com/sobolevn/dump-env>`__
 
 Contributing
 ============
