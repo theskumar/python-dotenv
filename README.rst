@@ -171,9 +171,15 @@ You can use dotenv with iPython. You can either let the dotenv search for .env w
     %dotenv -v
 
 
-
 Command-line interface
 =================
+
+For commandline support, use the `cli` option during installation:
+
+::
+
+    pip install -U "python-dotenv[cli]"
+
 
 A cli interface ``dotenv`` is also included, which helps you manipulate
 the ``.env`` file without manually opening it. The same cli installed on

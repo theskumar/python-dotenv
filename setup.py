@@ -19,9 +19,9 @@ setup(
     keywords=['environment variables', 'deployments', 'settings', 'env', 'dotenv',
               'configurations', 'python'],
     packages=['dotenv'],
-    install_requires=[
-        'click>=5.0',
-    ],
+    extras_require={
+        'cli': ['click>=5.0', ],
+    },
     entry_points='''
         [console_scripts]
         dotenv=dotenv:cli.cli
@@ -49,6 +49,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
