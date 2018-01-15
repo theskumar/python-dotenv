@@ -4,6 +4,7 @@ import pytest
 import tempfile
 import warnings
 import sh
+from io import BytesIO
 
 from dotenv import load_dotenv, find_dotenv, set_key
 from IPython.terminal.embed import InteractiveShellEmbed
@@ -110,3 +111,12 @@ def test_ipython_override():
     ipshell.magic("load_ext dotenv")
     ipshell.magic("dotenv -o")
     assert os.environ["MYNEWVALUE"] == 'q1w2e3'
+
+
+def test_parse_dotenv_stream():
+    stream = BytesIO('DOTENV=WORKS\n')
+    stream.seek(0)
+    parsed_generator = parse_dotenv(stream=stream)
+    parsed_dict = dict(iter(parsed_generator))
+    assert 'DOTENV' in parsed_dict
+    assert parsed_dict['DOTENV'] == 'WORKS'
