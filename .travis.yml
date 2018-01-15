@@ -12,7 +12,8 @@ install:
   - pip install -q -r requirements.txt
   - pip install --editable .
 script:
-  - pytest -v --tb=native --cov --flake8
+  - flake8 .
+  - pytest -v --tb=native --cov
 after_success:
   - coveralls
 deploy:
