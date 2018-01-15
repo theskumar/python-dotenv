@@ -7,6 +7,7 @@ import sh
 from io import BytesIO
 
 from dotenv import load_dotenv, find_dotenv, set_key
+from dotenv.main import parse_dotenv
 from IPython.terminal.embed import InteractiveShellEmbed
 
 
