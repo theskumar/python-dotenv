@@ -4,7 +4,10 @@ import pytest
 import tempfile
 import warnings
 import sh
-from io import BytesIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from dotenv import load_dotenv, find_dotenv, set_key
 from dotenv.main import parse_dotenv
@@ -115,7 +118,7 @@ def test_ipython_override():
 
 
 def test_parse_dotenv_stream():
-    stream = BytesIO('DOTENV=WORKS\n')
+    stream = StringIO('DOTENV=WORKS\n')
     stream.seek(0)
     parsed_generator = parse_dotenv(stream=stream)
     parsed_dict = dict(iter(parsed_generator))
