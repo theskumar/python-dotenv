@@ -120,9 +120,9 @@ Just be sure to rewind it before passing.
 
 .. code:: python
 
-    from io import BytesIO
+    from io import StringIO     # Python2: from StringIO import StringIO
     from dotenv.main import parse_dotenv
-    filelike = BytesIO('SPAM=EGSS\n')
+    filelike = StringIO('SPAM=EGSS\n')
     filelike.seek(0)
     parsed = parse_dotenv(stream=filelike)
 
