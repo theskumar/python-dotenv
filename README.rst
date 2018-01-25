@@ -91,6 +91,7 @@ ignored.
     SOME_VAR=someval
     # I am a comment and that is OK
     FOO="BAR"
+    MULTILINE_VAR="hello\nworld"
 
 ``.env`` can interpolate variables using POSIX variable expansion, variables
 are replaced from the environment first or from other values in the ``.env``
