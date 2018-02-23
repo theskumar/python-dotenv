@@ -8,12 +8,21 @@ import warnings
 import re
 from collections import OrderedDict
 
+from jinja2 import Template
+
 __escape_decoder = codecs.getdecoder('unicode_escape')
 __posix_variable = re.compile('\$\{[^\}]*\}')
 
 
 def decode_escaped(escaped):
     return __escape_decoder(escaped)[0]
+
+
+def jinja_templating(variable):
+    if "{{" in variable:
+        template = Template(variable)
+        return template.render(**os.environ)
+    return variable
 
 
 def load_dotenv(dotenv_path, verbose=False, override=False):
@@ -25,6 +34,7 @@ def load_dotenv(dotenv_path, verbose=False, override=False):
             warnings.warn("Not loading %s - it doesn't exist." % dotenv_path)
         return None
     for k, v in dotenv_values(dotenv_path).items():
+        v = jinja_templating(v)
         if override:
             os.environ[k] = v
         else:
