@@ -87,6 +87,36 @@ def test_load_dotenv_override(cli):
         sh.rm(dotenv_path)
 
 
+def test_load_dotenv_variable_jinja_formatting(cli):
+    dotenv_path = '.test_load_dotenv_variable_formatting'
+
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        set_key(dotenv_path, 'a', 'foo')
+        set_key(dotenv_path, 'b', '{{a}}/bar')
+        set_key(dotenv_path, 'c', '{bar}')
+        success = load_dotenv(dotenv_path)
+        assert success
+        assert os.environ['a'] == 'foo'
+        assert os.environ['b'] == 'foo/bar'
+        assert os.environ['c'] == '{bar}'
+        sh.rm(dotenv_path)
+
+
+def test_load_dotenv_variable_filtering(cli):
+    dotenv_path = '.test_load_dotenv_variable_formatting'
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        set_key(dotenv_path, 'd', 'foo')
+        set_key(dotenv_path, 'e', '{{a|upper}}')
+        success = load_dotenv(dotenv_path)
+        assert success
+        assert os.environ['d'] == 'foo'
+        assert os.environ['e'] == os.environ['a'].upper()
+        sh.rm(dotenv_path)
+
+
+
 def test_ipython():
     tmpdir = os.path.realpath(tempfile.mkdtemp())
     os.chdir(tmpdir)

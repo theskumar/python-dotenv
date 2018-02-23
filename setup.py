@@ -21,6 +21,7 @@ setup(
     packages=['dotenv'],
     install_requires=[
         'click>=5.0',
+        'Jinja2==2.7',
     ],
     entry_points='''
         [console_scripts]
