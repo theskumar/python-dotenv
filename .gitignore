@@ -9,3 +9,5 @@ __pycache__
 htmlcov/
 .cache/
 .idea
+.pytest_cache
+.venv
