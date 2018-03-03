@@ -1,4 +1,4 @@
 try:
-    from StringIO import StringIO
+    from StringIO import StringIO  # noqa
 except ImportError:
-    from io import StringIO
+    from io import StringIO  # noqa
