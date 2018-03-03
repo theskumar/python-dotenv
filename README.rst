@@ -11,8 +11,8 @@
 python-dotenv | |Build Status| |Coverage Status| |PyPI version| |PyPI|
 ======================================================================
 
-Reads the key,value pair from ``.env`` and adds them to environment
-variable. It is great of managing app settings during development and in
+Reads the key,value pair from ``.env`` file and adds them to environment
+variable. It is great for managing app settings during development and in
 production using `12-factor <http://12factor.net/>`__ principles.
 
     Do one thing, do it well!

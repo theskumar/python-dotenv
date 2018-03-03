@@ -27,7 +27,7 @@ def list(ctx):
     file = ctx.obj['FILE']
     dotenv_as_dict = dotenv_values(file)
     for k, v in dotenv_as_dict.items():
-        click.echo('%s="%s"' % (k, v))
+        click.echo('%s=%s' % (k, v))
 
 
 @cli.command()
@@ -40,7 +40,7 @@ def set(ctx, key, value):
     quote = ctx.obj['QUOTE']
     success, key, value = set_key(file, key, value, quote)
     if success:
-        click.echo('%s="%s"' % (key, value))
+        click.echo('%s=%s' % (key, value))
     else:
         exit(1)
 
@@ -53,7 +53,7 @@ def get(ctx, key):
     file = ctx.obj['FILE']
     stored_value = get_key(file, key)
     if stored_value:
-        click.echo('%s="%s"' % (key, stored_value))
+        click.echo('%s=%s' % (key, stored_value))
     else:
         exit(1)
 
