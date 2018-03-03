@@ -28,6 +28,38 @@ production using `12-factor <http://12factor.net/>`__ principles.
 
 Usages
 ======
+The easiest and most common usage consists on calling ``load_dotenv`` when the
+application starts, which will load environment variables from a file named
+``.env`` in the current directory or any of its parents or from the path specificied;
+after that, you can just call the environment-related method you need as
+provided by ``os.getenv``.
+
+``.env`` looks like this:
+
+.. code:: shell
+
+    # a comment and that will be ignored.
+    REDIS_ADDRESS=localhost:6379
+    MEANING_OF_LIFE=42
+    MULTILINE_VAR="hello\nworld"
+
+You can optionally prefix each line with the word ``export``, which will
+conveniently allow you to source the whole file on your shell.
+
+``.env`` can interpolate variables using POSIX variable expansion, variables
+are replaced from the environment first or from other values in the ``.env``
+file if the variable is not present in the environment. (``Note``: Default Value
+Expansion is not supported as of yet, see `#30 <https://github.com/theskumar/python-dotenv/pull/30#issuecomment-244036604>`__.)
+
+.. code:: shell
+
+    CONFIG_PATH=${HOME}/.config/foo
+    DOMAIN=example.org
+    EMAIL=admin@${DOMAIN}
+
+
+Getting started
+================
 
 Assuming you have created the ``.env`` file along-side your settings
 module.
@@ -43,66 +75,64 @@ Add the following code to your ``settings.py``
 .. code:: python
 
     # settings.py
-    from os.path import join, dirname
     from dotenv import load_dotenv
-
-    dotenv_path = join(dirname(__file__), '.env')
-    load_dotenv(dotenv_path)
+    load_dotenv()
 
     # OR, the same with increased verbosity:
-    load_dotenv(dotenv_path, verbose=True)
+    load_dotenv(verbose=True)
 
-Alternatively, you can use ``find_dotenv()`` method that will try to find a
-``.env`` file by (a) guessing where to start using ``__file__`` or the working
-directory -- allowing this to work in non-file contexts such as IPython notebooks
-and the REPL, and then (b) walking up the directory tree looking for the
-specified file -- called ``.env`` by default.
+    # OR, explicitly providing path to '.env'
+    from pathlib import Path  # python3 only
+    env_path = Path('.') / '.env'
+    load_dotenv(dotenv_path=env_path)
+
+
+At this point, parsed key/value from the `.env` file is now present as system
+environment variable and they can be conveniently accessed via ``os.getenv()``
+
+.. code:: python
+
+    # settings.py
+    import os
+    SECRET_KEY = os.getenv("EMAIL")
+    DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+
+
+ ``load_dotenv`` do not override existing System environment variables, but
+ you can do so if you want by passing ``override=True`` to ``load_dotenv()``.
+
+You can use ``find_dotenv()`` method that will try to find a ``.env`` file by
+(a) guessing where to start using ``__file__`` or the working directory -- allowing this to work in non-file contexts such as IPython notebooks and the REPL, and then
+(b) walking up the directory tree looking for the specified file -- called ``.env`` by default.
 
 .. code:: python
 
     from dotenv import load_dotenv, find_dotenv
     load_dotenv(find_dotenv())
 
-You can also set ``load_dotenv`` to override existing variables:
+
+In-memory filelikes
+-------------------
+
+It is possible to not rely on the filesystem to parse filelikes from other sources
+(e.g. from a network storage). ``load_dotenv`` and ``dotenv_values`` accepts a filelike ``stream``.
+Just be sure to rewind it before passing.
 
 .. code:: python
 
-    from dotenv import load_dotenv, find_dotenv
-    load_dotenv(find_dotenv(), override=True)
-
-Now, you can access the variables either from system environment
-variable or loaded from ``.env`` file. **System environment variables
-gets higher precedence** and it's advised not to include it in version control.
-
-.. code:: python
-
-    # settings.py
-
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
+    >>> from io import StringIO     # Python2: from StringIO import StringIO
+    >>> from dotenv import dotenv_values
+    >>> filelike = StringIO('SPAM=EGSS\n')
+    >>> filelike.seek(0)
+    >>> parsed = dotenv_values(stream=filelike)
+    >>> parsed['SPAM']
+    'EGSS'
 
 
-``.env`` is a simple text file. With each environment variables listed
-per line, in the format of ``KEY="Value"``, lines starting with `#` is
-ignored.
+The returned value is dictionary with key value pair.
 
-.. code:: shell
-
-    SOME_VAR=someval
-    # I am a comment and that is OK
-    FOO="BAR"
-    MULTILINE_VAR="hello\nworld"
-
-``.env`` can interpolate variables using POSIX variable expansion, variables
-are replaced from the environment first or from other values in the ``.env``
-file if the variable is not present in the environment. (``Note``: Default Value
-Expansion is not supported as of yet, see `#30 <https://github.com/theskumar/python-dotenv/pull/30#issuecomment-244036604>`__.)
-
-.. code:: shell
-
-    CONFIG_PATH=${HOME}/.config/foo
-    DOMAIN=example.org
-    EMAIL=admin@${DOMAIN}
+``dotenv_values`` could be useful if you need to *consume* the envfile but not *apply*  it
+directly into the system environment.
 
 
 Django
@@ -112,33 +142,6 @@ If you are using django you should add the above loader script at the
 top of ``wsgi.py`` and ``manage.py``.
 
 
-In-memory filelikes
--------------------
-
-Is possible to not rely on the filesystem to parse filelikes from other sources
-(e.g. from a network storage). ``parse_dotenv`` accepts a filelike `stream`.
-Just be sure to rewind it before passing.
-
-.. code:: python
-
-    from io import StringIO     # Python2: from StringIO import StringIO
-    from dotenv.main import parse_dotenv
-    filelike = StringIO('SPAM=EGSS\n')
-    filelike.seek(0)
-    parsed = parse_dotenv(stream=filelike)
-
-The returned lazy generator yields ``(key,value)`` tuples.
-To ease the consumption, is suggested to unpack it into a dictionary.
-
-.. code:: python
-
-    os_env_like = dict(iter(parsed))
-    assert os_env_like['SPAM'] == 'EGGS'
-
-This could be useful if you need to *consume* the envfile but not *apply*  it
-directly into the system environment.
-
-
 Installation
 ============
 
@@ -146,8 +149,32 @@ Installation
 
     pip install -U python-dotenv
 
+
+iPython Support
+---------------
+
+You can use dotenv with iPython. You can either let the dotenv search for .env with `%dotenv` or provide the path to .env file explicitly, see below for usages.
+
+::
+
+    %load_ext dotenv
+
+    # Use find_dotenv to locate the file
+    %dotenv
+
+    # Specify a particular file
+    %dotenv relative/or/absolute/path/to/.env
+
+    # Use _-o_ to indicate override of existing variables
+    %dotenv -o
+
+    # Use _-v_ to turn verbose mode on
+    %dotenv -v
+
+
+
 Command-line interface
-======================
+=================
 
 A cli interface ``dotenv`` is also included, which helps you manipulate
 the ``.env`` file without manually opening it. The same cli installed on
@@ -174,27 +201,6 @@ update your settings on remote server, handy isn't it!
       list   Display all the stored key/value.
       set    Store the given key/value.
       unset  Removes the given key.
-
-iPython Support
----------------
-
-You can use dotenv with iPython. You can either let the dotenv search for .env with `%dotenv` or provide the path to .env file explicitly, see below for usages.
-
-::
-
-    %load_ext dotenv
-
-    # Use find_dotenv to locate the file
-    %dotenv
-
-    # Specify a particular file
-    %dotenv relative/or/absolute/path/to/.env
-
-    # Use _-o_ to indicate override of existing variables
-    %dotenv -o
-
-    # Use _-v_ to turn verbose mode on
-    %dotenv -v
 
 
 Setting config on remote servers
@@ -235,6 +241,7 @@ Get all your remote config info with ``fab config``
 ::
 
     $ fab config
+    foo="bar"
 
 Set remote config variables with ``fab config:set,<key>,<value>``
 
@@ -292,6 +299,13 @@ Executing the tests:
 Changelog
 =========
 
+0.8.0
+----------------------------
+- ``set_key`` and ``unset_key`` only modified the affected file instead of parsing and re-writing file, this causes comments and other file entact as it is.
+- Add support for ``export `` prefix in the line.
+- Internal refractoring (`@theskumar`_)
+- Allow ``load_dotenv`` and ``dotenv_values`` to work with ``StringIO())`` (`@alanjds`_)(`@theskumar`_) (`#78`_)
+
 0.7.1
 ----------------------------
 
@@ -340,6 +354,7 @@ Changelog
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@alanjds: https://github.com/alanjds
 .. _@milonimrod: https://github.com/milonimrod
 .. _@maxkoryukov: https://github.com/maxkoryukov
 .. _@pjona: https://github.com/pjona
@@ -352,6 +367,7 @@ Changelog
 .. _@paulochf: https://github.com/paulochf
 .. _@theskumar: https://github.com/theskumar
 
+.. _#78: https://github.com/theskumar/python-dotenv/issues/78
 .. _#63: https://github.com/theskumar/python-dotenv/issues/63
 .. _#60: https://github.com/theskumar/python-dotenv/issues/60
 .. _#57: https://github.com/theskumar/python-dotenv/issues/57
