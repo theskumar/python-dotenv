@@ -98,8 +98,7 @@ environment variable and they can be conveniently accessed via ``os.getenv()``
     DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
 
- ``load_dotenv`` do not override existing System environment variables, but
- you can do so if you want by passing ``override=True`` to ``load_dotenv()``.
+``load_dotenv`` do not override existing System environment variables. To override, pass ``override=True`` to ``load_dotenv()``.
 
 You can use ``find_dotenv()`` method that will try to find a ``.env`` file by
 (a) guessing where to start using ``__file__`` or the working directory -- allowing this to work in non-file contexts such as IPython notebooks and the REPL, and then
