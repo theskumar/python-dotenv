@@ -21,19 +21,31 @@ def decode_escaped(escaped):
 
 def parse_line(line):
     line = line.strip()
+
+    # Ignore lines with `#` or which doesn't have `=` in it.
     if not line or line.startswith('#') or '=' not in line:
         return None, None
 
     k, v = line.split('=', 1)
 
-    # Remove any leading and trailing spaces in key, value
-    k, v = k.strip(), v.strip().encode('unicode-escape').decode('ascii')
+    if k.startswith('export '):
+        k = k.lstrip('export ')
 
-    if len(v) > 0:
+    # Remove any leading and trailing spaces in key, value
+    k, v = k.strip(), v.strip()
+
+    if v:
+        v = v.encode('unicode-escape')
+        try:
+            v = v.decode('ascii')
+        except UnicodeDecodeError:
+            pass
+
         quoted = v[0] == v[-1] in ['"', "'"]
 
         if quoted:
             v = decode_escaped(v[1:-1])
+
     return k, v
 
 
