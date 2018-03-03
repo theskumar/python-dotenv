@@ -87,8 +87,8 @@ Add the following code to your ``settings.py``
     load_dotenv(dotenv_path=env_path)
 
 
-Now, you can access the variables either from system environment
-variable or loaded from ``.env`` file.
+At this point, parsed key/value from the `.env` file is now present as system
+environment variable and they can be conveniently accessed via ``os.getenv()``
 
 .. code:: python
 
@@ -97,14 +97,13 @@ variable or loaded from ``.env`` file.
     SECRET_KEY = os.getenv("EMAIL")
     DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
- **System environment variables gets higher precedence**, but you can override existing
- system environment vars by using ``load_dotenv(override=True)``.
 
-Alternatively, you can use ``find_dotenv()`` method that will try to find a
-``.env`` file by (a) guessing where to start using ``__file__`` or the working
-directory -- allowing this to work in non-file contexts such as IPython notebooks
-and the REPL, and then (b) walking up the directory tree looking for the
-specified file -- called ``.env`` by default.
+ ``load_dotenv`` do not override existing System environment variables, but
+ you can do so if you want by passing ``override=True`` to ``load_dotenv()``.
+
+You can use ``find_dotenv()`` method that will try to find a ``.env`` file by
+(a) guessing where to start using ``__file__`` or the working directory -- allowing this to work in non-file contexts such as IPython notebooks and the REPL, and then
+(b) walking up the directory tree looking for the specified file -- called ``.env`` by default.
 
 .. code:: python
 
