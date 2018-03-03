@@ -95,24 +95,31 @@ def dotenv_values(dotenv_path):
     return values
 
 
-def parse_dotenv(dotenv_path):
-    with open(dotenv_path) as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith('#') or '=' not in line:
-                continue
-            k, v = line.split('=', 1)
+def parse_dotenv(dotenv_path=None, stream=None):
+    if dotenv_path:
+        f = open(dotenv_path)
+    elif stream:
+        f = stream
 
-            # Remove any leading and trailing spaces in key, value
-            k, v = k.strip(), v.strip().encode('unicode-escape').decode('ascii')
+    for line in f:
+        line = line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        k, v = line.split('=', 1)
 
-            if len(v) > 0:
-                quoted = v[0] == v[-1] in ['"', "'"]
+        # Remove any leading and trailing spaces in key, value
+        k, v = k.strip(), v.strip().encode('unicode-escape').decode('ascii')
 
-                if quoted:
-                    v = decode_escaped(v[1:-1])
+        if len(v) > 0:
+            quoted = v[0] == v[-1] in ['"', "'"]
 
-            yield k, v
+            if quoted:
+                v = decode_escaped(v[1:-1])
+
+        yield k, v
+
+    if dotenv_path:
+        f.close()
 
 
 def resolve_nested_variables(values):

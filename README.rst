@@ -111,6 +111,34 @@ Django
 If you are using django you should add the above loader script at the
 top of ``wsgi.py`` and ``manage.py``.
 
+
+In-memory filelikes
+-------------------
+
+Is possible to not rely on the filesystem to parse filelikes from other sources
+(e.g. from a network storage). ``parse_dotenv`` accepts a filelike `stream`.
+Just be sure to rewind it before passing.
+
+.. code:: python
+
+    from io import StringIO     # Python2: from StringIO import StringIO
+    from dotenv.main import parse_dotenv
+    filelike = StringIO('SPAM=EGSS\n')
+    filelike.seek(0)
+    parsed = parse_dotenv(stream=filelike)
+
+The returned lazy generator yields ``(key,value)`` tuples.
+To ease the consumption, is suggested to unpack it into a dictionary.
+
+.. code:: python
+
+    os_env_like = dict(iter(parsed))
+    assert os_env_like['SPAM'] == 'EGGS'
+
+This could be useful if you need to *consume* the envfile but not *apply*  it
+directly into the system environment.
+
+
 Installation
 ============
 
