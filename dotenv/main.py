@@ -45,17 +45,18 @@ class DotEnv():
         self.verbose = verbose
 
     def _get_stream(self):
+        self._is_file = False
         if isinstance(self.dotenv_path, StringIO):
-            self._is_file = False
             return self.dotenv_path
 
-        if not os.path.exists(self.dotenv_path):
-            if self.verbose:
-                warnings.warn("File doesn't exist {}".format(self.dotenv_path))
-            return None
+        if os.path.exists(self.dotenv_path):
+            self._is_file = True
+            return open(self.dotenv_path)
 
-        self._is_file = True
-        return open(self.dotenv_path)
+        if self.verbose:
+            warnings.warn("File doesn't exist {}".format(self.dotenv_path))
+
+        return StringIO('')
 
     def dict(self):
         """Return dotenv as dict"""
@@ -68,8 +69,6 @@ class DotEnv():
 
     def parse(self):
         f = self._get_stream()
-        if not f:
-            return None
 
         for line in f:
             key, value = parse_line(line)
