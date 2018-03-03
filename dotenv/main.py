@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 import codecs
 import fileinput
+import io
 import os
 import re
 import sys
@@ -35,14 +36,8 @@ def parse_line(line):
     k, v = k.strip(), v.strip()
 
     if v:
-        v = v.encode('unicode-escape')
-        try:
-            v = v.decode('ascii')
-        except UnicodeDecodeError:
-            pass
-
+        v = v.encode('unicode-escape').decode('ascii')
         quoted = v[0] == v[-1] in ['"', "'"]
-
         if quoted:
             v = decode_escaped(v[1:-1])
 
@@ -63,7 +58,7 @@ class DotEnv():
 
         if os.path.exists(self.dotenv_path):
             self._is_file = True
-            return open(self.dotenv_path)
+            return io.open(self.dotenv_path)
 
         if self.verbose:
             warnings.warn("File doesn't exist {}".format(self.dotenv_path))
@@ -97,10 +92,10 @@ class DotEnv():
         Load the current dotenv as system environemt variable.
         """
         for k, v in self.dict().items():
-            if override:
-                os.environ[k] = v
-            else:
-                os.environ.setdefault(k, v)
+            if k in os.environ and not override:
+                continue
+            os.environ[k] = v
+
         return True
 
     def get(self, key):
@@ -151,7 +146,7 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
         print(line, end='')
 
     if not replaced:
-        with open(dotenv_path, "a") as f:
+        with io.open(dotenv_path, "a") as f:
             f.write("{}\n".format(line_out))
 
     return True, key_to_set, value_to_set

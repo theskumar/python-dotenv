@@ -1,4 +1,6 @@
 # -*- coding: utf8 -*-
+from __future__ import unicode_literals
+
 import os
 import pytest
 import tempfile
@@ -117,8 +119,8 @@ def test_ipython_override():
 
 
 def test_parse_dotenv_stream():
-    stream = StringIO('hello="it works!😃"\nDOTENV=${hello}\n')
+    stream = StringIO(u'hello="it works!😃"\nDOTENV=${hello}\n')
     stream.seek(0)
     parsed_dict = dotenv_values(stream=stream)
     assert 'DOTENV' in parsed_dict
-    assert parsed_dict['DOTENV'] == 'it works!😃'
+    assert parsed_dict['DOTENV'] == u'it works!😃'
