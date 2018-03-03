@@ -6,12 +6,9 @@ import pytest
 import tempfile
 import warnings
 import sh
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 from dotenv import load_dotenv, find_dotenv, set_key, dotenv_values
+from dotenv.compat import StringIO
 from IPython.terminal.embed import InteractiveShellEmbed
 
 
@@ -118,9 +115,17 @@ def test_ipython_override():
     assert os.environ["MYNEWVALUE"] == 'q1w2e3'
 
 
-def test_parse_dotenv_stream():
+def test_dotenv_values_stream():
     stream = StringIO(u'hello="it works!😃"\nDOTENV=${hello}\n')
     stream.seek(0)
     parsed_dict = dotenv_values(stream=stream)
     assert 'DOTENV' in parsed_dict
     assert parsed_dict['DOTENV'] == u'it works!😃'
+
+
+def test_dotenv_values_export():
+    stream = StringIO('export foo=bar\n')
+    stream.seek(0)
+    load_dotenv(stream=stream)
+    assert 'foo' in os.environ
+    assert os.environ['foo'] == 'bar'
