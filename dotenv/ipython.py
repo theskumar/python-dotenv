@@ -1,9 +1,10 @@
 from __future__ import print_function
-from .main import load_dotenv, find_dotenv
 
-from IPython.core.magic import Magics, magics_class, line_magic
+from IPython.core.magic import Magics, line_magic, magics_class
 from IPython.core.magic_arguments import (argument, magic_arguments,
                                           parse_argstring)
+
+from .main import find_dotenv, load_dotenv
 
 
 @magics_class

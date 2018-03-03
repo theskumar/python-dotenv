@@ -2,7 +2,7 @@ import os
 
 import click
 
-from .main import get_key, dotenv_values, set_key, unset_key
+from .main import dotenv_values, get_key, set_key, unset_key
 
 
 @click.group()

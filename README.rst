@@ -115,27 +115,24 @@ top of ``wsgi.py`` and ``manage.py``.
 In-memory filelikes
 -------------------
 
-Is possible to not rely on the filesystem to parse filelikes from other sources
-(e.g. from a network storage). ``parse_dotenv`` accepts a filelike `stream`.
+It is possible to not rely on the filesystem to parse filelikes from other sources
+(e.g. from a network storage). ``load_dotenv`` and ``dotenv_values`` accepts a filelike ``stream``.
 Just be sure to rewind it before passing.
 
 .. code:: python
 
-    from io import StringIO     # Python2: from StringIO import StringIO
-    from dotenv.main import parse_dotenv
-    filelike = StringIO('SPAM=EGSS\n')
-    filelike.seek(0)
-    parsed = parse_dotenv(stream=filelike)
+    >>> from io import StringIO     # Python2: from StringIO import StringIO
+    >>> from dotenv import dotenv_values
+    >>> filelike = StringIO('SPAM=EGSS\n')
+    >>> filelike.seek(0)
+    >>> parsed = dotenv_values(stream=filelike)
+    >>> parsed['SPAM']
+    'EGSS'
 
-The returned lazy generator yields ``(key,value)`` tuples.
-To ease the consumption, is suggested to unpack it into a dictionary.
 
-.. code:: python
+The returned value is dictionary with key value pair.
 
-    os_env_like = dict(iter(parsed))
-    assert os_env_like['SPAM'] == 'EGGS'
-
-This could be useful if you need to *consume* the envfile but not *apply*  it
+``dotenv_values`` could be useful if you need to *consume* the envfile but not *apply*  it
 directly into the system environment.
 
 
@@ -292,6 +289,11 @@ Executing the tests:
 Changelog
 =========
 
+0.8.0
+----------------------------
+- Internal refractoring (`@theskumar`_)
+- Allow ``load_dotenv`` and ``dotenv_values`` to work with ``StringIO())`` (`@alanjds`_)(`@theskumar`_) (`#78`_)
+
 0.7.1
 ----------------------------
 
@@ -340,6 +342,7 @@ Changelog
 - cli: Added ``-q/--quote`` option to control the behaviour of quotes around values in ``.env``. (Thanks `@hugochinchilla`_).
 - Improved test coverage.
 
+.. _@alanjds: https://github.com/alanjds
 .. _@milonimrod: https://github.com/milonimrod
 .. _@maxkoryukov: https://github.com/maxkoryukov
 .. _@pjona: https://github.com/pjona
@@ -352,6 +355,7 @@ Changelog
 .. _@paulochf: https://github.com/paulochf
 .. _@theskumar: https://github.com/theskumar
 
+.. _#78: https://github.com/theskumar/python-dotenv/issues/78
 .. _#63: https://github.com/theskumar/python-dotenv/issues/63
 .. _#60: https://github.com/theskumar/python-dotenv/issues/60
 .. _#57: https://github.com/theskumar/python-dotenv/issues/57

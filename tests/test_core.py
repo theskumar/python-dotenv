@@ -9,8 +9,7 @@ try:
 except ImportError:
     from io import StringIO
 
-from dotenv import load_dotenv, find_dotenv, set_key
-from dotenv.main import parse_dotenv
+from dotenv import load_dotenv, find_dotenv, set_key, dotenv_values
 from IPython.terminal.embed import InteractiveShellEmbed
 
 
@@ -20,7 +19,7 @@ def test_warns_if_file_does_not_exist():
 
         assert len(w) == 1
         assert w[0].category is UserWarning
-        assert str(w[0].message) == "Not loading .does_not_exist - it doesn't exist."
+        assert str(w[0].message) == "File doesn't exist .does_not_exist"
 
 
 def test_find_dotenv():
@@ -118,9 +117,8 @@ def test_ipython_override():
 
 
 def test_parse_dotenv_stream():
-    stream = StringIO('DOTENV=WORKS\n')
+    stream = StringIO('hello="it works!😃"\nDOTENV=${hello}\n')
     stream.seek(0)
-    parsed_generator = parse_dotenv(stream=stream)
-    parsed_dict = dict(iter(parsed_generator))
+    parsed_dict = dotenv_values(stream=stream)
     assert 'DOTENV' in parsed_dict
-    assert parsed_dict['DOTENV'] == 'WORKS'
+    assert parsed_dict['DOTENV'] == 'it works!😃'
