@@ -1,5 +1,6 @@
 flake8>=2.2.3
 pytest>=3.0.5
+mock
 sh>=1.09
 bumpversion
 wheel

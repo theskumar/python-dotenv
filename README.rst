@@ -202,6 +202,44 @@ update your settings on remote server, handy isn't it!
       unset  Removes the given key.
 
 
+ORM-like setting module
+-----------------------
+
+An ORM-like setting-module has been add for better user-experience while using environment variables as config.
+
+.. code:: python
+
+    # We assume INT_EXAMPLE=1, STRING_EXAMPLE=HI
+    from dotenv import orm
+
+    class Model(orm.EnvModel):
+        example = orm.IntField(
+            "INT_EXAMPLE",
+            required=False,
+            default=None,
+        )
+
+    settings = Model()
+
+    print(type(settings.example.value))     # int
+    print(settings.example.name)        # INT_EXAMPLE
+    print(settings.is_valid())          # True
+
+    # update (if new env is set)
+    settings.update()
+
+    # visit errors
+    print(settings.errors)
+
+
+Current supported types:
+
+-  `StringField`
+-  `IntField`
+-  `FloatField`
+-  `BooleanField`
+
+
 Setting config on remote servers
 --------------------------------
 
