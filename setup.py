@@ -24,7 +24,7 @@ setup(
     },
     entry_points='''
         [console_scripts]
-        dotenv=dotenv:cli.cli
+        dotenv=dotenv.cli:cli
     ''',
     classifiers=[
         # As from https://pypi.python.org/pypi?%3Aaction=list_classifiers

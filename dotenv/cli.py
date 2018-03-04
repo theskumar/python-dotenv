@@ -1,10 +1,12 @@
 import os
+import sys
 
 try:
     import click
 except ImportError:
-    raise ImportError('It seems python-dotenv is not installed with cli option. \
-                       Run pip install "python-dotenv[cli]" to fix this.')
+    sys.stderr.write('It seems python-dotenv is not installed with cli option. \n'
+                     'Run pip install "python-dotenv[cli]" to fix this.')
+    sys.exit(1)
 
 from .main import dotenv_values, get_key, set_key, unset_key
 
