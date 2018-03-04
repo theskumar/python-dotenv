@@ -3,6 +3,7 @@ from os import environ
 from os.path import dirname, join
 
 import dotenv
+from dotenv.cli import cli as dotenv_cli
 
 import sh
 
@@ -23,13 +24,13 @@ def test_get_key():
 
 def test_list(cli, dotenv_file):
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'HELLO', 'WORLD')
-    result = cli.invoke(dotenv.cli.cli, ['--file', dotenv_file, 'list'])
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'list'])
     assert result.exit_code == 0, result.output
-    assert result.output == 'HELLO="WORLD"\n'
+    assert result.output == 'HELLO=WORLD\n'
 
 
 def test_list_wo_file(cli):
-    result = cli.invoke(dotenv.cli.cli, ['--file', 'doesnotexists', 'list'])
+    result = cli.invoke(dotenv_cli, ['--file', 'doesnotexists', 'list'])
     assert result.exit_code == 2, result.output
     assert 'Invalid value for "-f"' in result.output
 
@@ -117,7 +118,7 @@ def test_default_path(cli):
         sh.cd(here)
         sh.dotenv('set', 'HELLO', 'WORLD')
         output = sh.dotenv('get', 'HELLO')
-        assert output == 'HELLO="WORLD"\n'
+        assert output == 'HELLO=WORLD\n'
         sh.rm(dotenv_path)
 
 
