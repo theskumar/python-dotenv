@@ -304,6 +304,11 @@ Executing the tests:
 Changelog
 =========
 
+0.8.1
+----------------------------
+- Add tests for docs (`@Flimm`_)
+- Make 'cli' support optional. Use ``pip install python-dotnev[cli]``. (`@theskumar`_)
+
 0.8.0
 ----------------------------
 - ``set_key`` and ``unset_key`` only modified the affected file instead of parsing and re-writing file, this causes comments and other file entact as it is.
