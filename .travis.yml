@@ -8,16 +8,12 @@ python:
   - '3.6'
   - pypy
 install:
-  - pip install python-coveralls docutils
+  - pip install python-coveralls
   - pip install -q -r requirements.txt
   - pip install --editable .
 script:
   - flake8 .
   - pytest -v --tb=native --cov
-  - |
-    if python -c 'import sys; sys.exit(0 if sys.version_info >= (3, 4) else 1)' ; then
-      python setup.py check --metadata --restructuredtext --strict
-    fi
 after_success:
   - coveralls
 deploy:
