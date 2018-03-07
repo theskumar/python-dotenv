@@ -172,7 +172,7 @@ You can use dotenv with iPython. You can either let the dotenv search for .env w
 
 
 Command-line interface
-=================
+======================
 
 For commandline support, use the `cli` option during installation:
 
@@ -307,7 +307,7 @@ Changelog
 0.8.0
 ----------------------------
 - ``set_key`` and ``unset_key`` only modified the affected file instead of parsing and re-writing file, this causes comments and other file entact as it is.
-- Add support for ``export `` prefix in the line.
+- Add support for ``export`` prefix in the line.
 - Internal refractoring (`@theskumar`_)
 - Allow ``load_dotenv`` and ``dotenv_values`` to work with ``StringIO())`` (`@alanjds`_)(`@theskumar`_) (`#78`_)
 
