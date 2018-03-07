@@ -6,3 +6,4 @@ wheel
 pytest-cov
 click
 ipython
+pypandoc

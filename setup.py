@@ -3,15 +3,20 @@ from setuptools import setup
 
 # https://github.com/theskumar/python-dotenv/issues/45#issuecomment-277135416
 try:
-    with open('README.rst') as readme_file:
-        readme = readme_file.read()
-except Exception:
-    readme = 'Checkout http://github.com/theskumar/python-dotenv for more details.'
+    import pypandoc
+    long_description = pypandoc.convert('README.md', 'rst')
+    long_description = long_description.replace("\r", "")  # YOU  NEED THIS LINE
+except (OSError, ImportError):
+    print("Pandoc not found. Long_description conversion failure.")
+    import io
+    # pandoc is not installed, fallback to using raw contents
+    with io.open('README.md', encoding="utf-8") as f:
+        long_description = f.read()
 
 setup(
     name="python-dotenv",
     description="Add .env support to your django/flask apps in development and deployments",
-    long_description=readme,
+    long_description=long_description,
     version="0.8.1",
     author="Saurabh Kumar",
     author_email="me+github@saurabh-kumar.com",
