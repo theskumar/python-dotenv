@@ -18,6 +18,7 @@ __posix_variable = re.compile('\$\{[^\}]*\}')
 PY2 = sys.version_info[0] == 2
 WIN = sys.platform.startswith('win')
 
+
 def decode_escaped(escaped):
     return __escape_decoder(escaped)[0]
 
