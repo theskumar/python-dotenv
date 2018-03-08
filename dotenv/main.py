@@ -15,6 +15,8 @@ from .compat import StringIO
 __escape_decoder = codecs.getdecoder('unicode_escape')
 __posix_variable = re.compile('\$\{[^\}]*\}')
 
+PY2 = sys.version_info[0] == 2
+WIN = sys.platform.startswith('win')
 
 def decode_escaped(escaped):
     return __escape_decoder(escaped)[0]
@@ -94,6 +96,12 @@ class DotEnv():
         for k, v in self.dict().items():
             if k in os.environ and not override:
                 continue
+            # With Python2 on Windows, force environment variables to str to avoid
+            # "TypeError: environment can only contain strings" in Python's subprocess.py.
+            if PY2 and WIN:
+                if isinstance(k, unicode) or isinstance(v, unicode):
+                    k = k.encode('ascii')
+                    v = v.encode('ascii')
             os.environ[k] = v
 
         return True
