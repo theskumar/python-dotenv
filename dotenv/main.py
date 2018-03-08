@@ -10,14 +10,10 @@ import sys
 import warnings
 from collections import OrderedDict
 
-from .compat import StringIO
+from .compat import StringIO, PY2, WIN, text_type
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
 __posix_variable = re.compile('\$\{[^\}]*\}')
-
-PY2 = sys.version_info[0] == 2
-WIN = sys.platform.startswith('win')
-text_type = unicode if PY2 else str
 
 
 def decode_escaped(escaped):
