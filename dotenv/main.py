@@ -17,6 +17,7 @@ __posix_variable = re.compile('\$\{[^\}]*\}')
 
 PY2 = sys.version_info[0] == 2
 WIN = sys.platform.startswith('win')
+text_type = unicode if PY2 else str
 
 
 def decode_escaped(escaped):
@@ -100,7 +101,7 @@ class DotEnv():
             # With Python2 on Windows, force environment variables to str to avoid
             # "TypeError: environment can only contain strings" in Python's subprocess.py.
             if PY2 and WIN:
-                if isinstance(k, unicode) or isinstance(v, unicode):
+                if isinstance(k, text_type) or isinstance(v, text_type):
                     k = k.encode('ascii')
                     v = v.encode('ascii')
             os.environ[k] = v
