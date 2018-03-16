@@ -39,6 +39,13 @@ def test_list(cli, dotenv_file):
     assert result.output == 'HELLO=WORLD\n'
 
 
+def test_get_cli(cli, dotenv_file):
+    cli.invoke(dotenv_cli, ['--file', dotenv_file, 'set', 'HELLO', "WORLD 1"])
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'get', 'HELLO'])
+    assert result.exit_code == 0, result.output
+    assert result.output == 'HELLO=WORLD 1\n'
+
+
 def test_list_wo_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'doesnotexists', 'list'])
     assert result.exit_code == 2, result.output
@@ -87,12 +94,24 @@ def test_unset():
     stored_value = dotenv.get_key(dotenv_path, 'HELLO')
     assert stored_value == 'WORLD'
     success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
+    assert success is True
     assert dotenv.get_key(dotenv_path, 'HELLO') is None
     success, key_to_unset = dotenv.unset_key(dotenv_path, 'RANDOM')
     assert success is None
     sh.rm(dotenv_path)
     success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
     assert success is None
+
+
+def test_unset_cli(cli, dotenv_file):
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'TESTHELLO', 'WORLD')
+    dotenv.get_key(dotenv_file, 'TESTHELLO') == 'WORLD'
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'unset', 'TESTHELLO'])
+    assert result.exit_code == 0, result.output
+    assert result.output == 'Successfully removed TESTHELLO\n'
+    dotenv.get_key(dotenv_file, 'TESTHELLO') is None
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'unset', 'TESTHELLO'])
+    assert result.exit_code == 1, result.output
 
 
 def test_console_script(cli):
