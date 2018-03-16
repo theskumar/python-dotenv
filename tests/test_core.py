@@ -8,8 +8,25 @@ import warnings
 import sh
 
 from dotenv import load_dotenv, find_dotenv, set_key, dotenv_values
+from dotenv.main import parse_line
 from dotenv.compat import StringIO
 from IPython.terminal.embed import InteractiveShellEmbed
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    ("a=b", ("a", "b")),
+    (" a = b ", ("a", "b")),
+    ("export a=b", ("a", "b")),
+    (" export 'a'=b", ("'a'", "b")),
+    (" export 'a'=b", ("'a'", "b")),
+    ("# a=b", (None, None)),
+    ("# a=b", (None, None)),
+    ("a=b space ", ('a', 'b space')),
+    ("a='b space '", ('a', 'b space ')),
+    ('a="b space "', ('a', 'b space ')),
+])
+def test_parse_line(test_input, expected):
+    assert parse_line(test_input) == expected
 
 
 def test_warns_if_file_does_not_exist():
