@@ -220,14 +220,21 @@ def _walk_to_root(path):
         last_dir, current_dir = current_dir, parent_dir
 
 
+def _is_interactive():
+    """
+    Decide whether this is running in a REPL or IPython notebook
+    """
+    main = __import__('__main__', None, None, fromlist=['__file__'])
+    return not hasattr(main, '__file__')
+
+
 def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     """
     Search in increasingly higher folders for the given file
 
     Returns path to the file if found, or an empty string otherwise
     """
-    if usecwd or '__file__' not in globals():
-        # should work without __file__, e.g. in REPL or IPython notebook
+    if usecwd or _is_interactive():
         path = os.getcwd()
     else:
         # will work for .py files
