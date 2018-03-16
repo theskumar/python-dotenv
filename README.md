@@ -6,7 +6,7 @@
     __ |  |____ |  |\   |    \    /
    (__)|_______||__| \__|     \__/
 ```
-python-dotenv | [![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![Coverage Status](https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master)](https://coveralls.io/r/theskumar/python-dotenv?branch=master) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![PyPI](https://img.shields.io/pypi/dm/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv)
+python-dotenv | [![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![Coverage Status](https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master)](https://coveralls.io/r/theskumar/python-dotenv?branch=master) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/theskumar)
 ===============================================================================
 
 Reads the key,value pair from `.env` file and adds them to environment
