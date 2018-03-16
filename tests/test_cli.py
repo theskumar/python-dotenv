@@ -22,6 +22,16 @@ def test_get_key():
     assert success is None
 
 
+def test_set_key(dotenv_file):
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'foo', 'bar')
+    dotenv.get_key(dotenv_path, 'HELLO') == 'WORLD'
+
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD 2')
+    dotenv.get_key(dotenv_path, 'HELLO') == 'WORLD 2'
+    dotenv.get_key(dotenv_path, 'foo') == 'bar'
+
+
 def test_list(cli, dotenv_file):
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'HELLO', 'WORLD')
     result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'list'])
