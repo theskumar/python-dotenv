@@ -88,6 +88,8 @@ def test_unset():
     assert stored_value == 'WORLD'
     success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
     assert dotenv.get_key(dotenv_path, 'HELLO') is None
+    success, key_to_unset = dotenv.unset_key(dotenv_path, 'RANDOM')
+    assert success is None
     sh.rm(dotenv_path)
     success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
     assert success is None
