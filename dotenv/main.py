@@ -7,7 +7,6 @@ import inspect
 import io
 import os
 import re
-import sys
 import warnings
 from collections import OrderedDict
 
