@@ -192,6 +192,7 @@ Options:
 Commands:
   get    Retrive the value for the given key.
   list   Display all the stored key/value.
+  run    Run command with environment variables from .env file present
   set    Store the given key/value.
   unset  Removes the given key.
 ```
