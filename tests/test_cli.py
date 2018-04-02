@@ -211,7 +211,7 @@ def test_run_with_other_env(cli, dotenv_file):
 
 def test_run_without_cmd(cli):
     result = cli.invoke(dotenv_cli, ['run'])
-    assert result.exit_code == 1
+    assert result.exit_code != 0
 
 
 def test_run_with_invalid_cmd(cli):
