@@ -269,6 +269,11 @@ def run_command(command, env):
     env: Dict
         The additional environment variables
 
+    Returns
+    -------
+    int
+        The return code of the command
+
     """
     # copy the current environment variables and add the vales from
     # `env`
@@ -291,4 +296,4 @@ def run_command(command, env):
         out, _ = p.communicate()
         warnings.warn(out)
 
-    sys.exit(p.returncode)
+    return p.returncode
