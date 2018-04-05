@@ -8,7 +8,7 @@ except ImportError:
                      'Run pip install "python-dotenv[cli]" to fix this.')
     sys.exit(1)
 
-from .main import dotenv_values, get_key, set_key, unset_key
+from .main import dotenv_values, get_key, set_key, unset_key, run_command
 
 
 @click.group()
@@ -76,6 +76,20 @@ def unset(ctx, key):
         click.echo("Successfully removed %s" % key)
     else:
         exit(1)
+
+
+@cli.command(context_settings={'ignore_unknown_options': True})
+@click.pass_context
+@click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
+def run(ctx, commandline):
+    """Run command with environment variables present."""
+    file = ctx.obj['FILE']
+    dotenv_as_dict = dotenv_values(file)
+    if not commandline:
+        click.echo('No command given.')
+        exit(1)
+    ret = run_command(commandline, dotenv_as_dict)
+    exit(ret)
 
 
 if __name__ == "__main__":

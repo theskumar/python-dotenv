@@ -192,3 +192,28 @@ def test_get_key_with_interpolation_of_unset_variable(cli):
         assert stored_value == 'BAR'
         del(environ['NOT_SET'])
         sh.rm(dotenv_path)
+
+
+def test_run(cli):
+    with cli.isolated_filesystem():
+        sh.touch(dotenv_path)
+        sh.cd(here)
+        dotenv.set_key(dotenv_path, 'FOO', 'BAR')
+        result = sh.dotenv('run', 'printenv', 'FOO').strip()
+        assert result == 'BAR'
+
+
+def test_run_with_other_env(cli, dotenv_file):
+    cli.invoke(dotenv_cli, ['--file', dotenv_file, 'set', 'FOO', "BAR"])
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'run', 'printenv', 'FOO'])
+    assert result.output.strip() == 'BAR'
+
+
+def test_run_without_cmd(cli):
+    result = cli.invoke(dotenv_cli, ['run'])
+    assert result.exit_code != 0
+
+
+def test_run_with_invalid_cmd(cli):
+    result = cli.invoke(dotenv_cli, ['run', 'i_do_not_exist'])
+    assert result.exit_code != 0

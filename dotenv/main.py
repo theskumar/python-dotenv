@@ -7,6 +7,7 @@ import io
 import os
 import re
 import sys
+from subprocess import Popen, PIPE, STDOUT
 import warnings
 from collections import OrderedDict
 
@@ -253,3 +254,46 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False):
 def dotenv_values(dotenv_path=None, stream=None, verbose=False):
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose).dict()
+
+
+def run_command(command, env):
+    """Run command in sub process.
+
+    Runs the command in a sub process with the variables from `env`
+    added in the current environment variables.
+
+    Parameters
+    ----------
+    command: List[str]
+        The command and it's parameters
+    env: Dict
+        The additional environment variables
+
+    Returns
+    -------
+    int
+        The return code of the command
+
+    """
+    # copy the current environment variables and add the vales from
+    # `env`
+    cmd_env = os.environ.copy()
+    cmd_env.update(env)
+
+    p = Popen(command,
+              stdin=PIPE,
+              stdout=PIPE,
+              stderr=STDOUT,
+              universal_newlines=True,
+              bufsize=0,
+              shell=False,
+              env=cmd_env)
+    try:
+        out, _ = p.communicate()
+        print(out)
+    except Exception:
+        warnings.warn('An error occured, running the command:')
+        out, _ = p.communicate()
+        warnings.warn(out)
+
+    return p.returncode
