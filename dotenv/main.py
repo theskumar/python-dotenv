@@ -232,7 +232,11 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
         path = os.getcwd()
     else:
         # will work for .py files
-        frame_filename = sys._getframe().f_back.f_code.co_filename
+        frame = sys._getframe()
+        # find first frame that is outside of this file
+        while frame.f_code.co_filename == __file__:
+            frame = frame.f_back
+        frame_filename = frame.f_code.co_filename
         path = os.path.dirname(os.path.abspath(frame_filename))
 
     for dirname in _walk_to_root(path):
