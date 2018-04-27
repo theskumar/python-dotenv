@@ -38,17 +38,6 @@ def test_warns_if_file_does_not_exist():
         assert str(w[0].message) == "File doesn't exist .does_not_exist"
 
 
-def test_load_dotenv_in_current_dir():
-    dotenv_path = '.env'
-    with open(dotenv_path, 'w') as f:
-        f.write("TOTO=bla\n")
-    assert 'TOTO' not in os.environ
-    success = load_dotenv(verbose=True)
-    assert success
-    assert os.environ['TOTO'] == 'bla'
-    sh.rm(dotenv_path)
-
-
 def test_find_dotenv():
     """
     Create a temporary folder structure like the following:
@@ -116,6 +105,19 @@ def test_load_dotenv_override(cli):
         assert key_name in os.environ
         assert os.environ[key_name] == 'WORKS'
         sh.rm(dotenv_path)
+
+
+def test_load_dotenv_in_current_dir():
+    # make sure were are here!
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    dotenv_path = '.env'
+    with open(dotenv_path, 'w') as f:
+        f.write("TOTO=bla\n")
+    assert 'TOTO' not in os.environ
+    success = load_dotenv(verbose=True)
+    assert success
+    assert os.environ['TOTO'] == 'bla'
+    sh.rm(dotenv_path)
 
 
 def test_ipython():
