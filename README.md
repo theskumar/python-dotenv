@@ -168,7 +168,7 @@ Command-line interface
 
 For commandline support, use the cli option during installation:
 
-    pip install -U "python-dotenv[cli]"
+    pip install -U python-dotenv[cli]
 
 A cli interface `dotenv` is also included, which helps you manipulate
 the `.env` file without manually opening it. The same cli installed on
