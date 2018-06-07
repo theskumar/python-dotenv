@@ -11,6 +11,7 @@ except ImportError:
 from .main import dotenv_values, get_key, set_key, unset_key, run_command
 from .version import __version__
 
+
 @click.group()
 @click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
               type=click.Path(exists=True),
