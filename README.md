@@ -285,7 +285,7 @@ Changelog
 -----
 
 -   Add tests for docs ([@Flimm])
--   Make 'cli' support optional. Use `pip install python-dotnev[cli]`. ([@theskumar])
+-   Make 'cli' support optional. Use `pip install python-dotenv[cli]`. ([@theskumar])
 
 0.8.0
 -----
