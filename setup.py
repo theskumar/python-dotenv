@@ -13,11 +13,14 @@ except (OSError, ImportError):
     with io.open('README.md', encoding="utf-8") as f:
         long_description = f.read()
 
+meta = {}
+exec(open('./dotenv/version.py').read(), meta)
+
 setup(
     name="python-dotenv",
     description="Add .env support to your django/flask apps in development and deployments",
     long_description=long_description,
-    version="0.8.2",
+    version=meta['__version__'],
     author="Saurabh Kumar",
     author_email="me+github@saurabh-kumar.com",
     url="http://github.com/theskumar/python-dotenv",

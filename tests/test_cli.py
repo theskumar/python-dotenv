@@ -3,6 +3,7 @@ from os import environ
 from os.path import dirname, join
 
 import dotenv
+from dotenv.version import __version__
 from dotenv.cli import cli as dotenv_cli
 
 import sh
@@ -217,3 +218,10 @@ def test_run_without_cmd(cli):
 def test_run_with_invalid_cmd(cli):
     result = cli.invoke(dotenv_cli, ['run', 'i_do_not_exist'])
     assert result.exit_code != 0
+
+
+def test_run_with_version(cli):
+    result = cli.invoke(dotenv_cli, ['--version'])
+    print(vars(result))
+    assert result.exit_code == 0
+    assert result.output.strip().endswith(__version__)

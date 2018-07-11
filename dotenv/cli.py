@@ -9,6 +9,7 @@ except ImportError:
     sys.exit(1)
 
 from .main import dotenv_values, get_key, set_key, unset_key, run_command
+from .version import __version__
 
 
 @click.group()
@@ -18,6 +19,7 @@ from .main import dotenv_values, get_key, set_key, unset_key, run_command
 @click.option('-q', '--quote', default='always',
               type=click.Choice(['always', 'never', 'auto']),
               help="Whether to quote or not the variable values. Default mode is always. This does not affect parsing.")
+@click.version_option(version=__version__)
 @click.pass_context
 def cli(ctx, file, quote):
     '''This script is used to set, get or unset values from a .env file.'''
