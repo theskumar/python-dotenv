@@ -57,7 +57,7 @@ class DotEnv():
         if isinstance(self.dotenv_path, StringIO):
             return self.dotenv_path
 
-        if os.path.exists(self.dotenv_path):
+        if os.path.isfile(self.dotenv_path):
             self._is_file = True
             return io.open(self.dotenv_path)
 
@@ -241,7 +241,7 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
 
     for dirname in _walk_to_root(path):
         check_path = os.path.join(dirname, filename)
-        if os.path.exists(check_path):
+        if os.path.isfile(check_path):
             return check_path
 
     if raise_error_if_not_found:
