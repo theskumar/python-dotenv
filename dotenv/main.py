@@ -143,7 +143,7 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
         k, v = parse_line(line)
         if k == key_to_set:
             replaced = True
-            line = line_out
+            line = "{}\n".format(line_out)
         print(line, end='')
 
     if not replaced:
