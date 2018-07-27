@@ -29,14 +29,14 @@ def test_set_key(dotenv_file):
     assert dotenv.get_key(dotenv_file, 'HELLO') == 'WORLD'
 
     with open(dotenv_file, 'r') as fp:
-        assert 'HELLO="WORLD"\nfoo="bar"\n' == fp.read()
+        assert 'HELLO="WORLD"\nfoo="bar"' == fp.read().strip()
 
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'HELLO', 'WORLD 2')
     assert dotenv.get_key(dotenv_file, 'HELLO') == 'WORLD 2'
     assert dotenv.get_key(dotenv_file, 'foo') == 'bar'
 
     with open(dotenv_file, 'r') as fp:
-        assert 'HELLO="WORLD 2"\nfoo="bar"\n' == fp.read()
+        assert 'HELLO="WORLD 2"\nfoo="bar"' == fp.read().strip()
 
 
 def test_list(cli, dotenv_file):
