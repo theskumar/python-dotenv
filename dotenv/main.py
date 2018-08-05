@@ -31,7 +31,7 @@ def parse_line(line):
     k, v = line.split('=', 1)
 
     if k.startswith('export '):
-        k = k.lstrip('export ')
+        (_, _, k) = k.partition('export ')
 
     # Remove any leading and trailing spaces in key, value
     k, v = k.strip(), v.strip()
