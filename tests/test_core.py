@@ -24,6 +24,8 @@ from IPython.terminal.embed import InteractiveShellEmbed
     ("a=b space ", ('a', 'b space')),
     ("a='b space '", ('a', 'b space ')),
     ('a="b space "', ('a', 'b space ')),
+    ("export export_spam=1", ("export_spam", "1")),
+    ("export port=8000", ("port", "8000")),
 ])
 def test_parse_line(test_input, expected):
     assert parse_line(test_input) == expected
