@@ -135,7 +135,7 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     if " " in value_to_set:
         quote_mode = "always"
 
-    line_template = '{}="{}"' if quote_mode == "always" else '{}={}'
+    line_template = '{}="{}"\n' if quote_mode == "always" else '{}={}\n'
     line_out = line_template.format(key_to_set, value_to_set)
 
     replaced = False
