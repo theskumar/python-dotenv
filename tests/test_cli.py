@@ -24,13 +24,19 @@ def test_get_key():
 
 
 def test_set_key(dotenv_file):
-    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
-    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'foo', 'bar')
-    dotenv.get_key(dotenv_path, 'HELLO') == 'WORLD'
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'HELLO', 'WORLD')
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'foo', 'bar')
+    assert dotenv.get_key(dotenv_file, 'HELLO') == 'WORLD'
 
-    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD 2')
-    dotenv.get_key(dotenv_path, 'HELLO') == 'WORLD 2'
-    dotenv.get_key(dotenv_path, 'foo') == 'bar'
+    with open(dotenv_file, 'r') as fp:
+        assert 'HELLO="WORLD"\nfoo="bar"' == fp.read().strip()
+
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'HELLO', 'WORLD 2')
+    assert dotenv.get_key(dotenv_file, 'HELLO') == 'WORLD 2'
+    assert dotenv.get_key(dotenv_file, 'foo') == 'bar'
+
+    with open(dotenv_file, 'r') as fp:
+        assert 'HELLO="WORLD 2"\nfoo="bar"' == fp.read().strip()
 
 
 def test_list(cli, dotenv_file):
