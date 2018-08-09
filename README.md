@@ -24,6 +24,8 @@ in production using [12-factor](http://12factor.net/) principles.
 - [Contributing](#contributing)
 - [Changelog](#changelog)
 
+> Hey just wanted to let you know that since I've started writing 12-factor apps I've found python-dotenv to be invaluable for all my projects. It's super useful and “just works.” --Daniel Fridkin
+
 Usages
 ======
 
