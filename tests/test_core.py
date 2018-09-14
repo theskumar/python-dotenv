@@ -163,7 +163,7 @@ def test_dotenv_values_export():
     assert os.environ['foo'] == 'bar'
 
 
-def test_dotenv_empty_selfreferential_variable():
+def test_dotenv_empty_selfreferential_interpolation():
     stream = StringIO(u'some_path="${some_path}:a/b/c"\n')
     stream.seek(0)
     assert u'some_path' not in os.environ
@@ -171,7 +171,7 @@ def test_dotenv_empty_selfreferential_variable():
     assert {u'some_path': u':a/b/c'} == parsed_dict
 
 
-def test_dotenv_nonempty_selfreferential_variable():
+def test_dotenv_nonempty_selfreferential_interpolation():
     stream = StringIO(u'some_path="${some_path}:a/b/c"\n')
     stream.seek(0)
     assert u'some_path' not in os.environ
