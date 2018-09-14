@@ -72,7 +72,10 @@ class DotEnv():
             return self._dict
 
         values = OrderedDict(self.parse())
-        self._dict = resolve_nested_variables(values)
+        self._dict = resolve_nested_variables(
+            values,
+            extra_variables={"CONTAINING_DIR": str(self.dotenv_path)},
+        )
         return self._dict
 
     def parse(self):
@@ -180,14 +183,15 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     return removed, key_to_unset
 
 
-def resolve_nested_variables(values):
+def resolve_nested_variables(values, extra_variables={}):
     def _replacement(name):
         """
         get appropriate value for a variable name.
         first search in environ, if not found,
         then look into the dotenv variables
         """
-        ret = os.getenv(name, values.get(name, ""))
+        ret = os.getenv(name, values.get(name, extra_variables.get(name, "")))
+
         return ret
 
     def _re_sub_callback(match_object):
