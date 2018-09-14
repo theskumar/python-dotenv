@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import contextlib
 import os
 import pytest
 import tempfile
@@ -11,6 +12,16 @@ from dotenv import load_dotenv, find_dotenv, set_key, dotenv_values
 from dotenv.main import parse_line
 from dotenv.compat import StringIO
 from IPython.terminal.embed import InteractiveShellEmbed
+
+
+@contextlib.contextmanager
+def restore_os_environ():
+    environ = dict(os.environ)
+
+    try:
+        yield
+    finally:
+        os.environ.update(environ)
 
 
 @pytest.mark.parametrize("test_input,expected", [
@@ -175,6 +186,7 @@ def test_dotenv_nonempty_selfreferential_interpolation():
     stream = StringIO(u'some_path="${some_path}:a/b/c"\n')
     stream.seek(0)
     assert u'some_path' not in os.environ
-    os.environ[u'some_path'] = u'x/y/z'
-    parsed_dict = dotenv_values(stream=stream)
+    with restore_os_environ():
+        os.environ[u'some_path'] = u'x/y/z'
+        parsed_dict = dotenv_values(stream=stream)
     assert {u'some_path': u'x/y/z:a/b/c'} == parsed_dict
