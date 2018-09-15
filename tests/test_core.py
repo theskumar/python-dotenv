@@ -164,7 +164,7 @@ def test_dotenv_values_export():
 
 
 def test_dotenv_containing_directory_interpolation(tmpdir_factory):
-    filename = tmpdir_factory.mktemp('env').join(".env")
+    filename = str(tmpdir_factory.mktemp('env').join(".env"))
     with open(filename, 'w', encoding='UTF-8') as f:
         f.write(u'some_path="${CONTAINING_DIR}/a/b/c"\n')
 
