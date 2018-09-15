@@ -166,7 +166,7 @@ def test_dotenv_values_export():
 def test_dotenv_containing_directory_interpolation(tmpdir_factory):
     filename = str(tmpdir_factory.mktemp('env').join(".env"))
     with open(filename, 'wb') as f:
-        f.write(u'some_path="${CONTAINING_DIR}/a/b/c"\n'.encode('UTF-8')
+        f.write(u'some_path="${CONTAINING_DIR}/a/b/c"\n'.encode('UTF-8'))
 
     parsed_dict = dotenv_values(dotenv_path=filename)
     assert {u'some_path': u'{}/a/b/c'.format(filename)} == parsed_dict
