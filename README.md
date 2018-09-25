@@ -121,11 +121,11 @@ before passing.
 ```python
 >>> from io import StringIO     # Python2: from StringIO import StringIO
 >>> from dotenv import dotenv_values
->>> filelike = StringIO('SPAM=EGSS\n')
+>>> filelike = StringIO('SPAM=EGGS\n')
 >>> filelike.seek(0)
 >>> parsed = dotenv_values(stream=filelike)
 >>> parsed['SPAM']
-'EGSS'
+'EGGS'
 ```
 
 The returned value is dictionary with key value pair.
