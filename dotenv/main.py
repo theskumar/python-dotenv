@@ -190,7 +190,7 @@ def resolve_nested_variables(values, extra_variables={}):
         first search in environ, if not found,
         then look into the dotenv variables
         """
-        ret = os.getenv(name, values.get(name, extra_variables.get(name, "")))
+        ret = os.getenv(name, new_values.get(name, extra_variables.get(name, "")))
 
         return ret
 
@@ -201,10 +201,12 @@ def resolve_nested_variables(values, extra_variables={}):
         """
         return _replacement(match_object.group()[2:-1])
 
-    for k, v in values.items():
-        values[k] = __posix_variable.sub(_re_sub_callback, v)
+    new_values = {}
 
-    return values
+    for k, v in values.items():
+        new_values[k] = __posix_variable.sub(_re_sub_callback, v)
+
+    return new_values
 
 
 def _walk_to_root(path):
