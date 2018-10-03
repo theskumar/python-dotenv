@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import tempfile
 from os import environ
 from os.path import dirname, join
 
@@ -93,6 +94,18 @@ def test_value_with_special_characters():
         f.write(r"TEST='}=&~{,(\5%{&;'")
     assert dotenv.get_key(dotenv_path, 'TEST') == r'}=&~{,(\5%{&;'
     sh.rm(dotenv_path)
+
+
+def test_multiline_value():
+    with tempfile.NamedTemporaryFile() as f:
+        f.write("TEST='line 1\nline 2'".encode('utf-8'))
+        f.flush()
+        assert dotenv.get_key(f.name, 'TEST') == "line 1\nline 2"
+
+    with tempfile.NamedTemporaryFile() as f:
+        f.write("TEST='line 1\nline 2'\nFIZZ=BUZZ".encode('utf-8'))
+        f.flush()
+        assert dotenv.get_key(f.name, 'TEST') == "line 1\nline 2"
 
 
 def test_unset():

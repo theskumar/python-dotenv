@@ -14,7 +14,7 @@ from collections import OrderedDict
 from .compat import StringIO
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
-__posix_variable = re.compile('\$\{[^\}]*\}')
+__posix_variable = re.compile(r'\$\{[^\}]*\}')
 
 
 def decode_escaped(escaped):
@@ -78,12 +78,17 @@ class DotEnv():
     def parse(self):
         f = self._get_stream()
 
-        for line in f:
-            key, value = parse_line(line)
-            if not key:
-                continue
-
-            yield key, value
+        fbody = f.read()
+        # key starts with either `export FOO`, or `FOO`
+        key = r'^(?:export )?([a-zA-Z_][a-zA-Z0-9_]+)'
+        # `=` may be padded with spaces
+        eql = r' *= *'
+        # val is either wrapped in quotes, or a string of non-white-space chars
+        val = r'(?:\'(.*?)\'|"(.*?)"|([^\s]+))'
+        envs = re.findall(key + eql + val, fbody, re.MULTILINE | re.DOTALL)
+        for env in envs:
+            # Yield the key and the first non-empty val
+            yield env[0], next(x for x in env[1:] if x)
 
         if self._is_file:
             f.close()
