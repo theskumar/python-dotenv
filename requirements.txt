@@ -5,6 +5,7 @@ bumpversion
 wheel
 pytest-cov
 click
+jedi<0.13; python_version <= '3.3'
 ipython<6; python_version <= '2'
 ipython<7; python_version <= '3.3'
 ipython; python_version > '3.3'
