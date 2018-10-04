@@ -181,21 +181,42 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
 
 
 def resolve_nested_variables(values):
-    def _replacement(name):
+    def _replacement(name, default=None):
         """
         get appropriate value for a variable name.
         first search in environ, if not found,
         then look into the dotenv variables
         """
-        ret = os.getenv(name, new_values.get(name, ""))
-        return ret
+
+        # If name is set as an environment variable, use its value
+        if name in os.environ:
+            return os.getenv(name)
+
+        # If name is the same as k, we need to handle the situation special, or we will have ${K}
+        # or ${K:-default} as the return value.  Note that k comes from the for loop below
+        if name == k:
+            # If we have a default set, return it
+            if default:
+                return default
+
+            # Otherwise, return an empty string
+            return ''
+
+        # If all the above failed, try getting name from the environments, revert to the value
+        # from values, and if it’s not in values yet, revert to the default value
+        return os.getenv(name, values.get(name, default or ''))
 
     def _re_sub_callback(match_object):
         """
         From a match object gets the variable name and returns
         the correct replacement
         """
-        return _replacement(match_object.group()[2:-1])
+
+        replacement = match_object.group()[2:-1].split(':-', 1)
+        name = replacement.pop(0)
+        default = replacement[0] if replacement else None
+
+        return _replacement(name, default=default)
 
     new_values = {}
 
