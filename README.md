@@ -103,6 +103,8 @@ DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 `load_dotenv` do not override existing System environment variables. To
 override, pass `override=True` to `load_dotenv()`.
 
+`load_dotenv` also accepts `encoding` parameter to open the `.env` file. The default encoding is platform dependent (whatever `locale.getpreferredencoding()` returns), but any encoding supported by Python can be used. See the [codecs](https://docs.python.org/3/library/codecs.html#standard-encodings) module for the list of supported encodings.
+
 You can use `find_dotenv()` method that will try to find a `.env` file
 by (a) guessing where to start using `__file__` or the working directory
 -- allowing this to work in non-file contexts such as IPython notebooks
@@ -298,6 +300,7 @@ Unreleased
 -----
 
 - Add type hints and expose them to users ([@qnighy])([#172])
+- `load_dotenv` and `dotenv_values` now accepts `encoding` paramater, defaults to `None` ([@theskumar])([@earlbread]) (#161)
 
 0.10.1
 -----
@@ -409,6 +412,7 @@ Unreleased
     [@hugochinchilla](https://github.com/hugochinchilla)).
 -   Improved test coverage.
 
+[#161]: https://github.com/theskumar/python-dotenv/issues/161
 [#78]: https://github.com/theskumar/python-dotenv/issues/78
 [#148]: https://github.com/theskumar/python-dotenv/issues/148
 [#158]: https://github.com/theskumar/python-dotenv/issues/158
@@ -423,3 +427,4 @@ Unreleased
 [@cjauvin]: https://github.com/cjauvin
 [@bbc2]: https://github.com/bbc2
 [@qnighy]: https://github.com/qnighy
+[@earlbread]: https://github.com/earlbread
