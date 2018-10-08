@@ -47,10 +47,11 @@ def parse_line(line):
 
 class DotEnv():
 
-    def __init__(self, dotenv_path, verbose=False):
+    def __init__(self, dotenv_path, verbose=False, encoding='utf-8'):
         self.dotenv_path = dotenv_path
         self._dict = None
         self.verbose = verbose
+        self.encoding = encoding
 
     def _get_stream(self):
         self._is_file = False
@@ -59,7 +60,7 @@ class DotEnv():
 
         if os.path.isfile(self.dotenv_path):
             self._is_file = True
-            return io.open(self.dotenv_path)
+            return io.open(self.dotenv_path, encoding=self.encoding)
 
         if self.verbose:
             warnings.warn("File doesn't exist {}".format(self.dotenv_path))
@@ -252,14 +253,21 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     return ''
 
 
-def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False):
+def load_dotenv(dotenv_path=None,
+                stream=None,
+                verbose=False,
+                override=False,
+                encoding='utf-8'):
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose).set_as_environment_variables(override=override)
+    return DotEnv(f, verbose=verbose, encoding=encoding).set_as_environment_variables(override=override)
 
 
-def dotenv_values(dotenv_path=None, stream=None, verbose=False):
+def dotenv_values(dotenv_path=None,
+                  stream=None,
+                  verbose=False,
+                  encoding='utf-8'):
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose).dict()
+    return DotEnv(f, verbose=verbose, encoding=encoding).dict()
 
 
 def run_command(command, env):
