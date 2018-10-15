@@ -210,10 +210,14 @@ def test_run(cli):
         assert result == 'BAR'
 
 
-def test_run_with_other_env(cli, dotenv_file):
-    cli.invoke(dotenv_cli, ['--file', dotenv_file, 'set', 'FOO', "BAR"])
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'run', 'printenv', 'FOO'])
-    assert result.output.strip() == 'BAR'
+def test_run_with_other_env(cli):
+    DOTENV_FILE = 'dotenv'
+    with cli.isolated_filesystem():
+        sh.cd(here)
+        sh.touch(DOTENV_FILE)
+        sh.dotenv('--file', DOTENV_FILE, 'set', 'FOO', 'BAR')
+        result = sh.dotenv('--file', DOTENV_FILE, 'run', 'printenv', 'FOO').strip()
+        assert result == 'BAR'
 
 
 def test_run_without_cmd(cli):
