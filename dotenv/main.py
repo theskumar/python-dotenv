@@ -2,20 +2,23 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import codecs
-import fileinput
 import io
 import os
 import re
+import shutil
 import sys
 from subprocess import Popen
+import tempfile
 import warnings
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 from contextlib import contextmanager
 
 from .compat import StringIO, PY2, WIN, text_type
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
 __posix_variable = re.compile(r'\$\{[^\}]*\}')
+
+Binding = namedtuple('Binding', 'key value original')
 
 
 def decode_escaped(escaped):
@@ -44,6 +47,12 @@ def parse_line(line):
             v = decode_escaped(v[1:-1])
 
     return k, v
+
+
+def parse_stream(stream):
+    for line in stream:
+        (key, value) = parse_line(line)
+        yield Binding(key=key, value=value, original=line)
 
 
 class DotEnv():
@@ -76,12 +85,9 @@ class DotEnv():
 
     def parse(self):
         with self._get_stream() as stream:
-            for line in stream:
-                key, value = parse_line(line)
-                if not key:
-                    continue
-
-                yield key, value
+            for mapping in parse_stream(stream):
+                if mapping.key is not None and mapping.value is not None:
+                    yield mapping.key, mapping.value
 
     def set_as_environment_variables(self, override=False):
         """
@@ -121,6 +127,20 @@ def get_key(dotenv_path, key_to_get):
     return DotEnv(dotenv_path, verbose=True).get(key_to_get)
 
 
+@contextmanager
+def rewrite(path):
+    try:
+        with tempfile.NamedTemporaryFile(mode="w+", delete=False) as dest:
+            with io.open(path) as source:
+                yield (source, dest)
+    except BaseException:
+        if os.path.isfile(dest.name):
+            os.unlink(dest.name)
+        raise
+    else:
+        shutil.move(dest.name, path)
+
+
 def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     """
     Adds or Updates a key/value to the given .env
@@ -136,20 +156,19 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     if " " in value_to_set:
         quote_mode = "always"
 
-    line_template = '{}="{}"' if quote_mode == "always" else '{}={}'
+    line_template = '{}="{}"\n' if quote_mode == "always" else '{}={}\n'
     line_out = line_template.format(key_to_set, value_to_set)
 
-    replaced = False
-    for line in fileinput.input(dotenv_path, inplace=True):
-        k, v = parse_line(line)
-        if k == key_to_set:
-            replaced = True
-            line = "{}\n".format(line_out)
-        print(line, end='')
-
-    if not replaced:
-        with io.open(dotenv_path, "a") as f:
-            f.write("{}\n".format(line_out))
+    with rewrite(dotenv_path) as (source, dest):
+        replaced = False
+        for mapping in parse_stream(source):
+            if mapping.key == key_to_set:
+                dest.write(line_out)
+                replaced = True
+            else:
+                dest.write(mapping.original)
+        if not replaced:
+            dest.write(line_out)
 
     return True, key_to_set, value_to_set
 
@@ -161,18 +180,17 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     If the .env path given doesn't exist, fails
     If the given key doesn't exist in the .env, fails
     """
-    removed = False
-
     if not os.path.exists(dotenv_path):
         warnings.warn("can't delete from %s - it doesn't exist." % dotenv_path)
         return None, key_to_unset
 
-    for line in fileinput.input(dotenv_path, inplace=True):
-        k, v = parse_line(line)
-        if k == key_to_unset:
-            removed = True
-            line = ''
-        print(line, end='')
+    removed = False
+    with rewrite(dotenv_path) as (source, dest):
+        for mapping in parse_stream(source):
+            if mapping.key == key_to_unset:
+                removed = True
+            else:
+                dest.write(mapping.original)
 
     if not removed:
         warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))

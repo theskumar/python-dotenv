@@ -9,7 +9,7 @@ import warnings
 import sh
 
 from dotenv import load_dotenv, find_dotenv, set_key, dotenv_values
-from dotenv.main import parse_line
+from dotenv.main import Binding, parse_line, parse_stream
 from dotenv.compat import StringIO
 from IPython.terminal.embed import InteractiveShellEmbed
 
@@ -40,6 +40,23 @@ def restore_os_environ():
 ])
 def test_parse_line(test_input, expected):
     assert parse_line(test_input) == expected
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    ("", []),
+    ("a=b", [Binding(key="a", value="b", original="a=b")]),
+    (
+        "a=b\nc=d",
+        [
+            Binding(key="a", value="b", original="a=b\n"),
+            Binding(key="c", value="d", original="c=d"),
+        ],
+    ),
+])
+def test_parse_stream(test_input, expected):
+    result = parse_stream(StringIO(test_input))
+
+    assert list(result) == expected
 
 
 def test_warns_if_file_does_not_exist():
