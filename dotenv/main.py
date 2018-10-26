@@ -10,6 +10,7 @@ import sys
 from subprocess import Popen
 import warnings
 from collections import OrderedDict
+from contextlib import contextmanager
 
 from .compat import StringIO, PY2, WIN, text_type
 
@@ -52,19 +53,17 @@ class DotEnv():
         self._dict = None
         self.verbose = verbose
 
+    @contextmanager
     def _get_stream(self):
-        self._is_file = False
         if isinstance(self.dotenv_path, StringIO):
-            return self.dotenv_path
-
-        if os.path.isfile(self.dotenv_path):
-            self._is_file = True
-            return io.open(self.dotenv_path)
-
-        if self.verbose:
-            warnings.warn("File doesn't exist {}".format(self.dotenv_path))
-
-        return StringIO('')
+            yield self.dotenv_path
+        elif os.path.isfile(self.dotenv_path):
+            with io.open(self.dotenv_path) as stream:
+                yield stream
+        else:
+            if self.verbose:
+                warnings.warn("File doesn't exist {}".format(self.dotenv_path))
+            yield StringIO('')
 
     def dict(self):
         """Return dotenv as dict"""
@@ -76,17 +75,13 @@ class DotEnv():
         return self._dict
 
     def parse(self):
-        f = self._get_stream()
+        with self._get_stream() as stream:
+            for line in stream:
+                key, value = parse_line(line)
+                if not key:
+                    continue
 
-        for line in f:
-            key, value = parse_line(line)
-            if not key:
-                continue
-
-            yield key, value
-
-        if self._is_file:
-            f.close()
+                yield key, value
 
     def set_as_environment_variables(self, override=False):
         """
