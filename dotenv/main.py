@@ -14,7 +14,7 @@ from collections import OrderedDict
 from .compat import StringIO, PY2, WIN, text_type
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
-__posix_variable = re.compile('\$\{[^\}]*\}')  # noqa
+__posix_variable = re.compile(r'\$\{[^\}]*\}')
 
 
 def decode_escaped(escaped):
