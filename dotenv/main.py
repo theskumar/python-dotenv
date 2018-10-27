@@ -15,44 +15,77 @@ from contextlib import contextmanager
 
 from .compat import StringIO, PY2, WIN, text_type
 
-__escape_decoder = codecs.getdecoder('unicode_escape')
 __posix_variable = re.compile(r'\$\{[^\}]*\}')
+
+_binding = re.compile(
+    r"""
+        (
+            \s*                     # leading whitespace
+            (?:export\s+)?          # export
+
+            ( '[^']+'               # single-quoted key
+            | [^=\#\s]+             # or unquoted key
+            )?
+
+            (?:
+                (?:\s*=\s*)         # equal sign
+
+                ( '(?:\\'|[^'])*'   # single-quoted value
+                | "(?:\\"|[^"])*"   # or double-quoted value
+                | [^\#\r\n]*        # or unquoted value
+                )
+            )?
+
+            \s*                     # trailing whitespace
+            (?:\#[^\r\n]*)?         # comment
+            (?:\r|\n|\r\n)?         # newline
+        )
+    """,
+    re.MULTILINE | re.VERBOSE,
+)
+
+_escape_sequence = re.compile(r"\\[\\'\"abfnrtv]")
+
 
 Binding = namedtuple('Binding', 'key value original')
 
 
-def decode_escaped(escaped):
-    return __escape_decoder(escaped)[0]
+def decode_escapes(string):
+    def decode_match(match):
+        return codecs.decode(match.group(0), 'unicode-escape')
+
+    return _escape_sequence.sub(decode_match, string)
 
 
-def parse_line(line):
-    line = line.strip()
+def is_surrounded_by(string, char):
+    return (
+        len(string) > 1
+        and string[0] == string[-1] == char
+    )
 
-    # Ignore lines with `#` or which doesn't have `=` in it.
-    if not line or line.startswith('#') or '=' not in line:
-        return None, None
 
-    k, v = line.split('=', 1)
-
-    if k.startswith('export '):
-        (_, _, k) = k.partition('export ')
-
-    # Remove any leading and trailing spaces in key, value
-    k, v = k.strip(), v.strip()
-
-    if v:
-        v = v.encode('unicode-escape').decode('ascii')
-        quoted = v[0] == v[-1] in ['"', "'"]
-        if quoted:
-            v = decode_escaped(v[1:-1])
-
-    return k, v
+def parse_binding(string, position):
+    match = _binding.match(string, position)
+    (matched, key, value) = match.groups()
+    if key is None or value is None:
+        key = None
+        value = None
+    else:
+        value_quoted = is_surrounded_by(value, "'") or is_surrounded_by(value, '"')
+        if value_quoted:
+            value = decode_escapes(value[1:-1])
+        else:
+            value = value.strip()
+    return (Binding(key=key, value=value, original=matched), match.end())
 
 
 def parse_stream(stream):
-    for line in stream:
-        (key, value) = parse_line(line)
-        yield Binding(key=key, value=value, original=line)
+    string = stream.read()
+    position = 0
+    length = len(string)
+    while position < length:
+        (binding, position) = parse_binding(string, position)
+        yield binding
 
 
 class DotEnv():

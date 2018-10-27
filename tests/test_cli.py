@@ -39,6 +39,11 @@ def test_set_key(dotenv_file):
     with open(dotenv_file, 'r') as fp:
         assert 'HELLO="WORLD 2"\nfoo="bar"' == fp.read().strip()
 
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, "HELLO", "WORLD\n3")
+
+    with open(dotenv_file, "r") as fp:
+        assert 'HELLO="WORLD\n3"\nfoo="bar"' == fp.read().strip()
+
 
 def test_set_key_permission_error(dotenv_file):
     os.chmod(dotenv_file, 0o000)
@@ -69,6 +74,13 @@ def test_list_wo_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'doesnotexists', 'list'])
     assert result.exit_code == 2, result.output
     assert 'Invalid value for "-f"' in result.output
+
+
+def test_empty_value():
+    with open(dotenv_path, "w") as f:
+        f.write("TEST=")
+    assert dotenv.get_key(dotenv_path, "TEST") == ""
+    sh.rm(dotenv_path)
 
 
 def test_key_value_without_quotes():
@@ -104,6 +116,25 @@ def test_value_with_special_characters():
     with open(dotenv_path, 'w') as f:
         f.write(r"TEST='}=&~{,(\5%{&;'")
     assert dotenv.get_key(dotenv_path, 'TEST') == r'}=&~{,(\5%{&;'
+    sh.rm(dotenv_path)
+
+
+def test_value_with_new_lines():
+    with open(dotenv_path, 'w') as f:
+        f.write('TEST="a\nb"')
+    assert dotenv.get_key(dotenv_path, 'TEST') == "a\nb"
+    sh.rm(dotenv_path)
+
+    with open(dotenv_path, 'w') as f:
+        f.write("TEST='a\nb'")
+    assert dotenv.get_key(dotenv_path, 'TEST') == "a\nb"
+    sh.rm(dotenv_path)
+
+
+def test_value_after_comment():
+    with open(dotenv_path, "w") as f:
+        f.write("# comment\nTEST=a")
+    assert dotenv.get_key(dotenv_path, "TEST") == "a"
     sh.rm(dotenv_path)
 
 
