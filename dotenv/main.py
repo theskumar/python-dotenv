@@ -7,7 +7,7 @@ import io
 import os
 import re
 import sys
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen
 import warnings
 from collections import OrderedDict
 
@@ -293,19 +293,10 @@ def run_command(command, env):
     cmd_env.update(env)
 
     p = Popen(command,
-              stdin=PIPE,
-              stdout=PIPE,
-              stderr=STDOUT,
               universal_newlines=True,
               bufsize=0,
               shell=False,
               env=cmd_env)
-    try:
-        out, _ = p.communicate()
-        print(out)
-    except Exception:
-        warnings.warn('An error occured, running the command:')
-        out, _ = p.communicate()
-        warnings.warn(out)
+    _, _ = p.communicate()
 
     return p.returncode
