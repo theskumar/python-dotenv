@@ -11,7 +11,7 @@ from subprocess import Popen, PIPE, STDOUT
 import warnings
 from collections import OrderedDict
 
-from .compat import StringIO
+from .compat import StringIO, PY2, WIN, text_type
 
 __escape_decoder = codecs.getdecoder('unicode_escape')
 __posix_variable = re.compile('\$\{[^\}]*\}')  # noqa
@@ -95,6 +95,12 @@ class DotEnv():
         for k, v in self.dict().items():
             if k in os.environ and not override:
                 continue
+            # With Python2 on Windows, force environment variables to str to avoid
+            # "TypeError: environment can only contain strings" in Python's subprocess.py.
+            if PY2 and WIN:
+                if isinstance(k, text_type) or isinstance(v, text_type):
+                    k = k.encode('ascii')
+                    v = v.encode('ascii')
             os.environ[k] = v
 
         return True
