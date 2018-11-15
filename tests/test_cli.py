@@ -255,6 +255,7 @@ def test_run(cli):
         dotenv.set_key(dotenv_path, 'FOO', 'BAR')
         result = sh.dotenv('run', 'printenv', 'FOO').strip()
         assert result == 'BAR'
+        sh.rm(dotenv_path)
 
 
 def test_run_with_other_env(cli):
@@ -265,6 +266,7 @@ def test_run_with_other_env(cli):
         sh.dotenv('--file', DOTENV_FILE, 'set', 'FOO', 'BAR')
         result = sh.dotenv('--file', DOTENV_FILE, 'run', 'printenv', 'FOO').strip()
         assert result == 'BAR'
+        sh.rm(DOTENV_FILE)
 
 
 def test_run_without_cmd(cli):
