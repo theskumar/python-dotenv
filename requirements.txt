@@ -6,4 +6,5 @@ pypandoc
 pytest-cov
 pytest>=3.9
 sh>=1.09
+tox
 wheel
