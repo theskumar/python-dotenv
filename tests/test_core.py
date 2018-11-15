@@ -174,7 +174,6 @@ def test_load_dotenv_override(tmp_path):
     assert os.environ[key_name] == 'WORKS'
 
 
-@pytest.mark.xfail(sys.version_info < (3, 0), reason="test was incomplete")
 def test_load_dotenv_in_current_dir(tmp_path):
     dotenv_path = tmp_path / '.env'
     dotenv_path.write_bytes(b'a=b')
