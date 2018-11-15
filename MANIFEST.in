@@ -1,3 +1,10 @@
-include LICENSE
-include README.rst
+include LICENSE *.md *.yml
+
+include tox.ini
+recursive-include tests *.py
+
+include .bumpversion.cfg
+include .coveragerc
+include .editorconfig
+include Makefile
 include requirements.txt

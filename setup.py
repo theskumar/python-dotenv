@@ -14,7 +14,7 @@ except (OSError, ImportError):
         long_description = f.read()
 
 meta = {}
-with open('./dotenv/version.py') as f:
+with open('./src/dotenv/version.py') as f:
     exec(f.read(), meta)
 
 setup(
@@ -28,6 +28,7 @@ setup(
     keywords=['environment variables', 'deployments', 'settings', 'env', 'dotenv',
               'configurations', 'python'],
     packages=['dotenv'],
+    package_dir={'': 'src'},
     extras_require={
         'cli': ['click>=5.0', ],
     },

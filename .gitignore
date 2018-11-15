@@ -10,3 +10,4 @@ htmlcov/
 .cache/
 .idea
 .pytest_cache/
+.tox/

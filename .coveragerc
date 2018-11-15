@@ -1,6 +1,11 @@
 [run]
-source = dotenv/
-omit =
-    tests/*
-    venv/*
-    *conftest*
+source = dotenv
+
+[paths]
+source =
+    src/dotenv
+    .tox/*/lib/python*/site-packages/dotenv
+    .tox/pypy*/site-packages/dotenv
+
+[report]
+show_missing = True
