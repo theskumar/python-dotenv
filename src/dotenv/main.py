@@ -288,7 +288,14 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
         # will work for .py files
         frame = sys._getframe()
         # find first frame that is outside of this file
-        while frame.f_code.co_filename == __file__:
+        if PY2 and not __file__.endswith('.py'):
+            # in Python2 __file__ extension could be .pyc or .pyo (this doesn't account
+            # for edge case of Python compiled for non-standard extension)
+            current_file = __file__.rsplit('.', 1)[0] + '.py'
+        else:
+            current_file = __file__
+
+        while frame.f_code.co_filename == current_file:
             frame = frame.f_back
         frame_filename = frame.f_code.co_filename
         path = os.path.dirname(os.path.abspath(frame_filename))
