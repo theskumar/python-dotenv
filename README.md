@@ -284,6 +284,24 @@ Executing the tests:
 Changelog
 =========
 
+0.10.0
+-----
+
+- Add support for UTF-8 in unquoted values [(@bbc2)]
+- Add support for trailing comments [(@bbc2)]
+- Add backslashes support in values [(@bbc2)]
+- Add support for newlines in values [(@bbc2)]
+- Force environment variables to str with Python2 on Windows ([@greyli])
+- Drop Python 3.3 support ([@greyli])
+- Fix stderr/-out/-in redirection ([@venthur])
+
+
+0.9.0
+-----
+- Add `--version` parameter to cli ([@venthur])
+- Enable loading from current directory ([@cjauvin])
+- Add 'dotenv run' command for calling arbitrary shell script with .env ([@venthur])
+
 0.8.1
 -----
 
@@ -374,6 +392,10 @@ Changelog
 
 [#78]: https://github.com/theskumar/python-dotenv/issues/78
 
+[@@greyli]: https://github.com/@greyli
+[@venthur]: https://github.com/venthur
 [@Flimm]: https://github.com/Flimm
 [@theskumar]: https://github.com/theskumar
 [@alanjds]: https://github.com/alanjds
+[@cjauvin]: https://github.com/cjauvin
+[@bbc2]: https://github.com/bbc2
