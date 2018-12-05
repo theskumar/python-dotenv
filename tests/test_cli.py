@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from os import environ
+import os
 from os.path import dirname, join
 
-import dotenv
-from dotenv.version import __version__
-from dotenv.cli import cli as dotenv_cli
-
+import pytest
 import sh
+
+import dotenv
+from dotenv.cli import cli as dotenv_cli
+from dotenv.version import __version__
 
 here = dirname(__file__)
 dotenv_path = join(here, '.env')
@@ -38,6 +39,22 @@ def test_set_key(dotenv_file):
     with open(dotenv_file, 'r') as fp:
         assert 'HELLO="WORLD 2"\nfoo="bar"' == fp.read().strip()
 
+    success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, "HELLO", "WORLD\n3")
+
+    with open(dotenv_file, "r") as fp:
+        assert 'HELLO="WORLD\n3"\nfoo="bar"' == fp.read().strip()
+
+
+def test_set_key_permission_error(dotenv_file):
+    os.chmod(dotenv_file, 0o000)
+
+    with pytest.raises(Exception):
+        dotenv.set_key(dotenv_file, "HELLO", "WORLD")
+
+    os.chmod(dotenv_file, 0o600)
+    with open(dotenv_file, "r") as fp:
+        assert fp.read() == ""
+
 
 def test_list(cli, dotenv_file):
     success, key_to_set, value_to_set = dotenv.set_key(dotenv_file, 'HELLO', 'WORLD')
@@ -57,6 +74,13 @@ def test_list_wo_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'doesnotexists', 'list'])
     assert result.exit_code == 2, result.output
     assert 'Invalid value for "-f"' in result.output
+
+
+def test_empty_value():
+    with open(dotenv_path, "w") as f:
+        f.write("TEST=")
+    assert dotenv.get_key(dotenv_path, "TEST") == ""
+    sh.rm(dotenv_path)
 
 
 def test_key_value_without_quotes():
@@ -95,18 +119,41 @@ def test_value_with_special_characters():
     sh.rm(dotenv_path)
 
 
-def test_unset():
-    sh.touch(dotenv_path)
-    success, key_to_set, value_to_set = dotenv.set_key(dotenv_path, 'HELLO', 'WORLD')
-    stored_value = dotenv.get_key(dotenv_path, 'HELLO')
-    assert stored_value == 'WORLD'
-    success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
-    assert success is True
-    assert dotenv.get_key(dotenv_path, 'HELLO') is None
-    success, key_to_unset = dotenv.unset_key(dotenv_path, 'RANDOM')
-    assert success is None
+def test_value_with_new_lines():
+    with open(dotenv_path, 'w') as f:
+        f.write('TEST="a\nb"')
+    assert dotenv.get_key(dotenv_path, 'TEST') == "a\nb"
     sh.rm(dotenv_path)
-    success, key_to_unset = dotenv.unset_key(dotenv_path, 'HELLO')
+
+    with open(dotenv_path, 'w') as f:
+        f.write("TEST='a\nb'")
+    assert dotenv.get_key(dotenv_path, 'TEST') == "a\nb"
+    sh.rm(dotenv_path)
+
+
+def test_value_after_comment():
+    with open(dotenv_path, "w") as f:
+        f.write("# comment\nTEST=a")
+    assert dotenv.get_key(dotenv_path, "TEST") == "a"
+    sh.rm(dotenv_path)
+
+
+def test_unset_ok(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write("a=b\nc=d")
+
+    success, key_to_unset = dotenv.unset_key(dotenv_file, "a")
+
+    assert success is True
+    assert key_to_unset == "a"
+    with open(dotenv_file, "r") as f:
+        assert f.read() == "c=d"
+    sh.rm(dotenv_file)
+
+
+def test_unset_non_existing_file():
+    success, key_to_unset = dotenv.unset_key('/non-existing', 'HELLO')
+
     assert success is None
 
 
@@ -180,7 +227,7 @@ def test_get_key_with_interpolation(cli):
         stored_value = dotenv.get_key(dotenv_path, 'BAR')
         assert stored_value == 'CONCATENATED_WORLD_POSIX_VAR'
         # test replace from environ taking precedence over file
-        environ["HELLO"] = "TAKES_PRECEDENCE"
+        os.environ["HELLO"] = "TAKES_PRECEDENCE"
         stored_value = dotenv.get_key(dotenv_path, 'FOO')
         assert stored_value == "TAKES_PRECEDENCE"
         sh.rm(dotenv_path)
@@ -194,10 +241,10 @@ def test_get_key_with_interpolation_of_unset_variable(cli):
         stored_value = dotenv.get_key(dotenv_path, 'FOO')
         assert stored_value == ''
         # unless present in environment
-        environ['NOT_SET'] = 'BAR'
+        os.environ['NOT_SET'] = 'BAR'
         stored_value = dotenv.get_key(dotenv_path, 'FOO')
         assert stored_value == 'BAR'
-        del(environ['NOT_SET'])
+        del(os.environ['NOT_SET'])
         sh.rm(dotenv_path)
 
 
