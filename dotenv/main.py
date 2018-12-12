@@ -97,7 +97,9 @@ class DotEnv():
 
     @contextmanager
     def _get_stream(self):
-        if isinstance(self.dotenv_path, StringIO):
+        if hasattr(self.dotenv_path, 'read'):
+            # the dotenv_path implements a read method and is likely a stream.
+            # StringIO or sys.stdin, file objects from open(), etc
             yield self.dotenv_path
         elif os.path.isfile(self.dotenv_path):
             with io.open(self.dotenv_path) as stream:
