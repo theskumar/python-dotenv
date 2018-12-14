@@ -64,6 +64,13 @@ def restore_os_environ():
         ],
     ),
     (
+        'a=\nb=c',
+        [
+            Binding(key="a", value='', original='a=\n'),
+            Binding(key="b", value='c', original="b=c"),
+        ]
+    ),
+    (
         'a="\nb=c',
         [
             Binding(key="a", value='"', original='a="\n'),

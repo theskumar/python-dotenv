@@ -21,14 +21,14 @@ _binding = re.compile(
     r"""
         (
             \s*                     # leading whitespace
-            (?:export\s+)?          # export
+            (?:export{0}+)?         # export
 
             ( '[^']+'               # single-quoted key
             | [^=\#\s]+             # or unquoted key
             )?
 
             (?:
-                (?:\s*=\s*)         # equal sign
+                (?:{0}*={0}*)       # equal sign
 
                 ( '(?:\\'|[^'])*'   # single-quoted value
                 | "(?:\\"|[^"])*"   # or double-quoted value
@@ -40,7 +40,7 @@ _binding = re.compile(
             (?:\#[^\r\n]*)?         # comment
             (?:\r|\n|\r\n)?         # newline
         )
-    """,
+    """.format(r'[^\S\r\n]'),
     re.MULTILINE | re.VERBOSE,
 )
 
