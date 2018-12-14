@@ -272,7 +272,7 @@ All the contributions are welcome! Please open [an
 issue](https://github.com/theskumar/python-dotenv/issues/new) or send us
 a pull request.
 
-This project is currently maintained by Saurabh Kumar\_ and would not
+This project is currently maintained by [Saurabh Kumar](https://saurabh-kumar.com) and [Bertrand Bonnefoy-Claudet](https://github.com/bbc2) and would not
 have been possible without the support of these [awesome
 people](https://github.com/theskumar/python-dotenv/graphs/contributors).
 
@@ -283,6 +283,10 @@ Executing the tests:
 
 Changelog
 =========
+
+0.10.1
+-----
+- Fix parsing of variable without a value ([@asyncee])([@bbc2])([#158])
 
 0.10.0
 -----
@@ -392,8 +396,10 @@ Changelog
 
 [#78]: https://github.com/theskumar/python-dotenv/issues/78
 [#148]: https://github.com/theskumar/python-dotenv/issues/148
+[#158]: https://github.com/theskumar/python-dotenv/issues/158
 
-[@greyli]: https://github.com/@greyli
+[@asyncee]: https://github.com/asyncee
+[@greyli]: https://github.com/greyli
 [@venthur]: https://github.com/venthur
 [@Flimm]: https://github.com/Flimm
 [@theskumar]: https://github.com/theskumar
