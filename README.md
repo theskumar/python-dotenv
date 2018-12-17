@@ -45,7 +45,7 @@ MULTILINE_VAR="hello\nworld"
 ```
 
 You can optionally prefix each line with the word `export`, which will
-conveniently allow you to source the whole file on your shell.
+conveniently allow you pass the environmental variables to subprocesses.
 
 `.env` can interpolate variables using POSIX variable expansion,
 variables are replaced from the environment first or from other values
