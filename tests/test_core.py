@@ -3,15 +3,17 @@ from __future__ import unicode_literals
 
 import contextlib
 import os
-import pytest
-import tempfile
+import sys
+import textwrap
 import warnings
-import sh
 
-from dotenv import load_dotenv, find_dotenv, set_key, dotenv_values
-from dotenv.main import Binding, parse_stream
-from dotenv.compat import StringIO
+import pytest
+import sh
 from IPython.terminal.embed import InteractiveShellEmbed
+
+from dotenv import dotenv_values, find_dotenv, load_dotenv, set_key
+from dotenv.compat import StringIO
+from dotenv.main import Binding, parse_stream
 
 
 @contextlib.contextmanager
@@ -108,11 +110,11 @@ def test_warns_if_file_does_not_exist():
         assert str(w[0].message) == "File doesn't exist .does_not_exist"
 
 
-def test_find_dotenv():
+def test_find_dotenv(tmp_path):
     """
     Create a temporary folder structure like the following:
 
-        tmpXiWxa5/
+        test_find_dotenv0/
         └── child1
             ├── child2
             │   └── child3
@@ -121,19 +123,18 @@ def test_find_dotenv():
 
     Then try to automatically `find_dotenv` starting in `child4`
     """
-    tmpdir = os.path.realpath(tempfile.mkdtemp())
 
-    curr_dir = tmpdir
+    curr_dir = tmp_path
     dirs = []
     for f in ['child1', 'child2', 'child3', 'child4']:
-        curr_dir = os.path.join(curr_dir, f)
+        curr_dir /= f
         dirs.append(curr_dir)
-        os.mkdir(curr_dir)
+        curr_dir.mkdir()
 
     child1, child4 = dirs[0], dirs[-1]
 
     # change the working directory for testing
-    os.chdir(child4)
+    os.chdir(str(child4))
 
     # try without a .env file and force error
     with pytest.raises(IOError):
@@ -143,72 +144,70 @@ def test_find_dotenv():
     assert find_dotenv(usecwd=True) == ''
 
     # now place a .env file a few levels up and make sure it's found
-    filename = os.path.join(child1, '.env')
-    with open(filename, 'w') as f:
-        f.write("TEST=test\n")
-    assert find_dotenv(usecwd=True) == filename
+    dotenv_file = child1 / '.env'
+    dotenv_file.write_bytes(b"TEST=test\n")
+    assert find_dotenv(usecwd=True) == str(dotenv_file)
 
 
-def test_load_dotenv(cli):
+def test_load_dotenv(tmp_path):
+    os.chdir(str(tmp_path))
     dotenv_path = '.test_load_dotenv'
-    with cli.isolated_filesystem():
-        sh.touch(dotenv_path)
-        set_key(dotenv_path, 'DOTENV', 'WORKS')
-        assert 'DOTENV' not in os.environ
-        success = load_dotenv(dotenv_path)
-        assert success
-        assert 'DOTENV' in os.environ
-        assert os.environ['DOTENV'] == 'WORKS'
-        sh.rm(dotenv_path)
+    sh.touch(dotenv_path)
+    set_key(dotenv_path, 'DOTENV', 'WORKS')
+    assert 'DOTENV' not in os.environ
+    success = load_dotenv(dotenv_path)
+    assert success
+    assert 'DOTENV' in os.environ
+    assert os.environ['DOTENV'] == 'WORKS'
 
 
-def test_load_dotenv_override(cli):
+def test_load_dotenv_override(tmp_path):
+    os.chdir(str(tmp_path))
     dotenv_path = '.test_load_dotenv_override'
     key_name = "DOTENV_OVER"
-
-    with cli.isolated_filesystem():
-        sh.touch(dotenv_path)
-        os.environ[key_name] = "OVERRIDE"
-        set_key(dotenv_path, key_name, 'WORKS')
-        success = load_dotenv(dotenv_path, override=True)
-        assert success
-        assert key_name in os.environ
-        assert os.environ[key_name] == 'WORKS'
-        sh.rm(dotenv_path)
-
-
-def test_load_dotenv_in_current_dir():
-    # make sure were are here!
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    dotenv_path = '.env'
-    with open(dotenv_path, 'w') as f:
-        f.write("TOTO=bla\n")
-    assert 'TOTO' not in os.environ
-    success = load_dotenv(verbose=True)
+    sh.touch(dotenv_path)
+    os.environ[key_name] = "OVERRIDE"
+    set_key(dotenv_path, key_name, 'WORKS')
+    success = load_dotenv(dotenv_path, override=True)
     assert success
-    assert os.environ['TOTO'] == 'bla'
-    sh.rm(dotenv_path)
+    assert key_name in os.environ
+    assert os.environ[key_name] == 'WORKS'
 
 
-def test_ipython():
-    tmpdir = os.path.realpath(tempfile.mkdtemp())
-    os.chdir(tmpdir)
-    filename = os.path.join(tmpdir, '.env')
-    with open(filename, 'w') as f:
-        f.write("MYNEWVALUE=q1w2e3\n")
+@pytest.mark.xfail(sys.version_info < (3, 0), reason="test was incomplete")
+def test_load_dotenv_in_current_dir(tmp_path):
+    dotenv_path = tmp_path / '.env'
+    dotenv_path.write_bytes(b'a=b')
+    code_path = tmp_path / 'code.py'
+    code_path.write_text(textwrap.dedent("""
+        import dotenv
+        import os
+
+        dotenv.load_dotenv(verbose=True)
+        print(os.environ['a'])
+    """))
+    os.chdir(str(tmp_path))
+
+    result = sh.Command(sys.executable)(code_path)
+
+    assert result == 'b\n'
+
+
+def test_ipython(tmp_path):
+    os.chdir(str(tmp_path))
+    dotenv_file = tmp_path / '.env'
+    dotenv_file.write_text("MYNEWVALUE=q1w2e3\n")
     ipshell = InteractiveShellEmbed()
     ipshell.magic("load_ext dotenv")
     ipshell.magic("dotenv")
     assert os.environ["MYNEWVALUE"] == 'q1w2e3'
 
 
-def test_ipython_override():
-    tmpdir = os.path.realpath(tempfile.mkdtemp())
-    os.chdir(tmpdir)
-    filename = os.path.join(tmpdir, '.env')
+def test_ipython_override(tmp_path):
+    os.chdir(str(tmp_path))
+    dotenv_file = tmp_path / '.env'
     os.environ["MYNEWVALUE"] = "OVERRIDE"
-    with open(filename, 'w') as f:
-        f.write("MYNEWVALUE=q1w2e3\n")
+    dotenv_file.write_text("MYNEWVALUE=q1w2e3\n")
     ipshell = InteractiveShellEmbed()
     ipshell.magic("load_ext dotenv")
     ipshell.magic("dotenv -o")

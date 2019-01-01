@@ -1,9 +1,9 @@
-flake8>=2.2.3
-pytest>=3.0.5
-sh>=1.09
 bumpversion
-wheel
-pytest-cov
 click
+flake8>=2.2.3
 ipython
 pypandoc
+pytest-cov
+pytest>=3.9
+sh>=1.09
+wheel
