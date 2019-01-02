@@ -44,8 +44,12 @@ MEANING_OF_LIFE=42
 MULTILINE_VAR="hello\nworld"
 ```
 
-You can optionally prefix each line with the word `export`, which will
-conveniently allow you to source the whole file on your shell.
+You can optionally prefix each line with the word `export`, which is totally ignore by this library, but might allow you to [`source`](https://bash.cyberciti.biz/guide/Source_command) the file in bash.
+
+```
+export S3_BUCKET=YOURS3BUCKET
+export SECRET_KEY=YOURSECRETKEYGOESHERE
+```
 
 `.env` can interpolate variables using POSIX variable expansion,
 variables are replaced from the environment first or from other values
