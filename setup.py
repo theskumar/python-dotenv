@@ -14,7 +14,8 @@ except (OSError, ImportError):
         long_description = f.read()
 
 meta = {}
-exec(open('./dotenv/version.py').read(), meta)
+with open('./dotenv/version.py') as f:
+    exec(f.read(), meta)
 
 setup(
     name="python-dotenv",
