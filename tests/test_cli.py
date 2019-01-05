@@ -199,7 +199,8 @@ def test_get_key_with_interpolation(dotenv_file):
     dotenv.set_key(dotenv_file, 'FOO', '${HELLO}')
     dotenv.set_key(dotenv_file, 'BAR', 'CONCATENATED_${HELLO}_POSIX_VAR')
 
-    lines = list(open(dotenv_file, "r").readlines())
+    with open(dotenv_file) as f:
+        lines = f.readlines()
     assert lines == [
         'HELLO="WORLD"\n',
         'FOO="${HELLO}"\n',
