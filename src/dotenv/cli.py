@@ -97,7 +97,7 @@ def run(ctx, commandline):
     if not commandline:
         click.echo('No command given.')
         exit(1)
-    ret = run_command(commandline, dotenv_as_dict)
+    ret = run_command(commandline, dotenv_as_dict)  # type: ignore
     exit(ret)
 
 

@@ -10,7 +10,7 @@ import sys
 from subprocess import Popen
 import tempfile
 from typing import (Any, Dict, Iterator, List, Match, NamedTuple, Optional,
-                    Pattern, Union, TYPE_CHECKING, Text, TextIO, Tuple)
+                    Pattern, Union, TYPE_CHECKING, Text, IO, Tuple)
 import warnings
 from collections import OrderedDict, namedtuple
 from contextlib import contextmanager
@@ -22,6 +22,11 @@ if TYPE_CHECKING:
         _PathLike = os.PathLike
     else:
         _PathLike = Text
+
+    if sys.version_info >= (3, 0):
+        _StringIO = StringIO
+    else:
+        _StringIO = StringIO[Text]
 
 __posix_variable = re.compile(r'\$\{[^\}]*\}')  # type: Pattern[Text]
 
@@ -99,7 +104,7 @@ def parse_binding(string, position):
 
 
 def parse_stream(stream):
-    # type:(TextIO) -> Iterator[Binding]
+    # type:(IO[Text]) -> Iterator[Binding]
     string = stream.read()
     position = 0
     length = len(string)
@@ -111,19 +116,19 @@ def parse_stream(stream):
 class DotEnv():
 
     if TYPE_CHECKING:
-        dotenv_path = None  # type: Union[Text,_PathLike, StringIO]
+        dotenv_path = None  # type: Union[Text,_PathLike, _StringIO]
         _dict = None  # type: Optional[Dict[Text, Text]]
         verbose = None  # type: bool
 
     def __init__(self, dotenv_path, verbose=False):
-        # type: (Union[Text, _PathLike, StringIO], bool) -> None
+        # type: (Union[Text, _PathLike, _StringIO], bool) -> None
         self.dotenv_path = dotenv_path
         self._dict = None
         self.verbose = verbose
 
     @contextmanager
     def _get_stream(self):
-        # type: () -> Iterator[TextIO]
+        # type: () -> Iterator[IO[Text]]
         if isinstance(self.dotenv_path, StringIO):
             yield self.dotenv_path
         elif os.path.isfile(self.dotenv_path):
@@ -131,7 +136,8 @@ class DotEnv():
                 yield stream  # type: ignore
         else:
             if self.verbose:
-                warnings.warn("File doesn't exist {}".format(self.dotenv_path))
+                if not TYPE_CHECKING or sys.version_info >= (3, 0):
+                    warnings.warn("File doesn't exist {}".format(self.dotenv_path))
             yield StringIO('')
 
     def dict(self):
@@ -165,7 +171,8 @@ class DotEnv():
                 if isinstance(k, text_type) or isinstance(v, text_type):
                     k = k.encode('ascii')
                     v = v.encode('ascii')
-            os.environ[k] = v
+            if not TYPE_CHECKING or sys.version_info >= (3, 0):
+                os.environ[k] = v
 
         return True
 
@@ -179,7 +186,8 @@ class DotEnv():
             return data[key]
 
         if self.verbose:
-            warnings.warn("key %s not found in %s." % (key, self.dotenv_path))
+            if not TYPE_CHECKING or sys.version_info >= (3, 0):
+                warnings.warn("key %s not found in %s." % (key, self.dotenv_path))
 
         return None # NOTE: PEP8 compliance required by mypy
 
@@ -196,7 +204,7 @@ def get_key(dotenv_path, key_to_get):
 
 @contextmanager
 def rewrite(path):
-    # type: (_PathLike) -> Iterator[Tuple[TextIO, TextIO]]
+    # type: (_PathLike) -> Iterator[Tuple[IO[Text], IO[Text]]]
     try:
         with tempfile.NamedTemporaryFile(mode="w+", delete=False) as dest:
             with io.open(path) as source:
@@ -219,7 +227,8 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     """
     value_to_set = value_to_set.strip("'").strip('"')
     if not os.path.exists(dotenv_path):
-        warnings.warn("can't write to %s - it doesn't exist." % dotenv_path)
+        if not TYPE_CHECKING or sys.version_info >= (3, 0):
+            warnings.warn("can't write to %s - it doesn't exist." % dotenv_path)
         return None, key_to_set, value_to_set
 
     if " " in value_to_set:
@@ -251,7 +260,8 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     If the given key doesn't exist in the .env, fails
     """
     if not os.path.exists(dotenv_path):
-        warnings.warn("can't delete from %s - it doesn't exist." % dotenv_path)
+        if not TYPE_CHECKING or sys.version_info >= (3, 0):
+            warnings.warn("can't delete from %s - it doesn't exist." % dotenv_path)
         return None, key_to_unset
 
     removed = False
@@ -263,7 +273,8 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
                 dest.write(mapping.original)
 
     if not removed:
-        warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))
+        if not TYPE_CHECKING or sys.version_info >= (3, 0):
+            warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))
         return None, key_to_unset
 
     return removed, key_to_unset
@@ -298,7 +309,7 @@ def resolve_nested_variables(values):
 
 
 def _walk_to_root(path):
-    # type: (Text) -> Iterator[str]
+    # type: (Text) -> Iterator[Text]
     """
     Yield directories starting from the given directory up to the root
     """
@@ -354,19 +365,19 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
 
 
 def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False):
-    # type: (Union[Text, _PathLike, None], Optional[StringIO], bool, bool) -> bool
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool) -> bool
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose).set_as_environment_variables(override=override)
 
 
 def dotenv_values(dotenv_path=None, stream=None, verbose=False):
-    # type: (Union[Text, _PathLike, None], Optional[StringIO], bool) -> Dict[Text, Text]
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool) -> Dict[Text, Text]
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose).dict()
 
 
 def run_command(command, env):
-    # type: (List[Text], Dict[Text, Text]) -> int
+    # type: (List[str], Dict[str, str]) -> int
     """Run command in sub process.
 
     Runs the command in a sub process with the variables from `env`

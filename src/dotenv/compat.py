@@ -1,9 +1,9 @@
 from typing import Text, Type, TYPE_CHECKING
 import sys
-try:
-    from StringIO import StringIO  # type: ignore # noqa
-except ImportError:
+if sys.version_info >= (3, 0):
     from io import StringIO  # noqa
+else:
+    from StringIO import StringIO  # noqa
 
 PY2 = sys.version_info[0] == 2  # type: bool
 WIN = sys.platform.startswith('win')  # type: bool
