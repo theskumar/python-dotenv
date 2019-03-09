@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List
 
 try:
     import click
@@ -21,7 +22,7 @@ from .version import __version__
               help="Whether to quote or not the variable values. Default mode is always. This does not affect parsing.")
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx, file, quote):
+def cli(ctx: click.Context, file, quote) -> None:
     '''This script is used to set, get or unset values from a .env file.'''
     ctx.obj = {}
     ctx.obj['FILE'] = file
@@ -30,7 +31,7 @@ def cli(ctx, file, quote):
 
 @cli.command()
 @click.pass_context
-def list(ctx):
+def list(ctx: click.Context) -> None:
     '''Display all the stored key/value.'''
     file = ctx.obj['FILE']
     dotenv_as_dict = dotenv_values(file)
@@ -42,7 +43,7 @@ def list(ctx):
 @click.pass_context
 @click.argument('key', required=True)
 @click.argument('value', required=True)
-def set(ctx, key, value):
+def set(ctx: click.Context, key, value) -> None:
     '''Store the given key/value.'''
     file = ctx.obj['FILE']
     quote = ctx.obj['QUOTE']
@@ -56,7 +57,7 @@ def set(ctx, key, value):
 @cli.command()
 @click.pass_context
 @click.argument('key', required=True)
-def get(ctx, key):
+def get(ctx: click.Context, key) -> None:
     '''Retrieve the value for the given key.'''
     file = ctx.obj['FILE']
     stored_value = get_key(file, key)
@@ -69,7 +70,7 @@ def get(ctx, key):
 @cli.command()
 @click.pass_context
 @click.argument('key', required=True)
-def unset(ctx, key):
+def unset(ctx: click.Context, key) -> None:
     '''Removes the given key.'''
     file = ctx.obj['FILE']
     quote = ctx.obj['QUOTE']
@@ -83,7 +84,7 @@ def unset(ctx, key):
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.pass_context
 @click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
-def run(ctx, commandline):
+def run(ctx: click.Context, commandline: List[str]) -> None:
     """Run command with environment variables present."""
     file = ctx.obj['FILE']
     dotenv_as_dict = dotenv_values(file)

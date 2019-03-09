@@ -9,15 +9,17 @@ import shutil
 import sys
 from subprocess import Popen
 import tempfile
+from typing import (Any, Dict, Iterator, List, Match, NamedTuple, Optional,
+                    Pattern, Union, Text, TextIO, Tuple)
 import warnings
 from collections import OrderedDict, namedtuple
 from contextlib import contextmanager
 
 from .compat import StringIO, PY2, WIN, text_type
 
-__posix_variable = re.compile(r'\$\{[^\}]*\}')
+__posix_variable: Pattern[Text] = re.compile(r'\$\{[^\}]*\}')
 
-_binding = re.compile(
+_binding: Pattern[Text] = re.compile(
     r"""
         (
             \s*                     # leading whitespace
@@ -44,28 +46,31 @@ _binding = re.compile(
     re.MULTILINE | re.VERBOSE,
 )
 
-_escape_sequence = re.compile(r"\\[\\'\"abfnrtv]")
+_escape_sequence: Pattern[Text] = re.compile(r"\\[\\'\"abfnrtv]")
 
 
-Binding = namedtuple('Binding', 'key value original')
+class Binding(NamedTuple):
+    key: Optional[Text]
+    value: Optional[Text]
+    original: Text
 
 
-def decode_escapes(string):
-    def decode_match(match):
-        return codecs.decode(match.group(0), 'unicode-escape')
+def decode_escapes(string: Text) -> Text:
+    def decode_match(match: Match[Text]) -> Text:
+        return codecs.decode(match.group(0), 'unicode-escape')  # type: ignore
 
     return _escape_sequence.sub(decode_match, string)
 
 
-def is_surrounded_by(string, char):
+def is_surrounded_by(string: Text, char: Text) -> bool:
     return (
         len(string) > 1
         and string[0] == string[-1] == char
     )
 
 
-def parse_binding(string, position):
-    match = _binding.match(string, position)
+def parse_binding(string: Text, position: int) -> Tuple[Binding, int]:
+    match: Match[Text] = _binding.match(string, position)  # type: ignore
     (matched, key, value) = match.groups()
     if key is None or value is None:
         key = None
@@ -79,7 +84,7 @@ def parse_binding(string, position):
     return (Binding(key=key, value=value, original=matched), match.end())
 
 
-def parse_stream(stream):
+def parse_stream(stream: TextIO) -> Iterator[Binding]:
     string = stream.read()
     position = 0
     length = len(string)
@@ -90,24 +95,30 @@ def parse_stream(stream):
 
 class DotEnv():
 
-    def __init__(self, dotenv_path, verbose=False):
+    dotenv_path: Union[Text, os.PathLike, StringIO]
+    _dict: Optional[Dict[Text, Text]]
+    verbose: bool
+
+    def __init__(self,
+                 dotenv_path: Union[Text, os.PathLike, StringIO],
+                 verbose: bool = False) -> None:
         self.dotenv_path = dotenv_path
         self._dict = None
         self.verbose = verbose
 
     @contextmanager
-    def _get_stream(self):
+    def _get_stream(self) -> Iterator[TextIO]:
         if isinstance(self.dotenv_path, StringIO):
             yield self.dotenv_path
         elif os.path.isfile(self.dotenv_path):
             with io.open(self.dotenv_path) as stream:
-                yield stream
+                yield stream  # type: ignore
         else:
             if self.verbose:
                 warnings.warn("File doesn't exist {}".format(self.dotenv_path))
             yield StringIO('')
 
-    def dict(self):
+    def dict(self) -> Dict[Text, Text]:
         """Return dotenv as dict"""
         if self._dict:
             return self._dict
@@ -116,13 +127,13 @@ class DotEnv():
         self._dict = resolve_nested_variables(values)
         return self._dict
 
-    def parse(self):
+    def parse(self) -> Iterator[Tuple[Text, Text]]:
         with self._get_stream() as stream:
             for mapping in parse_stream(stream):
                 if mapping.key is not None and mapping.value is not None:
                     yield mapping.key, mapping.value
 
-    def set_as_environment_variables(self, override=False):
+    def set_as_environment_variables(self, override: bool = False) -> bool:
         """
         Load the current dotenv as system environemt variable.
         """
@@ -139,7 +150,7 @@ class DotEnv():
 
         return True
 
-    def get(self, key):
+    def get(self, key: Text) -> Optional[Text]:
         """
         """
         data = self.dict()
@@ -150,8 +161,11 @@ class DotEnv():
         if self.verbose:
             warnings.warn("key %s not found in %s." % (key, self.dotenv_path))
 
+        return None # NOTE: PEP8 compliance required by mypy
 
-def get_key(dotenv_path, key_to_get):
+
+def get_key(dotenv_path: Union[Text, os.PathLike],
+            key_to_get: Text) -> Optional[Text]:
     """
     Gets the value of a given key from the given .env
 
@@ -161,11 +175,11 @@ def get_key(dotenv_path, key_to_get):
 
 
 @contextmanager
-def rewrite(path):
+def rewrite(path: os.PathLike) -> Iterator[Tuple[TextIO, TextIO]]:
     try:
         with tempfile.NamedTemporaryFile(mode="w+", delete=False) as dest:
             with io.open(path) as source:
-                yield (source, dest)
+                yield (source, dest)  # type: ignore
     except BaseException:
         if os.path.isfile(dest.name):
             os.unlink(dest.name)
@@ -174,7 +188,10 @@ def rewrite(path):
         shutil.move(dest.name, path)
 
 
-def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
+def set_key(dotenv_path: os.PathLike,
+            key_to_set: Text,
+            value_to_set: Text,
+            quote_mode: Text = "always") -> Tuple[Optional[bool], Text, Text]:
     """
     Adds or Updates a key/value to the given .env
 
@@ -206,7 +223,9 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     return True, key_to_set, value_to_set
 
 
-def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
+def unset_key(dotenv_path: os.PathLike,
+              key_to_unset: Text,
+              quote_mode: Text = "always") -> Tuple[Optional[bool], Text]:
     """
     Removes a given key from the given .env
 
@@ -232,8 +251,8 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     return removed, key_to_unset
 
 
-def resolve_nested_variables(values):
-    def _replacement(name):
+def resolve_nested_variables(values: Dict[Text, Text]) -> Dict[Text, Text]:
+    def _replacement(name: Text) -> Text:
         """
         get appropriate value for a variable name.
         first search in environ, if not found,
@@ -242,7 +261,7 @@ def resolve_nested_variables(values):
         ret = os.getenv(name, new_values.get(name, ""))
         return ret
 
-    def _re_sub_callback(match_object):
+    def _re_sub_callback(match_object: Match[Text]) -> Text:
         """
         From a match object gets the variable name and returns
         the correct replacement
@@ -257,7 +276,7 @@ def resolve_nested_variables(values):
     return new_values
 
 
-def _walk_to_root(path):
+def _walk_to_root(path: Text) -> Iterator[str]:
     """
     Yield directories starting from the given directory up to the root
     """
@@ -275,7 +294,9 @@ def _walk_to_root(path):
         last_dir, current_dir = current_dir, parent_dir
 
 
-def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
+def find_dotenv(filename: Text = '.env',
+                raise_error_if_not_found: bool = False,
+                usecwd: bool = False) -> Text:
     """
     Search in increasingly higher folders for the given file
 
@@ -311,17 +332,22 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     return ''
 
 
-def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False):
+def load_dotenv(dotenv_path: Union[Text, os.PathLike, None] = None,
+                stream: Optional[StringIO] = None,
+                verbose: bool = False,
+                override: bool = False) -> bool:
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose).set_as_environment_variables(override=override)
 
 
-def dotenv_values(dotenv_path=None, stream=None, verbose=False):
+def dotenv_values(dotenv_path: Union[Text, os.PathLike, None] = None,
+                  stream: Optional[StringIO] = None,
+                  verbose: bool = False) -> Dict[Text, Text]:
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose).dict()
 
 
-def run_command(command, env):
+def run_command(command: List[Text], env: Dict[Text, Text]) -> int:
     """Run command in sub process.
 
     Runs the command in a sub process with the variables from `env`
