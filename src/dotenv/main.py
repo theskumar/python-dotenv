@@ -17,6 +17,12 @@ from contextlib import contextmanager
 
 from .compat import StringIO, PY2, WIN, text_type
 
+if TYPE_CHECKING:
+    if sys.version_info >= (3, 6):
+        _PathLike = os.PathLike
+    else:
+        _PathLike = Text
+
 __posix_variable = re.compile(r'\$\{[^\}]*\}')  # type: Pattern[Text]
 
 _binding = re.compile(
@@ -105,12 +111,12 @@ def parse_stream(stream):
 class DotEnv():
 
     if TYPE_CHECKING:
-        dotenv_path = None  # type: Union[Text, os.PathLike, StringIO]
+        dotenv_path = None  # type: Union[Text,_PathLike, StringIO]
         _dict = None  # type: Optional[Dict[Text, Text]]
         verbose = None  # type: bool
 
     def __init__(self, dotenv_path, verbose=False):
-        # type: (Union[Text, os.PathLike, StringIO], bool) -> None
+        # type: (Union[Text, _PathLike, StringIO], bool) -> None
         self.dotenv_path = dotenv_path
         self._dict = None
         self.verbose = verbose
@@ -179,7 +185,7 @@ class DotEnv():
 
 
 def get_key(dotenv_path, key_to_get):
-    # type: (Union[Text, os.PathLike], Text) -> Optional[Text]
+    # type: (Union[Text, _PathLike], Text) -> Optional[Text]
     """
     Gets the value of a given key from the given .env
 
@@ -190,7 +196,7 @@ def get_key(dotenv_path, key_to_get):
 
 @contextmanager
 def rewrite(path):
-    # type: (os.PathLike) -> Iterator[Tuple[TextIO, TextIO]]
+    # type: (_PathLike) -> Iterator[Tuple[TextIO, TextIO]]
     try:
         with tempfile.NamedTemporaryFile(mode="w+", delete=False) as dest:
             with io.open(path) as source:
@@ -204,7 +210,7 @@ def rewrite(path):
 
 
 def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
-    # type: (os.PathLike, Text, Text, Text) -> Tuple[Optional[bool], Text, Text]
+    # type: (_PathLike, Text, Text, Text) -> Tuple[Optional[bool], Text, Text]
     """
     Adds or Updates a key/value to the given .env
 
@@ -237,7 +243,7 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
 
 
 def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
-    # type: (os.PathLike, Text, Text) -> Tuple[Optional[bool], Text]
+    # type: (_PathLike, Text, Text) -> Tuple[Optional[bool], Text]
     """
     Removes a given key from the given .env
 
@@ -348,13 +354,13 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
 
 
 def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False):
-    # type: (Union[Text, os.PathLike, None], Optional[StringIO], bool, bool) -> bool
+    # type: (Union[Text, _PathLike, None], Optional[StringIO], bool, bool) -> bool
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose).set_as_environment_variables(override=override)
 
 
 def dotenv_values(dotenv_path=None, stream=None, verbose=False):
-    # type: (Union[Text, os.PathLike, None], Optional[StringIO], bool) -> Dict[Text, Text]
+    # type: (Union[Text, _PathLike, None], Optional[StringIO], bool) -> Dict[Text, Text]
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose).dict()
 
