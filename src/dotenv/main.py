@@ -353,3 +353,52 @@ def run_command(command, env):
     _, _ = p.communicate()
 
     return p.returncode
+
+
+def getenv(key, default=None, delimiter=','):
+    '''A wrapper to os.getenv. Loads key from the envs. If key is
+    not found from the envs, default will be returned. Additionally,
+    this utilizes the datatype of default, the returned value will be
+    cast to the type of given default.
+
+    when default is:
+        None - no casting will be done, return value is str
+        boolean - return value would be translated to boolean
+        list (or tuple) - env value split using delimiter, and returned
+            as list or tuple
+        numeric - return value is cast to numeric (int or float)
+        str - return value is string
+    '''
+
+    value = os.environ.get(key, default)
+
+    if isinstance(default, bool):
+        # if the default value is a boolean, this function will return
+        # True or False. None is not allowed and will raise an exception
+        if isinstance(value, bool):
+            return value
+
+        elif value.lower() in ['true', '1']:
+            return True
+
+        elif value.lower() in ['false', '0']:
+            return False
+
+        else:
+            raise ValueError(
+                'Error loading env. %s cannot be translated to boolean' % key)
+
+    elif isinstance(default, list) or isinstance(default, tuple):
+        # if the default value is a list or tuple, cast value to
+        # list or tuple by splitting on the delimiter
+        if isinstance(value, str):
+            value = value.split(delimiter)
+
+    if value is not None:
+        # cast type of value to type of default (if it is not None)
+        if default is not None:
+            return type(default)(value)
+
+        return value
+
+    raise ValueError('Env variable %s not found' % key)
