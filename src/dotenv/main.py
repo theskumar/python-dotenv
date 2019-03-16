@@ -12,7 +12,7 @@ import tempfile
 from typing import (Any, Dict, Iterator, List, Match, NamedTuple, Optional,
                     Pattern, Union, TYPE_CHECKING, Text, IO, Tuple)
 import warnings
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
 from contextlib import contextmanager
 
 from .compat import StringIO, PY2, WIN, text_type
@@ -60,12 +60,9 @@ _binding = re.compile(
 _escape_sequence = re.compile(r"\\[\\'\"abfnrtv]")  # type: Pattern[Text]
 
 
-if TYPE_CHECKING:
-    Binding = NamedTuple("Binding", [("key", Optional[Text]),
-                                     ("value", Optional[Text]),
-                                     ("original", Text)])
-else:
-    Binding = namedtuple("Binding", "key value original")
+Binding = NamedTuple("Binding", [("key", Optional[Text]),
+                                 ("value", Optional[Text]),
+                                 ("original", Text)])
 
 
 def decode_escapes(string):
