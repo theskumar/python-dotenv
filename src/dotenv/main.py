@@ -9,8 +9,8 @@ import shutil
 import sys
 from subprocess import Popen
 import tempfile
-from typing import (Any, Dict, Iterator, List, Match, NamedTuple, Optional,
-                    Pattern, Union, TYPE_CHECKING, Text, IO, Tuple)
+from typing import (Any, Dict, Iterator, List, Match, NamedTuple, Optional,  # noqa
+                    Pattern, Union, TYPE_CHECKING, Text, IO, Tuple)  # noqa
 import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
@@ -178,7 +178,7 @@ class DotEnv():
         if self.verbose:
             warnings.warn("key %s not found in %s." % (key, self.dotenv_path))  # type: ignore
 
-        return None # NOTE: PEP8 compliance required by mypy
+        return None
 
 
 def get_key(dotenv_path, key_to_get):

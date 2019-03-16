@@ -10,4 +10,4 @@ WIN = sys.platform.startswith('win')  # type: bool
 if TYPE_CHECKING:
     text_type = Text  # type: Type[Text]
 else:
-    text_type = unicode if PY2 else str
+    text_type = unicode if PY2 else str  # noqa
