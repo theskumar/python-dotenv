@@ -115,16 +115,11 @@ def parse_stream(stream):
 
 class DotEnv():
 
-    if TYPE_CHECKING:
-        dotenv_path = None  # type: Union[Text,_PathLike, _StringIO]
-        _dict = None  # type: Optional[Dict[Text, Text]]
-        verbose = None  # type: bool
-
     def __init__(self, dotenv_path, verbose=False):
         # type: (Union[Text, _PathLike, _StringIO], bool) -> None
-        self.dotenv_path = dotenv_path
-        self._dict = None
-        self.verbose = verbose
+        self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
+        self._dict = None  # type: Optional[Dict[Text, Text]]
+        self.verbose = verbose  # type: bool
 
     @contextmanager
     def _get_stream(self):
