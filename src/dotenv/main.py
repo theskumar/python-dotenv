@@ -133,7 +133,7 @@ class DotEnv():
             yield self.dotenv_path
         elif os.path.isfile(self.dotenv_path):
             with io.open(self.dotenv_path) as stream:
-                yield stream  # type: ignore
+                yield stream
         else:
             if self.verbose:
                 if not TYPE_CHECKING or sys.version_info >= (3, 0):
