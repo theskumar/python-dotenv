@@ -85,8 +85,7 @@ def is_surrounded_by(string, char):
 def parse_binding(string, position):
     # type: (Text, int) -> Tuple[Binding, int]
     match = _binding.match(string, position)
-    if TYPE_CHECKING:
-        assert match is not None
+    assert match is not None
     (matched, key, value) = match.groups()
     if key is None or value is None:
         key = None
