@@ -17,7 +17,7 @@ from contextlib import contextmanager
 
 from .compat import StringIO, PY2, WIN, text_type
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     if sys.version_info >= (3, 6):
         _PathLike = os.PathLike
     else:
