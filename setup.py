@@ -32,6 +32,9 @@ setup(
     package_data={
         'dotenv': ['py.typed'],
     },
+    install_requires=[
+        'typing',
+    ],
     extras_require={
         'cli': ['click>=5.0', ],
     },
