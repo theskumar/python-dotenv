@@ -33,7 +33,7 @@ setup(
         'dotenv': ['py.typed'],
     },
     install_requires=[
-        'typing',
+        "typing; python_version<'3.5'",
     ],
     extras_require={
         'cli': ['click>=5.0', ],

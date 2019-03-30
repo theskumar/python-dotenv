@@ -294,6 +294,11 @@ or with [tox](https://pypi.org/project/tox/) installed:
 Changelog
 =========
 
+Unreleased
+-----
+
+- Add type hints and expose them to users ([@qnighy])([#172])
+
 0.10.1
 -----
 - Fix parsing of variable without a value ([@asyncee])([@bbc2])([#158])
