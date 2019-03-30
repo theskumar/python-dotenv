@@ -412,6 +412,7 @@ Unreleased
 [#78]: https://github.com/theskumar/python-dotenv/issues/78
 [#148]: https://github.com/theskumar/python-dotenv/issues/148
 [#158]: https://github.com/theskumar/python-dotenv/issues/158
+[#172]: https://github.com/theskumar/python-dotenv/issues/172
 
 [@asyncee]: https://github.com/asyncee
 [@greyli]: https://github.com/greyli
@@ -421,3 +422,4 @@ Unreleased
 [@alanjds]: https://github.com/alanjds
 [@cjauvin]: https://github.com/cjauvin
 [@bbc2]: https://github.com/bbc2
+[@qnighy]: https://github.com/qnighy
