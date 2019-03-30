@@ -29,6 +29,12 @@ setup(
               'configurations', 'python'],
     packages=['dotenv'],
     package_dir={'': 'src'},
+    package_data={
+        'dotenv': ['py.typed'],
+    },
+    install_requires=[
+        'typing',
+    ],
     extras_require={
         'cli': ['click>=5.0', ],
     },
