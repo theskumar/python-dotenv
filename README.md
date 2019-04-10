@@ -270,6 +270,7 @@ Related Projects
 -   [django-configuration](https://github.com/jezdez/django-configurations)
 -   [dump-env](https://github.com/sobolevn/dump-env)
 -   [environs](https://github.com/sloria/environs)
+-   [dynaconf](https://github.com/rochacbruno/dynaconf)
 
 Contributing
 ============
