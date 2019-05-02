@@ -15,6 +15,7 @@ from dotenv.parser import Binding, parse_stream
     (" export 'a'=b", [Binding(key="'a'", value="b", original=" export 'a'=b")]),
     (" export 'a'=b", [Binding(key="'a'", value="b", original=" export 'a'=b")]),
     ("# a=b", [Binding(key=None, value=None, original="# a=b")]),
+    ("a=b#c", [Binding(key="a", value="b", original="a=b#c")]),
     ('a=b # comment', [Binding(key="a", value="b", original="a=b # comment")]),
     ("a=b space ", [Binding(key="a", value="b space", original="a=b space ")]),
     ("a='b space '", [Binding(key="a", value="b space ", original="a='b space '")]),
@@ -25,6 +26,7 @@ from dotenv.parser import Binding, parse_stream
     ("a='b\nc'", [Binding(key="a", value="b\nc", original="a='b\nc'")]),
     ('a="b\nc"', [Binding(key="a", value="b\nc", original='a="b\nc"')]),
     ('a="b\\nc"', [Binding(key="a", value='b\nc', original='a="b\\nc"')]),
+    ("a='b\\nc'", [Binding(key="a", value='b\nc', original="a='b\\nc'")]),
     ('a="b\\"c"', [Binding(key="a", value='b"c', original='a="b\\"c"')]),
     ("a='b\\'c'", [Binding(key="a", value="b'c", original="a='b\\'c'")]),
     ("a=à", [Binding(key="a", value="à", original="a=à")]),
@@ -49,6 +51,13 @@ from dotenv.parser import Binding, parse_stream
         [
             Binding(key="a", value='', original='a=\n'),
             Binding(key="b", value='c', original="b=c"),
+        ]
+    ),
+    (
+        'a=b\n\nc=d',
+        [
+            Binding(key="a", value="b", original="a=b\n\n"),
+            Binding(key="c", value="d", original="c=d"),
         ]
     ),
     (
