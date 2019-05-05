@@ -12,7 +12,7 @@ import sh
 from IPython.terminal.embed import InteractiveShellEmbed
 
 from dotenv import dotenv_values, find_dotenv, load_dotenv, set_key
-from dotenv.compat import StringIO
+from dotenv.compat import PY2, StringIO
 from dotenv.main import Binding, parse_stream
 
 
@@ -227,6 +227,15 @@ def test_dotenv_values_export():
     load_dotenv(stream=stream)
     assert 'foo' in os.environ
     assert os.environ['foo'] == 'bar'
+
+
+def test_dotenv_values_utf_8():
+    stream = StringIO(u"a=à\n")
+    load_dotenv(stream=stream)
+    if PY2:
+        assert os.environ["a"] == u"à".encode(sys.getfilesystemencoding())
+    else:
+        assert os.environ["a"] == "à"
 
 
 def test_dotenv_empty_selfreferential_interpolation():

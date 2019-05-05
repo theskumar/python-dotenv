@@ -300,7 +300,10 @@ Unreleased
 -----
 
 - Add type hints and expose them to users ([@qnighy])([#172])
-- `load_dotenv` and `dotenv_values` now accepts `encoding` paramater, defaults to `None` ([@theskumar])([@earlbread]) (#161)
+- `load_dotenv` and `dotenv_values` now accept an `encoding` parameter, defaults to `None`
+  ([@theskumar])([@earlbread])([#161])
+- Fix `str`/`unicode` inconsistency in Python 2: values are always `str` now. ([@bbc2])([#121])
+- Fix Unicode error in Python 2, introduced in 0.10.0. ([@bbc2])([#176])
 
 0.10.1
 -----
@@ -417,6 +420,8 @@ Unreleased
 [#148]: https://github.com/theskumar/python-dotenv/issues/148
 [#158]: https://github.com/theskumar/python-dotenv/issues/158
 [#172]: https://github.com/theskumar/python-dotenv/issues/172
+[#121]: https://github.com/theskumar/python-dotenv/issues/121
+[#176]: https://github.com/theskumar/python-dotenv/issues/176
 
 [@asyncee]: https://github.com/asyncee
 [@greyli]: https://github.com/greyli

@@ -15,7 +15,7 @@ import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from .compat import StringIO, PY2, WIN, text_type
+from .compat import StringIO, PY2
 
 if TYPE_CHECKING:  # pragma: no cover
     if sys.version_info >= (3, 6):
@@ -109,6 +109,17 @@ def parse_stream(stream):
         yield binding
 
 
+def to_env(text):
+    # type: (Text) -> str
+    """
+    Encode a string the same way whether it comes from the environment or a `.env` file.
+    """
+    if PY2:
+        return text.encode(sys.getfilesystemencoding() or "utf-8")
+    else:
+        return text
+
+
 class DotEnv():
 
     def __init__(self, dotenv_path, verbose=False, encoding=None):
@@ -156,13 +167,7 @@ class DotEnv():
         for k, v in self.dict().items():
             if k in os.environ and not override:
                 continue
-            # With Python2 on Windows, force environment variables to str to avoid
-            # "TypeError: environment can only contain strings" in Python's subprocess.py.
-            if PY2 and WIN:
-                if isinstance(k, text_type) or isinstance(v, text_type):
-                    k = k.encode('ascii')
-                    v = v.encode('ascii')
-            os.environ[k] = v  # type: ignore
+            os.environ[to_env(k)] = to_env(v)
 
         return True
 
