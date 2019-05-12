@@ -299,6 +299,12 @@ Changelog
 Unreleased
 -----
 
+- ...
+
+
+0.10.2
+-----
+
 - Add type hints and expose them to users ([@qnighy])([#172])
 - `load_dotenv` and `dotenv_values` now accept an `encoding` parameter, defaults to `None`
   ([@theskumar])([@earlbread])([#161])
