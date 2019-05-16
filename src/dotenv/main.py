@@ -7,16 +7,17 @@ import re
 import shutil
 import sys
 import tempfile
-from typing import (Dict, Iterator, List, Match, Optional,  # noqa
-                    Pattern, Union, TYPE_CHECKING, Text, IO, Tuple)
 import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from .compat import StringIO, PY2, to_env
+from .compat import StringIO, PY2, to_env, IS_TYPE_CHECKING
 from .parser import parse_stream
 
-if TYPE_CHECKING:  # pragma: no cover
+if IS_TYPE_CHECKING:  # pragma: no cover
+    from typing import (
+        Dict, Iterator, Match, Optional, Pattern, Union, Text, IO, Tuple
+    )
     if sys.version_info >= (3, 6):
         _PathLike = os.PathLike
     else:
