@@ -1,6 +1,7 @@
 import os
 import sys
-from typing import Any, List
+from subprocess import Popen
+from typing import Any, Dict, List  # noqa
 
 try:
     import click
@@ -9,7 +10,7 @@ except ImportError:
                      'Run pip install "python-dotenv[cli]" to fix this.')
     sys.exit(1)
 
-from .main import dotenv_values, get_key, set_key, unset_key, run_command
+from .main import dotenv_values, get_key, set_key, unset_key
 from .version import __version__
 
 
@@ -99,6 +100,41 @@ def run(ctx, commandline):
         exit(1)
     ret = run_command(commandline, dotenv_as_dict)  # type: ignore
     exit(ret)
+
+
+def run_command(command, env):
+    # type: (List[str], Dict[str, str]) -> int
+    """Run command in sub process.
+
+    Runs the command in a sub process with the variables from `env`
+    added in the current environment variables.
+
+    Parameters
+    ----------
+    command: List[str]
+        The command and it's parameters
+    env: Dict
+        The additional environment variables
+
+    Returns
+    -------
+    int
+        The return code of the command
+
+    """
+    # copy the current environment variables and add the vales from
+    # `env`
+    cmd_env = os.environ.copy()
+    cmd_env.update(env)
+
+    p = Popen(command,
+              universal_newlines=True,
+              bufsize=0,
+              shell=False,
+              env=cmd_env)
+    _, _ = p.communicate()
+
+    return p.returncode
 
 
 if __name__ == "__main__":

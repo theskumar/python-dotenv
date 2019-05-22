@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Optional  # noqa
 from .main import load_dotenv, get_key, set_key, unset_key, find_dotenv, dotenv_values
 
 

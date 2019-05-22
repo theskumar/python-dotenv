@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 import sys
-from subprocess import Popen
 import tempfile
 from typing import (Dict, Iterator, List, Match, Optional,  # noqa
                     Pattern, Union, TYPE_CHECKING, Text, IO, Tuple)
@@ -276,38 +275,3 @@ def dotenv_values(dotenv_path=None, stream=None, verbose=False, **kwargs):
     # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, Union[None, Text]) -> Dict[Text, Text]
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose, **kwargs).dict()
-
-
-def run_command(command, env):
-    # type: (List[str], Dict[str, str]) -> int
-    """Run command in sub process.
-
-    Runs the command in a sub process with the variables from `env`
-    added in the current environment variables.
-
-    Parameters
-    ----------
-    command: List[str]
-        The command and it's parameters
-    env: Dict
-        The additional environment variables
-
-    Returns
-    -------
-    int
-        The return code of the command
-
-    """
-    # copy the current environment variables and add the vales from
-    # `env`
-    cmd_env = os.environ.copy()
-    cmd_env.update(env)
-
-    p = Popen(command,
-              universal_newlines=True,
-              bufsize=0,
-              shell=False,
-              env=cmd_env)
-    _, _ = p.communicate()
-
-    return p.returncode
