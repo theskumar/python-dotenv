@@ -299,8 +299,9 @@ Changelog
 Unreleased
 -----
 
-- ...
-
+- Refactor parser to fix parsing inconsistencies ([@bbc2])([#170]).
+  - Interpret escapes as control characters only in double-quoted strings.
+  - Interpret `#` as start of comment only if preceded by whitespace.
 
 0.10.2
 -----
@@ -428,6 +429,7 @@ Unreleased
 [#172]: https://github.com/theskumar/python-dotenv/issues/172
 [#121]: https://github.com/theskumar/python-dotenv/issues/121
 [#176]: https://github.com/theskumar/python-dotenv/issues/176
+[#170]: https://github.com/theskumar/python-dotenv/issues/170
 
 [@asyncee]: https://github.com/asyncee
 [@greyli]: https://github.com/greyli
