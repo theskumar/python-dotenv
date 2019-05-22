@@ -14,7 +14,7 @@ import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from .compat import StringIO, PY2
+from .compat import StringIO, PY2, to_env
 from .parser import parse_stream
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -29,17 +29,6 @@ if TYPE_CHECKING:  # pragma: no cover
         _StringIO = StringIO[Text]
 
 __posix_variable = re.compile(r'\$\{[^\}]*\}')  # type: Pattern[Text]
-
-
-def to_env(text):
-    # type: (Text) -> str
-    """
-    Encode a string the same way whether it comes from the environment or a `.env` file.
-    """
-    if PY2:
-        return text.encode(sys.getfilesystemencoding() or "utf-8")
-    else:
-        return text
 
 
 class DotEnv():

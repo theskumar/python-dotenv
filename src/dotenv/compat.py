@@ -1,12 +1,23 @@
 import sys
-from typing import Text
-
-if sys.version_info >= (3, 0):
-    from io import StringIO  # noqa
-else:
-    from StringIO import StringIO  # noqa
+from typing import Text  # noqa
 
 PY2 = sys.version_info[0] == 2  # type: bool
+
+if PY2:
+    from StringIO import StringIO  # noqa
+else:
+    from io import StringIO  # noqa
+
+
+def to_env(text):
+    # type: (Text) -> str
+    """
+    Encode a string the same way whether it comes from the environment or a `.env` file.
+    """
+    if PY2:
+        return text.encode(sys.getfilesystemencoding() or "utf-8")
+    else:
+        return text
 
 
 def to_text(string):
