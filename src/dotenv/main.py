@@ -235,8 +235,14 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
 
     Returns path to the file if found, or an empty string otherwise
     """
-    if usecwd or '__file__' not in globals():
-        # should work without __file__, e.g. in REPL or IPython notebook
+
+    def _is_interactive():
+        """ Decide whether this is running in a REPL or IPython notebook """
+        main = __import__('__main__', None, None, fromlist=['__file__'])
+        return not hasattr(main, '__file__')
+
+    if usecwd or _is_interactive():
+        # Should work without __file__, e.g. in REPL or IPython notebook.
         path = os.getcwd()
     else:
         # will work for .py files
