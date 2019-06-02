@@ -299,6 +299,11 @@ Changelog
 Unreleased
 -----
 
+- ...
+
+0.10.3
+-----
+
 - Improve interactive mode detection ([@andrewsmith])([#183]).
 - Refactor parser to fix parsing inconsistencies ([@bbc2])([#170]).
   - Interpret escapes as control characters only in double-quoted strings.
