@@ -299,6 +299,7 @@ Changelog
 Unreleased
 -----
 
+- Improve interactive mode detection ([@andrewsmith])([#183]).
 - Refactor parser to fix parsing inconsistencies ([@bbc2])([#170]).
   - Interpret escapes as control characters only in double-quoted strings.
   - Interpret `#` as start of comment only if preceded by whitespace.
@@ -430,7 +431,9 @@ Unreleased
 [#121]: https://github.com/theskumar/python-dotenv/issues/121
 [#176]: https://github.com/theskumar/python-dotenv/issues/176
 [#170]: https://github.com/theskumar/python-dotenv/issues/170
+[#183]: https://github.com/theskumar/python-dotenv/issues/183
 
+[@andrewsmith]: https://github.com/andrewsmith
 [@asyncee]: https://github.com/asyncee
 [@greyli]: https://github.com/greyli
 [@venthur]: https://github.com/venthur
