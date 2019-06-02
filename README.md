@@ -44,7 +44,7 @@ MEANING_OF_LIFE=42
 MULTILINE_VAR="hello\nworld"
 ```
 
-You can optionally prefix each line with the word `export`, which is totally ignore by this library, but might allow you to [`source`](https://bash.cyberciti.biz/guide/Source_command) the file in bash.
+You can optionally prefix each line with the word `export`, which is totally ignored by this library, but might allow you to [`source`](https://bash.cyberciti.biz/guide/Source_command) the file in bash.
 
 ```
 export S3_BUCKET=YOURS3BUCKET
