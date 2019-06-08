@@ -14,7 +14,7 @@ from .main import dotenv_values, get_key, set_key, unset_key
 from .version import __version__
 
 if IS_TYPE_CHECKING:
-    from typing import Any, List
+    from typing import Any, List, Dict
 
 
 @click.group()

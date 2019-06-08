@@ -22,7 +22,7 @@ IS_TYPE_CHECKING = os.environ.get("MYPY_RUNNING", is_type_checking())
 
 
 if IS_TYPE_CHECKING:
-    from typing import Text  # noqa
+    from typing import Text
 
 
 def to_env(text):
