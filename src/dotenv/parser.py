@@ -39,7 +39,7 @@ try:
     Binding = typing.NamedTuple("Binding", [("key", typing.Optional[typing.Text]),
                                             ("value", typing.Optional[typing.Text]),
                                             ("original", typing.Text)])
-except ImportError:
+except ImportError:  # pragma: no cover
     from collections import namedtuple
     Binding = namedtuple("Binding", ["key",  # type: ignore
                                      "value",
