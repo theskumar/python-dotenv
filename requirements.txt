@@ -8,4 +8,4 @@ pytest>=3.9
 sh>=1.09
 tox
 wheel
-twine
+twine==1.13.0
