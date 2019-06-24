@@ -7,5 +7,5 @@ pytest-cov
 pytest>=3.9
 sh>=1.09
 tox
-wheel
+wheel==0.33.4
 twine
