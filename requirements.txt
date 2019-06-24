@@ -6,6 +6,6 @@ ipython
 pytest-cov
 pytest>=3.9
 sh>=1.09
-tox
+tox==3.12.1
 wheel
 twine
