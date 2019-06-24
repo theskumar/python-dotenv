@@ -1,5 +1,5 @@
 bumpversion
-typing; python_version<"3.5"
+typing==3.7.4; python_version<"3.5"
 click
 flake8>=2.2.3
 ipython
