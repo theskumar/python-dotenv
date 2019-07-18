@@ -9,7 +9,7 @@
 python-dotenv | [![Build Status](https://travis-ci.org/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.org/theskumar/python-dotenv) [![Coverage Status](https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master)](https://coveralls.io/r/theskumar/python-dotenv?branch=master) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/theskumar)
 ===============================================================================
 
-Reads the key,value pair from `.env` file and adds them to environment
+Reads the key-value pair from `.env` file and adds them to environment
 variable. It is great for managing app settings during development and
 in production using [12-factor](http://12factor.net/) principles.
 
@@ -18,7 +18,7 @@ in production using [12-factor](http://12factor.net/) principles.
 - [Usages](#usages)
 - [Installation](#installation)
 - [Command-line interface](#command-line-interface)
-- [iPython Support](#ipython-support)
+- [IPython Support](#ipython-support)
 - [Setting config on remote servers](#setting-config-on-remote-servers)
 - [Related Projects](#related-projects)
 - [Contributing](#contributing)
@@ -38,7 +38,7 @@ environment-related method you need as provided by `os.getenv`.
 `.env` looks like this:
 
 ```shell
-# a comment and that will be ignored.
+# a comment that will be ignored.
 REDIS_ADDRESS=localhost:6379
 MEANING_OF_LIFE=42
 MULTILINE_VAR="hello\nworld"
@@ -54,7 +54,7 @@ export SECRET_KEY=YOURSECRETKEYGOESHERE
 `.env` can interpolate variables using POSIX variable expansion,
 variables are replaced from the environment first or from other values
 in the `.env` file if the variable is not present in the environment.
-(`Note`: Default Value Expansion is not supported as of yet, see
+(**Note**: Default Value Expansion is not supported as of yet, see
 [\#30](https://github.com/theskumar/python-dotenv/pull/30#issuecomment-244036604).)
 
 ```shell
@@ -73,14 +73,14 @@ module.
     ├── .env
     └── settings.py
 
-Add the following code to your `settings.py`
+Add the following code to your `settings.py`:
 
 ```python
 # settings.py
 from dotenv import load_dotenv
 load_dotenv()
 
-# OR, the same with increased verbosity:
+# OR, the same with increased verbosity
 load_dotenv(verbose=True)
 
 # OR, explicitly providing path to '.env'
@@ -89,9 +89,9 @@ env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 ```
 
-At this point, parsed key/value from the .env file is now present as
+At this point, parsed key/value from the `.env` file is now present as
 system environment variable and they can be conveniently accessed via
-`os.getenv()`
+`os.getenv()`:
 
 ```python
 # settings.py
@@ -134,7 +134,7 @@ before passing.
 'EGGS'
 ```
 
-The returned value is dictionary with key value pair.
+The returned value is dictionary with key-value pair.
 
 `dotenv_values` could be useful if you need to *consume* the envfile but
 not *apply* it directly into the system environment.
@@ -142,19 +142,19 @@ not *apply* it directly into the system environment.
 Django
 ------
 
-If you are using django you should add the above loader script at the
+If you are using Django, you should add the above loader script at the
 top of `wsgi.py` and `manage.py`.
 
 Installation
 ============
-
-    pip install -U python-dotenv
-
-iPython Support
+```shell
+pip install -U python-dotenv
+```
+IPython Support
 ---------------
 
-You can use dotenv with iPython. You can either let the dotenv search
-for .env with %dotenv or provide the path to .env file explicitly, see
+You can use dotenv with IPython. You can either let the dotenv search
+for `.env` with `%dotenv` or provide the path to the `.env` file explicitly; see
 below for usages.
 
     %load_ext dotenv
@@ -171,17 +171,19 @@ below for usages.
     # Use '-v' to turn verbose mode on
     %dotenv -v
 
-Command-line interface
+Command-line Interface
 ======================
 
-For commandline support, use the cli option during installation:
+For command-line support, use the CLI option during installation:
 
-    pip install -U "python-dotenv[cli]"
+```shell
+pip install -U "python-dotenv[cli]"
+```
 
-A cli interface `dotenv` is also included, which helps you manipulate
-the `.env` file without manually opening it. The same cli installed on
+A CLI interface `dotenv` is also included, which helps you manipulate
+the `.env` file without manually opening it. The same CLI installed on
 remote machine combined with fabric (discussed later) will enable you to
-update your settings on remote server, handy isn't it!
+update your settings on a remote server; handy, isn't it!
 
 ```
 Usage: dotenv [OPTIONS] COMMAND [ARGS]...
@@ -205,11 +207,11 @@ Commands:
   unset  Removes the given key.
 ```
 
-Setting config on remote servers
+Setting config on Remote Servers
 --------------------------------
 
-We make use of excellent [Fabric](http://www.fabfile.org/) to acomplish
-this. Add a config task to your local fabfile, `dotenv_path` is the
+We make use of excellent [Fabric](http://www.fabfile.org/) to accomplish
+this. Add a config task to your local fabfile; `dotenv_path` is the
 location of the absolute path of `.env` file on the remote server.
 
 ```python
@@ -235,27 +237,27 @@ def config(action=None, key=None, value=None):
     run(command)
 ```
 
-Usage is designed to mirror the heroku config api very closely.
+Usage is designed to mirror the Heroku config API very closely.
 
-Get all your remote config info with `fab config`
+Get all your remote config info with `fab config`:
 
     $ fab config
     foo="bar"
 
-Set remote config variables with `fab config:set,<key>,<value>`
+Set remote config variables with `fab config:set,<key>,<value>`:
 
     $ fab config:set,hello,world
 
-Get a single remote config variables with `fab config:get,<key>`
+Get a single remote config variables with `fab config:get,<key>`:
 
     $ fab config:get,hello
 
-Delete a remote config variables with `fab config:unset,<key>`
+Delete a remote config variables with `fab config:unset,<key>`:
 
     $ fab config:unset,hello
 
 Thanks entirely to fabric and not one bit to this project, you can chain
-commands like so
+commands like so:
 `fab config:set,<key1>,<value1> config:set,<key2>,<value2>`
 
     $ fab config:set,hello,world config:set,foo,bar config:set,fizz=buzz
