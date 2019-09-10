@@ -1,0 +1,5 @@
+[tool.portray]
+modules = ["dotenv"]
+
+[tool.portray.mkdocs]
+repo_url = "https://github.com/theskumar/python-dotenv"

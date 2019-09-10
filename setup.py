@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-with open('README.md') as f:
-    long_description = f.read()
+
+def read_files(files):
+    data = []
+    for file in files:
+        with open(file) as f:
+            data.append(f.read())
+    return "\n".join(data)
+
+
+long_description = read_files(['README.md', 'CHANGELOG.md'])
 
 meta = {}
 with open('./src/dotenv/version.py') as f:
