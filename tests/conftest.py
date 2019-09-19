@@ -1,10 +1,14 @@
 import pytest
-
-from .fixtures import *  # noqa
+from click.testing import CliRunner
 
 
 @pytest.fixture
-def dotenv_file(tmpdir):
-    file_ = tmpdir.mkdir('dotenv_file').join('.env')
-    file_.write('')
-    return str(file_)
+def cli():
+    yield CliRunner()
+
+
+@pytest.fixture
+def dotenv_file(tmp_path):
+    file_ = tmp_path / '.env'
+    file_.write_bytes(b'')
+    yield str(file_)

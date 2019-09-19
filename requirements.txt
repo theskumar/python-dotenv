@@ -1,9 +1,12 @@
-flake8>=2.2.3
-pytest>=3.0.5
-sh>=1.09
 bumpversion
-wheel
-pytest-cov
+typing; python_version<"3.5"
 click
+flake8>=2.2.3
 ipython
-pypandoc
+pytest-cov
+pytest>=3.9
+sh>=1.09
+tox
+wheel
+twine
+portray
