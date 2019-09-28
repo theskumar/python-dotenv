@@ -37,7 +37,13 @@ class DotEnv():
         self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
         self._dict = None  # type: Optional[Dict[Text, Text]]
         self.verbose = verbose  # type: bool
-        self.encoding = encoding  # type: Union[None, Text]
+
+        # for the default encoding of python3
+        if PY2:
+            self.encoding = encoding  # type: Union[None, Text]
+        else:
+            self.encoding = 'utf-8'
+
 
     @contextmanager
     def _get_stream(self):
