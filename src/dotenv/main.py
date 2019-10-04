@@ -42,7 +42,7 @@ class DotEnv():
     @contextmanager
     def _get_stream(self):
         # type: () -> Iterator[IO[Text]]
-        if isinstance(self.dotenv_path, StringIO):
+        if hasattr(self.dotenv_path, "read"):
             yield self.dotenv_path
         elif os.path.isfile(self.dotenv_path):
             with io.open(self.dotenv_path, encoding=self.encoding) as stream:
