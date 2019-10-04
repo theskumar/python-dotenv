@@ -38,6 +38,10 @@ class Reader:
     def __init__(self, stream):
         # type: (IO[Text]) -> None
         self.string = stream.read()
+        if not isinstance(self.string, str):
+            message = ("Expected contents of type 'str'. ",
+                       "Received contents of type '%s'.")
+            raise TypeError(message % type(self.string).__name__)
         self.position = 0
         self.mark = 0
 
