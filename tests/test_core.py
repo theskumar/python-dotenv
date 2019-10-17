@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import contextlib
+import io
 import os
 import sys
 import textwrap
