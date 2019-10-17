@@ -37,7 +37,7 @@ class DotEnv():
         self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
         self._dict = None  # type: Optional[Dict[Text, Text]]
         self.verbose = verbose  # type: bool
-        self.encoding = encoding  # type: Union[None, Text]
+        self.encoding = encoding or sys.getfilesystemencoding() or 'utf-8'  # type: Union[None, Text]
 
     @contextmanager
     def _get_stream(self):
