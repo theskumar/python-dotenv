@@ -149,20 +149,21 @@ def test_dotenv_values_file(tmp_path):
     dotenv_path = tmp_path / '.test_open_file_stream'
     sh.touch(dotenv_path)
     sys_encoding = sys.getfilesystemencoding()
-    with open(str(dotenv_path), 'w', encoding=sys_encoding) as stream:
-        stream.write(u'stream_file="working😃"')
+    expected_read_value = u'working😃'.encode('utf-8').decode(sys_encoding)
+    with io.open(str(dotenv_path), 'w', encoding='utf-8') as stream:
+        stream.write(u'stream_file="working😃"\n')
 
     # test file opened normally
-    with open(str(dotenv_path), encoding=sys_encoding) as stream:
+    with io.open(str(dotenv_path), encoding=sys_encoding) as stream:
         parsed_dict = dotenv_values(stream=stream)
         assert 'stream_file' in parsed_dict
-        assert parsed_dict['stream_file'] == 'working😃'
+        assert parsed_dict['stream_file'] == expected_read_value
 
     # test file opened in raw mode
-    with open(str(dotenv_path), 'rb') as stream:
+    with io.open(str(dotenv_path), 'rb') as stream:
         parsed_dict = dotenv_values(stream=stream)
         assert 'stream_file' in parsed_dict
-        assert parsed_dict['stream_file'] == 'working😃'
+        assert parsed_dict['stream_file'] == expected_read_value
 
 
 def test_dotenv_values_export():
