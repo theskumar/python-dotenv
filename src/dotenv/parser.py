@@ -1,5 +1,6 @@
 import codecs
 import re
+import sys
 from typing import (IO, Iterator, Match, NamedTuple, Optional, Pattern,  # noqa
                     Sequence, Text)
 
@@ -37,11 +38,11 @@ class Error(Exception):
 class Reader:
     def __init__(self, stream):
         # type: (IO[Text]) -> None
-        self.string = stream.read()
-        if not isinstance(self.string, str):
-            message = ("Expected contents of type 'str'. ",
-                       "Received contents of type '%s'.")
-            raise TypeError(message % type(self.string).__name__)
+        contents = stream.read()
+        # Convert stream contents to unicode if needed
+        if not isinstance(contents, Text):
+            contents = contents.decode(sys.getfilesystemencoding() or "utf-8")
+        self.string = contents
         self.position = 0
         self.mark = 0
 
