@@ -145,6 +145,26 @@ def test_dotenv_values_stream():
     assert parsed_dict['DOTENV'] == u'it works!😃'
 
 
+def test_dotenv_values_file(tmp_path):
+    dotenv_path = tmp_path / '.test_open_file_stream'
+    sh.touch(dotenv_path)
+    sys_encoding = sys.getfilesystemencoding()
+    with open(str(dotenv_path), 'w', encoding=sys_encoding) as stream:
+        stream.write(u'stream_file="working😃"')
+
+    # test file opened normally
+    with open(str(dotenv_path), encoding=sys_encoding) as stream:
+        parsed_dict = dotenv_values(stream=stream)
+        assert 'stream_file' in parsed_dict
+        assert parsed_dict['stream_file'] == 'working😃'
+
+    # test file opened in raw mode
+    with open(str(dotenv_path), 'rb') as stream:
+        parsed_dict = dotenv_values(stream=stream)
+        assert 'stream_file' in parsed_dict
+        assert parsed_dict['stream_file'] == 'working😃'
+
+
 def test_dotenv_values_export():
     stream = StringIO('export foo=bar\n')
     stream.seek(0)
