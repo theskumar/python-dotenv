@@ -2,6 +2,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import io
+import logging
 import os
 import re
 import shutil
@@ -11,8 +12,10 @@ import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from .compat import StringIO, PY2, to_env, IS_TYPE_CHECKING
-from .parser import parse_stream
+from .compat import IS_TYPE_CHECKING, PY2, StringIO, to_env
+from .parser import Binding, parse_stream
+
+logger = logging.getLogger(__name__)
 
 if IS_TYPE_CHECKING:
     from typing import (
@@ -29,6 +32,17 @@ if IS_TYPE_CHECKING:
         _StringIO = StringIO[Text]
 
 __posix_variable = re.compile(r'\$\{[^\}]*\}')  # type: Pattern[Text]
+
+
+def with_warn_for_invalid_lines(mappings):
+    # type: (Iterator[Binding]) -> Iterator[Binding]
+    for mapping in mappings:
+        if mapping.key is None or mapping.value is None:
+            logger.warning(
+                "Python-dotenv could not parse statement starting at line %s",
+                mapping.original.line,
+            )
+        yield mapping
 
 
 class DotEnv():
@@ -66,7 +80,7 @@ class DotEnv():
     def parse(self):
         # type: () -> Iterator[Tuple[Text, Text]]
         with self._get_stream() as stream:
-            for mapping in parse_stream(stream):
+            for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
                 if mapping.key is not None and mapping.value is not None:
                     yield mapping.key, mapping.value
 
@@ -143,12 +157,12 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
 
     with rewrite(dotenv_path) as (source, dest):
         replaced = False
-        for mapping in parse_stream(source):
+        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
             if mapping.key == key_to_set:
                 dest.write(line_out)
                 replaced = True
             else:
-                dest.write(mapping.original)
+                dest.write(mapping.original.string)
         if not replaced:
             dest.write(line_out)
 
@@ -169,11 +183,11 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
 
     removed = False
     with rewrite(dotenv_path) as (source, dest):
-        for mapping in parse_stream(source):
+        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
             if mapping.key == key_to_unset:
                 removed = True
             else:
-                dest.write(mapping.original)
+                dest.write(mapping.original.string)
 
     if not removed:
         warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))  # type: ignore
