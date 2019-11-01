@@ -154,10 +154,7 @@ def parse_binding(reader):
 
 
 def parse_stream(stream):
-    # type:(IO[Text]) -> Iterator[Binding]
+    # type: (IO[Text]) -> Iterator[Binding]
     reader = Reader(stream)
     while reader.has_next():
-        try:
-            yield parse_binding(reader)
-        except Error:
-            return
+        yield parse_binding(reader)
