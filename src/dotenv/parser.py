@@ -1,8 +1,7 @@
 import codecs
 import re
 
-from .compat import to_text, IS_TYPE_CHECKING
-
+from .compat import IS_TYPE_CHECKING, to_text
 
 if IS_TYPE_CHECKING:
     from typing import (  # noqa:F401
@@ -16,6 +15,7 @@ def make_regex(string, extra_flags=0):
     return re.compile(to_text(string), re.UNICODE | extra_flags)
 
 
+_newline = make_regex(r"(\r\n|\n|\r)")
 _whitespace = make_regex(r"\s*", extra_flags=re.MULTILINE)
 _export = make_regex(r"(?:export[^\S\r\n]+)?")
 _single_quoted_key = make_regex(r"'([^']+)'")
@@ -36,14 +36,62 @@ try:
     # when we are type checking, and the linter is upset if we
     # re-import
     import typing
-    Binding = typing.NamedTuple("Binding", [("key", typing.Optional[typing.Text]),
-                                            ("value", typing.Optional[typing.Text]),
-                                            ("original", typing.Text)])
+
+    Original = typing.NamedTuple(
+        "Original",
+        [
+            ("string", typing.Text),
+            ("line", int),
+        ],
+    )
+
+    Binding = typing.NamedTuple(
+        "Binding",
+        [
+            ("key", typing.Optional[typing.Text]),
+            ("value", typing.Optional[typing.Text]),
+            ("original", Original),
+        ],
+    )
 except ImportError:
     from collections import namedtuple
-    Binding = namedtuple("Binding", ["key",  # type: ignore
-                                     "value",
-                                     "original"])  # type: Tuple[Optional[Text], Optional[Text], Text]
+    Original = namedtuple(  # type: ignore
+        "Original",
+        [
+            "string",
+            "line",
+        ],
+    )
+    Binding = namedtuple(  # type: ignore
+        "Binding",
+        [
+            "key",
+            "value",
+            "original",
+        ],
+    )
+
+
+class Position:
+    def __init__(self, chars, line):
+        # type: (int, int) -> None
+        self.chars = chars
+        self.line = line
+
+    @classmethod
+    def start(cls):
+        # type: () -> Position
+        return cls(chars=0, line=1)
+
+    def set(self, other):
+        # type: (Position) -> None
+        self.chars = other.chars
+        self.line = other.line
+
+    def advance(self, string):
+        # type: (Text) -> None
+        self.chars += len(string)
+        self.line += len(re.findall(_newline, string))
 
 
 class Error(Exception):
@@ -54,39 +102,42 @@ class Reader:
     def __init__(self, stream):
         # type: (IO[Text]) -> None
         self.string = stream.read()
-        self.position = 0
-        self.mark = 0
+        self.position = Position.start()
+        self.mark = Position.start()
 
     def has_next(self):
         # type: () -> bool
-        return self.position < len(self.string)
+        return self.position.chars < len(self.string)
 
     def set_mark(self):
         # type: () -> None
-        self.mark = self.position
+        self.mark.set(self.position)
 
     def get_marked(self):
-        # type: () -> Text
-        return self.string[self.mark:self.position]
+        # type: () -> Original
+        return Original(
+            string=self.string[self.mark.chars:self.position.chars],
+            line=self.mark.line,
+        )
 
     def peek(self, count):
         # type: (int) -> Text
-        return self.string[self.position:self.position + count]
+        return self.string[self.position.chars:self.position.chars + count]
 
     def read(self, count):
         # type: (int) -> Text
-        result = self.string[self.position:self.position + count]
+        result = self.string[self.position.chars:self.position.chars + count]
         if len(result) < count:
             raise Error("read: End of string")
-        self.position += count
+        self.position.advance(result)
         return result
 
     def read_regex(self, regex):
         # type: (Pattern[Text]) -> Sequence[Text]
-        match = regex.match(self.string, self.position)
+        match = regex.match(self.string, self.position.chars)
         if match is None:
             raise Error("read_regex: Pattern not found")
-        self.position = match.end()
+        self.position.advance(self.string[match.start():match.end()])
         return match.groups()
 
 
@@ -147,10 +198,18 @@ def parse_binding(reader):
         value = parse_value(reader)
         reader.read_regex(_comment)
         reader.read_regex(_end_of_line)
-        return Binding(key=key, value=value, original=reader.get_marked())
+        return Binding(
+            key=key,
+            value=value,
+            original=reader.get_marked(),
+        )
     except Error:
         reader.read_regex(_rest_of_line)
-        return Binding(key=None, value=None, original=reader.get_marked())
+        return Binding(
+            key=None,
+            value=None,
+            original=reader.get_marked(),
+        )
 
 
 def parse_stream(stream):
