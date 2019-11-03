@@ -5,8 +5,9 @@ import contextlib
 import os
 import sys
 import textwrap
-import warnings
 
+import logging
+import mock
 import pytest
 import sh
 
@@ -25,12 +26,12 @@ def restore_os_environ():
 
 
 def test_warns_if_file_does_not_exist():
-    with warnings.catch_warnings(record=True) as w:
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
         load_dotenv('.does_not_exist', verbose=True)
 
-        assert len(w) == 1
-        assert w[0].category is UserWarning
-        assert str(w[0].message) == "File doesn't exist .does_not_exist"
+    mock_warning.assert_called_once_with("File doesn't exist %s", ".does_not_exist")
 
 
 def test_find_dotenv(tmp_path):

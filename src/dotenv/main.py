@@ -8,7 +8,6 @@ import re
 import shutil
 import sys
 import tempfile
-import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 
@@ -64,7 +63,7 @@ class DotEnv():
                 yield stream
         else:
             if self.verbose:
-                warnings.warn("File doesn't exist {}".format(self.dotenv_path))  # type: ignore
+                logger.warning("File doesn't exist %s", self.dotenv_path)
             yield StringIO('')
 
     def dict(self):
@@ -107,7 +106,7 @@ class DotEnv():
             return data[key]
 
         if self.verbose:
-            warnings.warn("key %s not found in %s." % (key, self.dotenv_path))  # type: ignore
+            logger.warning("Key %s not found in %s.", key, self.dotenv_path)
 
         return None
 
@@ -147,7 +146,7 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     """
     value_to_set = value_to_set.strip("'").strip('"')
     if not os.path.exists(dotenv_path):
-        warnings.warn("can't write to %s - it doesn't exist." % dotenv_path)  # type: ignore
+        logger.warning("Can't write to %s - it doesn't exist.", dotenv_path)
         return None, key_to_set, value_to_set
 
     if " " in value_to_set:
@@ -179,7 +178,7 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     If the given key doesn't exist in the .env, fails
     """
     if not os.path.exists(dotenv_path):
-        warnings.warn("can't delete from %s - it doesn't exist." % dotenv_path)  # type: ignore
+        logger.warning("Can't delete from %s - it doesn't exist.", dotenv_path)
         return None, key_to_unset
 
     removed = False
@@ -191,7 +190,7 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
                 dest.write(mapping.original.string)
 
     if not removed:
-        warnings.warn("key %s not removed from %s - key doesn't exist." % (key_to_unset, dotenv_path))  # type: ignore
+        logger.warning("Key %s not removed from %s - key doesn't exist.", key_to_unset, dotenv_path)
         return None, key_to_unset
 
     return removed, key_to_unset
