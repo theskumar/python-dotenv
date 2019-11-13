@@ -93,7 +93,7 @@ SECRET_KEY = os.getenv("EMAIL")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 ```
 
-`load_dotenv` do not override existing System environment variables. To
+`load_dotenv` does not override existing System environment variables. To
 override, pass `override=True` to `load_dotenv()`.
 
 `load_dotenv` also accepts `encoding` parameter to open the `.env` file. The default encoding is platform dependent (whatever `locale.getpreferredencoding()` returns), but any encoding supported by Python can be used. See the [codecs](https://docs.python.org/3/library/codecs.html#standard-encodings) module for the list of supported encodings.
@@ -126,7 +126,7 @@ before passing.
 'EGGS'
 ```
 
-The returned value is dictionary with key-value pair.
+The returned value is dictionary with key-value pairs.
 
 `dotenv_values` could be useful if you need to *consume* the envfile but
 not *apply* it directly into the system environment.
