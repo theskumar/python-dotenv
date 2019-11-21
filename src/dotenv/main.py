@@ -257,7 +257,7 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
         main = __import__('__main__', None, None, fromlist=['__file__'])
         return not hasattr(main, '__file__')
 
-    if usecwd or _is_interactive():
+    if usecwd or _is_interactive() or getattr(sys, 'frozen', False):
         # Should work without __file__, e.g. in REPL or IPython notebook.
         path = os.getcwd()
     else:
