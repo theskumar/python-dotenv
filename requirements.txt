@@ -9,3 +9,4 @@ sh>=1.09
 tox
 wheel
 twine
+portray
