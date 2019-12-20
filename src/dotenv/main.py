@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from .compat import StringIO, PY2, to_env, IS_TYPE_CHECKING
 from .parser import parse_stream
 
-if IS_TYPE_CHECKING:  # pragma: no cover
+if IS_TYPE_CHECKING:
     from typing import (
         Dict, Iterator, Match, Optional, Pattern, Union, Text, IO, Tuple
     )

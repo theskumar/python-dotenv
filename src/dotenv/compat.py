@@ -1,4 +1,3 @@
-import os
 import sys
 
 PY2 = sys.version_info[0] == 2  # type: bool
@@ -18,7 +17,7 @@ def is_type_checking():
     return TYPE_CHECKING
 
 
-IS_TYPE_CHECKING = os.environ.get("MYPY_RUNNING", is_type_checking())
+IS_TYPE_CHECKING = is_type_checking()
 
 
 if IS_TYPE_CHECKING:
