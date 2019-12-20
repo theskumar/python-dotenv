@@ -279,7 +279,8 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, **
     - *dotenv_path*: absolute or relative path to .env file.
     - *stream*: `StringIO` object with .env content.
     - *verbose*: whether to output the warnings related to missing .env file etc. Defaults to `False`.
-    - *override*: where to override the system environment variables with the variables in `.env` file. Defaults to `False`.
+    - *override*: where to override the system environment variables with the variables in `.env` file.
+                  Defaults to `False`.
     """
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose, **kwargs).set_as_environment_variables(override=override)
