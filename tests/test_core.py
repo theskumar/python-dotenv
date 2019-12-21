@@ -9,7 +9,6 @@ import warnings
 
 import pytest
 import sh
-from IPython.terminal.embed import InteractiveShellEmbed
 
 from dotenv import dotenv_values, find_dotenv, load_dotenv, set_key
 from dotenv.compat import PY2, StringIO
@@ -117,6 +116,7 @@ def test_load_dotenv_in_current_dir(tmp_path):
 
 
 def test_ipython(tmp_path):
+    from IPython.terminal.embed import InteractiveShellEmbed
     os.chdir(str(tmp_path))
     dotenv_file = tmp_path / '.env'
     dotenv_file.write_text("MYNEWVALUE=q1w2e3\n")
@@ -127,6 +127,7 @@ def test_ipython(tmp_path):
 
 
 def test_ipython_override(tmp_path):
+    from IPython.terminal.embed import InteractiveShellEmbed
     os.chdir(str(tmp_path))
     dotenv_file = tmp_path / '.env'
     os.environ["MYNEWVALUE"] = "OVERRIDE"
