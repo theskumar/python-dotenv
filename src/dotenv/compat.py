@@ -1,5 +1,4 @@
 import sys
-from typing import Text  # noqa
 
 PY2 = sys.version_info[0] == 2  # type: bool
 
@@ -7,6 +6,22 @@ if PY2:
     from StringIO import StringIO  # noqa
 else:
     from io import StringIO  # noqa
+
+
+def is_type_checking():
+    # type: () -> bool
+    try:
+        from typing import TYPE_CHECKING
+    except ImportError:  # pragma: no cover
+        return False
+    return TYPE_CHECKING
+
+
+IS_TYPE_CHECKING = is_type_checking()
+
+
+if IS_TYPE_CHECKING:
+    from typing import Text
 
 
 def to_env(text):

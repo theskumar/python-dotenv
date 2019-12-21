@@ -1,9 +1,14 @@
 import codecs
 import re
-from typing import (IO, Iterator, Match, NamedTuple, Optional, Pattern,  # noqa
-                    Sequence, Text)
 
-from .compat import to_text
+from .compat import to_text, IS_TYPE_CHECKING
+
+
+if IS_TYPE_CHECKING:
+    from typing import (  # noqa:F401
+        IO, Iterator, Match, NamedTuple, Optional, Pattern, Sequence, Text,
+        Tuple
+    )
 
 
 def make_regex(string, extra_flags=0):
@@ -25,9 +30,20 @@ _rest_of_line = make_regex(r"[^\r\n]*(?:\r|\n|\r\n)?")
 _double_quote_escapes = make_regex(r"\\[\\'\"abfnrtv]")
 _single_quote_escapes = make_regex(r"\\[\\']")
 
-Binding = NamedTuple("Binding", [("key", Optional[Text]),
-                                 ("value", Optional[Text]),
-                                 ("original", Text)])
+
+try:
+    # this is necessary because we only import these from typing
+    # when we are type checking, and the linter is upset if we
+    # re-import
+    import typing
+    Binding = typing.NamedTuple("Binding", [("key", typing.Optional[typing.Text]),
+                                            ("value", typing.Optional[typing.Text]),
+                                            ("original", typing.Text)])
+except ImportError:  # pragma: no cover
+    from collections import namedtuple
+    Binding = namedtuple("Binding", ["key",  # type: ignore
+                                     "value",
+                                     "original"])  # type: Tuple[Optional[Text], Optional[Text], Text]
 
 
 class Error(Exception):

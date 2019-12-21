@@ -1,4 +1,4 @@
-include LICENSE *.md *.yml
+include LICENSE *.md *.yml *.toml
 
 include tox.ini
 recursive-include tests *.py

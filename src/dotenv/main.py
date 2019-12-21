@@ -7,16 +7,17 @@ import re
 import shutil
 import sys
 import tempfile
-from typing import (Dict, Iterator, List, Match, Optional,  # noqa
-                    Pattern, Union, TYPE_CHECKING, Text, IO, Tuple)
 import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from .compat import StringIO, PY2, to_env
+from .compat import StringIO, PY2, to_env, IS_TYPE_CHECKING
 from .parser import parse_stream
 
-if TYPE_CHECKING:  # pragma: no cover
+if IS_TYPE_CHECKING:
+    from typing import (
+        Dict, Iterator, Match, Optional, Pattern, Union, Text, IO, Tuple
+    )
     if sys.version_info >= (3, 6):
         _PathLike = os.PathLike
     else:
@@ -278,7 +279,8 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, **
     - *dotenv_path*: absolute or relative path to .env file.
     - *stream*: `StringIO` object with .env content.
     - *verbose*: whether to output the warnings related to missing .env file etc. Defaults to `False`.
-    - *override*: where to override the system environment variables with the variables in `.env` file. Defaults to `False`.
+    - *override*: where to override the system environment variables with the variables in `.env` file.
+                  Defaults to `False`.
     """
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose, **kwargs).set_as_environment_variables(override=override)
