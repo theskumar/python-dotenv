@@ -50,7 +50,7 @@ class DotEnv():
     def __init__(self, dotenv_path, verbose=False, encoding=None):
         # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text]) -> None
         self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
-        self._dict = None  # type: Optional[Dict[Text, Text]]
+        self._dict = None  # type: Optional[Dict[Text, Optional[Text]]]
         self.verbose = verbose  # type: bool
         self.encoding = encoding  # type: Union[None, Text]
 
@@ -68,7 +68,7 @@ class DotEnv():
             yield StringIO('')
 
     def dict(self):
-        # type: () -> Dict[Text, Text]
+        # type: () -> Dict[Text, Optional[Text]]
         """Return dotenv as dict"""
         if self._dict:
             return self._dict
@@ -78,10 +78,10 @@ class DotEnv():
         return self._dict
 
     def parse(self):
-        # type: () -> Iterator[Tuple[Text, Text]]
+        # type: () -> Iterator[Tuple[Text, Optional[Text]]]
         with self._get_stream() as stream:
             for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
-                if mapping.key is not None and mapping.value is not None:
+                if mapping.key is not None:
                     yield mapping.key, mapping.value
 
     def set_as_environment_variables(self, override=False):
@@ -92,7 +92,8 @@ class DotEnv():
         for k, v in self.dict().items():
             if k in os.environ and not override:
                 continue
-            os.environ[to_env(k)] = to_env(v)
+            if v is not None:
+                os.environ[to_env(k)] = to_env(v)
 
         return True
 
@@ -197,7 +198,7 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
 
 
 def resolve_nested_variables(values):
-    # type: (Dict[Text, Text]) -> Dict[Text, Text]
+    # type: (Dict[Text, Optional[Text]]) -> Dict[Text, Optional[Text]]
     def _replacement(name):
         # type: (Text) -> Text
         """
@@ -206,7 +207,7 @@ def resolve_nested_variables(values):
         then look into the dotenv variables
         """
         ret = os.getenv(name, new_values.get(name, ""))
-        return ret
+        return ret  # type: ignore
 
     def _re_sub_callback(match_object):
         # type: (Match[Text]) -> Text
@@ -219,7 +220,7 @@ def resolve_nested_variables(values):
     new_values = {}
 
     for k, v in values.items():
-        new_values[k] = __posix_variable.sub(_re_sub_callback, v)
+        new_values[k] = __posix_variable.sub(_re_sub_callback, v) if v is not None else None
 
     return new_values
 
@@ -301,6 +302,6 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, **
 
 
 def dotenv_values(dotenv_path=None, stream=None, verbose=False, **kwargs):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, Union[None, Text]) -> Dict[Text, Text]
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, Union[None, Text]) -> Dict[Text, Optional[Text]]
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose, **kwargs).dict()

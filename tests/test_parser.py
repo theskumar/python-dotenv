@@ -35,7 +35,7 @@ from dotenv.parser import Binding, Original, parse_stream
     (u"a='b\\'c'", [Binding(key=u"a", value=u"b'c", original=Original(string=u"a='b\\'c'", line=1))]),
     (u"a=à", [Binding(key=u"a", value=u"à", original=Original(string=u"a=à", line=1))]),
     (u'a="à"', [Binding(key=u"a", value=u"à", original=Original(string=u'a="à"', line=1))]),
-    (u'garbage', [Binding(key=None, value=None, original=Original(string=u"garbage", line=1))]),
+    (u'no_value_var', [Binding(key=u'no_value_var', value=None, original=Original(string=u"no_value_var", line=1))]),
     (
         u"a=b\nc=d",
         [
@@ -87,9 +87,11 @@ from dotenv.parser import Binding, Original, parse_stream
         ],
     ),
     (
-        u'garbage[%$#\na=b',
+        u'uglyKey[%$=\"S3cr3t_P4ssw#rD\" #\na=b',
         [
-            Binding(key=None, value=None, original=Original(string=u"garbage[%$#\n", line=1)),
+            Binding(key=u'uglyKey[%$',
+                    value=u'S3cr3t_P4ssw#rD',
+                    original=Original(string=u"uglyKey[%$=\"S3cr3t_P4ssw#rD\" #\n", line=1)),
             Binding(key=u"a", value=u"b", original=Original(string=u'a=b', line=2)),
         ],
     ),
