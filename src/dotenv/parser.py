@@ -25,7 +25,7 @@ _equal_sign = make_regex(r"(=[^\S\r\n]*)")
 _single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
 _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
 _unquoted_value_part = make_regex(r"([^ \r\n]*)")
-_comment = make_regex(r"(?:\s*#[^\r\n]*)?")
+_comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")
 _end_of_line = make_regex(r"[^\S\r\n]*(?:\r\n|\n|\r|$)")
 _rest_of_line = make_regex(r"[^\r\n]*(?:\r|\n|\r\n)?")
 _double_quote_escapes = make_regex(r"\\[\\'\"abfnrtv]")
@@ -52,6 +52,7 @@ try:
             ("key", typing.Optional[typing.Text]),
             ("value", typing.Optional[typing.Text]),
             ("original", Original),
+            ("error", bool),
         ],
     )
 except ImportError:
@@ -69,6 +70,7 @@ except ImportError:
             "key",
             "value",
             "original",
+            "error",
         ],
     )
 
@@ -152,9 +154,11 @@ def decode_escapes(regex, string):
 
 
 def parse_key(reader):
-    # type: (Reader) -> Text
+    # type: (Reader) -> Optional[Text]
     char = reader.peek(1)
-    if char == "'":
+    if char == "#":
+        return None
+    elif char == "'":
         (key,) = reader.read_regex(_single_quoted_key)
     else:
         (key,) = reader.read_regex(_unquoted_key)
@@ -207,6 +211,7 @@ def parse_binding(reader):
             key=key,
             value=value,
             original=reader.get_marked(),
+            error=False,
         )
     except Error:
         reader.read_regex(_rest_of_line)
@@ -214,6 +219,7 @@ def parse_binding(reader):
             key=None,
             value=None,
             original=reader.get_marked(),
+            error=True,
         )
 
 
