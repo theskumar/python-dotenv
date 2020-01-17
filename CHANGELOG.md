@@ -22,6 +22,7 @@ Latest
 - Fix handling of malformed lines and lines without a value:
   - Don't print warning when key has no value.
   - Reject more malformed lines (e.g. "A: B").
+- Fix handling of lines with just a comment.
 
 0.10.4
 -----
