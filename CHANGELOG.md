@@ -21,6 +21,13 @@ Latest
 
 - ...
 
+0.10.4
+-----
+
+- Make typing optional ([@techalchemy])([#179]).
+- Print a warning on malformed line ([@bbc2])([#211]).
+- Support keys without a value ([@ulyssessouza])([#220]).
+
 0.10.3
 -----
 
