@@ -36,6 +36,7 @@ from dotenv.parser import Binding, Original, parse_stream
     (u"a=à", [Binding(key=u"a", value=u"à", original=Original(string=u"a=à", line=1))]),
     (u'a="à"', [Binding(key=u"a", value=u"à", original=Original(string=u'a="à"', line=1))]),
     (u'no_value_var', [Binding(key=u'no_value_var', value=None, original=Original(string=u"no_value_var", line=1))]),
+    (u'a: b', [Binding(key=None, value=None, original=Original(string=u"a: b", line=1))]),
     (
         u"a=b\nc=d",
         [

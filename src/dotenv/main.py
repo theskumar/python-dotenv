@@ -37,7 +37,7 @@ __posix_variable = re.compile(r'\$\{[^\}]*\}')  # type: Pattern[Text]
 def with_warn_for_invalid_lines(mappings):
     # type: (Iterator[Binding]) -> Iterator[Binding]
     for mapping in mappings:
-        if mapping.key is None or mapping.value is None:
+        if mapping.key is None:
             logger.warning(
                 "Python-dotenv could not parse statement starting at line %s",
                 mapping.original.line,
