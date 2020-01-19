@@ -16,13 +16,13 @@ OR
 Changelog
 =========
 
-Latest
+0.10.5
 -----
 
-- Fix handling of malformed lines and lines without a value:
+- Fix handling of malformed lines and lines without a value ([@bbc2])([#222]):
   - Don't print warning when key has no value.
   - Reject more malformed lines (e.g. "A: B").
-- Fix handling of lines with just a comment.
+- Fix handling of lines with just a comment ([@bbc2])([#224]).
 
 0.10.4
 -----
