@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import io
 from setuptools import setup
 
 
 def read_files(files):
     data = []
     for file in files:
-        with open(file, encoding='utf-8') as f:
+        with io.open(file, encoding='utf-8') as f:
             data.append(f.read())
     return "\n".join(data)
 
@@ -13,7 +14,7 @@ def read_files(files):
 long_description = read_files(['README.md', 'CHANGELOG.md'])
 
 meta = {}
-with open('./src/dotenv/version.py', encoding='utf-8') as f:
+with io.open('./src/dotenv/version.py', encoding='utf-8') as f:
     exec(f.read(), meta)
 
 setup(
