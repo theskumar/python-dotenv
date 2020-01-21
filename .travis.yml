@@ -43,6 +43,8 @@ deploy:
   user: theskumar
   password:
     secure: DXUkl4YSC2RCltChik1csvQulnVMQQpD/4i4u+6pEyUfBMYP65zFYSNwLh+jt+URyX+MpN/Er20+TZ/F/fu7xkru6/KBqKLugeXihNbwGhbHUIkjZT/0dNSo03uAz6s5fWgqr8EJk9Ll71GexAsBPx2yqsjc2BMgOjwcNly40Co=
+  distributions: "sdist bdist_wheel"
+  skip_existing: true
   on:
     tags: true
     repo: theskumar/python-dotenv
