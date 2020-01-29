@@ -147,6 +147,22 @@ def test_dotenv_values_stream():
     assert parsed_dict['DOTENV'] == u'it works!😃'
 
 
+def test_dotenv_values_no_interpolate():
+    stream = StringIO(u'no_interpolate=$MYVAR')
+    stream.seek(0)
+    parsed_dict = dotenv_values(stream=stream, interpolate=False)
+    assert 'no_interpolate' in parsed_dict
+    assert parsed_dict['no_interpolate'] == u'$MYVAR'
+
+
+def test_dotenv_values_no_interpolate_strict():
+    stream = StringIO(u'no_interpolate_strict=${MYVAR}')
+    stream.seek(0)
+    parsed_dict = dotenv_values(stream=stream, interpolate=False)
+    assert 'no_interpolate_strict' in parsed_dict
+    assert parsed_dict['no_interpolate_strict'] == u'${MYVAR}'
+
+
 def test_dotenv_values_export():
     stream = StringIO('export foo=bar\n')
     stream.seek(0)
