@@ -46,12 +46,13 @@ def with_warn_for_invalid_lines(mappings):
 
 class DotEnv():
 
-    def __init__(self, dotenv_path, verbose=False, encoding=None):
-        # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text]) -> None
+    def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True):
+        # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text], bool) -> None
         self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
         self._dict = None  # type: Optional[Dict[Text, Optional[Text]]]
         self.verbose = verbose  # type: bool
         self.encoding = encoding  # type: Union[None, Text]
+        self.interpolate = interpolate  # type: bool
 
     @contextmanager
     def _get_stream(self):
@@ -73,7 +74,7 @@ class DotEnv():
             return self._dict
 
         values = OrderedDict(self.parse())
-        self._dict = resolve_nested_variables(values)
+        self._dict = resolve_nested_variables(values) if self.interpolate else values
         return self._dict
 
     def parse(self):
@@ -286,8 +287,8 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     return ''
 
 
-def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, **kwargs):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Union[None, Text]) -> bool
+def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, interpolate=True, **kwargs):
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Union[None, Text]) -> bool
     """Parse a .env file and then load all the variables found as environment variables.
 
     - *dotenv_path*: absolute or relative path to .env file.
@@ -297,10 +298,10 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, **
                   Defaults to `False`.
     """
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, **kwargs).set_as_environment_variables(override=override)
+    return DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(override=override)
 
 
-def dotenv_values(dotenv_path=None, stream=None, verbose=False, **kwargs):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, Union[None, Text]) -> Dict[Text, Optional[Text]]
+def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True, **kwargs):
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Union[None, Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, **kwargs).dict()
+    return DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).dict()
