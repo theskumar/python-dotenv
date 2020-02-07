@@ -1,15 +1,14 @@
 language: python
 cache: pip
-sudo: false
+os: linux
 dist: xenial
 
-matrix:
+jobs:
   include:
     - python: "3.6"
       env: TOXENV=lint
     - python: "3.6"
       env: TOXENV=manifest
-
     - python: "2.7"
       env: TOXENV=py27
     - python: "3.5"
@@ -42,7 +41,7 @@ after_success:
 
 deploy:
   provider: pypi
-  user: theskumar
+  username: theskumar
   password:
     secure: DXUkl4YSC2RCltChik1csvQulnVMQQpD/4i4u+6pEyUfBMYP65zFYSNwLh+jt+URyX+MpN/Er20+TZ/F/fu7xkru6/KBqKLugeXihNbwGhbHUIkjZT/0dNSo03uAz6s5fWgqr8EJk9Ll71GexAsBPx2yqsjc2BMgOjwcNly40Co=
   distributions: "sdist bdist_wheel"
