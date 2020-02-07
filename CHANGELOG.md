@@ -7,7 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-No unreleased change at the moment.
+### Changed
+
+- Use current working directory to find `.env` when bundled by PyInstaller (#213 by
+  [@gergelyk]).
 
 ## [0.11.0] - 2020-02-07
 
@@ -170,6 +173,7 @@ No unreleased change at the moment.
 [@bbc2]: https://github.com/bbc2
 [@cjauvin]: https://github.com/cjauvin
 [@earlbread]: https://github.com/earlbread
+[@gergelyk]: https://github.com/gergelyk
 [@greyli]: https://github.com/greyli
 [@qnighy]: https://github.com/qnighy
 [@techalchemy]: https://github.com/techalchemy
