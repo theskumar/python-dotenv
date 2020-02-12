@@ -153,8 +153,11 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     if " " in value_to_set:
         quote_mode = "always"
 
-    line_template = '{}="{}"\n' if quote_mode == "always" else '{}={}\n'
-    line_out = line_template.format(key_to_set, value_to_set)
+    if quote_mode == "always":
+        value_out = '"{}"'.format(value_to_set.replace('"', '\\"'))
+    else:
+        value_out = value_to_set
+    line_out = "{}={}\n".format(key_to_set, value_out)
 
     with rewrite(dotenv_path) as (source, dest):
         replaced = False
