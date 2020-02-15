@@ -29,14 +29,25 @@ def test_set_key_no_file(tmp_path):
     )
 
 
-def test_set_key_new(dotenv_file):
+@pytest.mark.parametrize(
+    "key,value,expected,content",
+    [
+        ("a", "", (True, "a", ""), 'a=""\n'),
+        ("a", "b", (True, "a", "b"), 'a="b"\n'),
+        ("a", "'b'", (True, "a", "b"), 'a="b"\n'),
+        ("a", "\"b\"", (True, "a", "b"), 'a="b"\n'),
+        ("a", "b'c", (True, "a", "b'c"), 'a="b\'c"\n'),
+        ("a", "b\"c", (True, "a", "b\"c"), 'a="b\\\"c"\n'),
+    ],
+)
+def test_set_key_new(dotenv_file, key, value, expected, content):
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.set_key(dotenv_file, "foo", "bar")
+        result = dotenv.set_key(dotenv_file, key, value)
 
-    assert result == (True, "foo", "bar")
-    assert open(dotenv_file, "r").read() == 'foo="bar"\n'
+    assert result == expected
+    assert open(dotenv_file, "r").read() == content
     mock_warning.assert_not_called()
 
 

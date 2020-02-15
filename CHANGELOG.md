@@ -12,6 +12,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Use current working directory to find `.env` when bundled by PyInstaller (#213 by
   [@gergelyk]).
 
+### Fixed
+
+- Fix escaping of quoted values written by `set_key` (#236 by [@bbc2]).
+
 ## [0.11.0] - 2020-02-07
 
 ### Added

@@ -1,7 +1,6 @@
 language: python
 cache: pip
 os: linux
-dist: xenial
 
 jobs:
   include:
@@ -21,10 +20,8 @@ jobs:
       env: TOXENV=py38
     - python: "pypy"
       env: TOXENV=pypy
-      dist: trusty
     - python: "pypy3"
       env: TOXENV=pypy3
-      dist: trusty
 
 install:
   - pip install tox
