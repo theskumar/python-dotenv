@@ -197,6 +197,13 @@ def parse_binding(reader):
     reader.set_mark()
     try:
         reader.read_regex(_multiline_whitespace)
+        if not reader.has_next():
+            return Binding(
+                key=None,
+                value=None,
+                original=reader.get_marked(),
+                error=False,
+            )
         reader.read_regex(_export)
         key = parse_key(reader)
         reader.read_regex(_whitespace)

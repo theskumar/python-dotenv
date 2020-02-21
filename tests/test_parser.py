@@ -87,6 +87,19 @@ from dotenv.parser import Binding, Original, parse_stream
         ]
     ),
     (
+        u"\n\n",
+        [
+            Binding(key=None, value=None, original=Original(string=u"\n\n", line=1), error=False),
+        ]
+    ),
+    (
+        u"a=b\n\n",
+        [
+            Binding(key=u"a", value=u"b", original=Original(string=u"a=b\n", line=1), error=False),
+            Binding(key=None, value=None, original=Original(string=u"\n", line=2), error=False),
+        ]
+    ),
+    (
         u'a=b\n\nc=d',
         [
             Binding(key=u"a", value=u"b", original=Original(string=u"a=b\n", line=1), error=False),

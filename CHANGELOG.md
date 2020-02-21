@@ -16,6 +16,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Fix escaping of quoted values written by `set_key` (#236 by [@bbc2]).
 - Fix `dotenv run` crashing on environment variables without values (#237 by [@yannham]).
+- Remove warning when last line is empty (#238 by [@bbc2]).
 
 ## [0.11.0] - 2020-02-07
 
