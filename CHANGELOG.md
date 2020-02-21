@@ -15,7 +15,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fix escaping of quoted values written by `set_key` (#236 by [@bbc2]).
-- Fix dotenv run crashing on environment variables without values
+- Fix `dotenv run` crashing on environment variables without values (#237 by [@yannham]).
 
 ## [0.11.0] - 2020-02-07
 
@@ -185,6 +185,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@theskumar]: https://github.com/theskumar
 [@ulyssessouza]: https://github.com/ulyssessouza
 [@venthur]: https://github.com/venthur
+[@yannham]: https://github.com/yannham
 
 [Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.11.0...HEAD
 [0.11.0]: https://github.com/theskumar/python-dotenv/compare/v0.10.5...v0.11.0
