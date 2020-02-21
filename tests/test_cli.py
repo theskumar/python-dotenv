@@ -121,6 +121,17 @@ def test_run(tmp_path):
     assert result == "b\n"
 
 
+def test_run_with_none_value(tmp_path):
+    sh.cd(str(tmp_path))
+    dotenv_file = str(tmp_path / ".env")
+    with open(dotenv_file, "w") as f:
+        f.write("a=b\nc")
+
+    result = sh.dotenv("run", "printenv", "a")
+
+    assert result == "b\n"
+
+
 def test_run_with_other_env(dotenv_file):
     with open(dotenv_file, "w") as f:
         f.write("a=b")
