@@ -9,7 +9,7 @@ except ImportError:
                      'Run pip install "python-dotenv[cli]" to fix this.')
     sys.exit(1)
 
-from .compat import IS_TYPE_CHECKING
+from .compat import IS_TYPE_CHECKING, to_env
 from .main import dotenv_values, get_key, set_key, unset_key
 from .version import __version__
 
@@ -97,11 +97,12 @@ def run(ctx, commandline):
     # type: (click.Context, List[str]) -> None
     """Run command with environment variables present."""
     file = ctx.obj['FILE']
-    dotenv_as_dict = dotenv_values(file)
+    dotenv_as_dict = {to_env(k): to_env(v) for (k, v) in dotenv_values(file).items() if v is not None}
+
     if not commandline:
         click.echo('No command given.')
         exit(1)
-    ret = run_command(commandline, dotenv_as_dict)  # type: ignore
+    ret = run_command(commandline, dotenv_as_dict)
     exit(ret)
 
 
