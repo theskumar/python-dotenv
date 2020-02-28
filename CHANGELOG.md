@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+*No unreleased change at this time.*
+
+## [0.12.0] - 2020-02-28
+
 ### Changed
 
 - Use current working directory to find `.env` when bundled by PyInstaller (#213 by
@@ -188,7 +192,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@venthur]: https://github.com/venthur
 [@yannham]: https://github.com/yannham
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/theskumar/python-dotenv/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/theskumar/python-dotenv/compare/v0.10.5...v0.11.0
 [0.10.5]: https://github.com/theskumar/python-dotenv/compare/v0.10.4...v0.10.5
 [0.10.4]: https://github.com/theskumar/python-dotenv/compare/v0.10.3...v0.10.4
