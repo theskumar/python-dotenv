@@ -30,7 +30,7 @@ script:
   - tox
 
 before_install:
-  - pip install python-coveralls
+  - pip install coveralls
 
 after_success:
   - tox -e coverage-report
