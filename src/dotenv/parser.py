@@ -1,13 +1,13 @@
 import codecs
+import os
 import re
 
 from .compat import IS_TYPE_CHECKING, to_text
 
 if IS_TYPE_CHECKING:
     from typing import (  # noqa:F401
-        IO, Iterator, Match, NamedTuple, Optional, Pattern, Sequence, Text,
-        Tuple
-    )
+    IO, Iterator, Match, NamedTuple, Optional, Pattern, Sequence, Text,
+    Tuple, Dict)
 
 
 def make_regex(string, extra_flags=0):
@@ -24,6 +24,7 @@ _unquoted_key = make_regex(r"([^=\#\s]+)")
 _equal_sign = make_regex(r"(=[^\S\r\n]*)")
 _single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
 _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
+_variable_value = make_regex(r"\$({)?([a-zA-Z_]+)(:-[a-zA-Z_]+)?(})?")
 _unquoted_value_part = make_regex(r"([^ \r\n]*)")
 _comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")
 _end_of_line = make_regex(r"[^\S\r\n]*(?:\r\n|\n|\r|$)")
@@ -175,6 +176,16 @@ def parse_unquoted_value(reader):
         if len(after) < 2 or after[0] in u"\r\n" or after[1] in u" #\r\n":
             return value
         value += reader.read(2)
+
+
+def parse_var_value(reader, local_env=None):
+    # type: (Reader, Dict[Text, Optional[Text]]) -> Optional[Text]
+    env = local_env or {}
+    (_, var, default_val, _) = reader.read_regex(_variable_value)
+    default = default_val if default_val else ''
+    if default:
+        default = default[2:]
+    return env.get(var, os.environ.get(str(var), default))
 
 
 def parse_value(reader):

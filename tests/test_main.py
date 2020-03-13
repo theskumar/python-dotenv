@@ -301,7 +301,7 @@ def test_dotenv_values_file(dotenv_file):
     [
         # Defined in environment, with and without interpolation
         ({"b": "c"}, "a=$b", False, {"a": "$b"}),
-        ({"b": "c"}, "a=$b", True, {"a": "$b"}),
+        ({"b": "c"}, "a=$b", True, {"a": "c"}),
         ({"b": "c"}, "a=${b}", False, {"a": "${b}"}),
         ({"b": "c"}, "a=${b}", True, {"a": "c"}),
 
@@ -310,6 +310,12 @@ def test_dotenv_values_file(dotenv_file):
 
         # Undefined
         ({}, "a=${b}", True, {"a": ""}),
+
+        # Undefined with default value
+        ({}, "a=${b:-DEFAULT_VALUE}", False, {"a": "${b:-DEFAULT_VALUE}"}),
+        ({}, "a=${b:-DEFAULT_VALUE}", True, {"a": "DEFAULT_VALUE"}),
+        ({"b": "c"}, "a=${b:-DEFAULT_VALUE}", False, {"a": "${b:-DEFAULT_VALUE}"}),
+        ({"b": "c"}, "a=${b:-DEFAULT_VALUE}", True, {"a": "c"}),
 
         # With quotes
         ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),

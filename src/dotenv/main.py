@@ -12,13 +12,13 @@ from collections import OrderedDict
 from contextlib import contextmanager
 
 from .compat import IS_TYPE_CHECKING, PY2, StringIO, to_env
-from .parser import Binding, parse_stream
+from .parser import Binding, Reader, parse_stream, parse_var_value, parse_value
 
 logger = logging.getLogger(__name__)
 
 if IS_TYPE_CHECKING:
     from typing import (
-        Dict, Iterator, Match, Optional, Pattern, Union, Text, IO, Tuple
+        Dict, Iterator, Optional, Pattern, Union, Text, IO, Tuple
     )
     if sys.version_info >= (3, 6):
         _PathLike = os.PathLike
@@ -53,6 +53,7 @@ class DotEnv():
         self.verbose = verbose  # type: bool
         self.encoding = encoding  # type: Union[None, Text]
         self.interpolate = interpolate  # type: bool
+        self.local_env = {}  # type: Dict[Text, Optional[Text]]
 
     @contextmanager
     def _get_stream(self):
@@ -200,32 +201,20 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     return removed, key_to_unset
 
 
-def resolve_nested_variables(values):
-    # type: (Dict[Text, Optional[Text]]) -> Dict[Text, Optional[Text]]
-    def _replacement(name):
-        # type: (Text) -> Text
-        """
-        get appropriate value for a variable name.
-        first search in environ, if not found,
-        then look into the dotenv variables
-        """
-        ret = os.getenv(name, new_values.get(name, ""))
-        return ret  # type: ignore
-
-    def _re_sub_callback(match_object):
-        # type: (Match[Text]) -> Text
-        """
-        From a match object gets the variable name and returns
-        the correct replacement
-        """
-        return _replacement(match_object.group()[2:-1])
-
-    new_values = {}
+def resolve_nested_variables(values, local_env=None):
+    # type: (Dict[Text, Optional[Text]], Dict[Text, Optional[Text]]) -> Dict[Text, Optional[Text]]
+    local_env = local_env or {}
 
     for k, v in values.items():
-        new_values[k] = __posix_variable.sub(_re_sub_callback, v) if v is not None else None
+        if not v:
+            value = v
+        elif v[0] == '$':
+            value = parse_var_value(Reader(StringIO(v)), local_env=local_env)
+        else:
+            value = parse_value(Reader(StringIO(v)))
+        local_env[k] = value
 
-    return new_values
+    return local_env
 
 
 def _walk_to_root(path):
