@@ -74,14 +74,19 @@ def test_get_key_no_file(tmp_path):
     nx_file = str(tmp_path / "nx")
     logger = logging.getLogger("dotenv.main")
 
-    with mock.patch.object(logger, "warning") as mock_warning:
+    with mock.patch.object(logger, "info") as mock_info, \
+            mock.patch.object(logger, "warning") as mock_warning:
         result = dotenv.get_key(nx_file, "foo")
 
     assert result is None
+    mock_info.assert_has_calls(
+        calls=[
+            mock.call("Python-dotenv could not find configuration file %s.", nx_file)
+        ],
+    )
     mock_warning.assert_has_calls(
         calls=[
-            mock.call("File doesn't exist %s", nx_file),
-            mock.call("Key %s not found in %s.", "foo", nx_file),
+            mock.call("Key %s not found in %s.", "foo", nx_file)
         ],
     )
 
@@ -228,10 +233,10 @@ def test_load_dotenv_existing_file(dotenv_file):
 def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
-    with mock.patch.object(logger, "warning") as mock_warning:
+    with mock.patch.object(logger, "info") as mock_info:
         dotenv.load_dotenv('.does_not_exist', verbose=True)
 
-    mock_warning.assert_called_once_with("File doesn't exist %s", ".does_not_exist")
+    mock_info.assert_called_once_with("Python-dotenv could not find configuration file %s.", ".does_not_exist")
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
