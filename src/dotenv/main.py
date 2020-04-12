@@ -275,6 +275,7 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
             current_file = __file__
 
         while frame.f_code.co_filename == current_file:
+            assert frame.f_back is not None
             frame = frame.f_back
         frame_filename = frame.f_code.co_filename
         path = os.path.dirname(os.path.abspath(frame_filename))
