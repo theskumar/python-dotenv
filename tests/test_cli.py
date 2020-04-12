@@ -20,7 +20,7 @@ def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'list'])
 
     assert result.exit_code == 2, result.output
-    assert 'Invalid value for "-f"' in result.output
+    assert "Invalid value for '-f'" in result.output
 
 
 def test_list_no_file(cli):
@@ -48,7 +48,7 @@ def test_get_no_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'get', 'a'])
 
     assert result.exit_code == 2
-    assert 'Invalid value for "-f"' in result.output
+    assert "Invalid value for '-f'" in result.output
 
 
 def test_unset_existing_value(cli, dotenv_file):
@@ -97,7 +97,7 @@ def test_set_no_file(cli):
     result = cli.invoke(dotenv_cli, ["--file", "nx_file", "set"])
 
     assert result.exit_code == 2
-    assert 'Invalid value for "-f"' in result.output
+    assert "Invalid value for '-f'" in result.output
 
 
 def test_get_default_path(tmp_path):
@@ -145,14 +145,14 @@ def test_run_without_cmd(cli):
     result = cli.invoke(dotenv_cli, ['run'])
 
     assert result.exit_code == 2
-    assert 'Invalid value for "-f"' in result.output
+    assert "Invalid value for '-f'" in result.output
 
 
 def test_run_with_invalid_cmd(cli):
     result = cli.invoke(dotenv_cli, ['run', 'i_do_not_exist'])
 
     assert result.exit_code == 2
-    assert 'Invalid value for "-f"' in result.output
+    assert "Invalid value for '-f'" in result.output
 
 
 def test_run_with_version(cli):
