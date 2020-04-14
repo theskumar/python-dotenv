@@ -39,18 +39,23 @@ export S3_BUCKET=YOURS3BUCKET
 export SECRET_KEY=YOURSECRETKEYGOESHERE
 ```
 
-`.env` can interpolate variables using POSIX variable expansion,
-variables are replaced from the environment first or from other values
-in the `.env` file if the variable is not present in the environment. 
+Python-dotenv can interpolate variables using POSIX variable expansion.
+
+The value of a variable is the first of the values defined in the following list:
+
+- Value of that variable in the environment.
+- Value of that variable in the `.env` file.
+- Default value, if provided.
+- Empty string.
+
 Ensure that variables are surrounded with `{}` like `${HOME}` as bare 
 variables such as `$HOME` are not expanded.
-(**Note**: Default Value Expansion is not supported as of yet, see
-[\#30](https://github.com/theskumar/python-dotenv/pull/30#issuecomment-244036604).)
 
 ```shell
 CONFIG_PATH=${HOME}/.config/foo
 DOMAIN=example.org
 EMAIL=admin@${DOMAIN}
+DEBUG=${DEBUG:-false}
 ```
 
 ## Getting started

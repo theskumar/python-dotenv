@@ -7,7 +7,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-*No unreleased change at this time.*
+- Add support for a Bash-like default value in variable expansion (#248 by [@bbc2]).
 
 ## [0.12.0] - 2020-02-28
 

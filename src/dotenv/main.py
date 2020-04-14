@@ -30,7 +30,17 @@ if IS_TYPE_CHECKING:
     else:
         _StringIO = StringIO[Text]
 
-__posix_variable = re.compile(r'\$\{[^\}]*\}')  # type: Pattern[Text]
+__posix_variable = re.compile(
+    r"""
+    \$\{
+        (?P<name>[^\}:]*)
+        (?::-
+            (?P<default>[^\}]*)
+        )?
+    \}
+    """,
+    re.VERBOSE,
+)  # type: Pattern[Text]
 
 
 def with_warn_for_invalid_lines(mappings):
@@ -202,23 +212,25 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
 
 def resolve_nested_variables(values):
     # type: (Dict[Text, Optional[Text]]) -> Dict[Text, Optional[Text]]
-    def _replacement(name):
-        # type: (Text) -> Text
+    def _replacement(name, default):
+        # type: (Text, Optional[Text]) -> Text
         """
         get appropriate value for a variable name.
         first search in environ, if not found,
         then look into the dotenv variables
         """
-        ret = os.getenv(name, new_values.get(name, ""))
+        default = default if default is not None else ""
+        ret = os.getenv(name, new_values.get(name, default))
         return ret  # type: ignore
 
-    def _re_sub_callback(match_object):
+    def _re_sub_callback(match):
         # type: (Match[Text]) -> Text
         """
         From a match object gets the variable name and returns
         the correct replacement
         """
-        return _replacement(match_object.group()[2:-1])
+        matches = match.groupdict()
+        return _replacement(name=matches["name"], default=matches["default"])  # type: ignore
 
     new_values = {}
 
