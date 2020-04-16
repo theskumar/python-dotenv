@@ -1,6 +1,7 @@
 language: python
 cache: pip
 os: linux
+dist: xenial
 
 jobs:
   include:
