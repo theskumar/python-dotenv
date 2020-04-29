@@ -25,7 +25,7 @@ setup(
     version=meta['__version__'],
     author="Saurabh Kumar",
     author_email="me+github@saurabh-kumar.com",
-    url="http://github.com/theskumar/python-dotenv",
+    url="https://github.com/theskumar/python-dotenv",
     keywords=['environment variables', 'deployments', 'settings', 'env', 'dotenv',
               'configurations', 'python'],
     packages=['dotenv'],
