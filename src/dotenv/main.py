@@ -74,7 +74,7 @@ class DotEnv():
                 yield stream
         else:
             if self.verbose:
-                logger.warning("File doesn't exist %s", self.dotenv_path)
+                logger.info("Python-dotenv could not find configuration file %s.", self.dotenv_path or '.env')
             yield StringIO('')
 
     def dict(self):
