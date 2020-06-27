@@ -334,6 +334,9 @@ def test_dotenv_values_file(dotenv_file):
 
         # Reused
         ({"b": "c"}, "a=${b}${b}", True, {"a": "cc"}),
+
+        # Re-defined and used in file
+        ({"b": "c"}, "b=d\na=${b}", True, {"a": "d", "b": "d"}),
     ],
 )
 def test_dotenv_values_stream(env, string, interpolate, expected):

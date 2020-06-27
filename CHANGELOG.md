@@ -7,7 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-*No unreleased change at this time.*
+### Fixed
+
+- Privilege definition in file over the environment in variable expansion (#256 by
+  [@elbehery95]).
 
 ## [0.13.0] - 2020-04-16
 
@@ -197,6 +200,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@ulyssessouza]: https://github.com/ulyssessouza
 [@venthur]: https://github.com/venthur
 [@yannham]: https://github.com/yannham
+[@elbehery95]: https://github.com/elbehery95
 
 [Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.13.0...HEAD
 [0.13.0]: https://github.com/theskumar/python-dotenv/compare/v0.12.0...v0.13.0

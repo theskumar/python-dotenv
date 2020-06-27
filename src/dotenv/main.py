@@ -214,13 +214,8 @@ def resolve_nested_variables(values):
     # type: (Dict[Text, Optional[Text]]) -> Dict[Text, Optional[Text]]
     def _replacement(name, default):
         # type: (Text, Optional[Text]) -> Text
-        """
-        get appropriate value for a variable name.
-        first search in environ, if not found,
-        then look into the dotenv variables
-        """
         default = default if default is not None else ""
-        ret = os.getenv(name, new_values.get(name, default))
+        ret = new_values.get(name, os.getenv(name, default))
         return ret  # type: ignore
 
     def _re_sub_callback(match):
