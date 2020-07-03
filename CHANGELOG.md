@@ -7,10 +7,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
+*No unreleased change at this time.*
+
+## [0.14.0] - 2020-07-03
+
+### Changed
 
 - Privilege definition in file over the environment in variable expansion (#256 by
   [@elbehery95]).
+
+### Fixed
+
+- Improve error message for when file isn't found (#245 by [@snobu]).
+- Use HTTPS URL in package meta data (#251 by [@ekohl]).
 
 ## [0.13.0] - 2020-04-16
 
@@ -192,17 +201,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@bbc2]: https://github.com/bbc2
 [@cjauvin]: https://github.com/cjauvin
 [@earlbread]: https://github.com/earlbread
+[@ekohl]: https://github.com/ekohl
+[@elbehery95]: https://github.com/elbehery95
 [@gergelyk]: https://github.com/gergelyk
 [@greyli]: https://github.com/greyli
 [@qnighy]: https://github.com/qnighy
+[@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
 [@theskumar]: https://github.com/theskumar
 [@ulyssessouza]: https://github.com/ulyssessouza
 [@venthur]: https://github.com/venthur
 [@yannham]: https://github.com/yannham
-[@elbehery95]: https://github.com/elbehery95
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/theskumar/python-dotenv/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/theskumar/python-dotenv/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/theskumar/python-dotenv/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/theskumar/python-dotenv/compare/v0.10.5...v0.11.0
