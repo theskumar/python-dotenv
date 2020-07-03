@@ -7,7 +7,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-*No unreleased change at this time.*
+### Fixed
+
+- Fix potentially empty expanded value for duplicate key (#260 by [@bbc]).
 
 ## [0.14.0] - 2020-07-03
 
