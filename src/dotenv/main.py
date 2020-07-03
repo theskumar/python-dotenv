@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 if IS_TYPE_CHECKING:
     from typing import (
-        Dict, Iterator, Match, Optional, Pattern, Union, Text, IO, Tuple
+        Dict, Iterable, Iterator, Match, Optional, Pattern, Union, Text, IO, Tuple
     )
     if sys.version_info >= (3, 6):
         _PathLike = os.PathLike
@@ -83,9 +83,13 @@ class DotEnv():
         if self._dict:
             return self._dict
 
-        values = OrderedDict(self.parse())
-        self._dict = resolve_nested_variables(values) if self.interpolate else values
-        return self._dict
+        if self.interpolate:
+            values = resolve_nested_variables(self.parse())
+        else:
+            values = OrderedDict(self.parse())
+
+        self._dict = values
+        return values
 
     def parse(self):
         # type: () -> Iterator[Tuple[Text, Optional[Text]]]
@@ -211,7 +215,7 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
 
 
 def resolve_nested_variables(values):
-    # type: (Dict[Text, Optional[Text]]) -> Dict[Text, Optional[Text]]
+    # type: (Iterable[Tuple[Text, Optional[Text]]]) -> Dict[Text, Optional[Text]]
     def _replacement(name, default):
         # type: (Text, Optional[Text]) -> Text
         default = default if default is not None else ""
@@ -229,7 +233,7 @@ def resolve_nested_variables(values):
 
     new_values = {}
 
-    for k, v in values.items():
+    for (k, v) in values:
         new_values[k] = __posix_variable.sub(_re_sub_callback, v) if v is not None else None
 
     return new_values
