@@ -55,7 +55,7 @@ try:
             ("error", bool),
         ],
     )
-except ImportError:
+except (ImportError, AttributeError):
     from collections import namedtuple
     Original = namedtuple(  # type: ignore
         "Original",
