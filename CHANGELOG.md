@@ -10,6 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fix potentially empty expanded value for duplicate key (#260 by [@bbc]).
+- Fix import error on Python 3.5.0 and 3.5.1 (#267 by [@gongqingkui]).
 
 ## [0.14.0] - 2020-07-03
 
@@ -206,6 +207,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@ekohl]: https://github.com/ekohl
 [@elbehery95]: https://github.com/elbehery95
 [@gergelyk]: https://github.com/gergelyk
+[@gongqingkui]: https://github.com/gongqingkui
 [@greyli]: https://github.com/greyli
 [@qnighy]: https://github.com/qnighy
 [@snobu]: https://github.com/snobu
