@@ -97,14 +97,16 @@ class DotEnv():
     def set_as_environment_variables(self, override=False):
         # type: (bool) -> bool
         """
-        Load the current dotenv as system environemt variable.
+        Set environment variables from a dotenv dict.
         """
+        if self.verbose and not len(self.dict()):
+            logger.info("No variables loaded from %s.", self.dotenv_path)
+            return False
         for k, v in self.dict().items():
             if k in os.environ and not override:
                 continue
             if v is not None:
                 os.environ[to_env(k)] = to_env(v)
-
         return True
 
     def get(self, key):
@@ -304,12 +306,16 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, in
 
     - *dotenv_path*: absolute or relative path to .env file.
     - *stream*: `StringIO` object with .env content.
-    - *verbose*: whether to output the warnings related to missing .env file etc. Defaults to `False`.
+    - *verbose*: whether to output warnings related to missing .env file etc. Defaults to `False`.
+      If `True`, and no environment variables are loaded, raises a `LookupError`.
     - *override*: where to override the system environment variables with the variables in `.env` file.
-                  Defaults to `False`.
+      Defaults to `False`.
     """
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(override=override)
+    env = DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(override=override)
+    if verbose and not env:
+        raise LookupError("No variables loaded")
+    return env
 
 
 def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True, **kwargs):

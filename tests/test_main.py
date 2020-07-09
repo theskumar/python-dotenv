@@ -12,6 +12,7 @@ import sh
 
 import dotenv
 from dotenv.compat import PY2, StringIO
+from dotenv.main import DotEnv
 
 
 def test_set_key_no_file(tmp_path):
@@ -230,13 +231,32 @@ def test_load_dotenv_existing_file(dotenv_file):
     assert os.environ == {"a": "b"}
 
 
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_empty_file(dotenv_file):
+    logger = logging.getLogger("dotenv.main")
+
+    result = DotEnv(dotenv_file, verbose=False).set_as_environment_variables()
+    assert result is True
+
+    with mock.patch.object(logger, "info") as mock_info:
+        result = DotEnv(dotenv_file, verbose=True).set_as_environment_variables()
+        mock_info.assert_has_calls(calls=[mock.call("No variables loaded from %s.", dotenv_file)])
+        assert result is False
+
+
 def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info:
-        dotenv.load_dotenv('.does_not_exist', verbose=True)
-
-    mock_info.assert_called_once_with("Python-dotenv could not find configuration file %s.", ".does_not_exist")
+        msg = "No variables loaded"
+        with pytest.raises(LookupError, match=msg):
+            dotenv.load_dotenv('.does_not_exist', verbose=True)
+            mock_info.assert_has_calls(
+                calls=[
+                    mock.call("Python-dotenv could not find configuration file %s.", '.does_not_exist'),
+                    mock.call("%s from %s.", msg, ".does_not_exist")
+                ]
+            )
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
