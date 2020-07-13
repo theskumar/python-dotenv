@@ -238,25 +238,31 @@ def test_load_dotenv_empty_file(dotenv_file):
     result = DotEnv(dotenv_file, verbose=False).set_as_environment_variables()
     assert result is True
 
+    result = DotEnv(dotenv_file, verbose=False).set_as_environment_variables(raise_error_if_nothing_set=True)
+    assert result is False
+
     with mock.patch.object(logger, "info") as mock_info:
-        result = DotEnv(dotenv_file, verbose=True).set_as_environment_variables()
-        mock_info.assert_has_calls(calls=[mock.call("No variables loaded from %s.", dotenv_file)])
-        assert result is False
+        with pytest.raises(LookupError):
+            result = dotenv.load_dotenv(dotenv_file, verbose=True,
+                                        raise_error_if_nothing_set=True).set_as_environment_variables()
+            mock_info.assert_has_calls(calls=[mock.call("No variables set from %s.", dotenv_file)])
+            assert result is False
 
 
-def test_load_dotenv_no_file_verbose():
+def test_load_dotenv_no_file():
     logger = logging.getLogger("dotenv.main")
 
+    with pytest.raises(IOError):
+        result = dotenv.load_dotenv(raise_error_if_not_found=True)
+        assert result is False
+
     with mock.patch.object(logger, "info") as mock_info:
-        msg = "No variables loaded"
-        with pytest.raises(LookupError, match=msg):
-            dotenv.load_dotenv('.does_not_exist', verbose=True)
-            mock_info.assert_has_calls(
-                calls=[
-                    mock.call("Python-dotenv could not find configuration file %s.", '.does_not_exist'),
-                    mock.call("%s from %s.", msg, ".does_not_exist")
-                ]
-            )
+        dotenv.load_dotenv('.does_not_exist', verbose=True)
+        mock_info.assert_has_calls(
+            calls=[
+                mock.call("Python-dotenv could not find configuration file %s.", '.does_not_exist'),
+            ]
+        )
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
