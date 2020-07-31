@@ -102,11 +102,12 @@ class Error(Exception):
 
 
 class Reader:
-    def __init__(self, stream):
+    def __init__(self, stream, remove_quotes):
         # type: (IO[Text]) -> None
         self.string = stream.read()
         self.position = Position.start()
         self.mark = Position.start()
+        self.remove_quotes = remove_quotes  # type: bool
 
     def has_next(self):
         # type: () -> bool
@@ -180,10 +181,10 @@ def parse_unquoted_value(reader):
 def parse_value(reader):
     # type: (Reader) -> Text
     char = reader.peek(1)
-    if char == u"'":
+    if char == u"'" and reader.remove_quotes:
         (value,) = reader.read_regex(_single_quoted_value)
         return decode_escapes(_single_quote_escapes, value)
-    elif char == u'"':
+    elif char == u'"' and reader.remove_quotes:
         (value,) = reader.read_regex(_double_quoted_value)
         return decode_escapes(_double_quote_escapes, value)
     elif char in (u"", u"\n", u"\r"):
@@ -230,8 +231,8 @@ def parse_binding(reader):
         )
 
 
-def parse_stream(stream):
+def parse_stream(stream, remove_quotes=True):
     # type: (IO[Text]) -> Iterator[Binding]
-    reader = Reader(stream)
+    reader = Reader(stream, remove_quotes)
     while reader.has_next():
         yield parse_binding(reader)

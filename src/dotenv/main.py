@@ -56,13 +56,14 @@ def with_warn_for_invalid_lines(mappings):
 
 class DotEnv():
 
-    def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True):
+    def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True, remove_quotes=True):
         # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text], bool) -> None
         self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
         self._dict = None  # type: Optional[Dict[Text, Optional[Text]]]
         self.verbose = verbose  # type: bool
         self.encoding = encoding  # type: Union[None, Text]
         self.interpolate = interpolate  # type: bool
+        self.remove_quotes = remove_quotes  # type: bool
 
     @contextmanager
     def _get_stream(self):
@@ -94,7 +95,7 @@ class DotEnv():
     def parse(self):
         # type: () -> Iterator[Tuple[Text, Optional[Text]]]
         with self._get_stream() as stream:
-            for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
+            for mapping in with_warn_for_invalid_lines(parse_stream(stream, self.remove_quotes)):
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
@@ -151,8 +152,8 @@ def rewrite(path):
         shutil.move(dest.name, path)
 
 
-def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
-    # type: (_PathLike, Text, Text, Text) -> Tuple[Optional[bool], Text, Text]
+def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always", remove_quotes=True):
+    # type: (_PathLike, Text, Text, Text, bool) -> Tuple[Optional[bool], Text, Text]
     """
     Adds or Updates a key/value to the given .env
 
@@ -175,7 +176,7 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
 
     with rewrite(dotenv_path) as (source, dest):
         replaced = False
-        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+        for mapping in with_warn_for_invalid_lines(parse_stream(source, remove_quotes)):
             if mapping.key == key_to_set:
                 dest.write(line_out)
                 replaced = True
@@ -187,8 +188,8 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     return True, key_to_set, value_to_set
 
 
-def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
-    # type: (_PathLike, Text, Text) -> Tuple[Optional[bool], Text]
+def unset_key(dotenv_path, key_to_unset, quote_mode="always", remove_quotes=True):
+    # type: (_PathLike, Text, Text, bool) -> Tuple[Optional[bool], Text]
     """
     Removes a given key from the given .env
 
@@ -201,7 +202,7 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
 
     removed = False
     with rewrite(dotenv_path) as (source, dest):
-        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+        for mapping in with_warn_for_invalid_lines(parse_stream(source, remove_quotes)):
             if mapping.key == key_to_unset:
                 removed = True
             else:
@@ -302,7 +303,8 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     return ''
 
 
-def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, interpolate=True, **kwargs):
+def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, interpolate=True, remove_quotes=True,
+                **kwargs):
     # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Union[None, Text]) -> bool
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -313,10 +315,11 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, in
                   Defaults to `False`.
     """
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(override=override)
+    return DotEnv(f, verbose=verbose, interpolate=interpolate, remove_quotes=remove_quotes, **kwargs)\
+        .set_as_environment_variables(override=override)
 
 
-def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True, **kwargs):
+def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True, remove_quotes=True, **kwargs):
     # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Union[None, Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).dict()
+    return DotEnv(f, verbose=verbose, interpolate=interpolate, remove_quotes=remove_quotes, **kwargs).dict()
