@@ -186,16 +186,23 @@ Usage: dotenv [OPTIONS] COMMAND [ARGS]...
 Options:
   -f, --file PATH                 Location of the .env file, defaults to .env
                                   file in current working directory.
+
   -q, --quote [always|never|auto]
                                   Whether to quote or not the variable values.
                                   Default mode is always. This does not affect
                                   parsing.
+
+  -e, --export BOOLEAN
+                                  Whether to write the dot file as an
+                                  executable bash script.
+
+  --version                       Show the version and exit.
   --help                          Show this message and exit.
 
 Commands:
-  get    Retrive the value for the given key.
+  get    Retrieve the value for the given key.
   list   Display all the stored key/value.
-  run    Run command with environment variables from .env file present
+  run    Run command with environment variables present.
   set    Store the given key/value.
   unset  Removes the given key.
 ```

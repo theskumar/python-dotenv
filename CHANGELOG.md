@@ -7,6 +7,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add `--export` option to `set` to make it prepend the binding with `export` (#270 by
+  [@jadutter]).
+
+### Changed
+
+- Make `set` command create the `.env` file in the current directory if no `.env` file was
+  found (#270 by [@jadutter]).
+
 ### Fixed
 
 - Fix potentially empty expanded value for duplicate key (#260 by [@bbc]).
@@ -209,6 +219,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@gergelyk]: https://github.com/gergelyk
 [@gongqingkui]: https://github.com/gongqingkui
 [@greyli]: https://github.com/greyli
+[@jadutter]: https://github.com/jadutter
 [@qnighy]: https://github.com/qnighy
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
