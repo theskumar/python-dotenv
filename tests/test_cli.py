@@ -20,7 +20,7 @@ def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'list'])
 
     assert result.exit_code == 2, result.output
-    assert "Invalid value for '-f'" in result.output
+    assert "does not exist" in result.output
 
 
 def test_list_no_file(cli):
@@ -48,7 +48,7 @@ def test_get_no_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'get', 'a'])
 
     assert result.exit_code == 2
-    assert "Invalid value for '-f'" in result.output
+    assert "does not exist" in result.output
 
 
 def test_unset_existing_value(cli, dotenv_file):
@@ -77,10 +77,27 @@ def test_unset_non_existent_value(cli, dotenv_file):
         ("auto", "HELLO", "HELLO WORLD", 'HELLO="HELLO WORLD"\n'),
     )
 )
-def test_set_options(cli, dotenv_file, quote_mode, variable, value, expected):
+def test_set_quote_options(cli, dotenv_file, quote_mode, variable, value, expected):
     result = cli.invoke(
         dotenv_cli,
-        ["--file", dotenv_file, "--quote", quote_mode, "set", variable, value]
+        ["--file", dotenv_file, "--export", "false", "--quote", quote_mode, "set", variable, value]
+    )
+
+    assert (result.exit_code, result.output) == (0, "{}={}\n".format(variable, value))
+    assert open(dotenv_file, "r").read() == expected
+
+
+@pytest.mark.parametrize(
+    "dotenv_file,export_mode,variable,value,expected",
+    (
+        (".nx_file", "true", "HELLO", "WORLD", "export HELLO=\"WORLD\"\n"),
+        (".nx_file", "false", "HELLO", "WORLD", "HELLO=\"WORLD\"\n"),
+    )
+)
+def test_set_export(cli, dotenv_file, export_mode, variable, value, expected):
+    result = cli.invoke(
+        dotenv_cli,
+        ["--file", dotenv_file, "--quote", "always", "--export", export_mode, "set", variable, value]
     )
 
     assert (result.exit_code, result.output) == (0, "{}={}\n".format(variable, value))
@@ -97,7 +114,7 @@ def test_set_no_file(cli):
     result = cli.invoke(dotenv_cli, ["--file", "nx_file", "set"])
 
     assert result.exit_code == 2
-    assert "Invalid value for '-f'" in result.output
+    assert "Missing argument" in result.output
 
 
 def test_get_default_path(tmp_path):

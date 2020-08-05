@@ -140,6 +140,9 @@ def get_key(dotenv_path, key_to_get):
 def rewrite(path):
     # type: (_PathLike) -> Iterator[Tuple[IO[Text], IO[Text]]]
     try:
+        if not os.path.isfile(path):
+            with io.open(path, "w+") as source:
+                source.write("")
         with tempfile.NamedTemporaryFile(mode="w+", delete=False) as dest:
             with io.open(path) as source:
                 yield (source, dest)  # type: ignore
@@ -151,8 +154,8 @@ def rewrite(path):
         shutil.move(dest.name, path)
 
 
-def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
-    # type: (_PathLike, Text, Text, Text) -> Tuple[Optional[bool], Text, Text]
+def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always", export=False):
+    # type: (_PathLike, Text, Text, Text, bool) -> Tuple[Optional[bool], Text, Text]
     """
     Adds or Updates a key/value to the given .env
 
@@ -160,9 +163,6 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
     an orphan .env somewhere in the filesystem
     """
     value_to_set = value_to_set.strip("'").strip('"')
-    if not os.path.exists(dotenv_path):
-        logger.warning("Can't write to %s - it doesn't exist.", dotenv_path)
-        return None, key_to_set, value_to_set
 
     if " " in value_to_set:
         quote_mode = "always"
@@ -171,7 +171,10 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always"):
         value_out = '"{}"'.format(value_to_set.replace('"', '\\"'))
     else:
         value_out = value_to_set
-    line_out = "{}={}\n".format(key_to_set, value_out)
+    if export:
+        line_out = 'export {}={}\n'.format(key_to_set, value_out)
+    else:
+        line_out = "{}={}\n".format(key_to_set, value_out)
 
     with rewrite(dotenv_path) as (source, dest):
         replaced = False

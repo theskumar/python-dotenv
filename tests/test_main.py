@@ -18,15 +18,11 @@ def test_set_key_no_file(tmp_path):
     nx_file = str(tmp_path / "nx")
     logger = logging.getLogger("dotenv.main")
 
-    with mock.patch.object(logger, "warning") as mock_warning:
+    with mock.patch.object(logger, "warning"):
         result = dotenv.set_key(nx_file, "foo", "bar")
 
-    assert result == (None, "foo", "bar")
-    assert not os.path.exists(nx_file)
-    mock_warning.assert_called_once_with(
-        "Can't write to %s - it doesn't exist.",
-        nx_file,
-    )
+    assert result == (True, "foo", "bar")
+    assert os.path.exists(nx_file)
 
 
 @pytest.mark.parametrize(
