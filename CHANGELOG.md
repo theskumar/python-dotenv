@@ -19,8 +19,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fix potentially empty expanded value for duplicate key (#260 by [@bbc]).
+- Fix potentially empty expanded value for duplicate key (#260 by [@bbc2]).
 - Fix import error on Python 3.5.0 and 3.5.1 (#267 by [@gongqingkui]).
+- Fix parsing of unquoted values containing several adjacent space or tab characters
+  (#277 by [@bbc2], review by [@x-yuri]).
 
 ## [0.14.0] - 2020-07-03
 
@@ -226,6 +228,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@theskumar]: https://github.com/theskumar
 [@ulyssessouza]: https://github.com/ulyssessouza
 [@venthur]: https://github.com/venthur
+[@x-yuri]: https://github.com/x-yuri
 [@yannham]: https://github.com/yannham
 
 [Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.14.0...HEAD
