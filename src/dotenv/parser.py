@@ -24,7 +24,7 @@ _unquoted_key = make_regex(r"([^=\#\s]+)")
 _equal_sign = make_regex(r"(=[^\S\r\n]*)")
 _single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
 _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
-_unquoted_value_part = make_regex(r"([^ \r\n]*)")
+_unquoted_value = make_regex(r"([^\r\n]*)")
 _comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")
 _end_of_line = make_regex(r"[^\S\r\n]*(?:\r\n|\n|\r|$)")
 _rest_of_line = make_regex(r"[^\r\n]*(?:\r|\n|\r\n)?")
@@ -167,14 +167,8 @@ def parse_key(reader):
 
 def parse_unquoted_value(reader):
     # type: (Reader) -> Text
-    value = u""
-    while True:
-        (part,) = reader.read_regex(_unquoted_value_part)
-        value += part
-        after = reader.peek(2)
-        if len(after) < 2 or after[0] in u"\r\n" or after[1] in u" #\r\n":
-            return value
-        value += reader.read(2)
+    (part,) = reader.read_regex(_unquoted_value)
+    return re.sub(r"\s+#.*", "", part).rstrip()
 
 
 def parse_value(reader):

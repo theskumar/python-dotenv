@@ -19,20 +19,40 @@ from dotenv.parser import Binding, Original, parse_stream
     (u"# a=b", [Binding(key=None, value=None, original=Original(string=u"# a=b", line=1), error=False)]),
     (u"a=b#c", [Binding(key=u"a", value=u"b#c", original=Original(string=u"a=b#c", line=1), error=False)]),
     (
-        u'a=b # comment',
-        [Binding(key=u"a", value=u"b", original=Original(string=u"a=b # comment", line=1), error=False)],
+        u'a=b #c',
+        [Binding(key=u"a", value=u"b", original=Original(string=u"a=b #c", line=1), error=False)],
     ),
     (
-        u"a=b space ",
-        [Binding(key=u"a", value=u"b space", original=Original(string=u"a=b space ", line=1), error=False)],
+        u'a=b\t#c',
+        [Binding(key=u"a", value=u"b", original=Original(string=u"a=b\t#c", line=1), error=False)],
     ),
     (
-        u"a='b space '",
-        [Binding(key=u"a", value=u"b space ", original=Original(string=u"a='b space '", line=1), error=False)],
+        u"a=b c",
+        [Binding(key=u"a", value=u"b c", original=Original(string=u"a=b c", line=1), error=False)],
     ),
     (
-        u'a="b space "',
-        [Binding(key=u"a", value=u"b space ", original=Original(string=u'a="b space "', line=1), error=False)],
+        u"a=b\tc",
+        [Binding(key=u"a", value=u"b\tc", original=Original(string=u"a=b\tc", line=1), error=False)],
+    ),
+    (
+        u"a=b  c",
+        [Binding(key=u"a", value=u"b  c", original=Original(string=u"a=b  c", line=1), error=False)],
+    ),
+    (
+        u"a=b\u00a0 c",
+        [Binding(key=u"a", value=u"b\u00a0 c", original=Original(string=u"a=b\u00a0 c", line=1), error=False)],
+    ),
+    (
+        u"a=b c ",
+        [Binding(key=u"a", value=u"b c", original=Original(string=u"a=b c ", line=1), error=False)],
+    ),
+    (
+        u"a='b c '",
+        [Binding(key=u"a", value=u"b c ", original=Original(string=u"a='b c '", line=1), error=False)],
+    ),
+    (
+        u'a="b c "',
+        [Binding(key=u"a", value=u"b c ", original=Original(string=u'a="b c "', line=1), error=False)],
     ),
     (
         u"export export_a=1",
