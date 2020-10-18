@@ -12,7 +12,6 @@ import sh
 
 import dotenv
 from dotenv.compat import PY2, StringIO
-from dotenv.main import DotEnv
 
 
 def test_set_key_no_file(tmp_path):
@@ -232,37 +231,32 @@ def test_load_dotenv_existing_file(dotenv_file):
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
-def test_load_dotenv_empty_file(dotenv_file):
+def test_load_dotenv_existing_file_empty(dotenv_file):
     logger = logging.getLogger("dotenv.main")
 
-    result = DotEnv(dotenv_file, verbose=False).set_as_environment_variables()
-    assert result is True
+    with mock.patch.object(logger, "info") as mock_info:
+        assert dotenv.load_dotenv(dotenv_file) is True
 
-    result = DotEnv(dotenv_file, verbose=False).set_as_environment_variables(raise_error_if_nothing_set=True)
-    assert result is False
+    mock_info.assert_not_called()
+
+
+def test_load_dotenv_no_file_verbose():
+    logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info:
-        with pytest.raises(LookupError):
-            result = dotenv.load_dotenv(dotenv_file, verbose=True,
-                                        raise_error_if_nothing_set=True).set_as_environment_variables()
-            mock_info.assert_has_calls(calls=[mock.call("No variables set from %s.", dotenv_file)])
-            assert result is False
+        assert dotenv.load_dotenv(".does_not_exist", verbose=True) is False
+
+    mock_info.assert_called_once_with("Python-dotenv could not find configuration file %s.", ".env")
 
 
 def test_load_dotenv_no_file():
     logger = logging.getLogger("dotenv.main")
 
-    with pytest.raises(IOError):
-        result = dotenv.load_dotenv(raise_error_if_not_found=True)
-        assert result is False
-
     with mock.patch.object(logger, "info") as mock_info:
-        dotenv.load_dotenv('.does_not_exist', verbose=True)
-        mock_info.assert_has_calls(
-            calls=[
-                mock.call("Python-dotenv could not find configuration file %s.", '.does_not_exist'),
-            ]
-        )
+        assert dotenv.load_dotenv() is False
+        assert dotenv.load_dotenv(".does_not_exist") is False
+
+    mock_info.assert_not_called()
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
@@ -285,6 +279,11 @@ def test_load_dotenv_existing_variable_override(dotenv_file):
 
     assert result is True
     assert os.environ == {"a": "b"}
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_stream_without_string():
+    assert dotenv.load_dotenv(stream=StringIO()) is True
 
 
 @mock.patch.dict(os.environ, {}, clear=True)

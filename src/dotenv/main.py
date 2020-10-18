@@ -94,14 +94,11 @@ class DotEnv():
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
-    def set_as_environment_variables(self, override=False, raise_error_if_nothing_set=False):
-        # type: (bool, bool) -> bool
+    def set_as_environment_variables(self, override=False):
+        # type: (bool) -> bool
         """
         Set environment variables from a dotenv dict.
         """
-        if raise_error_if_nothing_set and not len(self.dict()):
-            return False
-
         for k, v in self.dict().items():
             if k in os.environ and not override:
                 continue
@@ -301,29 +298,19 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     return ''
 
 
-def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, interpolate=True,
-                raise_error_if_not_found=False, raise_error_if_nothing_set=False, **kwargs):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, bool, bool, Union[None, Text]) -> bool
+def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, interpolate=True, **kwargs):
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Union[None, Text]) -> bool
     """Parse a .env file and then load all the variables found as environment variables.
 
     - *dotenv_path*: absolute or relative path to .env file.
     - *stream*: `StringIO` object with .env content.
     - *verbose*: whether to output log messages related to loading .env files etc. Defaults to `False`.
-    - *raise_error_if_not_found*: whether to output warnings related to missing .env file etc. Defaults to `False`.
-    - *raise_error_if_nothing_set*: whether to raise an error if no environment variables are set. Defaults to `False`.
-      If `True`, and no environment variables are loaded, logs a message and raises a `LookupError`.
     - *override*: where to override the system environment variables with the variables in `.env` file.
-      Defaults to `False`.
+                  Defaults to `False`.
     """
-    f = dotenv_path or stream or find_dotenv(raise_error_if_not_found=raise_error_if_not_found)
-    env = DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(
-                 override=override, raise_error_if_nothing_set=raise_error_if_nothing_set)
-    if raise_error_if_nothing_set and not env:
-        msg = ("No variables set from %s.", f)
-        if verbose:
-            logger.info(msg)
-        raise LookupError(msg)
-    return env
+    f = dotenv_path if dotenv_path and find_dotenv(filename=str(dotenv_path)) else stream if stream else find_dotenv()
+    env = DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(override=override)
+    return env if f else False
 
 
 def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True, **kwargs):
