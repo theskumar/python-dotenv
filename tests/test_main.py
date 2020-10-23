@@ -235,8 +235,9 @@ def test_load_dotenv_existing_file_empty(dotenv_file):
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info:
-        assert dotenv.load_dotenv(dotenv_file) is True
+        result = dotenv.load_dotenv(dotenv_file)
 
+    assert result is True
     mock_info.assert_not_called()
 
 
@@ -244,8 +245,9 @@ def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info:
-        assert dotenv.load_dotenv(".does_not_exist", verbose=True) is False
+        result = dotenv.load_dotenv(".does_not_exist", verbose=True)
 
+    assert result is False
     mock_info.assert_called_once_with("Python-dotenv could not find configuration file %s.", ".env")
 
 
@@ -253,9 +255,9 @@ def test_load_dotenv_no_file():
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info:
-        assert dotenv.load_dotenv() is False
-        assert dotenv.load_dotenv(".does_not_exist") is False
+        result = dotenv.load_dotenv()
 
+    assert result is False
     mock_info.assert_not_called()
 
 
@@ -283,7 +285,9 @@ def test_load_dotenv_existing_variable_override(dotenv_file):
 
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_stream_without_string():
-    assert dotenv.load_dotenv(stream=StringIO()) is True
+    result = dotenv.load_dotenv(stream=StringIO())
+
+    assert result is True
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
