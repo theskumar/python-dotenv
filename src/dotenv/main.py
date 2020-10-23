@@ -308,7 +308,7 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, in
     - *override*: where to override the system environment variables with the variables in `.env` file.
                   Defaults to `False`.
     """
-    f = dotenv_path if dotenv_path and find_dotenv(filename=str(dotenv_path)) else stream if stream else find_dotenv()
+    f = find_dotenv(filename=str(dotenv_path)) or stream or find_dotenv()
     env = DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(override=override)
     return env if f else False
 
