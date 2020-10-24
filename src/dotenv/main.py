@@ -299,7 +299,7 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
 
 
 def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, interpolate=True, **kwargs):
-    # type: (Optional[Union[Text, _PathLike, _StringIO]], Optional[_StringIO], bool, bool, bool, Optional[Text]) -> bool
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Union[None, Text]) -> bool
     """Parse a .env file and then load all the variables found as environment variables.
 
     - *dotenv_path*: absolute or relative path to .env file.
