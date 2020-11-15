@@ -257,6 +257,28 @@ def test_load_dotenv_existing_variable_override(dotenv_file):
     assert os.environ == {"a": "b"}
 
 
+@mock.patch.dict(os.environ, {"a": "c"}, clear=True)
+def test_load_dotenv_redefine_var_used_in_file_no_override(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write('a=b\nd="${a}"')
+
+    result = dotenv.load_dotenv(dotenv_file)
+
+    assert result is True
+    assert os.environ == {"a": "c", "d": "c"}
+
+
+@mock.patch.dict(os.environ, {"a": "c"}, clear=True)
+def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write('a=b\nd="${a}"')
+
+    result = dotenv.load_dotenv(dotenv_file, override=True)
+
+    assert result is True
+    assert os.environ == {"a": "b", "d": "b"}
+
+
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_utf_8():
     stream = StringIO("a=à")

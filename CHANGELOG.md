@@ -7,7 +7,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-_There are no unreleased changes at this time._
+- Fix resolution order in variable expansion with `override=False` (#? by [@bbc2]).
 
 ## [0.15.0] - 2020-10-28
 
