@@ -4,7 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import io
 import logging
 import os
-import re
 import shutil
 import sys
 import tempfile
@@ -13,13 +12,13 @@ from contextlib import contextmanager
 
 from .compat import IS_TYPE_CHECKING, PY2, StringIO, to_env
 from .parser import Binding, parse_stream
+from .variables import parse_variables
 
 logger = logging.getLogger(__name__)
 
 if IS_TYPE_CHECKING:
-    from typing import (
-        Dict, Iterable, Iterator, Match, Optional, Pattern, Union, Text, IO, Tuple
-    )
+    from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Text,
+                        Tuple, Union)
     if sys.version_info >= (3, 6):
         _PathLike = os.PathLike
     else:
@@ -29,18 +28,6 @@ if IS_TYPE_CHECKING:
         _StringIO = StringIO
     else:
         _StringIO = StringIO[Text]
-
-__posix_variable = re.compile(
-    r"""
-    \$\{
-        (?P<name>[^\}:]*)
-        (?::-
-            (?P<default>[^\}]*)
-        )?
-    \}
-    """,
-    re.VERBOSE,
-)  # type: Pattern[Text]
 
 
 def with_warn_for_invalid_lines(mappings):
@@ -83,13 +70,14 @@ class DotEnv():
         if self._dict:
             return self._dict
 
-        if self.interpolate:
-            values = resolve_nested_variables(self.parse())
-        else:
-            values = OrderedDict(self.parse())
+        raw_values = self.parse()
 
-        self._dict = values
-        return values
+        if self.interpolate:
+            self._dict = OrderedDict(resolve_variables(raw_values))
+        else:
+            self._dict = OrderedDict(raw_values)
+
+        return self._dict
 
     def parse(self):
         # type: () -> Iterator[Tuple[Text, Optional[Text]]]
@@ -217,27 +205,22 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     return removed, key_to_unset
 
 
-def resolve_nested_variables(values):
-    # type: (Iterable[Tuple[Text, Optional[Text]]]) -> Dict[Text, Optional[Text]]
-    def _replacement(name, default):
-        # type: (Text, Optional[Text]) -> Text
-        default = default if default is not None else ""
-        ret = new_values.get(name, os.getenv(name, default))
-        return ret  # type: ignore
+def resolve_variables(values):
+    # type: (Iterable[Tuple[Text, Optional[Text]]]) -> Mapping[Text, Optional[Text]]
 
-    def _re_sub_callback(match):
-        # type: (Match[Text]) -> Text
-        """
-        From a match object gets the variable name and returns
-        the correct replacement
-        """
-        matches = match.groupdict()
-        return _replacement(name=matches["name"], default=matches["default"])  # type: ignore
+    new_values = {}  # type: Dict[Text, Optional[Text]]
 
-    new_values = {}
+    for (name, value) in values:
+        if value is None:
+            result = None
+        else:
+            atoms = parse_variables(value)
+            env = {}  # type: Dict[Text, Optional[Text]]
+            env.update(os.environ)  # type: ignore
+            env.update(new_values)
+            result = "".join(atom.resolve(env) for atom in atoms)
 
-    for (k, v) in values:
-        new_values[k] = __posix_variable.sub(_re_sub_callback, v) if v is not None else None
+        new_values[name] = result
 
     return new_values
 
