@@ -43,13 +43,14 @@ def with_warn_for_invalid_lines(mappings):
 
 class DotEnv():
 
-    def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True):
-        # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text], bool) -> None
+    def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True, override=True):
+        # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text], bool, bool) -> None
         self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
         self._dict = None  # type: Optional[Dict[Text, Optional[Text]]]
         self.verbose = verbose  # type: bool
         self.encoding = encoding  # type: Union[None, Text]
         self.interpolate = interpolate  # type: bool
+        self.override = override  # type: bool
 
     @contextmanager
     def _get_stream(self):
@@ -73,7 +74,7 @@ class DotEnv():
         raw_values = self.parse()
 
         if self.interpolate:
-            self._dict = OrderedDict(resolve_variables(raw_values))
+            self._dict = OrderedDict(resolve_variables(raw_values, override=self.override))
         else:
             self._dict = OrderedDict(raw_values)
 
@@ -86,13 +87,13 @@ class DotEnv():
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
-    def set_as_environment_variables(self, override=False):
-        # type: (bool) -> bool
+    def set_as_environment_variables(self):
+        # type: () -> bool
         """
         Load the current dotenv as system environemt variable.
         """
         for k, v in self.dict().items():
-            if k in os.environ and not override:
+            if k in os.environ and not self.override:
                 continue
             if v is not None:
                 os.environ[to_env(k)] = to_env(v)
@@ -205,8 +206,8 @@ def unset_key(dotenv_path, key_to_unset, quote_mode="always"):
     return removed, key_to_unset
 
 
-def resolve_variables(values):
-    # type: (Iterable[Tuple[Text, Optional[Text]]]) -> Mapping[Text, Optional[Text]]
+def resolve_variables(values, override):
+    # type: (Iterable[Tuple[Text, Optional[Text]]], bool) -> Mapping[Text, Optional[Text]]
 
     new_values = {}  # type: Dict[Text, Optional[Text]]
 
@@ -216,8 +217,12 @@ def resolve_variables(values):
         else:
             atoms = parse_variables(value)
             env = {}  # type: Dict[Text, Optional[Text]]
-            env.update(os.environ)  # type: ignore
-            env.update(new_values)
+            if override:
+                env.update(os.environ)  # type: ignore
+                env.update(new_values)
+            else:
+                env.update(new_values)
+                env.update(os.environ)  # type: ignore
             result = "".join(atom.resolve(env) for atom in atoms)
 
         new_values[name] = result
@@ -299,10 +304,11 @@ def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, in
                   Defaults to `False`.
     """
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).set_as_environment_variables(override=override)
+    dotenv = DotEnv(f, verbose=verbose, interpolate=interpolate, override=override, **kwargs)
+    return dotenv.set_as_environment_variables()
 
 
 def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True, **kwargs):
     # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Union[None, Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, interpolate=interpolate, **kwargs).dict()
+    return DotEnv(f, verbose=verbose, interpolate=interpolate, override=True, **kwargs).dict()
