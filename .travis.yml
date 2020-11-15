@@ -33,6 +33,7 @@ script:
   - tox
 
 before_install:
+  - pip install --upgrade pip
   - pip install coveralls
 
 after_success:
