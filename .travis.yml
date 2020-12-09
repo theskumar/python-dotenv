@@ -25,6 +25,27 @@ jobs:
       env: TOXENV=pypy
     - python: "pypy3"
       env: TOXENV=pypy3
+    - python: "3.6"
+      env: TOXENV=lint
+      arch: ppc64le
+    - python: "3.6"
+      env: TOXENV=manifest
+      arch: ppc64le
+    - python: "3.5"
+      env: TOXENV=py35
+      arch: ppc64le
+    - python: "3.6"
+      env: TOXENV=py36
+      arch: ppc64le
+    - python: "3.7"
+      env: TOXENV=py37
+      arch: ppc64le
+    - python: "3.8"
+      env: TOXENV=py38
+      arch: ppc64le
+    - python: "3.9-dev"
+      env: TOXENV=py39
+      arch: ppc64le
 
 install:
   - pip install tox
