@@ -125,6 +125,19 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 ```
 
+### Converting types
+
+The library reads and provides strings. If you need for example a boolean, it is up to you to convert the value.
+
+Example:
+
+```python
+DEBUG = distutils.util.strtobool(os.getenv('DEBUG'))
+```
+
+
+
+
 ### In-memory filelikes
 
 It is possible to not rely on the filesystem to parse filelikes from
