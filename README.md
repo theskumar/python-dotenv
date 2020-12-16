@@ -132,7 +132,8 @@ The library reads and provides strings. If you need for example a boolean, it is
 Example:
 
 ```python
-DEBUG = distutils.util.strtobool(os.getenv('DEBUG'))
+import distutils.util
+DEBUG = bool(distutils.util.strtobool(os.getenv('DEBUG', 'True')))
 ```
 
 
