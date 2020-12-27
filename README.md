@@ -8,6 +8,18 @@ Python-dotenv reads key-value pairs from a `.env` file and can set them as envir
 variables. It helps in the development of applications following the
 [12-factor](http://12factor.net/) principles.
 
+- [Getting Started](#getting-started)
+- [Other Use Cases](#other-use-cases)
+  * [Load configuration without altering the environment](#load-configuration-without-altering-the-environment)
+  * [Parse configuration as a stream](#parse-configuration-as-a-stream)
+  * [Load .env files in IPython](#load-env-files-in-ipython)
+- [Command-line Interface](#command-line-interface)
+- [File format](#file-format)
+  * [Multiline values](#multiline-values)
+  * [Variable expansion](#variable-expansion)
+- [Related Projects](#related-projects)
+- [Acknowledgements](#acknowledgements)
+
 ## Getting Started
 
 ```shell
