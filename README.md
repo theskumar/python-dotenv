@@ -1,43 +1,175 @@
-```
-        _______ .__   __. ____    ____
-       |   ____||  \ |  | \   \  /   /
-       |  |__   |   \|  |  \   \/   /
-       |   __|  |  . `  |   \      /
-    __ |  |____ |  |\   |    \    /
-   (__)|_______||__| \__|     \__/
-```
-python-dotenv | [![Build Status](https://travis-ci.com/theskumar/python-dotenv.svg?branch=master)](https://travis-ci.com/theskumar/python-dotenv) [![Coverage Status](https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master)](https://coveralls.io/r/theskumar/python-dotenv?branch=master) [![PyPI version](https://badge.fury.io/py/python-dotenv.svg)](http://badge.fury.io/py/python-dotenv) [![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/theskumar)
-===============================================================================
+# python-dotenv
 
-Reads the key-value pair from `.env` file and adds them to environment
-variable. It is great for managing app settings during development and
-in production using [12-factor](http://12factor.net/) principles.
+[![Build Status][build_status_badge]][build_status_link]
+[![Coverage Status][coverage_status_badge]][coverage_status_link]
+[![PyPI version][pypi_badge]][pypi_link]
 
-> Do one thing, do it well!
+Python-dotenv reads key-value pairs from a `.env` file and can set them as environment
+variables. It helps in the development of applications following the
+[12-factor](http://12factor.net/) principles.
 
-## Usages
-
-The easiest and most common usage consists on calling `load_dotenv` when
-the application starts, which will load environment variables from a
-file named `.env` in the current directory or any of its parents or from
-the path specificied; after that, you can just call the
-environment-related method you need as provided by `os.getenv`.
-
-`.env` looks like this:
+## Getting Started
 
 ```shell
-# a comment that will be ignored.
-REDIS_ADDRESS=localhost:6379
-MEANING_OF_LIFE=42
-MULTILINE_VAR="hello\nworld"
+pip install python-dotenv
 ```
 
-You can optionally prefix each line with the word `export`, which is totally ignored by this library, but might allow you to [`source`](https://bash.cyberciti.biz/guide/Source_command) the file in bash.
+If your application takes its configuration from environment variables, like a 12-factor
+application, launching it in development is not very practical because you have to set
+those environment variables yourself.
+
+To help you with that, you can add Python-dotenv to your application to make it load the
+configuration from a `.env` file when it is present (e.g. in development) while remaining
+configurable via the environment:
+
+```python
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
+# Code of your application, which uses environment variables (e.g. from `os.environ` or
+# `os.getenv`) as if they came from the actual environment.
+```
+
+By default, `load_dotenv` doesn't override existing environment variables.
+
+To configure the development environment, add a `.env` in the root directory of your
+project:
 
 ```
-export S3_BUCKET=YOURS3BUCKET
-export SECRET_KEY=YOURSECRETKEYGOESHERE
+.
+├── .env
+└── foo.py
 ```
+
+The syntax of `.env` files supported by python-dotenv is similar to that of Bash:
+
+```bash
+# Development settings
+DOMAIN=example.org
+ADMIN_EMAIL=admin@${DOMAIN}
+ROOT_URL=${DOMAIN}/app
+```
+
+If you use variables in values, ensure they are surrounded with `{` and `}`, like
+`${DOMAIN}`, as bare variables such as `$DOMAIN` are not expanded.
+
+You will probably want to add `.env` to your `.gitignore`, especially if it contains
+secrets like a password.
+
+See the section "File format" below for more information about what you can write in a
+`.env` file.
+
+## Other Use Cases
+
+### Load configuration without altering the environment
+
+The function `dotenv_values` works more or less the same way as `load_dotenv`, except it
+doesn't touch the environment, it just returns a `dict` with the values parsed from the
+`.env` file.
+
+```python
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")  # config = {"USER": "foo", "EMAIL": "foo@example.org"}
+```
+
+This notably enables advanced configuration management:
+
+```python
+import os
+from dotenv import dotenv_values
+
+config = {
+    **dotenv_values(".env.shared"),  # load shared development variables
+    **dotenv_values(".env.secret"),  # load sensitive variables
+    **os.environ,  # override loaded values with environment variables
+}
+```
+
+### Parse configuration as a stream
+
+`load_dotenv` and `dotenv_values` accept [streams][python_streams] via their `stream`
+argument.  It is thus possible to load the variables from sources other than the
+filesystem (e.g. the network).
+
+```python
+from io import StringIO
+
+from dotenv import load_dotenv
+
+config = StringIO("USER=foo\nEMAIL=foo@example.org")
+load_dotenv(stream=stream)
+```
+
+### Load .env files in IPython
+
+You can use dotenv in IPython.  By default, it will use `find_dotenv` to search for a
+`.env` file:
+
+```python
+%load_ext dotenv
+%dotenv
+```
+
+You can also specify a path:
+
+```python
+%dotenv relative/or/absolute/path/to/.env
+```
+
+Optional flags:
+
+- `-o` to override existing variables.
+- `-v` for increased verbosity.
+
+## Command-line Interface
+
+A CLI interface `dotenv` is also included, which helps you manipulate the `.env` file
+without manually opening it.
+
+```shell
+$ pip install "python-dotenv[cli]"
+$ dotenv set USER=foo
+$ dotenv set EMAIL=foo@example.org
+$ dotenv list
+USER=foo
+EMAIL=foo@example.org
+$ dotenv run -- python foo.py
+```
+
+Run `dotenv --help` for more information about the options and subcommands.
+
+## File format
+
+The format is not formally specified and still improves over time.  That being said,
+`.env` files should mostly look like Bash files.
+
+Keys can be unquoted or single-quoted. Values can be unquoted, single- or double-quoted.
+Spaces before and after keys, equal signs, and values are ignored. Values can be followed
+by a comment.  Lines can start with the `export` directive, which has no effect on their
+interpretation.
+
+Allowed escape sequences:
+
+- in single-quoted values: `\\`, `\'`
+- in double-quoted values: `\\`, `\'`, `\"`, `\a`, `\b`, `\f`, `\n`, `\r`, `\t`, `\v`
+
+### Multiline values
+
+It is possible for single- or double-quoted values to span multiple lines.  The following
+examples are equivalent:
+
+```bash
+FOO="first line
+second line"
+```
+
+```bash
+FOO="first line\nsecond line"
+```
+
+### Variable expansion
 
 Python-dotenv can interpolate variables using POSIX variable expansion.
 
@@ -57,221 +189,6 @@ defined in the following list:
 - Default value, if provided.
 - Empty string.
 
-Ensure that variables are surrounded with `{}` like `${HOME}` as bare
-variables such as `$HOME` are not expanded.
-
-```shell
-CONFIG_PATH=${HOME}/.config/foo
-DOMAIN=example.org
-EMAIL=admin@${DOMAIN}
-DEBUG=${DEBUG:-false}
-```
-
-## Getting started
-
-Install the latest version with:
-
-```shell
-pip install -U python-dotenv
-```
-
-Assuming you have created the `.env` file along-side your settings
-module.
-
-    .
-    ├── .env
-    └── settings.py
-
-Add the following code to your `settings.py`:
-
-```python
-# settings.py
-from dotenv import load_dotenv
-load_dotenv()
-
-# OR, the same with increased verbosity
-load_dotenv(verbose=True)
-
-# OR, explicitly providing path to '.env'
-from pathlib import Path  # Python 3.6+ only
-env_path = Path('.') / '.env'
-load_dotenv(dotenv_path=env_path)
-```
-
-At this point, parsed key/value from the `.env` file is now present as
-system environment variable and they can be conveniently accessed via
-`os.getenv()`:
-
-```python
-# settings.py
-import os
-SECRET_KEY = os.getenv("EMAIL")
-DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-```
-
-`load_dotenv` does not override existing System environment variables. To
-override, pass `override=True` to `load_dotenv()`.
-
-`load_dotenv` also accepts `encoding` parameter to open the `.env` file. The default encoding is platform dependent (whatever `locale.getpreferredencoding()` returns), but any encoding supported by Python can be used. See the [codecs](https://docs.python.org/3/library/codecs.html#standard-encodings) module for the list of supported encodings.
-
-You can use `find_dotenv()` method that will try to find a `.env` file
-by (a) guessing where to start using `__file__` or the working directory
--- allowing this to work in non-file contexts such as IPython notebooks
-and the REPL, and then (b) walking up the directory tree looking for the
-specified file -- called `.env` by default.
-
-```python
-from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
-```
-
-### In-memory filelikes
-
-It is possible to not rely on the filesystem to parse filelikes from
-other sources (e.g. from a network storage). `load_dotenv` and
-`dotenv_values` accepts a filelike `stream`. Just be sure to rewind it
-before passing.
-
-```python
->>> from io import StringIO     # Python2: from StringIO import StringIO
->>> from dotenv import dotenv_values
->>> filelike = StringIO('SPAM=EGGS\n')
->>> filelike.seek(0)
->>> parsed = dotenv_values(stream=filelike)
->>> parsed['SPAM']
-'EGGS'
-```
-
-The returned value is dictionary with key-value pairs.
-
-`dotenv_values` could be useful if you need to *consume* the envfile but
-not *apply* it directly into the system environment.
-
-### Django
-
-If you are using Django, you should add the above loader script at the
-top of `wsgi.py` and `manage.py`.
-
-
-## IPython Support
-
-You can use dotenv with IPython. You can either let the dotenv search
-for `.env` with `%dotenv` or provide the path to the `.env` file explicitly; see
-below for usages.
-
-    %load_ext dotenv
-
-    # Use find_dotenv to locate the file
-    %dotenv
-
-    # Specify a particular file
-    %dotenv relative/or/absolute/path/to/.env
-
-    # Use '-o' to indicate override of existing variables
-    %dotenv -o
-
-    # Use '-v' to turn verbose mode on
-    %dotenv -v
-
-
-## Command-line Interface
-
-For command-line support, use the CLI option during installation:
-
-```shell
-pip install -U "python-dotenv[cli]"
-```
-
-A CLI interface `dotenv` is also included, which helps you manipulate
-the `.env` file without manually opening it. The same CLI installed on
-remote machine combined with fabric (discussed later) will enable you to
-update your settings on a remote server; handy, isn't it!
-
-```
-Usage: dotenv [OPTIONS] COMMAND [ARGS]...
-
-  This script is used to set, get or unset values from a .env file.
-
-Options:
-  -f, --file PATH                 Location of the .env file, defaults to .env
-                                  file in current working directory.
-
-  -q, --quote [always|never|auto]
-                                  Whether to quote or not the variable values.
-                                  Default mode is always. This does not affect
-                                  parsing.
-
-  -e, --export BOOLEAN
-                                  Whether to write the dot file as an
-                                  executable bash script.
-
-  --version                       Show the version and exit.
-  --help                          Show this message and exit.
-
-Commands:
-  get    Retrieve the value for the given key.
-  list   Display all the stored key/value.
-  run    Run command with environment variables present.
-  set    Store the given key/value.
-  unset  Removes the given key.
-```
-
-
-### Setting config on Remote Servers
-
-We make use of excellent [Fabric](http://www.fabfile.org/) to accomplish
-this. Add a config task to your local fabfile; `dotenv_path` is the
-location of the absolute path of `.env` file on the remote server.
-
-```python
-# fabfile.py
-
-import dotenv
-from fabric.api import task, run, env
-
-# absolute path to the location of .env on remote server.
-env.dotenv_path = '/opt/myapp/.env'
-
-@task
-def config(action=None, key=None, value=None):
-    '''Manage project configuration via .env
-
-    e.g: fab config:set,<key>,<value>
-         fab config:get,<key>
-         fab config:unset,<key>
-         fab config:list
-    '''
-    run('touch %(dotenv_path)s' % env)
-    command = dotenv.get_cli_string(env.dotenv_path, action, key, value)
-    run(command)
-```
-
-Usage is designed to mirror the Heroku config API very closely.
-
-Get all your remote config info with `fab config`:
-
-    $ fab config
-    foo="bar"
-
-Set remote config variables with `fab config:set,<key>,<value>`:
-
-    $ fab config:set,hello,world
-
-Get a single remote config variables with `fab config:get,<key>`:
-
-    $ fab config:get,hello
-
-Delete a remote config variables with `fab config:unset,<key>`:
-
-    $ fab config:unset,hello
-
-Thanks entirely to fabric and not one bit to this project, you can chain
-commands like so:
-`fab config:set,<key1>,<value1> config:set,<key2>,<value2>`
-
-    $ fab config:set,hello,world config:set,foo,bar config:set,fizz=buzz
-
-
 ## Related Projects
 
 -   [Honcho](https://github.com/nickstenning/honcho) - For managing
@@ -283,9 +200,17 @@ commands like so:
 -   [environs](https://github.com/sloria/environs)
 -   [dynaconf](https://github.com/rochacbruno/dynaconf)
 
-
 ## Acknowledgements
 
-This project is currently maintained by [Saurabh Kumar](https://saurabh-kumar.com) and [Bertrand Bonnefoy-Claudet](https://github.com/bbc2) and would not
-have been possible without the support of these [awesome
+This project is currently maintained by [Saurabh Kumar](https://saurabh-kumar.com) and
+[Bertrand Bonnefoy-Claudet](https://github.com/bbc2) and would not have been possible
+without the support of these [awesome
 people](https://github.com/theskumar/python-dotenv/graphs/contributors).
+
+[build_status_badge]: https://travis-ci.com/theskumar/python-dotenv.svg?branch=master
+[build_status_link]: https://travis-ci.com/theskumar/python-dotenv
+[coverage_status_badge]: https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master
+[coverage_status_link]: https://coveralls.io/r/theskumar/python-dotenv?branch=master
+[pypi_badge]: https://badge.fury.io/py/python-dotenv.svg
+[pypi_link]: http://badge.fury.io/py/python-dotenv
+[python_streams]: https://docs.python.org/3/library/io.html
