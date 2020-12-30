@@ -153,7 +153,7 @@ def test_get_boolean_key_not_found(dotenv_file):
     with mock.patch.object(logger, "warning") as mock_warning:
         result = dotenv.get_boolean_key(dotenv_file, "foo")
 
-    assert result is None
+    assert not result
     mock_warning.assert_called_once_with("Key %s not found in %s.", "foo", dotenv_file)
 
 

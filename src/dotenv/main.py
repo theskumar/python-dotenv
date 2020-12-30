@@ -102,14 +102,14 @@ class DotEnv():
         return True
 
     def get(self, key, boolean=False):
-        # type: (Text, Optional[bool]) -> Optional[Union[Text, bool]]
+        # type: (Text, Optional[bool]) -> Union[Text, bool, None]
         """
         """
         data = self.dict()
 
         if key in data:
             if boolean:
-                return strtobool(data[key])
+                return strtobool(str(data[key]))
             return data[key]
 
         if self.verbose:
@@ -122,11 +122,11 @@ class DotEnv():
         """
         Wrapper around get with boolean=True
         """
-        return self.get(key, True)
+        return bool(self.get(key, True))
 
 
 def get_key(dotenv_path, key_to_get):
-    # type: (Union[Text, _PathLike], Text) -> Optional[Text]
+    # type: (Union[Text, _PathLike], Text) -> Union[Text, bool, None]
     """
     Gets the value of a given key from the given .env
 
@@ -342,4 +342,4 @@ def get_bool(key, default=None):
         # happens if default was a boolean
         return bool(value)
 
-    return bool(strtobool(value))
+    return bool(strtobool(str(value)))
