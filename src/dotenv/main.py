@@ -9,6 +9,7 @@ import sys
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
+from distutils.util import strtobool
 
 from .compat import IS_TYPE_CHECKING, PY2, StringIO, to_env
 from .parser import Binding, parse_stream
@@ -100,19 +101,28 @@ class DotEnv():
 
         return True
 
-    def get(self, key):
-        # type: (Text) -> Optional[Text]
+    def get(self, key, boolean=False):
+        # type: (Text) -> Optional[Union[Text, bool]]
         """
         """
         data = self.dict()
 
         if key in data:
+            if boolean:
+                return strtobool(data[key])
             return data[key]
 
         if self.verbose:
             logger.warning("Key %s not found in %s.", key, self.dotenv_path)
 
         return None
+
+    def get_as_boolean(self, key):
+        # type: (Text) -> Optional[bool]
+        """
+        Wrapper around get with boolean=True
+        """
+        return self.get(key, True)
 
 
 def get_key(dotenv_path, key_to_get):
@@ -123,6 +133,16 @@ def get_key(dotenv_path, key_to_get):
     If the .env path given doesn't exist, fails
     """
     return DotEnv(dotenv_path, verbose=True).get(key_to_get)
+
+
+def get_boolean_key(dotenv_path, key_to_get):
+    # type: (Union[Text, _PathLike], Text) -> Optional[bool]
+    """
+    Gets the value of a given key from the given .env
+
+    If the .env path given doesn't exist, fails
+    """
+    return DotEnv(dotenv_path, verbose=True).get_as_boolean(key_to_get)
 
 
 @contextmanager
@@ -312,3 +332,17 @@ def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True
     # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Union[None, Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
     f = dotenv_path or stream or find_dotenv()
     return DotEnv(f, verbose=verbose, interpolate=interpolate, override=True, **kwargs).dict()
+
+
+def get_bool(key, default=None):
+    # type: (Text, Union[Text, bool, None]) -> bool
+    if default:
+        value = os.getenv(key, default)
+    else:
+        value = os.getenv(key)
+
+    if isinstance(value, (bool, int)):
+        # happens if default was a boolean
+        return bool(value)
+
+    return bool(strtobool(value))

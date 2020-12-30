@@ -1,5 +1,5 @@
 from .compat import IS_TYPE_CHECKING
-from .main import load_dotenv, get_key, set_key, unset_key, find_dotenv, dotenv_values
+from .main import load_dotenv, get_key, get_bool, get_boolean_key, set_key, unset_key, find_dotenv, dotenv_values
 
 if IS_TYPE_CHECKING:
     from typing import Any, Optional
@@ -40,6 +40,8 @@ __all__ = ['get_cli_string',
            'load_dotenv',
            'dotenv_values',
            'get_key',
+           'get_bool',
+           'get_boolean_key',
            'set_key',
            'unset_key',
            'find_dotenv',
