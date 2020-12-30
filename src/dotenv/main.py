@@ -102,7 +102,7 @@ class DotEnv():
         return True
 
     def get(self, key, boolean=False):
-        # type: (Text) -> Optional[Union[Text, bool]]
+        # type: (Text, Optional[bool]) -> Optional[Union[Text, bool]]
         """
         """
         data = self.dict()
@@ -336,10 +336,7 @@ def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True
 
 def get_bool(key, default=None):
     # type: (Text, Union[Text, bool, None]) -> bool
-    if default:
-        value = os.getenv(key, default)
-    else:
-        value = os.getenv(key)
+    value = os.getenv(key, default)
 
     if isinstance(value, (bool, int)):
         # happens if default was a boolean
