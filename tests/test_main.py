@@ -121,6 +121,42 @@ def test_get_key_none(dotenv_file):
     mock_warning.assert_not_called()
 
 
+@pytest.mark.parametrize("true_value", ["Yes", "yes", "True", "true", "on", "1", "y"])
+def test_get_boolean_key_ok(dotenv_file, true_value):
+    logger = logging.getLogger("dotenv.main")
+    with open(dotenv_file, "w") as f:
+        f.write("foo={}".format(true_value))
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.get_boolean_key(dotenv_file, "foo")
+
+    assert result
+    mock_warning.assert_not_called()
+
+
+@pytest.mark.parametrize("false_value", ["n", "no", "f", "False", "false", "off", "0"])
+def test_get_boolean_key_ok_false(dotenv_file, false_value):
+    logger = logging.getLogger("dotenv.main")
+    with open(dotenv_file, "w") as f:
+        f.write("foo={}".format(false_value))
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.get_boolean_key(dotenv_file, "foo")
+
+    assert not result
+    mock_warning.assert_not_called()
+
+
+def test_get_boolean_key_not_found(dotenv_file):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.get_boolean_key(dotenv_file, "foo")
+
+    assert result is None
+    mock_warning.assert_called_once_with("Key %s not found in %s.", "foo", dotenv_file)
+
+
 def test_unset_with_value(dotenv_file):
     logger = logging.getLogger("dotenv.main")
     with open(dotenv_file, "w") as f:
@@ -367,3 +403,62 @@ def test_dotenv_values_stream(env, string, interpolate, expected):
         result = dotenv.dotenv_values(stream=stream, interpolate=interpolate)
 
         assert result == expected
+
+
+@pytest.mark.parametrize("true_value", ["Yes", "yes", "True", "true", "on", "1", "y"])
+def test_get_bool(dotenv_file, true_value):
+    logger = logging.getLogger("dotenv.main")
+    with open(dotenv_file, "w") as f:
+        f.write("foo={}".format(true_value))
+
+    dotenv.load_dotenv(dotenv_file)
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        value = dotenv.get_bool("foo")
+
+    assert type(value) == bool
+    assert value
+
+    mock_warning.assert_not_called()
+
+
+@pytest.mark.parametrize("false_value", ["n", "no", "f", "False", "false", "off", "0"])
+def test_get_bool_false(dotenv_file, false_value):
+    logger = logging.getLogger("dotenv.main")
+    with open(dotenv_file, "w") as f:
+        f.write("foo={}".format(false_value))
+
+    dotenv.load_dotenv(dotenv_file, override=True)
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        value = dotenv.get_bool("foo")
+
+    assert type(value) == bool
+    assert not value
+
+    mock_warning.assert_not_called()
+
+
+@pytest.mark.parametrize("default,expected_value", [(True, True), (1, True), ("true", True), ("f", False)])
+def test_get_bool_default(dotenv_file, default, expected_value):
+    logger = logging.getLogger("dotenv.main")
+    dotenv.load_dotenv(dotenv_file)
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        value = dotenv.get_bool("bar", default)
+
+    assert type(value) == bool
+    assert bool(value) == expected_value
+
+    mock_warning.assert_not_called()
+
+
+@pytest.mark.parametrize("value", ["b", "trrue", "fals", "foo", "bar"])
+def test_get_bool_invalid(dotenv_file, value):
+    with open(dotenv_file, "w") as f:
+        f.write("foo={}".format(value))
+
+    dotenv.load_dotenv(dotenv_file, override=True)
+
+    with pytest.raises(ValueError):
+        value = dotenv.get_bool("foo")
