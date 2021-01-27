@@ -90,7 +90,7 @@ class DotEnv():
     def set_as_environment_variables(self):
         # type: () -> bool
         """
-        Load the current dotenv as system environemt variable.
+        Load the current dotenv as system environment variable.
         """
         for k, v in self.dict().items():
             if k in os.environ and not self.override:
