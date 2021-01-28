@@ -107,9 +107,14 @@ def unset(ctx, key):
 
 @cli.command(context_settings={'ignore_unknown_options': True})
 @click.pass_context
+@click.option(
+    "--override/--no-override",
+    default=True,
+    help="Override variables from the environment file with those from the .env file.",
+)
 @click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
-def run(ctx, commandline):
-    # type: (click.Context, List[str]) -> None
+def run(ctx, override, commandline):
+    # type: (click.Context, bool, List[str]) -> None
     """Run command with environment variables present."""
     file = ctx.obj['FILE']
     if not os.path.isfile(file):
@@ -117,7 +122,11 @@ def run(ctx, commandline):
             'Invalid value for \'-f\' "%s" does not exist.' % (file),
             ctx=ctx
         )
-    dotenv_as_dict = {to_env(k): to_env(v) for (k, v) in dotenv_values(file).items() if v is not None}
+    dotenv_as_dict = {
+        to_env(k): to_env(v)
+        for (k, v) in dotenv_values(file).items()
+        if v is not None and (override or to_env(k) not in os.environ)
+    }
 
     if not commandline:
         click.echo('No command given.')
