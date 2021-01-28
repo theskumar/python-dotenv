@@ -7,7 +7,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-_There are no unreleased changes at this time._
+### Added
+
+- Add `--override`/`--no-override` option to `dotenv run` (#312 by [@zueve] and [@bbc2]).
 
 ## [0.16.0] - 2021-03-27
 
@@ -242,6 +244,7 @@ _There are no unreleased changes at this time._
 [@venthur]: https://github.com/venthur
 [@x-yuri]: https://github.com/x-yuri
 [@yannham]: https://github.com/yannham
+[@zueve]: https://github.com/zueve
 
 [Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.16.0...HEAD
 [0.16.0]: https://github.com/theskumar/python-dotenv/compare/v0.15.0...v0.16.0

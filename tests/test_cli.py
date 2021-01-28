@@ -138,6 +138,34 @@ def test_run(tmp_path):
     assert result == "b\n"
 
 
+def test_run_with_existing_variable(tmp_path):
+    sh.cd(str(tmp_path))
+    dotenv_file = str(tmp_path / ".env")
+    with open(dotenv_file, "w") as f:
+        f.write("a=b")
+
+    result = sh.dotenv("run", "printenv", "a", _env={"LANG": "en_US.UTF-8", "a": "c"})
+
+    assert result == "b\n"
+
+
+def test_run_with_existing_variable_not_overridden(tmp_path):
+    sh.cd(str(tmp_path))
+    dotenv_file = str(tmp_path / ".env")
+    with open(dotenv_file, "w") as f:
+        f.write("a=b")
+
+    result = sh.dotenv(
+        "run",
+        "--no-override",
+        "printenv",
+        "a",
+        _env={"LANG": "en_US.UTF-8", "a": "c"},
+    )
+
+    assert result == "c\n"
+
+
 def test_run_with_none_value(tmp_path):
     sh.cd(str(tmp_path))
     dotenv_file = str(tmp_path / ".env")
