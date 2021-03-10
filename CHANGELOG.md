@@ -7,7 +7,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Fix resolution order in variable expansion with `override=False` (#? by [@bbc2]).
+### Changed
+
+- The default value of the `encoding` parameter for `load_dotenv` and `dotenv_values` is
+  now `"utf-8"` instead of `None` (#? by [@bbc2]).
+- Fix resolution order in variable expansion with `override=False` (#287 by [@bbc2]).
 
 ## [0.15.0] - 2020-10-28
 
