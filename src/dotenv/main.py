@@ -293,22 +293,63 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     return ''
 
 
-def load_dotenv(dotenv_path=None, stream=None, verbose=False, override=False, interpolate=True, **kwargs):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Union[None, Text]) -> bool
+def load_dotenv(
+    dotenv_path=None,
+    stream=None,
+    verbose=False,
+    override=False,
+    interpolate=True,
+    encoding="utf-8",
+):
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Optional[Text]) -> bool  # noqa
     """Parse a .env file and then load all the variables found as environment variables.
 
     - *dotenv_path*: absolute or relative path to .env file.
-    - *stream*: `StringIO` object with .env content.
-    - *verbose*: whether to output the warnings related to missing .env file etc. Defaults to `False`.
-    - *override*: where to override the system environment variables with the variables in `.env` file.
-                  Defaults to `False`.
+    - *stream*: `StringIO` object with .env content, used if `dotenv_path` is `None`.
+    - *verbose*: whether to output a warning the .env file is missing. Defaults to
+      `False`.
+    - *override*: whether to override the system environment variables with the variables
+      in `.env` file.  Defaults to `False`.
+    - *encoding*: encoding to be used to read the file.
+
+    If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
     """
     f = dotenv_path or stream or find_dotenv()
-    dotenv = DotEnv(f, verbose=verbose, interpolate=interpolate, override=override, **kwargs)
+    dotenv = DotEnv(
+        f,
+        verbose=verbose,
+        interpolate=interpolate,
+        override=override,
+        encoding=encoding,
+    )
     return dotenv.set_as_environment_variables()
 
 
-def dotenv_values(dotenv_path=None, stream=None, verbose=False, interpolate=True, **kwargs):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Union[None, Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
+def dotenv_values(
+    dotenv_path=None,
+    stream=None,
+    verbose=False,
+    interpolate=True,
+    encoding="utf-8",
+):
+    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Optional[Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
+    """
+    Parse a .env file and return its content as a dict.
+
+    - *dotenv_path*: absolute or relative path to .env file.
+    - *stream*: `StringIO` object with .env content, used if `dotenv_path` is `None`.
+    - *verbose*: whether to output a warning the .env file is missing. Defaults to
+      `False`.
+      in `.env` file.  Defaults to `False`.
+    - *encoding*: encoding to be used to read the file.
+
+    If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
+    """
     f = dotenv_path or stream or find_dotenv()
-    return DotEnv(f, verbose=verbose, interpolate=interpolate, override=True, **kwargs).dict()
+    return DotEnv(
+        f,
+        verbose=verbose,
+        interpolate=interpolate,
+        override=True,
+        encoding=encoding,
+    ).dict()
