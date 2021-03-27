@@ -1,7 +1,6 @@
 # python-dotenv
 
 [![Build Status][build_status_badge]][build_status_link]
-[![Coverage Status][coverage_status_badge]][coverage_status_link]
 [![PyPI version][pypi_badge]][pypi_link]
 
 Python-dotenv reads key-value pairs from a `.env` file and can set them as environment
@@ -221,8 +220,6 @@ people](https://github.com/theskumar/python-dotenv/graphs/contributors).
 
 [build_status_badge]: https://github.com/theskumar/python-dotenv/actions/workflows/test.yml/badge.svg
 [build_status_link]: https://github.com/theskumar/python-dotenv/actions/workflows/test.yml
-[coverage_status_badge]: https://coveralls.io/repos/theskumar/python-dotenv/badge.svg?branch=master
-[coverage_status_link]: https://coveralls.io/r/theskumar/python-dotenv?branch=master
 [pypi_badge]: https://badge.fury.io/py/python-dotenv.svg
 [pypi_link]: http://badge.fury.io/py/python-dotenv
 [python_streams]: https://docs.python.org/3/library/io.html
