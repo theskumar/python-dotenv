@@ -7,10 +7,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+_There are no unreleased changes at this time._
+
+## [0.16.0] - 2021-03-27
+
 ### Changed
 
 - The default value of the `encoding` parameter for `load_dotenv` and `dotenv_values` is
-  now `"utf-8"` instead of `None` (#? by [@bbc2]).
+  now `"utf-8"` instead of `None` (#306 by [@bbc2]).
 - Fix resolution order in variable expansion with `override=False` (#287 by [@bbc2]).
 
 ## [0.15.0] - 2020-10-28
@@ -239,7 +243,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@x-yuri]: https://github.com/x-yuri
 [@yannham]: https://github.com/yannham
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.15.0...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/theskumar/python-dotenv/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/theskumar/python-dotenv/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/theskumar/python-dotenv/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/theskumar/python-dotenv/compare/v0.12.0...v0.13.0

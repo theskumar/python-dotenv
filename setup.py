@@ -19,7 +19,7 @@ with io.open('./src/dotenv/version.py', encoding='utf-8') as f:
 
 setup(
     name="python-dotenv",
-    description="Add .env support to your django/flask apps in development and deployments",
+    description="Read key-value pairs from a .env file and set them as environment variables",
     long_description=long_description,
     long_description_content_type='text/markdown',
     version=meta['__version__'],
