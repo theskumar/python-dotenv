@@ -35,7 +35,7 @@ def test_get_existing_value(cli, dotenv_file):
 
     result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'get', 'a'])
 
-    assert (result.exit_code, result.output) == (0, "a=b\n")
+    assert (result.exit_code, result.output) == (0, "b\n")
 
 
 def test_get_non_existent_value(cli, dotenv_file):
@@ -124,7 +124,7 @@ def test_get_default_path(tmp_path):
 
     result = sh.dotenv("get", "a")
 
-    assert result == "a=b\n"
+    assert result == "b\n"
 
 
 def test_run(tmp_path):
