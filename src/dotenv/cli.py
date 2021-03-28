@@ -85,7 +85,7 @@ def get(ctx, key):
         )
     stored_value = get_key(file, key)
     if stored_value:
-        click.echo('%s=%s' % (key, stored_value))
+        click.echo(stored_value)
     else:
         exit(1)
 

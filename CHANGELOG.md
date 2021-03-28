@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Make `dotenv get <key>` only show the value, not `key=value` (#313 by [@bbc2]).
+
 ### Added
 
 - Add `--override`/`--no-override` option to `dotenv run` (#312 by [@zueve] and [@bbc2]).
