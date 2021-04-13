@@ -110,7 +110,7 @@ from io import StringIO
 from dotenv import load_dotenv
 
 config = StringIO("USER=foo\nEMAIL=foo@example.org")
-load_dotenv(stream=stream)
+load_dotenv(stream=config)
 ```
 
 ### Load .env files in IPython
