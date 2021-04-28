@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed tests for build environments relying on `PYTHONPATH` (#318 by [@befeleme]).
+
 ## [0.17.0] - 2021-04-02
 
 ### Changed
@@ -232,6 +238,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@andrewsmith]: https://github.com/andrewsmith
 [@asyncee]: https://github.com/asyncee
 [@bbc2]: https://github.com/bbc2
+[@befeleme]: https://github.com/befeleme
 [@cjauvin]: https://github.com/cjauvin
 [@earlbread]: https://github.com/earlbread
 [@ekohl]: https://github.com/ekohl
