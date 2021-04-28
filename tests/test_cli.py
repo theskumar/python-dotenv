@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+
 import pytest
 import sh
 
@@ -143,8 +145,10 @@ def test_run_with_existing_variable(tmp_path):
     dotenv_file = str(tmp_path / ".env")
     with open(dotenv_file, "w") as f:
         f.write("a=b")
+    env = dict(os.environ)
+    env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-    result = sh.dotenv("run", "printenv", "a", _env={"LANG": "en_US.UTF-8", "a": "c"})
+    result = sh.dotenv("run", "printenv", "a", _env=env)
 
     assert result == "b\n"
 
@@ -154,14 +158,10 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
     dotenv_file = str(tmp_path / ".env")
     with open(dotenv_file, "w") as f:
         f.write("a=b")
+    env = dict(os.environ)
+    env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-    result = sh.dotenv(
-        "run",
-        "--no-override",
-        "printenv",
-        "a",
-        _env={"LANG": "en_US.UTF-8", "a": "c"},
-    )
+    result = sh.dotenv("run", "--no-override", "printenv", "a", _env=env)
 
     assert result == "c\n"
 
