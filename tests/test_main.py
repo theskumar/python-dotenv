@@ -14,6 +14,13 @@ import dotenv
 from dotenv.compat import PY2, StringIO
 
 
+def ordereddict_to_dict(value):
+    for k, v in value.items():
+        if isinstance(v, dict):
+            value[k] = ordereddict_to_dict(v)
+    return dict(value)
+
+
 def test_set_key_no_file(tmp_path):
     nx_file = str(tmp_path / "nx")
     logger = logging.getLogger("dotenv.main")
@@ -226,6 +233,20 @@ def test_load_dotenv_existing_file(dotenv_file):
     assert os.environ == {"a": "b"}
 
 
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_existing_file_group(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write("a=b\n")
+        f.write("b_a=b\n")
+        f.write("b_d=c\n")
+        f.write("c_b=b\n")
+
+    result = dotenv.load_dotenv(dotenv_file, group_sep="_")
+
+    assert result is True
+    assert os.environ == {'a': 'b', 'b_a': 'b', 'b_d': 'c', 'c_b': 'b'}
+
+
 def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
@@ -317,6 +338,18 @@ def test_dotenv_values_file(dotenv_file):
     result = dotenv.dotenv_values(dotenv_file)
 
     assert result == {"a": "b"}
+
+
+def test_dotenv_values_file_group(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write("a=b\n")
+        f.write("b_a=b\n")
+        f.write("b_d=c\n")
+        f.write("c_b=b\n")
+
+    result = dotenv.dotenv_values(dotenv_file, group_sep="_")
+
+    assert ordereddict_to_dict(result) == {'a': 'b', 'b': {'a': 'b', 'd': 'c'}, 'c': {'b': 'b'}}
 
 
 @pytest.mark.parametrize(

@@ -43,7 +43,8 @@ def with_warn_for_invalid_lines(mappings):
 
 class DotEnv():
 
-    def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True, override=True):
+    def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True,
+                 override=True, group_sep=None):
         # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text], bool, bool) -> None
         self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
         self._dict = None  # type: Optional[Dict[Text, Optional[Text]]]
@@ -51,6 +52,7 @@ class DotEnv():
         self.encoding = encoding  # type: Union[None, Text]
         self.interpolate = interpolate  # type: bool
         self.override = override  # type: bool
+        self.group_sep = group_sep
 
     @contextmanager
     def _get_stream(self):
@@ -78,6 +80,17 @@ class DotEnv():
         else:
             self._dict = OrderedDict(raw_values)
 
+        if self.group_sep:
+            ret = OrderedDict({})
+            for k, v in self._dict.items():
+                if self.group_sep in k:
+                    ng, nk = k.split(self.group_sep, 1)
+                    if ng not in ret:
+                        ret[ng] = OrderedDict({})
+                    ret[ng][nk] = v
+                else:
+                    ret[k] = v
+            self._dict = ret
         return self._dict
 
     def parse(self):
@@ -93,6 +106,15 @@ class DotEnv():
         Load the current dotenv as system environment variable.
         """
         for k, v in self.dict().items():
+            # flat the dict again os.environ is just accepting str
+            if isinstance(v, dict) and self.group_sep:
+                for sk, sv in v.items():
+                    nk = "{k}{sep}{sk}".format(k=k, sep=self.group_sep, sk=sk)
+                    if nk in os.environ and not self.override:
+                        continue
+                    if sv is not None:
+                        os.environ[to_env(nk)] = to_env(sv)
+                continue
             if k in os.environ and not self.override:
                 continue
             if v is not None:
@@ -300,6 +322,7 @@ def load_dotenv(
     override=False,
     interpolate=True,
     encoding="utf-8",
+    group_sep=None,
 ):
     # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Optional[Text]) -> bool  # noqa
     """Parse a .env file and then load all the variables found as environment variables.
@@ -321,6 +344,7 @@ def load_dotenv(
         interpolate=interpolate,
         override=override,
         encoding=encoding,
+        group_sep=group_sep,
     )
     return dotenv.set_as_environment_variables()
 
@@ -331,6 +355,7 @@ def dotenv_values(
     verbose=False,
     interpolate=True,
     encoding="utf-8",
+    group_sep=None
 ):
     # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Optional[Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
     """
@@ -352,4 +377,5 @@ def dotenv_values(
         interpolate=interpolate,
         override=True,
         encoding=encoding,
+        group_sep=group_sep,
     ).dict()
