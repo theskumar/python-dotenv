@@ -206,6 +206,7 @@ defined in the following list:
     Procfile-based applications.
 -   [django-dotenv](https://github.com/jpadilla/django-dotenv)
 -   [django-environ](https://github.com/joke2k/django-environ)
+-   [django-environ-2](https://github.com/sergeyklay/django-environ-2)
 -   [django-configuration](https://github.com/jezdez/django-configurations)
 -   [dump-env](https://github.com/sobolevn/dump-env)
 -   [environs](https://github.com/sloria/environs)
