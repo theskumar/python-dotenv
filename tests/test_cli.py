@@ -73,10 +73,11 @@ def test_unset_non_existent_value(cli, dotenv_file):
 @pytest.mark.parametrize(
     "quote_mode,variable,value,expected",
     (
-        ("always", "HELLO", "WORLD", 'HELLO="WORLD"\n'),
-        ("never", "HELLO", "WORLD", 'HELLO=WORLD\n'),
-        ("auto", "HELLO", "WORLD", 'HELLO=WORLD\n'),
-        ("auto", "HELLO", "HELLO WORLD", 'HELLO="HELLO WORLD"\n'),
+        ("always", "a", "x", "a='x'\n"),
+        ("never", "a", "x", 'a=x\n'),
+        ("auto", "a", "x", "a=x\n"),
+        ("auto", "a", "x y", "a='x y'\n"),
+        ("auto", "a", "$", "a='$'\n"),
     )
 )
 def test_set_quote_options(cli, dotenv_file, quote_mode, variable, value, expected):
@@ -92,8 +93,8 @@ def test_set_quote_options(cli, dotenv_file, quote_mode, variable, value, expect
 @pytest.mark.parametrize(
     "dotenv_file,export_mode,variable,value,expected",
     (
-        (".nx_file", "true", "HELLO", "WORLD", "export HELLO=\"WORLD\"\n"),
-        (".nx_file", "false", "HELLO", "WORLD", "HELLO=\"WORLD\"\n"),
+        (".nx_file", "true", "a", "x", "export a='x'\n"),
+        (".nx_file", "false", "a", "x", "a='x'\n"),
     )
 )
 def test_set_export(cli, dotenv_file, export_mode, variable, value, expected):
