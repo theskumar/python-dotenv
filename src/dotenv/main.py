@@ -151,13 +151,16 @@ def set_key(dotenv_path, key_to_set, value_to_set, quote_mode="always", export=F
     If the .env path given doesn't exist, fails instead of risking creating
     an orphan .env somewhere in the filesystem
     """
-    value_to_set = value_to_set.strip("'").strip('"')
+    if quote_mode not in ("always", "auto", "never"):
+        raise ValueError("Unknown quote_mode: {}".format(quote_mode))
 
-    if " " in value_to_set:
-        quote_mode = "always"
+    quote = (
+        quote_mode == "always"
+        or (quote_mode == "auto" and not value_to_set.isalnum())
+    )
 
-    if quote_mode == "always":
-        value_out = '"{}"'.format(value_to_set.replace('"', '\\"'))
+    if quote:
+        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
     else:
         value_out = value_to_set
     if export:

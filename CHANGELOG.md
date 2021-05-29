@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Changed
+
+- Raise `ValueError` if `quote_mode` isn't one of `always`, `auto` or `never` in
+  `set_key` (#330 by [@bbc2]).
+- When writing a value to a .env file with `set_key` or `dotenv set <key> <value>` (#330
+  by [@bbc2]):
+  - Use single quotes instead of double quotes.
+  - Don't strip surrounding quotes.
+  - In `auto` mode, don't add quotes if the value is only made of alphanumeric characters
+    (as determined by `string.isalnum`).
+
 ## [0.17.1] - 2021-04-29
 
 ### Fixed
