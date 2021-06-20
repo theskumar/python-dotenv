@@ -43,6 +43,7 @@ setup(
         [console_scripts]
         dotenv=dotenv.cli:cli
     ''',
+    license='BSD-3-Clause',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
