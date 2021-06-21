@@ -98,7 +98,7 @@ class DotEnv():
             if v is not None:
                 os.environ[to_env(k)] = to_env(v)
 
-        return True
+        return os.path.isfile(str(self.dotenv_path))
 
     def get(self, key):
         # type: (Text) -> Optional[Text]
