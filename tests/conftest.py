@@ -4,7 +4,9 @@ from click.testing import CliRunner
 
 @pytest.fixture
 def cli():
-    yield CliRunner()
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        yield runner
 
 
 @pytest.fixture
