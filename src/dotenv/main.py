@@ -135,6 +135,35 @@ def rewrite(path: Union[str, _PathLike]) -> Iterator[Tuple[IO[str], IO[str]]]:
         shutil.move(dest.name, path)
 
 
+def make_env_line(
+    key: str,
+    value: str,
+    quote_mode: str = "always",
+    export: bool = False,
+) -> str:
+    """
+    Make a line which format fits to .env
+    """
+    if quote_mode not in ("always", "auto", "never"):
+        raise ValueError("Unknown quote_mode: {}".format(quote_mode))
+
+    quote = (
+        quote_mode == "always"
+        or (quote_mode == "auto" and not value.isalnum())
+    )
+
+    if quote:
+        value_out = "'{}'".format(value.replace("'", "\\'"))
+    else:
+        value_out = value
+    if export:
+        line_out = 'export {}={}\n'.format(key, value_out)
+    else:
+        line_out = "{}={}\n".format(key, value_out)
+
+    return line_out
+
+
 def set_key(
     dotenv_path: Union[str, _PathLike],
     key_to_set: str,
@@ -148,22 +177,7 @@ def set_key(
     If the .env path given doesn't exist, fails instead of risking creating
     an orphan .env somewhere in the filesystem
     """
-    if quote_mode not in ("always", "auto", "never"):
-        raise ValueError("Unknown quote_mode: {}".format(quote_mode))
-
-    quote = (
-        quote_mode == "always"
-        or (quote_mode == "auto" and not value_to_set.isalnum())
-    )
-
-    if quote:
-        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
-    else:
-        value_out = value_to_set
-    if export:
-        line_out = 'export {}={}\n'.format(key_to_set, value_out)
-    else:
-        line_out = "{}={}\n".format(key_to_set, value_out)
+    line_out = make_env_line(key_to_set, value_to_set, quote_mode, export)
 
     with rewrite(dotenv_path) as (source, dest):
         replaced = False
@@ -358,3 +372,33 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+
+def update_dict_to_dotenv(
+    dotenv_path: Union[str, _PathLike], 
+    env_dict: dict, 
+    quote_mode: str = "always", 
+    export: bool = False
+):
+    """
+    Adds or Updates key/value pairs in the given dictionary to the given .env
+
+    If the .env path given doesn't exist, fails instead of risking creating
+    an orphan .env somewhere in the filesystem
+    """
+    key_to_line = {}
+
+    for key_to_set, value_to_set in env_dict.items():
+        env_line = make_env_line(key_to_set, value_to_set, quote_mode, export)
+        key_to_line[key_to_set] = env_line
+
+    with rewrite(dotenv_path) as (source, dest):
+        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+            if mapping.key in key_to_line:
+                line_out = key_to_line.pop(mapping.key)
+                dest.write(line_out)
+            else:
+                dest.write(mapping.original.string)
+
+        for _, line_out in key_to_line.items():
+            dest.write(line_out)
