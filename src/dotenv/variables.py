@@ -18,71 +18,58 @@ _posix_variable = re.compile(
 class Atom():
     __metaclass__ = ABCMeta
 
-    def __ne__(self, other):
-        # type: (object) -> bool
+    def __ne__(self, other: object) -> bool:
         result = self.__eq__(other)
         if result is NotImplemented:
             return NotImplemented
         return not result
 
-    def resolve(self, env):
-        # type: (Mapping[Text, Optional[Text]]) -> Text
+    def resolve(self, env: Mapping[Text, Optional[Text]]) -> Text:
         raise NotImplementedError
 
 
 class Literal(Atom):
-    def __init__(self, value):
-        # type: (Text) -> None
+    def __init__(self, value: Text) -> None:
         self.value = value
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "Literal(value={})".format(self.value)
 
-    def __eq__(self, other):
-        # type: (object) -> bool
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return NotImplemented
         return self.value == other.value
 
-    def __hash__(self):
-        # type: () -> int
+    def __hash__(self) -> int:
         return hash((self.__class__, self.value))
 
-    def resolve(self, env):
-        # type: (Mapping[Text, Optional[Text]]) -> Text
+    def resolve(self, env: Mapping[Text, Optional[Text]]) -> Text:
         return self.value
 
 
 class Variable(Atom):
-    def __init__(self, name, default):
-        # type: (Text, Optional[Text]) -> None
+    def __init__(self, name: Text, default: Optional[Text]) -> None:
         self.name = name
         self.default = default
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "Variable(name={}, default={})".format(self.name, self.default)
 
-    def __eq__(self, other):
-        # type: (object) -> bool
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return NotImplemented
         return (self.name, self.default) == (other.name, other.default)
 
-    def __hash__(self):
-        # type: () -> int
+    def __hash__(self) -> int:
         return hash((self.__class__, self.name, self.default))
 
-    def resolve(self, env):
-        # type: (Mapping[Text, Optional[Text]]) -> Text
+    def resolve(self, env: Mapping[Text, Optional[Text]]) -> Text:
         default = self.default if self.default is not None else ""
         result = env.get(self.name, default)
         return result if result is not None else ""
 
 
-def parse_variables(value):
-    # type: (Text) -> Iterator[Atom]
+def parse_variables(value: Text) -> Iterator[Atom]:
     cursor = 0
 
     for match in _posix_variable.finditer(value):
