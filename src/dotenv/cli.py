@@ -1,6 +1,7 @@
 import os
 import sys
 from subprocess import Popen
+from typing import Any, Dict, List
 
 try:
     import click
@@ -9,12 +10,8 @@ except ImportError:
                      'Run pip install "python-dotenv[cli]" to fix this.')
     sys.exit(1)
 
-from .compat import IS_TYPE_CHECKING
 from .main import dotenv_values, get_key, set_key, unset_key
 from .version import __version__
-
-if IS_TYPE_CHECKING:
-    from typing import Any, List, Dict
 
 
 @click.group()

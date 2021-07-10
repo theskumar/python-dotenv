@@ -1,8 +1,7 @@
-from .compat import IS_TYPE_CHECKING
-from .main import load_dotenv, get_key, set_key, unset_key, find_dotenv, dotenv_values
+from typing import Any, Optional
 
-if IS_TYPE_CHECKING:
-    from typing import Any, Optional
+from .main import (dotenv_values, find_dotenv, get_key, load_dotenv, set_key,
+                   unset_key)
 
 
 def load_ipython_extension(ipython):

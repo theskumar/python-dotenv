@@ -1,13 +1,7 @@
 import codecs
 import re
-
-from .compat import IS_TYPE_CHECKING
-
-if IS_TYPE_CHECKING:
-    from typing import (  # noqa:F401
-        IO, Iterator, Match, NamedTuple, Optional, Pattern, Sequence, Text,
-        Tuple
-    )
+from typing import (IO, Iterator, Match, NamedTuple, Optional,  # noqa:F401
+                    Pattern, Sequence, Text, Tuple)
 
 
 def make_regex(string, extra_flags=0):
@@ -32,47 +26,23 @@ _double_quote_escapes = make_regex(r"\\[\\'\"abfnrtv]")
 _single_quote_escapes = make_regex(r"\\[\\']")
 
 
-try:
-    # this is necessary because we only import these from typing
-    # when we are type checking, and the linter is upset if we
-    # re-import
-    import typing
+Original = NamedTuple(
+    "Original",
+    [
+        ("string", Text),
+        ("line", int),
+    ],
+)
 
-    Original = typing.NamedTuple(
-        "Original",
-        [
-            ("string", typing.Text),
-            ("line", int),
-        ],
-    )
-
-    Binding = typing.NamedTuple(
-        "Binding",
-        [
-            ("key", typing.Optional[typing.Text]),
-            ("value", typing.Optional[typing.Text]),
-            ("original", Original),
-            ("error", bool),
-        ],
-    )
-except (ImportError, AttributeError):
-    from collections import namedtuple
-    Original = namedtuple(  # type: ignore
-        "Original",
-        [
-            "string",
-            "line",
-        ],
-    )
-    Binding = namedtuple(  # type: ignore
-        "Binding",
-        [
-            "key",
-            "value",
-            "original",
-            "error",
-        ],
-    )
+Binding = NamedTuple(
+    "Binding",
+    [
+        ("key", Optional[Text]),
+        ("value", Optional[Text]),
+        ("original", Original),
+        ("error", bool),
+    ],
+)
 
 
 class Position:
