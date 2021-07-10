@@ -1,11 +1,6 @@
 import re
 from abc import ABCMeta
-
-from .compat import IS_TYPE_CHECKING
-
-if IS_TYPE_CHECKING:
-    from typing import Iterator, Mapping, Optional, Pattern, Text
-
+from typing import Iterator, Mapping, Optional, Pattern, Text
 
 _posix_variable = re.compile(
     r"""

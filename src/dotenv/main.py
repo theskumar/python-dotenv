@@ -6,20 +6,18 @@ import sys
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
+from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Text,
+                    Tuple, Union)
 
-from .compat import IS_TYPE_CHECKING
 from .parser import Binding, parse_stream
 from .variables import parse_variables
 
 logger = logging.getLogger(__name__)
 
-if IS_TYPE_CHECKING:
-    from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Text,
-                        Tuple, Union)
-    if sys.version_info >= (3, 6):
-        _PathLike = os.PathLike
-    else:
-        _PathLike = Text
+if sys.version_info >= (3, 6):
+    _PathLike = os.PathLike
+else:
+    _PathLike = Text
 
 
 def with_warn_for_invalid_lines(mappings):
