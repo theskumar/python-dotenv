@@ -10,7 +10,7 @@ import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
 
-from .compat import IS_TYPE_CHECKING, PY2, StringIO, to_env
+from .compat import IS_TYPE_CHECKING
 from .parser import Binding, parse_stream
 from .variables import parse_variables
 
@@ -23,11 +23,6 @@ if IS_TYPE_CHECKING:
         _PathLike = os.PathLike
     else:
         _PathLike = Text
-
-    if sys.version_info >= (3, 0):
-        _StringIO = StringIO
-    else:
-        _StringIO = StringIO[Text]
 
 
 def with_warn_for_invalid_lines(mappings):
@@ -44,8 +39,8 @@ def with_warn_for_invalid_lines(mappings):
 class DotEnv():
 
     def __init__(self, dotenv_path, verbose=False, encoding=None, interpolate=True, override=True):
-        # type: (Union[Text, _PathLike, _StringIO], bool, Union[None, Text], bool, bool) -> None
-        self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, _StringIO]
+        # type: (Union[Text, _PathLike, io.StringIO], bool, Union[None, Text], bool, bool) -> None
+        self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, io.StringIO]
         self._dict = None  # type: Optional[Dict[Text, Optional[Text]]]
         self.verbose = verbose  # type: bool
         self.encoding = encoding  # type: Union[None, Text]
@@ -55,7 +50,7 @@ class DotEnv():
     @contextmanager
     def _get_stream(self):
         # type: () -> Iterator[IO[Text]]
-        if isinstance(self.dotenv_path, StringIO):
+        if isinstance(self.dotenv_path, io.StringIO):
             yield self.dotenv_path
         elif os.path.isfile(self.dotenv_path):
             with io.open(self.dotenv_path, encoding=self.encoding) as stream:
@@ -63,7 +58,7 @@ class DotEnv():
         else:
             if self.verbose:
                 logger.info("Python-dotenv could not find configuration file %s.", self.dotenv_path or '.env')
-            yield StringIO('')
+            yield io.StringIO('')
 
     def dict(self):
         # type: () -> Dict[Text, Optional[Text]]
@@ -96,7 +91,7 @@ class DotEnv():
             if k in os.environ and not self.override:
                 continue
             if v is not None:
-                os.environ[to_env(k)] = to_env(v)
+                os.environ[k] = v
 
         return True
 
@@ -271,13 +266,7 @@ def find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=False):
     else:
         # will work for .py files
         frame = sys._getframe()
-        # find first frame that is outside of this file
-        if PY2 and not __file__.endswith('.py'):
-            # in Python2 __file__ extension could be .pyc or .pyo (this doesn't account
-            # for edge case of Python compiled for non-standard extension)
-            current_file = __file__.rsplit('.', 1)[0] + '.py'
-        else:
-            current_file = __file__
+        current_file = __file__
 
         while frame.f_code.co_filename == current_file:
             assert frame.f_back is not None
@@ -304,7 +293,7 @@ def load_dotenv(
     interpolate=True,
     encoding="utf-8",
 ):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, bool, Optional[Text]) -> bool  # noqa
+    # type: (Union[Text, _PathLike, None], Optional[io.StringIO], bool, bool, bool, Optional[Text]) -> bool  # noqa
     """Parse a .env file and then load all the variables found as environment variables.
 
     - *dotenv_path*: absolute or relative path to .env file.
@@ -335,7 +324,7 @@ def dotenv_values(
     interpolate=True,
     encoding="utf-8",
 ):
-    # type: (Union[Text, _PathLike, None], Optional[_StringIO], bool, bool, Optional[Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
+    # type: (Union[Text, _PathLike, None], Optional[io.StringIO], bool, bool, Optional[Text]) -> Dict[Text, Optional[Text]]  # noqa: E501
     """
     Parse a .env file and return its content as a dict.
 

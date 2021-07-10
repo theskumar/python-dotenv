@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import io
+
 import pytest
 
-from dotenv.compat import StringIO
 from dotenv.parser import Binding, Original, parse_stream
 
 
@@ -166,6 +167,6 @@ from dotenv.parser import Binding, Original, parse_stream
     ),
 ])
 def test_parse_stream(test_input, expected):
-    result = parse_stream(StringIO(test_input))
+    result = parse_stream(io.StringIO(test_input))
 
     assert list(result) == expected

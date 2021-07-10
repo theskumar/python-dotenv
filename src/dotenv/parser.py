@@ -1,7 +1,7 @@
 import codecs
 import re
 
-from .compat import IS_TYPE_CHECKING, to_text
+from .compat import IS_TYPE_CHECKING
 
 if IS_TYPE_CHECKING:
     from typing import (  # noqa:F401
@@ -12,7 +12,7 @@ if IS_TYPE_CHECKING:
 
 def make_regex(string, extra_flags=0):
     # type: (str, int) -> Pattern[Text]
-    return re.compile(to_text(string), re.UNICODE | extra_flags)
+    return re.compile(string, re.UNICODE | extra_flags)
 
 
 _newline = make_regex(r"(\r\n|\n|\r)")
