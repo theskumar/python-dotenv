@@ -1,10 +1,10 @@
 import codecs
 import re
 from typing import (IO, Iterator, Match, NamedTuple, Optional,  # noqa:F401
-                    Pattern, Sequence, Text, Tuple)
+                    Pattern, Sequence, Tuple)
 
 
-def make_regex(string: str, extra_flags: int = 0) -> Pattern[Text]:
+def make_regex(string: str, extra_flags: int = 0) -> Pattern[str]:
     return re.compile(string, re.UNICODE | extra_flags)
 
 
@@ -28,7 +28,7 @@ _single_quote_escapes = make_regex(r"\\[\\']")
 Original = NamedTuple(
     "Original",
     [
-        ("string", Text),
+        ("string", str),
         ("line", int),
     ],
 )
@@ -36,8 +36,8 @@ Original = NamedTuple(
 Binding = NamedTuple(
     "Binding",
     [
-        ("key", Optional[Text]),
-        ("value", Optional[Text]),
+        ("key", Optional[str]),
+        ("value", Optional[str]),
         ("original", Original),
         ("error", bool),
     ],
@@ -57,7 +57,7 @@ class Position:
         self.chars = other.chars
         self.line = other.line
 
-    def advance(self, string: Text) -> None:
+    def advance(self, string: str) -> None:
         self.chars += len(string)
         self.line += len(re.findall(_newline, string))
 
@@ -67,7 +67,7 @@ class Error(Exception):
 
 
 class Reader:
-    def __init__(self, stream: IO[Text]) -> None:
+    def __init__(self, stream: IO[str]) -> None:
         self.string = stream.read()
         self.position = Position.start()
         self.mark = Position.start()
@@ -84,17 +84,17 @@ class Reader:
             line=self.mark.line,
         )
 
-    def peek(self, count: int) -> Text:
+    def peek(self, count: int) -> str:
         return self.string[self.position.chars:self.position.chars + count]
 
-    def read(self, count: int) -> Text:
+    def read(self, count: int) -> str:
         result = self.string[self.position.chars:self.position.chars + count]
         if len(result) < count:
             raise Error("read: End of string")
         self.position.advance(result)
         return result
 
-    def read_regex(self, regex: Pattern[Text]) -> Sequence[Text]:
+    def read_regex(self, regex: Pattern[str]) -> Sequence[str]:
         match = regex.match(self.string, self.position.chars)
         if match is None:
             raise Error("read_regex: Pattern not found")
@@ -102,14 +102,14 @@ class Reader:
         return match.groups()
 
 
-def decode_escapes(regex: Pattern[Text], string: Text) -> Text:
-    def decode_match(match: Match[Text]) -> Text:
+def decode_escapes(regex: Pattern[str], string: str) -> str:
+    def decode_match(match: Match[str]) -> str:
         return codecs.decode(match.group(0), 'unicode-escape')  # type: ignore
 
     return regex.sub(decode_match, string)
 
 
-def parse_key(reader: Reader) -> Optional[Text]:
+def parse_key(reader: Reader) -> Optional[str]:
     char = reader.peek(1)
     if char == "#":
         return None
@@ -120,12 +120,12 @@ def parse_key(reader: Reader) -> Optional[Text]:
     return key
 
 
-def parse_unquoted_value(reader: Reader) -> Text:
+def parse_unquoted_value(reader: Reader) -> str:
     (part,) = reader.read_regex(_unquoted_value)
     return re.sub(r"\s+#.*", "", part).rstrip()
 
 
-def parse_value(reader: Reader) -> Text:
+def parse_value(reader: Reader) -> str:
     char = reader.peek(1)
     if char == u"'":
         (value,) = reader.read_regex(_single_quoted_value)
@@ -155,7 +155,7 @@ def parse_binding(reader: Reader) -> Binding:
         reader.read_regex(_whitespace)
         if reader.peek(1) == "=":
             reader.read_regex(_equal_sign)
-            value = parse_value(reader)  # type: Optional[Text]
+            value = parse_value(reader)  # type: Optional[str]
         else:
             value = None
         reader.read_regex(_comment)
@@ -176,7 +176,7 @@ def parse_binding(reader: Reader) -> Binding:
         )
 
 
-def parse_stream(stream: IO[Text]) -> Iterator[Binding]:
+def parse_stream(stream: IO[str]) -> Iterator[Binding]:
     reader = Reader(stream)
     while reader.has_next():
         yield parse_binding(reader)
