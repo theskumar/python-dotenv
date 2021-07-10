@@ -9,7 +9,7 @@ except ImportError:
                      'Run pip install "python-dotenv[cli]" to fix this.')
     sys.exit(1)
 
-from .compat import IS_TYPE_CHECKING, to_env
+from .compat import IS_TYPE_CHECKING
 from .main import dotenv_values, get_key, set_key, unset_key
 from .version import __version__
 
@@ -123,9 +123,9 @@ def run(ctx, override, commandline):
             ctx=ctx
         )
     dotenv_as_dict = {
-        to_env(k): to_env(v)
+        k: v
         for (k, v) in dotenv_values(file).items()
-        if v is not None and (override or to_env(k) not in os.environ)
+        if v is not None and (override or k not in os.environ)
     }
 
     if not commandline:

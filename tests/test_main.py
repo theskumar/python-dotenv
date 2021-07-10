@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import io
 import logging
 import os
 import sys
@@ -11,7 +12,6 @@ import pytest
 import sh
 
 import dotenv
-from dotenv.compat import PY2, StringIO
 
 
 def test_set_key_no_file(tmp_path):
@@ -281,15 +281,12 @@ def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_file):
 
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_utf_8():
-    stream = StringIO("a=à")
+    stream = io.StringIO("a=à")
 
     result = dotenv.load_dotenv(stream=stream)
 
     assert result is True
-    if PY2:
-        assert os.environ == {"a": "à".encode(sys.getfilesystemencoding())}
-    else:
-        assert os.environ == {"a": "à"}
+    assert os.environ == {"a": "à"}
 
 
 def test_load_dotenv_in_current_dir(tmp_path):
@@ -361,7 +358,7 @@ def test_dotenv_values_file(dotenv_file):
 )
 def test_dotenv_values_stream(env, string, interpolate, expected):
     with mock.patch.dict(os.environ, env, clear=True):
-        stream = StringIO(string)
+        stream = io.StringIO(string)
         stream.seek(0)
 
         result = dotenv.dotenv_values(stream=stream, interpolate=interpolate)
