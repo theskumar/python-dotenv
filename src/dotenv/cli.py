@@ -26,8 +26,7 @@ from .version import __version__
               help="Whether to write the dot file as an executable bash script.")
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx, file, quote, export):
-    # type: (click.Context, Any, Any, Any) -> None
+def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
     '''This script is used to set, get or unset values from a .env file.'''
     ctx.obj = {}
     ctx.obj['QUOTE'] = quote
@@ -37,8 +36,7 @@ def cli(ctx, file, quote, export):
 
 @cli.command()
 @click.pass_context
-def list(ctx):
-    # type: (click.Context) -> None
+def list(ctx: click.Context) -> None:
     '''Display all the stored key/value.'''
     file = ctx.obj['FILE']
     if not os.path.isfile(file):
@@ -55,8 +53,7 @@ def list(ctx):
 @click.pass_context
 @click.argument('key', required=True)
 @click.argument('value', required=True)
-def set(ctx, key, value):
-    # type: (click.Context, Any, Any) -> None
+def set(ctx: click.Context, key: Any, value: Any) -> None:
     '''Store the given key/value.'''
     file = ctx.obj['FILE']
     quote = ctx.obj['QUOTE']
@@ -71,8 +68,7 @@ def set(ctx, key, value):
 @cli.command()
 @click.pass_context
 @click.argument('key', required=True)
-def get(ctx, key):
-    # type: (click.Context, Any) -> None
+def get(ctx: click.Context, key: Any) -> None:
     '''Retrieve the value for the given key.'''
     file = ctx.obj['FILE']
     if not os.path.isfile(file):
@@ -90,8 +86,7 @@ def get(ctx, key):
 @cli.command()
 @click.pass_context
 @click.argument('key', required=True)
-def unset(ctx, key):
-    # type: (click.Context, Any) -> None
+def unset(ctx: click.Context, key: Any) -> None:
     '''Removes the given key.'''
     file = ctx.obj['FILE']
     quote = ctx.obj['QUOTE']
@@ -110,8 +105,7 @@ def unset(ctx, key):
     help="Override variables from the environment file with those from the .env file.",
 )
 @click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
-def run(ctx, override, commandline):
-    # type: (click.Context, bool, List[str]) -> None
+def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     """Run command with environment variables present."""
     file = ctx.obj['FILE']
     if not os.path.isfile(file):
@@ -132,8 +126,7 @@ def run(ctx, override, commandline):
     exit(ret)
 
 
-def run_command(command, env):
-    # type: (List[str], Dict[str, str]) -> int
+def run_command(command: List[str], env: Dict[str, str]) -> int:
     """Run command in sub process.
 
     Runs the command in a sub process with the variables from `env`
