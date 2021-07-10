@@ -1,6 +1,6 @@
 import re
 from abc import ABCMeta
-from typing import Iterator, Mapping, Optional, Pattern, Text
+from typing import Iterator, Mapping, Optional, Pattern
 
 _posix_variable = re.compile(
     r"""
@@ -12,7 +12,7 @@ _posix_variable = re.compile(
     \}
     """,
     re.VERBOSE,
-)  # type: Pattern[Text]
+)  # type: Pattern[str]
 
 
 class Atom():
@@ -24,12 +24,12 @@ class Atom():
             return NotImplemented
         return not result
 
-    def resolve(self, env: Mapping[Text, Optional[Text]]) -> Text:
+    def resolve(self, env: Mapping[str, Optional[str]]) -> str:
         raise NotImplementedError
 
 
 class Literal(Atom):
-    def __init__(self, value: Text) -> None:
+    def __init__(self, value: str) -> None:
         self.value = value
 
     def __repr__(self) -> str:
@@ -43,12 +43,12 @@ class Literal(Atom):
     def __hash__(self) -> int:
         return hash((self.__class__, self.value))
 
-    def resolve(self, env: Mapping[Text, Optional[Text]]) -> Text:
+    def resolve(self, env: Mapping[str, Optional[str]]) -> str:
         return self.value
 
 
 class Variable(Atom):
-    def __init__(self, name: Text, default: Optional[Text]) -> None:
+    def __init__(self, name: str, default: Optional[str]) -> None:
         self.name = name
         self.default = default
 
@@ -63,13 +63,13 @@ class Variable(Atom):
     def __hash__(self) -> int:
         return hash((self.__class__, self.name, self.default))
 
-    def resolve(self, env: Mapping[Text, Optional[Text]]) -> Text:
+    def resolve(self, env: Mapping[str, Optional[str]]) -> str:
         default = self.default if self.default is not None else ""
         result = env.get(self.name, default)
         return result if result is not None else ""
 
 
-def parse_variables(value: Text) -> Iterator[Atom]:
+def parse_variables(value: str) -> Iterator[Atom]:
     cursor = 0
 
     for match in _posix_variable.finditer(value):

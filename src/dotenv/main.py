@@ -6,8 +6,8 @@ import sys
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
-from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Text,
-                    Tuple, Union)
+from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple,
+                    Union)
 
 from .parser import Binding, parse_stream
 from .variables import parse_variables
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 if sys.version_info >= (3, 6):
     _PathLike = os.PathLike
 else:
-    _PathLike = Text
+    _PathLike = str
 
 
 def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
@@ -33,21 +33,21 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
 class DotEnv():
     def __init__(
         self,
-        dotenv_path: Union[Text, _PathLike, io.StringIO],
+        dotenv_path: Union[str, _PathLike, io.StringIO],
         verbose: bool = False,
-        encoding: Union[None, Text] = None,
+        encoding: Union[None, str] = None,
         interpolate: bool = True,
         override: bool = True,
     ) -> None:
-        self.dotenv_path = dotenv_path  # type: Union[Text,_PathLike, io.StringIO]
-        self._dict = None  # type: Optional[Dict[Text, Optional[Text]]]
+        self.dotenv_path = dotenv_path  # type: Union[str,_PathLike, io.StringIO]
+        self._dict = None  # type: Optional[Dict[str, Optional[str]]]
         self.verbose = verbose  # type: bool
-        self.encoding = encoding  # type: Union[None, Text]
+        self.encoding = encoding  # type: Union[None, str]
         self.interpolate = interpolate  # type: bool
         self.override = override  # type: bool
 
     @contextmanager
-    def _get_stream(self) -> Iterator[IO[Text]]:
+    def _get_stream(self) -> Iterator[IO[str]]:
         if isinstance(self.dotenv_path, io.StringIO):
             yield self.dotenv_path
         elif os.path.isfile(self.dotenv_path):
@@ -58,7 +58,7 @@ class DotEnv():
                 logger.info("Python-dotenv could not find configuration file %s.", self.dotenv_path or '.env')
             yield io.StringIO('')
 
-    def dict(self) -> Dict[Text, Optional[Text]]:
+    def dict(self) -> Dict[str, Optional[str]]:
         """Return dotenv as dict"""
         if self._dict:
             return self._dict
@@ -72,7 +72,7 @@ class DotEnv():
 
         return self._dict
 
-    def parse(self) -> Iterator[Tuple[Text, Optional[Text]]]:
+    def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         with self._get_stream() as stream:
             for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
                 if mapping.key is not None:
@@ -90,7 +90,7 @@ class DotEnv():
 
         return True
 
-    def get(self, key: Text) -> Optional[Text]:
+    def get(self, key: str) -> Optional[str]:
         """
         """
         data = self.dict()
@@ -104,7 +104,7 @@ class DotEnv():
         return None
 
 
-def get_key(dotenv_path: Union[Text, _PathLike], key_to_get: Text) -> Optional[Text]:
+def get_key(dotenv_path: Union[str, _PathLike], key_to_get: str) -> Optional[str]:
     """
     Gets the value of a given key from the given .env
 
@@ -114,7 +114,7 @@ def get_key(dotenv_path: Union[Text, _PathLike], key_to_get: Text) -> Optional[T
 
 
 @contextmanager
-def rewrite(path: _PathLike) -> Iterator[Tuple[IO[Text], IO[Text]]]:
+def rewrite(path: _PathLike) -> Iterator[Tuple[IO[str], IO[str]]]:
     try:
         if not os.path.isfile(path):
             with io.open(path, "w+") as source:
@@ -132,11 +132,11 @@ def rewrite(path: _PathLike) -> Iterator[Tuple[IO[Text], IO[Text]]]:
 
 def set_key(
     dotenv_path: _PathLike,
-    key_to_set: Text,
-    value_to_set: Text,
-    quote_mode: Text = "always",
+    key_to_set: str,
+    value_to_set: str,
+    quote_mode: str = "always",
     export: bool = False,
-) -> Tuple[Optional[bool], Text, Text]:
+) -> Tuple[Optional[bool], str, str]:
     """
     Adds or Updates a key/value to the given .env
 
@@ -176,9 +176,9 @@ def set_key(
 
 def unset_key(
     dotenv_path: _PathLike,
-    key_to_unset: Text,
-    quote_mode: Text = "always",
-) -> Tuple[Optional[bool], Text]:
+    key_to_unset: str,
+    quote_mode: str = "always",
+) -> Tuple[Optional[bool], str]:
     """
     Removes a given key from the given .env
 
@@ -205,17 +205,17 @@ def unset_key(
 
 
 def resolve_variables(
-    values: Iterable[Tuple[Text, Optional[Text]]],
+    values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
-) -> Mapping[Text, Optional[Text]]:
-    new_values = {}  # type: Dict[Text, Optional[Text]]
+) -> Mapping[str, Optional[str]]:
+    new_values = {}  # type: Dict[str, Optional[str]]
 
     for (name, value) in values:
         if value is None:
             result = None
         else:
             atoms = parse_variables(value)
-            env = {}  # type: Dict[Text, Optional[Text]]
+            env = {}  # type: Dict[str, Optional[str]]
             if override:
                 env.update(os.environ)  # type: ignore
                 env.update(new_values)
@@ -229,7 +229,7 @@ def resolve_variables(
     return new_values
 
 
-def _walk_to_root(path: Text) -> Iterator[Text]:
+def _walk_to_root(path: str) -> Iterator[str]:
     """
     Yield directories starting from the given directory up to the root
     """
@@ -248,10 +248,10 @@ def _walk_to_root(path: Text) -> Iterator[Text]:
 
 
 def find_dotenv(
-    filename: Text = '.env',
+    filename: str = '.env',
     raise_error_if_not_found: bool = False,
     usecwd: bool = False,
-) -> Text:
+) -> str:
     """
     Search in increasingly higher folders for the given file
 
@@ -289,12 +289,12 @@ def find_dotenv(
 
 
 def load_dotenv(
-    dotenv_path: Union[Text, _PathLike, None] = None,
+    dotenv_path: Union[str, _PathLike, None] = None,
     stream: Optional[io.StringIO] = None,
     verbose: bool = False,
     override: bool = False,
     interpolate: bool = True,
-    encoding: Optional[Text] = "utf-8",
+    encoding: Optional[str] = "utf-8",
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -320,12 +320,12 @@ def load_dotenv(
 
 
 def dotenv_values(
-    dotenv_path: Union[Text, _PathLike, None] = None,
+    dotenv_path: Union[str, _PathLike, None] = None,
     stream: Optional[io.StringIO] = None,
     verbose: bool = False,
     interpolate: bool = True,
-    encoding: Optional[Text] = "utf-8",
-) -> Dict[Text, Optional[Text]]:
+    encoding: Optional[str] = "utf-8",
+) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
 
