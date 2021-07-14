@@ -141,8 +141,8 @@ without manually opening it.
 
 ```shell
 $ pip install "python-dotenv[cli]"
-$ dotenv set USER=foo
-$ dotenv set EMAIL=foo@example.org
+$ dotenv set USER foo
+$ dotenv set EMAIL foo@example.org
 $ dotenv list
 USER=foo
 EMAIL=foo@example.org
