@@ -33,13 +33,15 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
 class DotEnv():
     def __init__(
         self,
-        dotenv_path: Union[str, _PathLike, io.StringIO],
+        dotenv_path: Optional[Union[str, _PathLike]],
+        stream: Optional[IO[str]] = None,
         verbose: bool = False,
         encoding: Union[None, str] = None,
         interpolate: bool = True,
         override: bool = True,
     ) -> None:
-        self.dotenv_path = dotenv_path  # type: Union[str,_PathLike, io.StringIO]
+        self.dotenv_path = dotenv_path  # type: Optional[Union[str, _PathLike]]
+        self.stream = stream  # type: Optional[IO[str]]
         self._dict = None  # type: Optional[Dict[str, Optional[str]]]
         self.verbose = verbose  # type: bool
         self.encoding = encoding  # type: Union[None, str]
@@ -48,14 +50,17 @@ class DotEnv():
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
-        if isinstance(self.dotenv_path, io.StringIO):
-            yield self.dotenv_path
-        elif os.path.isfile(self.dotenv_path):
+        if self.dotenv_path and os.path.isfile(self.dotenv_path):
             with io.open(self.dotenv_path, encoding=self.encoding) as stream:
                 yield stream
+        elif self.stream is not None:
+            yield self.stream
         else:
             if self.verbose:
-                logger.info("Python-dotenv could not find configuration file %s.", self.dotenv_path or '.env')
+                logger.info(
+                    "Python-dotenv could not find configuration file %s.",
+                    self.dotenv_path or '.env',
+                )
             yield io.StringIO('')
 
     def dict(self) -> Dict[str, Optional[str]]:
@@ -290,7 +295,7 @@ def find_dotenv(
 
 def load_dotenv(
     dotenv_path: Union[str, _PathLike, None] = None,
-    stream: Optional[io.StringIO] = None,
+    stream: Optional[IO[str]] = None,
     verbose: bool = False,
     override: bool = False,
     interpolate: bool = True,
@@ -299,7 +304,8 @@ def load_dotenv(
     """Parse a .env file and then load all the variables found as environment variables.
 
     - *dotenv_path*: absolute or relative path to .env file.
-    - *stream*: `StringIO` object with .env content, used if `dotenv_path` is `None`.
+    - *stream*: Text stream (such as `io.StringIO`) with .env content, used if
+      `dotenv_path` is `None`.
     - *verbose*: whether to output a warning the .env file is missing. Defaults to
       `False`.
     - *override*: whether to override the system environment variables with the variables
@@ -308,9 +314,12 @@ def load_dotenv(
 
     If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
     """
-    f = dotenv_path or stream or find_dotenv()
+    if dotenv_path is None and stream is None:
+        dotenv_path = find_dotenv()
+
     dotenv = DotEnv(
-        f,
+        dotenv_path=dotenv_path,
+        stream=stream,
         verbose=verbose,
         interpolate=interpolate,
         override=override,
@@ -321,7 +330,7 @@ def load_dotenv(
 
 def dotenv_values(
     dotenv_path: Union[str, _PathLike, None] = None,
-    stream: Optional[io.StringIO] = None,
+    stream: Optional[IO[str]] = None,
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
@@ -338,9 +347,12 @@ def dotenv_values(
 
     If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
     """
-    f = dotenv_path or stream or find_dotenv()
+    if dotenv_path is None and stream is None:
+        dotenv_path = find_dotenv()
+
     return DotEnv(
-        f,
+        dotenv_path=dotenv_path,
+        stream=stream,
         verbose=verbose,
         interpolate=interpolate,
         override=True,

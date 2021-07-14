@@ -277,13 +277,25 @@ def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_file):
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
-def test_load_dotenv_utf_8():
+def test_load_dotenv_string_io_utf_8():
     stream = io.StringIO("a=à")
 
     result = dotenv.load_dotenv(stream=stream)
 
     assert result is True
     assert os.environ == {"a": "à"}
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_file_stream(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write("a=b")
+
+    with open(dotenv_file, "r") as f:
+        result = dotenv.load_dotenv(stream=f)
+
+    assert result is True
+    assert os.environ == {"a": "b"}
 
 
 def test_load_dotenv_in_current_dir(tmp_path):
@@ -353,7 +365,7 @@ def test_dotenv_values_file(dotenv_file):
         ({}, "a=b\nc=${a}\nd=e\nc=${d}", True, {"a": "b", "c": "e", "d": "e"}),
     ],
 )
-def test_dotenv_values_stream(env, string, interpolate, expected):
+def test_dotenv_values_string_io(env, string, interpolate, expected):
     with mock.patch.dict(os.environ, env, clear=True):
         stream = io.StringIO(string)
         stream.seek(0)
@@ -361,3 +373,13 @@ def test_dotenv_values_stream(env, string, interpolate, expected):
         result = dotenv.dotenv_values(stream=stream, interpolate=interpolate)
 
         assert result == expected
+
+
+def test_dotenv_values_file_stream(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write("a=b")
+
+    with open(dotenv_file, "r") as f:
+        result = dotenv.dotenv_values(stream=f)
+
+    assert result == {"a": "b"}
