@@ -7,6 +7,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- The `dotenv_path` argument of `set_key` and `unset_key` now has a type of `Union[str,
+  os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
+
 ### Changed
 
 - Require Python 3.5 or a later version.  Python 2 and 3.4 are no longer supported. (#341
