@@ -114,7 +114,7 @@ def get_key(dotenv_path: Union[str, _PathLike], key_to_get: str) -> Optional[str
 
 
 @contextmanager
-def rewrite(path: _PathLike) -> Iterator[Tuple[IO[str], IO[str]]]:
+def rewrite(path: Union[str, _PathLike]) -> Iterator[Tuple[IO[str], IO[str]]]:
     try:
         if not os.path.isfile(path):
             with io.open(path, "w+") as source:
@@ -131,7 +131,7 @@ def rewrite(path: _PathLike) -> Iterator[Tuple[IO[str], IO[str]]]:
 
 
 def set_key(
-    dotenv_path: _PathLike,
+    dotenv_path: Union[str, _PathLike],
     key_to_set: str,
     value_to_set: str,
     quote_mode: str = "always",
@@ -175,7 +175,7 @@ def set_key(
 
 
 def unset_key(
-    dotenv_path: _PathLike,
+    dotenv_path: Union[str, _PathLike],
     key_to_unset: str,
     quote_mode: str = "always",
 ) -> Tuple[Optional[bool], str]:
