@@ -221,13 +221,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## 0.6.2
 
 -   Fix dotenv list command ([@ticosax](https://github.com/ticosax))
--   Add iPython Suport
+-   Add iPython Support
     ([@tillahoffmann](https://github.com/tillahoffmann))
 
 ## 0.6.0
 
 -   Drop support for Python 2.6
--   Handle escaped charaters and newlines in quoted values. (Thanks
+-   Handle escaped characters and newlines in quoted values. (Thanks
     [@iameugenejo](https://github.com/iameugenejo))
 -   Remove any spaces around unquoted key/value. (Thanks
     [@paulochf](https://github.com/paulochf))
