@@ -39,6 +39,7 @@ class DotEnv():
         encoding: Union[None, str] = None,
         interpolate: bool = True,
         override: bool = True,
+        base_env: Mapping[str, Optional[str]] = os.environ
     ) -> None:
         self.dotenv_path = dotenv_path  # type: Optional[Union[str, _PathLike]]
         self.stream = stream  # type: Optional[IO[str]]
@@ -47,6 +48,7 @@ class DotEnv():
         self.encoding = encoding  # type: Union[None, str]
         self.interpolate = interpolate  # type: bool
         self.override = override  # type: bool
+        self.base_env = base_env  # type: Mapping[str, Optional[str]]
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
@@ -71,7 +73,9 @@ class DotEnv():
         raw_values = self.parse()
 
         if self.interpolate:
-            self._dict = OrderedDict(resolve_variables(raw_values, override=self.override))
+            self._dict = OrderedDict(
+                resolve_variables(raw_values, override=self.override, base_env=self.base_env)
+            )
         else:
             self._dict = OrderedDict(raw_values)
 
@@ -212,6 +216,7 @@ def unset_key(
 def resolve_variables(
     values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
+    base_env: Mapping[str, Optional[str]] = os.environ,
 ) -> Mapping[str, Optional[str]]:
     new_values = {}  # type: Dict[str, Optional[str]]
 
@@ -222,11 +227,11 @@ def resolve_variables(
             atoms = parse_variables(value)
             env = {}  # type: Dict[str, Optional[str]]
             if override:
-                env.update(os.environ)  # type: ignore
+                env.update(base_env)  # type: ignore
                 env.update(new_values)
             else:
                 env.update(new_values)
-                env.update(os.environ)  # type: ignore
+                env.update(base_env)  # type: ignore
             result = "".join(atom.resolve(env) for atom in atoms)
 
         new_values[name] = result
@@ -334,6 +339,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    base_env: Mapping[str, Optional[str]] = os.environ,
 ) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
@@ -342,8 +348,8 @@ def dotenv_values(
     - *stream*: `StringIO` object with .env content, used if `dotenv_path` is `None`.
     - *verbose*: whether to output a warning the .env file is missing. Defaults to
       `False`.
-      in `.env` file.  Defaults to `False`.
     - *encoding*: encoding to be used to read the file.
+    - *base_env*: dict with initial environment. Defaults to os.environ
 
     If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
     """
@@ -357,4 +363,5 @@ def dotenv_values(
         interpolate=interpolate,
         override=True,
         encoding=encoding,
+        base_env=base_env,
     ).dict()
