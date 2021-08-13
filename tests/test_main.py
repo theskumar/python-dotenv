@@ -325,6 +325,15 @@ def test_dotenv_values_file(dotenv_file):
     assert result == {"a": "b"}
 
 
+def test_dotenv_values_file_base_env(dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write("a=${var}")
+
+    result = dotenv.dotenv_values(dotenv_file, base_env={'var': 'b'})
+
+    assert result == {"a": "b"}
+
+
 @pytest.mark.parametrize(
     "env,string,interpolate,expected",
     [

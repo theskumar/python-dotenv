@@ -98,6 +98,28 @@ config = {
 }
 ```
 
+Further advanced use by overriding os.environ with a user defined dict:
+
+```python
+import os
+import subprocess
+from dotenv import dotenv_values
+
+deploy_env = {
+  'FALLBACK_DOMAIN': 'example.org',
+  'VERSION': '1.5',
+}
+env = dotenv_values('.env.deployment01', base_env={
+    # override=False to ignore local file overrides in interpolations:
+    **dotenv_values('.env.base', override=False, base_env=deploy_env),
+    **deploy_env,
+})
+subprocess.call(
+  ['/usr/bin/docker', 'stack', 'deploy', '-c', 'docker-compose.yml', 'myproject'],
+  env={**deploy_env, **env},
+)
+```
+
 ### Parse configuration as a stream
 
 `load_dotenv` and `dotenv_values` accept [streams][python_streams] via their `stream`
