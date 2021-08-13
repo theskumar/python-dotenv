@@ -110,7 +110,8 @@ deploy_env = {
   'VERSION': '1.5',
 }
 env = dotenv_values('.env.deployment01', base_env={
-    **dotenv_values('.env.base', base_env=deploy_env),
+    # override=False to ignore local file overrides in interpolations:
+    **dotenv_values('.env.base', override=False, base_env=deploy_env),
     **deploy_env,
 })
 subprocess.call(

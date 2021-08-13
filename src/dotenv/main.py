@@ -337,6 +337,7 @@ def dotenv_values(
     dotenv_path: Union[str, _PathLike, None] = None,
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
+    override: bool = True,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
     base_env: Mapping[str, Optional[str]] = os.environ,
@@ -348,6 +349,8 @@ def dotenv_values(
     - *stream*: `StringIO` object with .env content, used if `dotenv_path` is `None`.
     - *verbose*: whether to output a warning the .env file is missing. Defaults to
       `False`.
+    - *override*: whether to override the system environment/`base_env` variables with
+      the variables in `.env` file. Defaults to `True` as opposed to `load_dotenv`.
     - *encoding*: encoding to be used to read the file.
     - *base_env*: dict with initial environment. Defaults to os.environ
 
@@ -361,7 +364,7 @@ def dotenv_values(
         stream=stream,
         verbose=verbose,
         interpolate=interpolate,
-        override=True,
+        override=override,
         encoding=encoding,
         base_env=base_env,
     ).dict()

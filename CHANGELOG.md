@@ -11,6 +11,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Add support to use a custom dict instead of os.environ for variable
   interpolating when calling `dotenv_values` (by [@johnbergvall])
+- Add override-flag to `dotenv_values` to allow for more advanced
+  chaining of env-files (#73 #186 by [@johnbergvall])
 
 ## [0.19.0] - 2021-07-24
 
