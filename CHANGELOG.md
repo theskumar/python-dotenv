@@ -9,7 +9,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Add support for Python 3.10 ([@theskumar]).
+- Add support for Python 3.10. (#359 by [@theskumar])
 
 
 ## [0.19.0] - 2021-07-24
@@ -266,6 +266,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [#172]: https://github.com/theskumar/python-dotenv/issues/172
 [#176]: https://github.com/theskumar/python-dotenv/issues/176
 [#183]: https://github.com/theskumar/python-dotenv/issues/183
+[#359]: https://github.com/theskumar/python-dotenv/issues/359
 
 [@Flimm]: https://github.com/Flimm
 [@alanjds]: https://github.com/alanjds
