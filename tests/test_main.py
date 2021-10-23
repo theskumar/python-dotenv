@@ -37,6 +37,7 @@ def test_set_key_no_file(tmp_path):
         ("a=b\nc=d", "a", "e", (True, "a", "e"), "a='e'\nc=d"),
         ("a=b\nc=d\ne=f", "c", "g", (True, "c", "g"), "a=b\nc='g'\ne=f"),
         ("a=b\n", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
+        ("a=b", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
     ],
 )
 def test_set_key(dotenv_file, before, key, value, expected, after):
