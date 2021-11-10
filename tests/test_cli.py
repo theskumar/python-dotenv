@@ -205,3 +205,9 @@ def test_run_with_version(cli):
 
     assert result.exit_code == 0
     assert result.output.strip().endswith(__version__)
+
+def test_example_file_non_existent_file(cli):
+    result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'example_file'])
+
+    assert result.exit_code == 2, result.output
+    assert "does not exist" in result.output

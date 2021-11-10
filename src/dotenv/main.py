@@ -167,13 +167,17 @@ def set_key(
 
     with rewrite(dotenv_path) as (source, dest):
         replaced = False
+        missing_newline = False
         for mapping in with_warn_for_invalid_lines(parse_stream(source)):
             if mapping.key == key_to_set:
                 dest.write(line_out)
                 replaced = True
             else:
                 dest.write(mapping.original.string)
+                missing_newline = not mapping.original.string.endswith("\n")
         if not replaced:
+            if missing_newline:
+                dest.write("\n")
             dest.write(line_out)
 
     return True, key_to_set, value_to_set

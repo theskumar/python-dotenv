@@ -82,7 +82,6 @@ def get(ctx: click.Context, key: Any) -> None:
     else:
         exit(1)
 
-
 @cli.command()
 @click.pass_context
 @click.argument('key', required=True)
@@ -125,6 +124,32 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     ret = run_command(commandline, dotenv_as_dict)
     exit(ret)
 
+@cli.command()
+@click.pass_context
+def example_file(ctx: click.Context) -> None:
+    '''Generates a .example.env file without values.'''
+    filedir = ctx.obj['FILE'].replace("\\", "/")
+    if not os.path.isfile(filedir):
+        raise click.BadParameter(
+            'Path "%s" does not exist.' % (filedir),
+            ctx=ctx
+        )
+    newFileList = []
+    with open(filedir,'r') as file:
+        for line in file:
+            line = line.strip()
+            if line[0] != "#":
+                line = line.split("=", 1)[0] + "="
+            newFileList.append(line + "\n")
+
+        while newFileList[-1] == "\n":
+            newFileList.pop(-1)
+
+        newFileName = f"{os.path.basename(file.name).split('.', 1)[0]}.example.env"
+        with open(newFileName, "w") as newFile:
+            for line in newFileList:
+                newFile.write(line)
+            click.echo(f"{newFileName} exported.")
 
 def run_command(command: List[str], env: Dict[str, str]) -> int:
     """Run command in sub process.

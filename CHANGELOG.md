@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.2] - 2021-11-11
+
+### Fixed
+
+- In `set_key`, add missing newline character before new entry if necessary. (#361 by
+  [@bbc2])
+
 ## [0.19.1] - 2021-08-09
 
 ### Added
@@ -292,7 +299,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@yannham]: https://github.com/yannham
 [@zueve]: https://github.com/zueve
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.19.1...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.19.2...HEAD
+[0.19.2]: https://github.com/theskumar/python-dotenv/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/theskumar/python-dotenv/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/theskumar/python-dotenv/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/theskumar/python-dotenv/compare/v0.17.1...v0.18.0
