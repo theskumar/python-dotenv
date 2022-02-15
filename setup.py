@@ -36,10 +36,11 @@ setup(
     extras_require={
         'cli': ['click>=5.0', ],
     },
-    entry_points='''
-        [console_scripts]
-        dotenv=dotenv.cli:cli
-    ''',
+    entry_points={
+        "console_scripts": [
+            "dotenv=dotenv.cli:cli",
+        ],
+    },
     license='BSD-3-Clause',
     classifiers=[
         'Development Status :: 5 - Production/Stable',

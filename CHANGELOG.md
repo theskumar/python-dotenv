@@ -12,6 +12,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add `encoding` (`Optional[str]`) parameter to `get_key`, `set_key` and `unset_key`.
   (#379 by [@bbc2])
 
+### Fixed
+
+- Use dict to specify the `entry_points` parameter of `setuptools.setup` (#376 by
+  [@mgorny]).
+
 ## [0.19.2] - 2021-11-11
 
 ### Fixed
@@ -296,6 +301,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@gongqingkui]: https://github.com/gongqingkui
 [@greyli]: https://github.com/greyli
 [@jadutter]: https://github.com/jadutter
+[@mgorny]: https://github.com/mgorny
 [@qnighy]: https://github.com/qnighy
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
