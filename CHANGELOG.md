@@ -16,6 +16,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Use dict to specify the `entry_points` parameter of `setuptools.setup` (#376 by
   [@mgorny]).
+- Don't build universal wheels (#387 by [@bbc2]).
 
 ## [0.19.2] - 2021-11-11
 
