@@ -87,6 +87,9 @@ class DotEnv():
         """
         Load the current dotenv as system environment variable.
         """
+        if not self.dict():
+            return False
+
         for k, v in self.dict().items():
             if k in os.environ and not self.override:
                 continue
