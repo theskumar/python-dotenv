@@ -325,7 +325,8 @@ def load_dotenv(
       in `.env` file.  Defaults to `False`.
     - *encoding*: encoding to be used to read the file.
 
-    If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
+    If neither `dotenv_path` nor `stream` are provided, `find_dotenv()` is used
+    to find the .env file.
     """
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
