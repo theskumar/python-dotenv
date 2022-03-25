@@ -51,7 +51,7 @@ class DotEnv():
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
         if self.dotenv_path and os.path.isfile(self.dotenv_path):
-            with io.open(self.dotenv_path, encoding=self.encoding) as stream:
+            with open(self.dotenv_path, encoding=self.encoding) as stream:
                 yield stream
         elif self.stream is not None:
             yield self.stream
@@ -129,10 +129,10 @@ def rewrite(
 ) -> Iterator[Tuple[IO[str], IO[str]]]:
     try:
         if not os.path.isfile(path):
-            with io.open(path, "w+", encoding=encoding) as source:
+            with open(path, "w+", encoding=encoding) as source:
                 source.write("")
         with tempfile.NamedTemporaryFile(mode="w+", delete=False, encoding=encoding) as dest:
-            with io.open(path, encoding=encoding) as source:
+            with open(path, encoding=encoding) as source:
                 yield (source, dest)  # type: ignore
     except BaseException:
         if os.path.isfile(dest.name):
