@@ -180,6 +180,20 @@ second line"
 FOO="first line\nsecond line"
 ```
 
+### Variable without a value
+
+A variable can have no value:
+
+```bash
+FOO
+```
+
+It results in `dotenv_values` associating that variable name with the value `None` (e.g.
+`{"FOO": None}`. `load_dotenv`, on the other hand, simply ignores such variables.
+
+This shouldn't be confused with `FOO=`, in which case the variable is associated with the
+empty string.
+
 ### Variable expansion
 
 Python-dotenv can interpolate variables using POSIX variable expansion.

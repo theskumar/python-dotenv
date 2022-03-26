@@ -351,14 +351,20 @@ def dotenv_values(
     """
     Parse a .env file and return its content as a dict.
 
-    - *dotenv_path*: absolute or relative path to .env file.
-    - *stream*: `StringIO` object with .env content, used if `dotenv_path` is `None`.
-    - *verbose*: whether to output a warning the .env file is missing. Defaults to
-      `False`.
-      in `.env` file.  Defaults to `False`.
-    - *encoding*: encoding to be used to read the file.
+    The returned dict will have `None` values for keys without values in the .env file.
+    For example, `foo=bar` results in `{"foo": "bar"}` whereas `foo` alone results in
+    `{"foo": None}`
 
-    If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
+    Parameters:
+
+    - `dotenv_path`: absolute or relative path to the .env file.
+    - `stream`: `StringIO` object with .env content, used if `dotenv_path` is `None`.
+    - `verbose`: whether to output a warning if the .env file is missing. Defaults to
+      `False`.
+    - `encoding`: encoding to be used to read the file. Defaults to `"utf-8"`.
+
+    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
+    .env file.
     """
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
