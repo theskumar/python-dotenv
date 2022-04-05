@@ -37,7 +37,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "dotenv=dotenv.cli:cli",
+            "dotenv=dotenv.__main__:cli",
         ],
     },
     license='BSD-3-Clause',
