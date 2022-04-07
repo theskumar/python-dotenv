@@ -3,8 +3,8 @@ import logging
 import os
 import sys
 import textwrap
+from unittest import mock
 
-import mock
 import pytest
 import sh
 
