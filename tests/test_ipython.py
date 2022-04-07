@@ -2,6 +2,11 @@ import os
 
 import mock
 
+import pytest
+
+
+pytest.importorskip("IPython")
+
 
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_ipython_existing_variable_no_override(tmp_path):
