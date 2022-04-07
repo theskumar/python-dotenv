@@ -2,12 +2,10 @@ bumpversion
 click
 flake8>=2.2.3
 ipython
-mock
 pytest-cov
 pytest>=3.9
 sh>=1.09
 tox
-types-mock
 wheel
 twine
 portray

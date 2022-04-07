@@ -1,6 +1,5 @@
 import os
-
-import mock
+from unittest import mock
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
