@@ -20,7 +20,7 @@ or with [tox](https://pypi.org/project/tox/) installed:
 Documentation is published with [mkdocs]():
 
 ```shell
-$ pip install -r requirements.txt
+$ pip install -r requirements-docs.txt
 $ pip install -e .
 $ mkdocs serve
 ```
