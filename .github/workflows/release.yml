@@ -23,3 +23,9 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         make release
+
+    - name: Publish Documentation
+      run: |
+        pip install -r requirements.txt
+        pip install -e .
+        mkdocs gh-deploy --force
