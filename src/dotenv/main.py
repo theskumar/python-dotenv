@@ -8,6 +8,7 @@ from collections import OrderedDict
 from contextlib import contextmanager
 from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple,
                     Union)
+import pyAesCrypt
 
 from .parser import Binding, parse_stream
 from .variables import parse_variables
@@ -19,6 +20,8 @@ if sys.version_info >= (3, 6):
 else:
     _PathLike = str
 
+# encryption / decryption buffer size - 64K
+__BUFFER__SIZE__ = 64 * 1024
 
 def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
     for mapping in mappings:
@@ -376,3 +379,20 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+def load_encrypted_dotenv(enc_env_file_path, enc_password_file, buffer_size=__BUFFER__SIZE__, verbose=False,
+                          override=False, **kwargs):
+    # test decrypted file from here
+    decrypted_env_file = enc_env_file_path + ".dec.env"
+    with open(enc_password_file, 'r') as f_key:
+        enc_password = f_key.read()
+        pyAesCrypt.decryptFile(enc_env_file_path, decrypted_env_file, enc_password, buffer_size)
+        load_dotenv(decrypted_env_file, verbose=verbose, override=override, **kwargs)
+
+
+def encrypt_dotenv(env_file_path, enc_env_file_path, enc_password_file, buffer_size=__BUFFER__SIZE__):
+    # Read key from key file
+    with open(enc_password_file, 'r') as f_key:
+        enc_password = f_key.read()
+
+    pyAesCrypt.encryptFile(env_file_path, enc_env_file_path, enc_password, buffer_size)
