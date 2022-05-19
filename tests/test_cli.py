@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytest
@@ -15,6 +16,16 @@ def test_list(cli, dotenv_file):
     result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'list'])
 
     assert (result.exit_code, result.output) == (0, result.output)
+
+
+def test_list_json(cli, dotenv_file):
+    with open(dotenv_file, "w") as f:
+        f.write("a=b")
+
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'list', '--format=json'])
+    assert result.exit_code == 0
+    result_obj = json.loads(result.output)
+    assert (len(result_obj), result_obj['a']) == (1, 'b')
 
 
 def test_list_non_existent_file(cli):

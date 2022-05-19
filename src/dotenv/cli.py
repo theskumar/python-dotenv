@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from subprocess import Popen
@@ -36,7 +37,11 @@ def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
 
 @cli.command()
 @click.pass_context
-def list(ctx: click.Context) -> None:
+@click.option('--format', default='simple',
+              type=click.Choice(['simple', 'json']),
+              help="The format in which to display the list. Default format is simple, "
+                   "which displays name=value without quotes.")
+def list(ctx: click.Context, format: bool) -> None:
     '''Display all the stored key/value.'''
     file = ctx.obj['FILE']
     if not os.path.isfile(file):
@@ -45,8 +50,11 @@ def list(ctx: click.Context) -> None:
             ctx=ctx
         )
     dotenv_as_dict = dotenv_values(file)
-    for k, v in dotenv_as_dict.items():
-        click.echo('%s=%s' % (k, v))
+    if format == 'json':
+        print(json.dumps(dotenv_as_dict, indent=2, sort_keys=True))
+    else:
+        for k, v in dotenv_as_dict.items():
+            click.echo('%s=%s' % (k, v))
 
 
 @cli.command()
