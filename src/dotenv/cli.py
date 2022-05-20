@@ -52,7 +52,7 @@ def list(ctx: click.Context, format: bool) -> None:
         )
     dotenv_as_dict = dotenv_values(file)
     if format == 'json':
-        print(json.dumps(dotenv_as_dict, indent=2, sort_keys=True))
+        click.echo(json.dumps(dotenv_as_dict, indent=2, sort_keys=True))
     else:
         prefix = 'export ' if format == 'export' else ''
         for k in sorted(dotenv_as_dict):
