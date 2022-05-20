@@ -1,31 +1,34 @@
-import json
 import os
 
 import pytest
 import sh
-
+from typing import Optional
 import dotenv
 from dotenv.cli import cli as dotenv_cli
 from dotenv.version import __version__
 
 
-def test_list(cli, dotenv_file):
+@pytest.mark.parametrize(
+    "format,content,expected",
+    (
+        (None, "x='a b c'", '''x=a b c\n'''),
+        ("simple", "x='a b c'", '''x=a b c\n'''),
+        ("json", "x='a b c'", '''{\n  "x": "a b c"\n}\n'''),
+        ("shell", "x='a b c'", '''x='a b c'\n'''),
+        ("export", "x='a b c'", '''export x='a b c'\n'''),
+    )
+)
+def test_list(cli, dotenv_file, format: Optional[str], content: str, expected: str):
     with open(dotenv_file, "w") as f:
-        f.write("a=b")
+        f.write(content + '\n')
 
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'list'])
+    args = ['--file', dotenv_file, 'list']
+    if format is not None:
+        args.extend(['--format', format])
 
-    assert (result.exit_code, result.output) == (0, result.output)
+    result = cli.invoke(dotenv_cli, args)
 
-
-def test_list_json(cli, dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
-
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'list', '--format=json'])
-    assert result.exit_code == 0
-    result_obj = json.loads(result.output)
-    assert (len(result_obj), result_obj['a']) == (1, 'b')
+    assert (result.exit_code, result.output) == (0, expected)
 
 
 def test_list_non_existent_file(cli):

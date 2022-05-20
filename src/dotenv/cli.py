@@ -1,5 +1,6 @@
 import json
 import os
+import shlex
 import sys
 from subprocess import Popen
 from typing import Any, Dict, List
@@ -38,7 +39,7 @@ def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
 @cli.command()
 @click.pass_context
 @click.option('--format', default='simple',
-              type=click.Choice(['simple', 'json']),
+              type=click.Choice(['simple', 'json', 'shell', 'export']),
               help="The format in which to display the list. Default format is simple, "
                    "which displays name=value without quotes.")
 def list(ctx: click.Context, format: bool) -> None:
@@ -53,8 +54,12 @@ def list(ctx: click.Context, format: bool) -> None:
     if format == 'json':
         print(json.dumps(dotenv_as_dict, indent=2, sort_keys=True))
     else:
-        for k, v in dotenv_as_dict.items():
-            click.echo('%s=%s' % (k, v))
+        prefix = 'export ' if format == 'export' else ''
+        for k in sorted(dotenv_as_dict):
+            v = dotenv_as_dict[k]
+            if format in ('export', 'shell'):
+                v = shlex.quote(v)
+            click.echo('%s%s=%s' % (prefix, k, v))
 
 
 @cli.command()
