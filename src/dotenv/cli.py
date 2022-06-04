@@ -57,9 +57,10 @@ def list(ctx: click.Context, format: bool) -> None:
         prefix = 'export ' if format == 'export' else ''
         for k in sorted(dotenv_as_dict):
             v = dotenv_as_dict[k]
-            if format in ('export', 'shell'):
-                v = shlex.quote(v)
-            click.echo('%s%s=%s' % (prefix, k, v))
+            if v is not None:
+                if format in ('export', 'shell'):
+                    v = shlex.quote(v)
+                click.echo('%s%s=%s' % (prefix, k, v))
 
 
 @cli.command()
