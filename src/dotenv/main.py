@@ -87,6 +87,9 @@ class DotEnv():
         """
         Load the current dotenv as system environment variable.
         """
+        if not self.dict():
+            return False
+
         for k, v in self.dict().items():
             if k in os.environ and not self.override:
                 continue
@@ -324,6 +327,8 @@ def load_dotenv(
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
         encoding: Encoding to be used to read the file.
+    Returns:
+        Bool: True if atleast one environment variable is set elese False
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
