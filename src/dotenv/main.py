@@ -327,7 +327,6 @@ def load_dotenv(
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
         encoding: Encoding to be used to read the file.
-        
     Returns:
         Bool: True if atleast one environment variable is set elese False
 
