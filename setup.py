@@ -1,11 +1,10 @@
-import io
 from setuptools import setup
 
 
 def read_files(files):
     data = []
     for file in files:
-        with io.open(file, encoding='utf-8') as f:
+        with open(file, encoding='utf-8') as f:
             data.append(f.read())
     return "\n".join(data)
 
@@ -13,7 +12,7 @@ def read_files(files):
 long_description = read_files(['README.md', 'CHANGELOG.md'])
 
 meta = {}
-with io.open('./src/dotenv/version.py', encoding='utf-8') as f:
+with open('./src/dotenv/version.py', encoding='utf-8') as f:
     exec(f.read(), meta)
 
 setup(
@@ -38,7 +37,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "dotenv=dotenv.cli:cli",
+            "dotenv=dotenv.__main__:cli",
         ],
     },
     license='BSD-3-Clause',

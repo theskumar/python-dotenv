@@ -51,7 +51,7 @@ class DotEnv():
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
         if self.dotenv_path and os.path.isfile(self.dotenv_path):
-            with io.open(self.dotenv_path, encoding=self.encoding) as stream:
+            with open(self.dotenv_path, encoding=self.encoding) as stream:
                 yield stream
         elif self.stream is not None:
             yield self.stream
@@ -132,10 +132,10 @@ def rewrite(
 ) -> Iterator[Tuple[IO[str], IO[str]]]:
     try:
         if not os.path.isfile(path):
-            with io.open(path, "w+", encoding=encoding) as source:
+            with open(path, "w+", encoding=encoding) as source:
                 source.write("")
         with tempfile.NamedTemporaryFile(mode="w+", delete=False, encoding=encoding) as dest:
-            with io.open(path, encoding=encoding) as source:
+            with open(path, encoding=encoding) as source:
                 yield (source, dest)  # type: ignore
     except BaseException:
         if os.path.isfile(dest.name):
@@ -201,10 +201,10 @@ def unset_key(
     encoding: Optional[str] = "utf-8",
 ) -> Tuple[Optional[bool], str]:
     """
-    Removes a given key from the given .env
+    Removes a given key from the given `.env` file.
 
-    If the .env path given doesn't exist, fails
-    If the given key doesn't exist in the .env, fails
+    If the .env path given doesn't exist, fails.
+    If the given key doesn't exist in the .env, fails.
     """
     if not os.path.exists(dotenv_path):
         logger.warning("Can't delete from %s - it doesn't exist.", dotenv_path)
@@ -319,17 +319,20 @@ def load_dotenv(
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
-    - *dotenv_path*: absolute or relative path to .env file.
-    - *stream*: Text stream (such as `io.StringIO`) with .env content, used if
-      `dotenv_path` is `None`.
-    - *verbose*: whether to output a warning the .env file is missing. Defaults to
-      `False`.
-    - *override*: whether to override the system environment variables with the variables
-      in `.env` file.  Defaults to `False`.
-    - *encoding*: encoding to be used to read the file.
+    Parameters:
+        dotenv_path: Absolute or relative path to .env file.
+        stream: Text stream (such as `io.StringIO`) with .env content, used if
+            `dotenv_path` is `None`.
+        verbose: Whether to output a warning the .env file is missing.
+        override: Whether to override the system environment variables with the variables
+            from the `.env` file.
+        encoding: Encoding to be used to read the file.
+        
+    Returns:
+        Bool: True if atleast one environment variable is set elese False
 
-    If neither `dotenv_path` nor `stream` are provided, `find_dotenv()` is used
-    to find the .env file.
+    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
+    .env file.
     """
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
@@ -355,14 +358,18 @@ def dotenv_values(
     """
     Parse a .env file and return its content as a dict.
 
-    - *dotenv_path*: absolute or relative path to .env file.
-    - *stream*: `StringIO` object with .env content, used if `dotenv_path` is `None`.
-    - *verbose*: whether to output a warning the .env file is missing. Defaults to
-      `False`.
-      in `.env` file.  Defaults to `False`.
-    - *encoding*: encoding to be used to read the file.
+    The returned dict will have `None` values for keys without values in the .env file.
+    For example, `foo=bar` results in `{"foo": "bar"}` whereas `foo` alone results in
+    `{"foo": None}`
 
-    If both `dotenv_path` and `stream`, `find_dotenv()` is used to find the .env file.
+    Parameters:
+        dotenv_path: Absolute or relative path to the .env file.
+        stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
+        verbose: Whether to output a warning if the .env file is missing.
+        encoding: Encoding to be used to read the file.
+
+    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
+    .env file.
     """
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
