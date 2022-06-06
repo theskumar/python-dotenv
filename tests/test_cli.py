@@ -221,7 +221,7 @@ def test_generate_sample_cleanup_and_comment_preservation(cli, dotenv_file):
     result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'generate-sample'])
 
     assert result.exit_code == 0
-    assert result.output == "# a = b\n# c = d\n# e=f\n# g = h\ni = j\n\n"
+    assert result.output == "# a = b\n# c = d\n# e=f\n# g = h\ni =\n\n"
 
 
 def test_generate_sample_value_removal(cli, dotenv_file):
