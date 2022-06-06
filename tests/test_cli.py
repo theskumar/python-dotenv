@@ -214,14 +214,14 @@ def test_generate_sample_non_existent_file(cli):
     assert "does not exist" in result.output
 
 
-def test_generate_sample_comment_preservation(cli, dotenv_file):
-    sample = "# a = b\n#c = d\n  # e=f\n  #g = h\n" # tests different spacings of comments
+def test_generate_sample_cleanup_and_comment_preservation(cli, dotenv_file):
+    sample = "# a = b\n#c = d\n  # e=f\n  #g = h\ni=j" # tests different spacings of comments
     with open(dotenv_file, "w") as f:
         f.write(sample) 
     result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'generate-sample'])
 
     assert result.exit_code == 0
-    assert result.output == "# a = b\n# c = d\n# e = f\n# g = h\n\n"
+    assert result.output == "# a = b\n# c = d\n# e=f\n# g = h\ni = j\n\n"
 
 
 def test_generate_sample_value_removal(cli, dotenv_file):
