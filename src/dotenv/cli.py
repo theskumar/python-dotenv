@@ -138,10 +138,12 @@ def generate_sample(ctx: click.Context) -> None:
     newEnvList = []
     with open(filedir,'r') as file:
         for line in file:
-            line = line.replace(" ", "").replace("#", "# ").replace("=", " = ")
+            line = line.replace(" ", "")
             if line[0] != "#":
-                line = line.split("=", 1)[0] + "="
-            newEnvList.append(line[:-1]) # [:-1] removes trailing newline
+                line = line.replace("=", " = ").split("=", 1)[0] + "="
+            else:
+                line = "# " + line[1:] # inserts space between comment and '#'
+            newEnvList.append(line[:-1]) # slicing removes trailing newline
         newEnvList[-1] += "\n"
         
     while newEnvList[-1] == "\n":
