@@ -142,7 +142,7 @@ def generate_sample(ctx: click.Context) -> None:
             if line[0] != "#":
                 line = line.split("=", 1)[0] + "="
             newEnvList.append(line)
-
+        newEnvList[-1] += "\n"
     while newEnvList[-1] == "\n":
         newEnvList.pop(-1)
 
