@@ -138,7 +138,7 @@ def generate_sample(ctx: click.Context) -> None:
     newEnvList = []
     with open(filedir,'r') as file:
         for line in file:
-            line = line.strip()
+            line = " ".join(line.strip().split())
             if line[0] != "#":
                 line = line.split("=", 1)[0] + "="
             newEnvList.append(line + "\n")
