@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.20.0] - 2022-03-24
+
+### Added
+
+- Add `encoding` (`Optional[str]`) parameter to `get_key`, `set_key` and `unset_key`.
+  (#379 by [@bbc2])
+
+### Fixed
+
+- Use dict to specify the `entry_points` parameter of `setuptools.setup` (#376 by
+  [@mgorny]).
+- Don't build universal wheels (#387 by [@bbc2]).
+
 ## [0.19.2] - 2021-11-11
 
 ### Fixed
@@ -289,6 +302,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@gongqingkui]: https://github.com/gongqingkui
 [@greyli]: https://github.com/greyli
 [@jadutter]: https://github.com/jadutter
+[@mgorny]: https://github.com/mgorny
 [@qnighy]: https://github.com/qnighy
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
@@ -299,7 +313,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@yannham]: https://github.com/yannham
 [@zueve]: https://github.com/zueve
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.19.2...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.20.0...HEAD
+[0.20.0]: https://github.com/theskumar/python-dotenv/compare/v0.19.2...v0.20.0
 [0.19.2]: https://github.com/theskumar/python-dotenv/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/theskumar/python-dotenv/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/theskumar/python-dotenv/compare/v0.18.0...v0.19.0

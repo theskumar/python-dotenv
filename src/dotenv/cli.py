@@ -180,7 +180,3 @@ def run_command(command: List[str], env: Dict[str, str]) -> int:
     _, _ = p.communicate()
 
     return p.returncode
-
-
-if __name__ == "__main__":
-    cli()

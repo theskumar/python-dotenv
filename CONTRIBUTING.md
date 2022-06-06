@@ -16,3 +16,14 @@ or with [tox](https://pypi.org/project/tox/) installed:
 
     $ tox
 
+
+Documentation is published with [mkdocs]():
+
+```shell
+$ pip install -r requirements-docs.txt
+$ pip install -e .
+$ mkdocs serve
+```
+
+Open http://127.0.0.1:8000/ to view the documentation locally.
+

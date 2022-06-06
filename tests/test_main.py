@@ -3,8 +3,8 @@ import logging
 import os
 import sys
 import textwrap
+from unittest import mock
 
-import mock
 import pytest
 import sh
 
@@ -51,6 +51,15 @@ def test_set_key(dotenv_file, before, key, value, expected, after):
     assert result == expected
     assert open(dotenv_file, "r").read() == after
     mock_warning.assert_not_called()
+
+
+def test_set_key_encoding(dotenv_file):
+    encoding = "latin-1"
+
+    result = dotenv.set_key(dotenv_file, "a", "é", encoding=encoding)
+
+    assert result == (True, "a", "é")
+    assert open(dotenv_file, "r", encoding=encoding).read() == "a='é'\n"
 
 
 def test_set_key_permission_error(dotenv_file):
@@ -107,6 +116,16 @@ def test_get_key_ok(dotenv_file):
     mock_warning.assert_not_called()
 
 
+def test_get_key_encoding(dotenv_file):
+    encoding = "latin-1"
+    with open(dotenv_file, "w", encoding=encoding) as f:
+        f.write("é=è")
+
+    result = dotenv.get_key(dotenv_file, "é", encoding=encoding)
+
+    assert result == "è"
+
+
 def test_get_key_none(dotenv_file):
     logger = logging.getLogger("dotenv.main")
     with open(dotenv_file, "w") as f:
@@ -145,6 +164,18 @@ def test_unset_no_value(dotenv_file):
     with open(dotenv_file, "r") as f:
         assert f.read() == ""
     mock_warning.assert_not_called()
+
+
+def test_unset_encoding(dotenv_file):
+    encoding = "latin-1"
+    with open(dotenv_file, "w", encoding=encoding) as f:
+        f.write("é=x")
+
+    result = dotenv.unset_key(dotenv_file, "é", encoding=encoding)
+
+    assert result == (True, "é")
+    with open(dotenv_file, "r", encoding=encoding) as f:
+        assert f.read() == ""
 
 
 def test_unset_non_existent_file(tmp_path):
@@ -228,8 +259,9 @@ def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info:
-        dotenv.load_dotenv('.does_not_exist', verbose=True)
+        result = dotenv.load_dotenv('.does_not_exist', verbose=True)
 
+    assert result is False
     mock_info.assert_called_once_with("Python-dotenv could not find configuration file %s.", ".does_not_exist")
 
 

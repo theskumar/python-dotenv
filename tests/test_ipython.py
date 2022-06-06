@@ -1,6 +1,10 @@
 import os
+from unittest import mock
 
-import mock
+import pytest
+
+
+pytest.importorskip("IPython")
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
