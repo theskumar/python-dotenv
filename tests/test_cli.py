@@ -208,7 +208,7 @@ def test_run_with_version(cli):
 
 
 def test_generate_sample_non_existent_file(cli):
-    result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'generate_sample'])
+    result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'generate-sample'])
 
     assert result.exit_code == 2
     assert "does not exist" in result.output
@@ -218,7 +218,7 @@ def test_generate_sample_comment_preservation(cli, dotenv_file):
     sample = "# a = b\n#c = d\n  # e=f\n  #g = h" # tests different spacings of comments
     with open(dotenv_file, "w") as f:
         f.write(sample) 
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'generate_sample'])
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'generate-sample'])
 
     assert result.exit_code == 0
     assert result.output == (sample + "\n")
@@ -227,7 +227,7 @@ def test_generate_sample_comment_preservation(cli, dotenv_file):
 def test_generate_sample_value_removal(cli, dotenv_file):
     with open(dotenv_file, "w") as f:
         f.write("a=b")
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'generate_sample'])
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'generate-sample'])
 
     assert result.exit_code == 0, result.output
     assert 'b' not in result.output
