@@ -124,6 +124,7 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     ret = run_command(commandline, dotenv_as_dict)
     exit(ret)
 
+
 @cli.command()
 @click.pass_context
 def generate_sample(ctx: click.Context) -> None:
@@ -147,6 +148,7 @@ def generate_sample(ctx: click.Context) -> None:
 
     for line in newEnvList:
         click.echo(line)
+
 
 def run_command(command: List[str], env: Dict[str, str]) -> int:
     """Run command in sub process.
