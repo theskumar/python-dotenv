@@ -13,8 +13,13 @@ from dotenv.version import __version__
     (
         (None, "x='a b c'", '''x=a b c\n'''),
         ("simple", "x='a b c'", '''x=a b c\n'''),
+        ("simple", """x='"a b c"'""", '''x="a b c"\n'''),
+        ("simple", '''x="'a b c'"''', '''x='a b c'\n'''),
         ("json", "x='a b c'", '''{\n  "x": "a b c"\n}\n'''),
-        ("shell", "x='a b c'", '''x='a b c'\n'''),
+        ("shell", "x='a b c'", "x='a b c'\n"),
+        ("shell", """x='"a b c"'""", '''x='"a b c"'\n'''),
+        ("shell", '''x="'a b c'"''', '''x=''"'"'a b c'"'"''\n'''),
+        ("shell", "x='a\nb\nc'", "x='a\nb\nc'\n"),
         ("export", "x='a b c'", '''export x='a b c'\n'''),
     )
 )
