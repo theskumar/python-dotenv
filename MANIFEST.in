@@ -1,6 +1,7 @@
 include LICENSE *.md *.yml *.toml
 
 include tox.ini
+recursive-include docs *.md
 recursive-include tests *.py
 
 include .bumpversion.cfg
@@ -8,4 +9,5 @@ include .coveragerc
 include .editorconfig
 include Makefile
 include requirements.txt
+include requirements-docs.txt
 include src/dotenv/py.typed

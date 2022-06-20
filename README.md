@@ -225,6 +225,7 @@ defined in the following list:
 -   [dump-env](https://github.com/sobolevn/dump-env)
 -   [environs](https://github.com/sloria/environs)
 -   [dynaconf](https://github.com/rochacbruno/dynaconf)
+-   [parse_it](https://github.com/naorlivne/parse_it)
 
 ## Acknowledgements
 
