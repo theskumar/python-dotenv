@@ -14,6 +14,7 @@ from .variables import parse_variables
 
 logger = logging.getLogger(__name__)
 
+
 def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
     for mapping in mappings:
         if mapping.error:
