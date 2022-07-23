@@ -27,14 +27,14 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
 class DotEnv():
     def __init__(
         self,
-        dotenv_path: Optional[Union[str, os.PathLike[str]]],
+        dotenv_path: Optional[Union[str, os.PathLike]],
         stream: Optional[IO[str]] = None,
         verbose: bool = False,
         encoding: Union[None, str] = None,
         interpolate: bool = True,
         override: bool = True,
     ) -> None:
-        self.dotenv_path = dotenv_path  # type: Optional[Union[str, os.PathLike[str]]]
+        self.dotenv_path = dotenv_path  # type: Optional[Union[str, os.PathLike]]
         self.stream = stream  # type: Optional[IO[str]]
         self._dict = None  # type: Optional[Dict[str, Optional[str]]]
         self.verbose = verbose  # type: bool
@@ -107,7 +107,7 @@ class DotEnv():
 
 
 def get_key(
-    dotenv_path: Union[str, os.PathLike[str]],
+    dotenv_path: Union[str, os.PathLike],
     key_to_get: str,
     encoding: Optional[str] = "utf-8",
 ) -> Optional[str]:
@@ -121,7 +121,7 @@ def get_key(
 
 @contextmanager
 def rewrite(
-    path: Union[str, os.PathLike[str]],
+    path: Union[str, os.PathLike],
     encoding: Optional[str],
 ) -> Iterator[Tuple[IO[str], IO[str]]]:
     try:
@@ -140,7 +140,7 @@ def rewrite(
 
 
 def set_key(
-    dotenv_path: Union[str, os.PathLike[str]],
+    dotenv_path: Union[str, os.PathLike],
     key_to_set: str,
     value_to_set: str,
     quote_mode: str = "always",
@@ -189,7 +189,7 @@ def set_key(
 
 
 def unset_key(
-    dotenv_path: Union[str, os.PathLike[str]],
+    dotenv_path: Union[str, os.PathLike],
     key_to_unset: str,
     quote_mode: str = "always",
     encoding: Optional[str] = "utf-8",
@@ -304,7 +304,7 @@ def find_dotenv(
 
 
 def load_dotenv(
-    dotenv_path: Union[str, os.PathLike[str], None] = None,
+    dotenv_path: Union[str, os.PathLike, None] = None,
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
     override: bool = False,
@@ -342,7 +342,7 @@ def load_dotenv(
 
 
 def dotenv_values(
-    dotenv_path: Union[str, os.PathLike[str], None] = None,
+    dotenv_path: Union[str, os.PathLike, None] = None,
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
     interpolate: bool = True,
