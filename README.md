@@ -146,6 +146,11 @@ $ dotenv set EMAIL foo@example.org
 $ dotenv list
 USER=foo
 EMAIL=foo@example.org
+$ dotenv list --format=json
+{
+  "USER": "foo",
+  "EMAIL": "foo@example.org"
+}
 $ dotenv run -- python foo.py
 ```
 
