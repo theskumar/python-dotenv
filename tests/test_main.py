@@ -178,6 +178,13 @@ def test_unset_encoding(dotenv_file):
         assert f.read() == ""
 
 
+def test_set_key_unauthorized_file(dotenv_file):
+    os.chmod(dotenv_file, 0o000)
+
+    with pytest.raises(PermissionError):
+        dotenv.set_key(dotenv_file, "a", "x")
+
+
 def test_unset_non_existent_file(tmp_path):
     nx_file = str(tmp_path / "nx")
     logger = logging.getLogger("dotenv.main")
