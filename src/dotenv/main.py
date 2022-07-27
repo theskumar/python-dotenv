@@ -125,19 +125,17 @@ def rewrite(
     path: Union[str, os.PathLike],
     encoding: Optional[str],
 ) -> Iterator[Tuple[IO[str], IO[str]]]:
-    try:
-        if not os.path.isfile(path):
-            with open(path, "w+", encoding=encoding) as source:
-                source.write("")
-        with tempfile.NamedTemporaryFile(mode="w+", delete=False, encoding=encoding) as dest:
+    if not os.path.isfile(path):
+        with open(path, mode="w", encoding=encoding) as source:
+            source.write("")
+    with tempfile.NamedTemporaryFile(mode="w", encoding=encoding, delete=False) as dest:
+        try:
             with open(path, encoding=encoding) as source:
-                yield (source, dest)  # type: ignore
-    except BaseException:
-        if os.path.isfile(dest.name):
+                yield (source, dest)
+        except BaseException:
             os.unlink(dest.name)
-        raise
-    else:
-        shutil.move(dest.name, path)
+            raise
+    shutil.move(dest.name, path)
 
 
 def set_key(
