@@ -78,21 +78,6 @@ class DotEnv:
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
-    def set_as_environment_variables(self) -> bool:
-        """
-        Load the current dotenv as system environment variable.
-        """
-        if not self.dict():
-            return False
-
-        for k, v in self.dict().items():
-            if k in os.environ and not self.override:
-                continue
-            if v is not None:
-                os.environ[k] = v
-
-        return True
-
     def get(self, key: str) -> Optional[str]:
         """
         """
@@ -105,6 +90,25 @@ class DotEnv:
             logger.warning("Key %s not found in %s.", key, self.dotenv_path)
 
         return None
+
+
+def set_as_environment_variables(
+    dotenv_dict: Optional[Dict[str, Optional[str]]],
+    override: bool = False
+) -> bool:
+    """
+    Load an arbitrary dict as system environment variable.
+    """
+    if not dotenv_dict:
+        return False
+
+    for k, v in dotenv_dict.items():
+        if k in os.environ and not override:
+            continue
+        if v is not None:
+            os.environ[k] = v
+
+    return True
 
 
 def get_key(
@@ -337,7 +341,10 @@ def load_dotenv(
         override=override,
         encoding=encoding,
     )
-    return dotenv.set_as_environment_variables()
+    return set_as_environment_variables(
+        dotenv_dict=dotenv.dict(),
+        override=dotenv.override
+    )
 
 
 def dotenv_values(
