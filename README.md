@@ -163,7 +163,7 @@ The format is not formally specified and still improves over time.  That being s
 
 Keys can be unquoted or single-quoted. Values can be unquoted, single- or double-quoted.
 Spaces before and after keys, equal signs, and values are ignored. Values can be followed
-by a comment.  Lines can start with the `export` directive, which has no effect on their
+by a comment.  Lines can start with the `export` directive, which does not affect their
 interpretation.
 
 Allowed escape sequences:
