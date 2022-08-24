@@ -92,7 +92,6 @@ def parse_variables(value: str) -> Iterator[Atom]:
             end = i
             cursor = i+1
             if len(starts) == 0:
-                print(value[start:end])
                 for match in _variable_re.finditer(value[start:end]):
                     name = match.groupdict()["name"]
                     default = match.groupdict()["default"]
