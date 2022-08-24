@@ -2,18 +2,6 @@ import re
 from abc import ABCMeta
 from typing import Iterator, Mapping, Optional, Pattern
 
-_posix_variable = re.compile(
-    r"""
-    \$\{
-        (?P<name>[^\}:]*)
-        (?::-
-            (?P<default>[^\}]*)
-        )?
-    \}
-    """,
-    re.VERBOSE,
-)  # type: Pattern[str]
-
 
 class Atom():
     __metaclass__ = ABCMeta
@@ -48,7 +36,7 @@ class Literal(Atom):
 
 
 class Variable(Atom):
-    def __init__(self, name: str, default: Optional[str]) -> None:
+    def __init__(self, name: str, default: Optional[Iterator[Atom]]) -> None:
         self.name = name
         self.default = default
 
@@ -64,24 +52,52 @@ class Variable(Atom):
         return hash((self.__class__, self.name, self.default))
 
     def resolve(self, env: Mapping[str, Optional[str]]) -> str:
-        default = self.default if self.default is not None else ""
+        # default = self.default if self.default is not None else ""
+        default = "".join(atom.resolve(env) for atom in self.default) if self.default is not None else ""
         result = env.get(self.name, default)
         return result if result is not None else ""
+
+
+_variable_re = re.compile(
+    r"""
+    ^
+        (?P<name>[^\}:]*?)
+        (?::[-=]
+            (?P<default>.*)
+        )?
+    $
+    """,
+    re.VERBOSE,
+)  # type: Pattern[str]
+
+ESC_CHAR = '\\'
 
 
 def parse_variables(value: str) -> Iterator[Atom]:
     cursor = 0
 
-    for match in _posix_variable.finditer(value):
-        (start, end) = match.span()
-        name = match.groupdict()["name"]
-        default = match.groupdict()["default"]
-
-        if start > cursor:
-            yield Literal(value=value[cursor:start])
-
-        yield Variable(name=name, default=default)
-        cursor = end
+    starts = []
+    esc = False
+    for i in range(len(value)):
+        if esc:
+            esc = False
+        elif ESC_CHAR == value[i]:
+            esc = True
+        elif i < len(value) - 1 and '$' == value[i] and '{' == value[i+1]:
+            if len(starts) == 0 and cursor < i:
+                yield Literal(value=value[cursor:i])
+            starts.append(i + 2)
+        elif '}' == value[i]:
+            start = starts.pop()
+            end = i
+            cursor = i+1
+            if len(starts) == 0:
+                print(value[start:end])
+                for match in _variable_re.finditer(value[start:end]):
+                    name = match.groupdict()["name"]
+                    default = match.groupdict()["default"]
+                    default = None if default is None else list(parse_variables(default))
+                    yield Variable(name=name, default=default)
 
     length = len(value)
     if cursor < length:
