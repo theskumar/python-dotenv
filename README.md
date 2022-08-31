@@ -146,6 +146,11 @@ $ dotenv set EMAIL foo@example.org
 $ dotenv list
 USER=foo
 EMAIL=foo@example.org
+$ dotenv list --format=json
+{
+  "USER": "foo",
+  "EMAIL": "foo@example.org"
+}
 $ dotenv run -- python foo.py
 ```
 
@@ -225,6 +230,7 @@ defined in the following list:
 -   [dump-env](https://github.com/sobolevn/dump-env)
 -   [environs](https://github.com/sloria/environs)
 -   [dynaconf](https://github.com/rochacbruno/dynaconf)
+-   [parse_it](https://github.com/naorlivne/parse_it)
 
 ## Acknowledgements
 
