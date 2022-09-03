@@ -8,18 +8,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [0.21.0] - 2022-09-03
 
 ### Added
-* CLI: add support for invocations via 'python -m'. (#395 by [@theskumar])
-* `load_dotenv` function now returns `False`. (#388 by [@larsks])
-* CLI: add --format= option to list command. (#407 by [@sammck])
+* CLI: add support for invocations via 'python -m'. (#395 by @theskumar)
+* `load_dotenv` function now returns `False`. (#388 by @larsks)
+* CLI: add --format= option to list command. (#407 by @sammck)
 
 ### Fixed
-* Drop Python 3.5 and 3.6 and upgrade GA (#393 by [@eggplants])
-* Fix out of scope error when `dest` variable is undefined. (#414 by [@theGOTOguy])
-* Use `open` instead of `io.open`. (#389 by [@rabinadk1])
-* Improve documentation for variables without a value (#390 by [@bbc2])
-* Add `parse_it` to Related Projects by (#410 by [@naorlivne])
-* Update README.md by (#415 by [@harveer07])
-* Improve documentation with direct use of MkDocs by (#398 by [@bbc2])
+* Drop Python 3.5 and 3.6 and upgrade GA (#393 by @eggplants)
+* Use `open` instead of `io.open`. (#389 by @rabinadk1)
+* Improve documentation for variables without a value (#390 by @bbc2)
+* Add `parse_it` to Related Projects by (#410 by @naorlivne)
+* Update README.md by (#415 by @harveer07)
+* Improve documentation with direct use of MkDocs by (#398 by @bbc2)
 
 ## [0.20.0] - 2022-03-24
 
@@ -328,7 +327,6 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@sammck]: https://github.com/@sammck
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
-[@theGOTOguy]: https://github.com/@theGOTOguy
 [@theskumar]: https://github.com/theskumar
 [@ulyssessouza]: https://github.com/ulyssessouza
 [@venthur]: https://github.com/venthur
