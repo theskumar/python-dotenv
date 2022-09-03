@@ -1,6 +1,6 @@
 import re
 from abc import ABCMeta
-from typing import Iterator, Mapping, Optional, Pattern
+from typing import Iterator, Mapping, Optional, Pattern, List
 
 
 class Atom():
@@ -36,7 +36,7 @@ class Literal(Atom):
 
 
 class Variable(Atom):
-    def __init__(self, name: str, default: Optional[Iterator[Atom]]) -> None:
+    def __init__(self, name: str, default: Optional[List[Atom]]) -> None:
         self.name = name
         self.default = default
 
@@ -52,7 +52,6 @@ class Variable(Atom):
         return hash((self.__class__, self.name, self.default))
 
     def resolve(self, env: Mapping[str, Optional[str]]) -> str:
-        # default = self.default if self.default is not None else ""
         default = "".join(atom.resolve(env) for atom in self.default) if self.default is not None else ""
         result = env.get(self.name, default)
         return result if result is not None else ""
@@ -76,7 +75,7 @@ ESC_CHAR = '\\'
 def parse_variables(value: str) -> Iterator[Atom]:
     cursor = 0
 
-    starts = []
+    starts: List[int] = []
     esc = False
     for i in range(len(value)):
         if esc:
