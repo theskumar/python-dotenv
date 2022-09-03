@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.0] - 2022-09-03
+
+### Added
+* CLI: add support for invocations via 'python -m'. (#395 by [@theskumar])
+* `load_dotenv` function now returns `False`. (#388 by [@larsks])
+* CLI: add --format= option to list command. (#407 by [@sammck])
+
+### Fixed
+* Drop Python 3.5 and 3.6 and upgrade GA (#393 by [@eggplants])
+* Fix out of scope error when `dest` variable is undefined. (#414 by [@theGOTOguy])
+* Use `open` instead of `io.open`. (#389 by [@rabinadk1])
+* Improve documentation for variables without a value (#390 by [@bbc2])
+* Add `parse_it` to Related Projects by (#410 by [@naorlivne])
+* Update README.md by (#415 by [@harveer07])
+* Improve documentation with direct use of MkDocs by (#398 by [@bbc2])
+
 ## [0.20.0] - 2022-03-24
 
 ### Added
@@ -287,7 +303,6 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [#183]: https://github.com/theskumar/python-dotenv/issues/183
 [#359]: https://github.com/theskumar/python-dotenv/issues/359
 
-[@Flimm]: https://github.com/Flimm
 [@alanjds]: https://github.com/alanjds
 [@altendky]: https://github.com/altendky
 [@andrewsmith]: https://github.com/andrewsmith
@@ -296,16 +311,24 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@befeleme]: https://github.com/befeleme
 [@cjauvin]: https://github.com/cjauvin
 [@earlbread]: https://github.com/earlbread
+[@eggplants]: https://github.com/@eggplants
 [@ekohl]: https://github.com/ekohl
 [@elbehery95]: https://github.com/elbehery95
+[@Flimm]: https://github.com/Flimm
 [@gergelyk]: https://github.com/gergelyk
 [@gongqingkui]: https://github.com/gongqingkui
 [@greyli]: https://github.com/greyli
+[@harveer07]: https://github.com/@harveer07
 [@jadutter]: https://github.com/jadutter
+[@larsks]: https://github.com/@larsks
 [@mgorny]: https://github.com/mgorny
+[@naorlivne]: https://github.com/@naorlivne
 [@qnighy]: https://github.com/qnighy
+[@rabinadk1]: https://github.com/@rabinadk1
+[@sammck]: https://github.com/@sammck
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
+[@theGOTOguy]: https://github.com/@theGOTOguy
 [@theskumar]: https://github.com/theskumar
 [@ulyssessouza]: https://github.com/ulyssessouza
 [@venthur]: https://github.com/venthur
@@ -313,7 +336,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@yannham]: https://github.com/yannham
 [@zueve]: https://github.com/zueve
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.20.0...HEAD
+
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...HEAD
+[0.21.0]: https://github.com/theskumar/python-dotenv/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/theskumar/python-dotenv/compare/v0.19.2...v0.20.0
 [0.19.2]: https://github.com/theskumar/python-dotenv/compare/v0.19.1...v0.19.2
 [0.19.1]: https://github.com/theskumar/python-dotenv/compare/v0.19.0...v0.19.1
