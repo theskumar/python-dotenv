@@ -24,7 +24,7 @@ def test_set_key_no_file(tmp_path):
 
 def test_set_key_invalid_file():
     with pytest.raises(TypeError):
-        result = dotenv.set_key(None, "foo", "bar")
+        dotenv.set_key(None, "foo", "bar")
 
 
 @pytest.mark.parametrize(
