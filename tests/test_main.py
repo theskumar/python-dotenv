@@ -22,6 +22,11 @@ def test_set_key_no_file(tmp_path):
     assert os.path.exists(nx_file)
 
 
+def test_set_key_invalid_file():
+    with pytest.raises(TypeError):
+        result = dotenv.set_key(None, "foo", "bar")
+
+
 @pytest.mark.parametrize(
     "before,key,value,expected,after",
     [
