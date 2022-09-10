@@ -77,7 +77,7 @@ def test_unset_existing_value(cli, dotenv_file):
 
     result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'unset', 'a'])
 
-    assert (result.exit_code, result.output) == (0, f"Successfully removed a from {dotenv_file}\n")
+    assert (result.exit_code, result.output) == (0, "Successfully removed a from %s\n" % dotenv_file)
     assert open(dotenv_file, "r").read() == ""
 
 
