@@ -48,25 +48,20 @@ def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
                    "which displays name=value without quotes.")
 def list(ctx: click.Context, format: bool) -> None:
     '''Display all the stored key/value.'''
-    
-    d = {}
+    dotenv_as_dict = {}
     for file in ctx.obj['FILES']:
         if not os.path.isfile(file):
             raise click.BadParameter(
                 'Path "%s" does not exist.' % (file),
                 ctx=ctx
             )
-        dotenv_as_dict = dotenv_values(file)
-
-        for k, v in dotenv_as_dict.items():
-            d[k] = v
-
+        dotenv_as_dict.update(dotenv_values(file))
     if format == 'json':
-        click.echo(json.dumps(d, indent=2, sort_keys=True))
+        click.echo(json.dumps(dotenv_as_dict, indent=2, sort_keys=True))
     else:
         prefix = 'export ' if format == 'export' else ''
-        for k in sorted(d):
-            v = d[k]
+        for k in sorted(dotenv_as_dict):
+            v = dotenv_as_dict[k]
             if v is not None:
                 if format in ('export', 'shell'):
                     v = shlex.quote(v)
@@ -145,28 +140,22 @@ def unset(ctx: click.Context, key: Any) -> None:
 @click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
 def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     """Run command with environment variables present."""
-    
-    d = {}
+    dotenv_as_dict = {}
     for file in ctx.obj['FILES']:
         if not os.path.isfile(file):
             raise click.BadParameter(
                 'Invalid value for \'-f\' "%s" does not exist.' % (file),
                 ctx=ctx
             )
-        dotenv_as_dict = {
+        dotenv_as_dict.update({
             k: v
             for (k, v) in dotenv_values(file).items()
             if v is not None and (override or k not in os.environ)
-        }
-
-        for k, v in dotenv_as_dict.items():
-            d[k] = v
-    
+        })
     if not commandline:
         click.echo('No command given.')
         exit(1)
-
-    ret = run_command(commandline, d)
+    ret = run_command(commandline, dotenv_as_dict)
     exit(ret)
 
 
