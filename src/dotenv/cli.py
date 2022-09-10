@@ -17,7 +17,8 @@ from .version import __version__
 
 
 @click.group()
-@click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
+@click.option('-f', '--file', default=[os.path.join(os.getcwd(), '.env')],
+              multiple=True,
               type=click.Path(file_okay=True),
               help="Location of the .env file, defaults to .env file in current working directory.")
 @click.option('-q', '--quote', default='always',
@@ -33,7 +34,7 @@ def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
     ctx.obj = {}
     ctx.obj['QUOTE'] = quote
     ctx.obj['EXPORT'] = export
-    ctx.obj['FILE'] = file
+    ctx.obj['FILES'] = file
 
 
 @cli.command()
@@ -121,22 +122,30 @@ def unset(ctx: click.Context, key: Any) -> None:
 @click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
 def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     """Run command with environment variables present."""
-    file = ctx.obj['FILE']
-    if not os.path.isfile(file):
-        raise click.BadParameter(
-            'Invalid value for \'-f\' "%s" does not exist.' % (file),
-            ctx=ctx
-        )
-    dotenv_as_dict = {
-        k: v
-        for (k, v) in dotenv_values(file).items()
-        if v is not None and (override or k not in os.environ)
-    }
-
+    
+    
     if not commandline:
         click.echo('No command given.')
         exit(1)
-    ret = run_command(commandline, dotenv_as_dict)
+    
+    d = {}
+    for file in ctx.obj['FILES']:
+        if not os.path.isfile(file):
+            raise click.BadParameter(
+                'Invalid value for \'-f\' "%s" does not exist.' % (file),
+                ctx=ctx
+            )
+        dotenv_as_dict = {
+            k: v
+            for (k, v) in dotenv_values(file).items()
+            if v is not None and (override or k not in os.environ)
+        }
+
+        for k, v in dotenv_as_dict.items():
+            d[k] = v
+
+
+    ret = run_command(commandline, d)
     exit(ret)
 
 
