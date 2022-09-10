@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import shlex
 import sys
@@ -14,6 +15,8 @@ except ImportError:
 
 from .main import dotenv_values, get_key, set_key, unset_key
 from .version import __version__
+
+logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -45,24 +48,30 @@ def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
                    "which displays name=value without quotes.")
 def list(ctx: click.Context, format: bool) -> None:
     '''Display all the stored key/value.'''
-    file = ctx.obj['FILE']
-    if not os.path.isfile(file):
-        raise click.BadParameter(
-            'Path "%s" does not exist.' % (file),
-            ctx=ctx
-        )
-    dotenv_as_dict = dotenv_values(file)
+    
+    d = {}
+    for file in ctx.obj['FILES']:
+        if not os.path.isfile(file):
+            raise click.BadParameter(
+                'Path "%s" does not exist.' % (file),
+                ctx=ctx
+            )
+        dotenv_as_dict = dotenv_values(file)
+
+        for k, v in dotenv_as_dict.items():
+            d[k] = v
+
     if format == 'json':
-        click.echo(json.dumps(dotenv_as_dict, indent=2, sort_keys=True))
+        click.echo(json.dumps(d, indent=2, sort_keys=True))
     else:
         prefix = 'export ' if format == 'export' else ''
-        for k in sorted(dotenv_as_dict):
-            v = dotenv_as_dict[k]
+        for k in sorted(d):
+            v = d[k]
             if v is not None:
                 if format in ('export', 'shell'):
                     v = shlex.quote(v)
                 click.echo('%s%s=%s' % (prefix, k, v))
-
+        
 
 @cli.command()
 @click.pass_context
@@ -70,14 +79,15 @@ def list(ctx: click.Context, format: bool) -> None:
 @click.argument('value', required=True)
 def set(ctx: click.Context, key: Any, value: Any) -> None:
     '''Store the given key/value.'''
-    file = ctx.obj['FILE']
+    file = ctx.obj['FILES']
     quote = ctx.obj['QUOTE']
     export = ctx.obj['EXPORT']
-    success, key, value = set_key(file, key, value, quote, export)
-    if success:
-        click.echo('%s=%s' % (key, value))
-    else:
-        exit(1)
+    for file in ctx.obj['FILES']:
+        success, key, value = set_key(file, key, value, quote, export)
+        if success:
+            click.echo('%s=%s' % (key, value))
+        else:
+            exit(1)
 
 
 @cli.command()
@@ -85,16 +95,23 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
 @click.argument('key', required=True)
 def get(ctx: click.Context, key: Any) -> None:
     '''Retrieve the value for the given key.'''
-    file = ctx.obj['FILE']
-    if not os.path.isfile(file):
-        raise click.BadParameter(
-            'Path "%s" does not exist.' % (file),
-            ctx=ctx
-        )
-    stored_value = get_key(file, key)
-    if stored_value:
-        click.echo(stored_value)
+    
+    value, set = None, False
+    files = ctx.obj['FILES']
+    for file in files:
+        if not os.path.isfile(file):
+            raise click.BadParameter(
+                'Path "%s" does not exist.' % (file),
+                ctx=ctx
+            )
+        stored_value = get_key(file, key)
+        if stored_value:
+            value, set = stored_value, True
+    
+    if set:
+        click.echo(value)
     else:
+        logger.warning(f"Key {key} not found in {files[0] if len(files) == 1 else files}.")
         exit(1)
 
 
@@ -103,11 +120,17 @@ def get(ctx: click.Context, key: Any) -> None:
 @click.argument('key', required=True)
 def unset(ctx: click.Context, key: Any) -> None:
     '''Removes the given key.'''
-    file = ctx.obj['FILE']
     quote = ctx.obj['QUOTE']
-    success, key = unset_key(file, key, quote)
-    if success:
-        click.echo("Successfully removed %s" % key)
+
+    global_success = False
+    success_files = []
+    for file in ctx.obj['FILES']:
+        success, key = unset_key(file, key, quote)
+        if success:
+            global_success = True
+            success_files.append(file)
+    if global_success:
+        click.echo("Successfully removed %s from %s" % (key, success_files[0] if len(success_files) == 1 else success_files))
     else:
         exit(1)
 
