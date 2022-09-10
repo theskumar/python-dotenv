@@ -66,7 +66,7 @@ def list(ctx: click.Context, format: bool) -> None:
                 if format in ('export', 'shell'):
                     v = shlex.quote(v)
                 click.echo('%s%s=%s' % (prefix, k, v))
-        
+
 
 @cli.command()
 @click.pass_context
@@ -90,7 +90,6 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
 @click.argument('key', required=True)
 def get(ctx: click.Context, key: Any) -> None:
     '''Retrieve the value for the given key.'''
-    
     value, set = None, False
     files = ctx.obj['FILES']
     for file in files:
@@ -102,7 +101,6 @@ def get(ctx: click.Context, key: Any) -> None:
         stored_value = get_key(file, key)
         if stored_value:
             value, set = stored_value, True
-    
     if set:
         click.echo(value)
     else:

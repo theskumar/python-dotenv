@@ -89,8 +89,6 @@ def test_get_key_no_file(tmp_path):
 
 
 def test_get_key_not_found(dotenv_file):
-    logger = logging.getLogger("dotenv.main")
-
     result = dotenv.get_key(dotenv_file, "foo")
 
     assert result is None
