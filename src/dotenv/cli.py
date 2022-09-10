@@ -146,11 +146,6 @@ def unset(ctx: click.Context, key: Any) -> None:
 def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     """Run command with environment variables present."""
     
-    
-    if not commandline:
-        click.echo('No command given.')
-        exit(1)
-    
     d = {}
     for file in ctx.obj['FILES']:
         if not os.path.isfile(file):
@@ -166,7 +161,10 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
 
         for k, v in dotenv_as_dict.items():
             d[k] = v
-
+    
+    if not commandline:
+        click.echo('No command given.')
+        exit(1)
 
     ret = run_command(commandline, d)
     exit(ret)

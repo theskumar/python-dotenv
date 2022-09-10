@@ -77,8 +77,7 @@ def test_get_key_no_file(tmp_path):
     nx_file = str(tmp_path / "nx")
     logger = logging.getLogger("dotenv.main")
 
-    with mock.patch.object(logger, "info") as mock_info, \
-            mock.patch.object(logger, "warning") as mock_warning:
+    with mock.patch.object(logger, "info") as mock_info:
         result = dotenv.get_key(nx_file, "foo")
 
     assert result is None
@@ -87,21 +86,14 @@ def test_get_key_no_file(tmp_path):
             mock.call("Python-dotenv could not find configuration file %s.", nx_file)
         ],
     )
-    mock_warning.assert_has_calls(
-        calls=[
-            mock.call("Key %s not found in %s.", "foo", nx_file)
-        ],
-    )
 
 
 def test_get_key_not_found(dotenv_file):
     logger = logging.getLogger("dotenv.main")
 
-    with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.get_key(dotenv_file, "foo")
+    result = dotenv.get_key(dotenv_file, "foo")
 
     assert result is None
-    mock_warning.assert_called_once_with("Key %s not found in %s.", "foo", dotenv_file)
 
 
 def test_get_key_ok(dotenv_file):

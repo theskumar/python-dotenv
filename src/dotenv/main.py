@@ -117,7 +117,7 @@ def get_key(
 
     Returns `None` if the key isn't found or doesn't have a value.
     """
-    return DotEnv(dotenv_path, verbose=False, encoding=encoding).get(key_to_get)
+    return DotEnv(dotenv_path, verbose=True, encoding=encoding).get(key_to_get)
 
 
 @contextmanager
