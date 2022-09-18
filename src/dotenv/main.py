@@ -323,7 +323,7 @@ def load_dotenv(
             from the `.env` file.
         encoding: Encoding to be used to read the file.
     Returns:
-        Bool: True if atleast one environment variable is set elese False
+        Bool: True if atleast one environment variable is set else False
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
