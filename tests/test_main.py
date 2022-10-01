@@ -94,10 +94,24 @@ def test_get_key_no_file(tmp_path):
     )
 
 
-def test_get_key_not_found(dotenv_file):
-    result = dotenv.get_key(dotenv_file, "foo")
+def test_get_key_not_found_verbose(dotenv_file):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.get_key(dotenv_file, "foo")
 
     assert result is None
+    mock_warning.assert_called_once_with("Key %s not found in %s.", "foo", dotenv_file)
+
+
+def test_get_key_not_found_silent(dotenv_file):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.get_key(dotenv_file, "foo", verbose=False)
+
+    assert result is None
+    mock_warning.assert_not_called()
 
 
 def test_get_key_ok(dotenv_file):
