@@ -123,7 +123,8 @@ def unset(ctx: click.Context, key: Any) -> None:
             global_success = True
             success_files.append(file)
     if global_success:
-        click.echo("Successfully removed %s from %s" % (key, success_files[0] if len(success_files) == 1 else success_files))
+        source = success_files[0] if len(success_files) == 1 else success_files
+        click.echo("Successfully removed %s from %s" % (key, source))
     else:
         exit(1)
 
