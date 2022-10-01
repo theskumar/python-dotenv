@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import shlex
 import sys
@@ -15,8 +14,6 @@ except ImportError:
 
 from .main import dotenv_values, get_key, set_key, unset_key
 from .version import __version__
-
-logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -98,13 +95,13 @@ def get(ctx: click.Context, key: Any) -> None:
                 'Path "%s" does not exist.' % (file),
                 ctx=ctx
             )
-        stored_value = get_key(file, key)
+        stored_value = get_key(file, key, verbose=False)
         if stored_value:
             value, set = stored_value, True
     if set:
         click.echo(value)
     else:
-        logger.warning(f"Key {key} not found in {files[0] if len(files) == 1 else files}.")
+        click.echo(f"Key {key} not found in {files[0] if len(files) == 1 else files}.", err=True)
         exit(1)
 
 
