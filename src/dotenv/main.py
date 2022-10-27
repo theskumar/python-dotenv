@@ -25,23 +25,23 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
         yield mapping
 
 
-class DotEnv():
+class DotEnv:
     def __init__(
         self,
         dotenv_path: Optional[Union[str, os.PathLike]],
         stream: Optional[IO[str]] = None,
         verbose: bool = False,
-        encoding: Union[None, str] = None,
+        encoding: Optional[str] = None,
         interpolate: bool = True,
         override: bool = True,
     ) -> None:
-        self.dotenv_path = dotenv_path  # type: Optional[Union[str, os.PathLike]]
-        self.stream = stream  # type: Optional[IO[str]]
-        self._dict = None  # type: Optional[Dict[str, Optional[str]]]
-        self.verbose = verbose  # type: bool
-        self.encoding = encoding  # type: Union[None, str]
-        self.interpolate = interpolate  # type: bool
-        self.override = override  # type: bool
+        self.dotenv_path: Optional[Union[str, os.PathLike]] = dotenv_path
+        self.stream: Optional[IO[str]] = stream
+        self._dict: Optional[Dict[str, Optional[str]]] = None
+        self.verbose: bool = verbose
+        self.encoding: Optional[str] = encoding
+        self.interpolate: bool = interpolate
+        self.override: bool = override
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
@@ -153,7 +153,7 @@ def set_key(
     an orphan .env somewhere in the filesystem
     """
     if quote_mode not in ("always", "auto", "never"):
-        raise ValueError("Unknown quote_mode: {}".format(quote_mode))
+        raise ValueError(f"Unknown quote_mode: {quote_mode}")
 
     quote = (
         quote_mode == "always"
@@ -165,9 +165,9 @@ def set_key(
     else:
         value_out = value_to_set
     if export:
-        line_out = 'export {}={}\n'.format(key_to_set, value_out)
+        line_out = f'export {key_to_set}={value_out}\n'
     else:
-        line_out = "{}={}\n".format(key_to_set, value_out)
+        line_out = f"{key_to_set}={value_out}\n"
 
     with rewrite(dotenv_path, encoding=encoding) as (source, dest):
         replaced = False
@@ -222,14 +222,14 @@ def resolve_variables(
     values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
 ) -> Mapping[str, Optional[str]]:
-    new_values = {}  # type: Dict[str, Optional[str]]
+    new_values: Dict[str, Optional[str]] = {}
 
     for (name, value) in values:
         if value is None:
             result = None
         else:
             atoms = parse_variables(value)
-            env = {}  # type: Dict[str, Optional[str]]
+            env: Dict[str, Optional[str]] = {}
             if override:
                 env.update(os.environ)  # type: ignore
                 env.update(new_values)
