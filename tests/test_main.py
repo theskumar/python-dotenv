@@ -423,3 +423,26 @@ def test_dotenv_values_file_stream(dotenv_file):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+@pytest.mark.parametrize(
+    "before,env_dict,after",
+    [
+        ("", {"a1": "", "a2": "b", "a3": "'b'", "a4": "\"b\""},
+         "a1=''\na2='b'\na3='\\'b\\''\na4='\"b\"'\n"),
+        ("", {"a1": "b'c", "a2": "b\"c"}, "a1='b\\'c'\na2='b\"c'\n"),
+        ("a=b\nb=c\n", {"b": "cc", "c": "d", "d": "e"},
+         "a=b\nb='cc'\nc='d'\nd='e'\n")
+    ],
+)
+def test_update_dict_to_dotenv(dotenv_file, before, env_dict, after):
+    logger = logging.getLogger("dotenv.main")
+    with open(dotenv_file, "w") as f:
+        f.write(before)
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        dotenv.update_dict_to_dotenv(dotenv_file, env_dict)
+
+    assert open(dotenv_file, "r").read() == after
+    mock_warning.assert_not_called()
+
