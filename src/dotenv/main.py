@@ -35,7 +35,8 @@ class DotEnv():
         interpolate: bool = True,
         override: bool = True,
     ) -> None:
-        self.dotenv_path = dotenv_path  # type: Optional[Union[str, os.PathLike]]
+        # type: Optional[Union[str, os.PathLike]]
+        self.dotenv_path = dotenv_path
         self.stream = stream  # type: Optional[IO[str]]
         self._dict = None  # type: Optional[Dict[str, Optional[str]]]
         self.verbose = verbose  # type: bool
@@ -66,7 +67,8 @@ class DotEnv():
         raw_values = self.parse()
 
         if self.interpolate:
-            self._dict = OrderedDict(resolve_variables(raw_values, override=self.override))
+            self._dict = OrderedDict(resolve_variables(
+                raw_values, override=self.override))
         else:
             self._dict = OrderedDict(raw_values)
 
@@ -153,7 +155,7 @@ def set_key(
     an orphan .env somewhere in the filesystem
     """
     if quote_mode not in ("always", "auto", "never"):
-        raise ValueError("Unknown quote_mode: {}".format(quote_mode))
+        raise ValueError(f"Unknown quote_mode: {quote_mode}")
 
     quote = (
         quote_mode == "always"
@@ -165,9 +167,9 @@ def set_key(
     else:
         value_out = value_to_set
     if export:
-        line_out = 'export {}={}\n'.format(key_to_set, value_out)
+        line_out = f'export {key_to_set}={value_out}\n'
     else:
-        line_out = "{}={}\n".format(key_to_set, value_out)
+        line_out = f"{key_to_set}={value_out}\n"
 
     with rewrite(dotenv_path, encoding=encoding) as (source, dest):
         replaced = False
@@ -212,7 +214,8 @@ def unset_key(
                 dest.write(mapping.original.string)
 
     if not removed:
-        logger.warning("Key %s not removed from %s - key doesn't exist.", key_to_unset, dotenv_path)
+        logger.warning(
+            "Key %s not removed from %s - key doesn't exist.", key_to_unset, dotenv_path)
         return None, key_to_unset
 
     return removed, key_to_unset
@@ -231,7 +234,7 @@ def resolve_variables(
             atoms = parse_variables(value)
             env = {}  # type: Dict[str, Optional[str]]
             if override:
-                env.update(os.environ)  # type: ignore
+                env |= os.environ
                 env.update(new_values)
             else:
                 env.update(new_values)
@@ -321,7 +324,7 @@ def load_dotenv(
             from the `.env` file.
         encoding: Encoding to be used to read the file.
     Returns:
-        Bool: True if atleast one environment variable is set else False
+        Bool: True if atleast one environment variable is set elese False
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
