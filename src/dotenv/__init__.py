@@ -32,7 +32,7 @@ def get_cli_string(
             command.append(key)
             if value:
                 if ' ' in value:
-                    command.append('"%s"' % value)
+                    command.append(f'"{value}"')
                 else:
                     command.append(value)
 
