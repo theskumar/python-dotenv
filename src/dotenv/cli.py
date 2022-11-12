@@ -2,8 +2,9 @@ import json
 import os
 import shlex
 import sys
+from contextlib import contextmanager
 from subprocess import Popen
-from typing import Any, Dict, List
+from typing import Any, Dict, IO, Iterator, List
 
 try:
     import click
@@ -12,7 +13,7 @@ except ImportError:
                      'Run pip install "python-dotenv[cli]" to fix this.')
     sys.exit(1)
 
-from .main import dotenv_values, get_key, set_key, unset_key
+from .main import dotenv_values, set_key, unset_key
 from .version import __version__
 
 
@@ -33,6 +34,22 @@ def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
     ctx.obj = {'QUOTE': quote, 'EXPORT': export, 'FILE': file}
 
 
+@contextmanager
+def stream_file(path: os.PathLike) -> Iterator[IO[str]]:
+    """
+    Open a file and yield the corresponding (decoded) stream.
+
+    Exits with error code 2 if the file cannot be opened.
+    """
+
+    try:
+        with open(path) as stream:
+            yield stream
+    except OSError as exc:
+        print(f"Error opening env file: {exc}", file=sys.stderr)
+        exit(2)
+
+
 @cli.command()
 @click.pass_context
 @click.option('--format', default='simple',
@@ -42,18 +59,16 @@ def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
 def list(ctx: click.Context, format: bool) -> None:
     """Display all the stored key/value."""
     file = ctx.obj['FILE']
-    if not os.path.isfile(file):
-        raise click.BadParameter(
-            f'Path "{file}" does not exist.',
-            ctx=ctx
-        )
-    dotenv_as_dict = dotenv_values(file)
+
+    with stream_file(file) as stream:
+        values = dotenv_values(stream=stream)
+
     if format == 'json':
-        click.echo(json.dumps(dotenv_as_dict, indent=2, sort_keys=True))
+        click.echo(json.dumps(values, indent=2, sort_keys=True))
     else:
         prefix = 'export ' if format == 'export' else ''
-        for k in sorted(dotenv_as_dict):
-            v = dotenv_as_dict[k]
+        for k in sorted(values):
+            v = values[k]
             if v is not None:
                 if format in ('export', 'shell'):
                     v = shlex.quote(v)
@@ -82,12 +97,11 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
 def get(ctx: click.Context, key: Any) -> None:
     """Retrieve the value for the given key."""
     file = ctx.obj['FILE']
-    if not os.path.isfile(file):
-        raise click.BadParameter(
-            f'Path "{file}" does not exist.',
-            ctx=ctx
-        )
-    stored_value = get_key(file, key)
+
+    with stream_file(file) as stream:
+        values = dotenv_values(stream=stream)
+
+    stored_value = values.get(key)
     if stored_value:
         click.echo(stored_value)
     else:

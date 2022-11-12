@@ -40,7 +40,14 @@ def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'list'])
 
     assert result.exit_code == 2, result.output
-    assert "does not exist" in result.output
+    assert "Error opening env file" in result.output
+
+
+def test_list_not_a_file(cli):
+    result = cli.invoke(dotenv_cli, ['--file', '.', 'list'])
+
+    assert result.exit_code == 2, result.output
+    assert "Error opening env file" in result.output
 
 
 def test_list_no_file(cli):
@@ -64,11 +71,18 @@ def test_get_non_existent_value(cli, dotenv_file):
     assert (result.exit_code, result.output) == (1, "")
 
 
-def test_get_no_file(cli):
+def test_get_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'get', 'a'])
 
     assert result.exit_code == 2
-    assert "does not exist" in result.output
+    assert "Error opening env file" in result.output
+
+
+def test_get_not_a_file(cli):
+    result = cli.invoke(dotenv_cli, ['--file', '.', 'get', 'a'])
+
+    assert result.exit_code == 2
+    assert "Error opening env file" in result.output
 
 
 def test_unset_existing_value(cli, dotenv_file):
