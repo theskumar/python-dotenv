@@ -12,6 +12,12 @@ from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple,
 from .parser import Binding, parse_stream
 from .variables import parse_variables
 
+# A type alias for a string path to be used for the paths in this file.
+# These paths may flow to `open()` and `shutil.move()`; `shutil.move()`
+# only accepts string paths, not byte paths or file descriptors. See
+# https://github.com/python/typeshed/pull/6832.
+StrPath = Union[str, 'os.PathLike[str]']
+
 logger = logging.getLogger(__name__)
 
 
@@ -28,14 +34,14 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
 class DotEnv():
     def __init__(
         self,
-        dotenv_path: Optional[Union[str, os.PathLike]],
+        dotenv_path: Optional[StrPath],
         stream: Optional[IO[str]] = None,
         verbose: bool = False,
         encoding: Union[None, str] = None,
         interpolate: bool = True,
         override: bool = True,
     ) -> None:
-        self.dotenv_path = dotenv_path  # type: Optional[Union[str, os.PathLike]]
+        self.dotenv_path = dotenv_path  # type: Optional[StrPath]
         self.stream = stream  # type: Optional[IO[str]]
         self._dict = None  # type: Optional[Dict[str, Optional[str]]]
         self.verbose = verbose  # type: bool
@@ -108,7 +114,7 @@ class DotEnv():
 
 
 def get_key(
-    dotenv_path: Union[str, os.PathLike],
+    dotenv_path: StrPath,
     key_to_get: str,
     encoding: Optional[str] = "utf-8",
 ) -> Optional[str]:
@@ -122,7 +128,7 @@ def get_key(
 
 @contextmanager
 def rewrite(
-    path: Union[str, os.PathLike],
+    path: StrPath,
     encoding: Optional[str],
 ) -> Iterator[Tuple[IO[str], IO[str]]]:
     try:
@@ -141,7 +147,7 @@ def rewrite(
 
 
 def set_key(
-    dotenv_path: Union[str, os.PathLike],
+    dotenv_path: StrPath,
     key_to_set: str,
     value_to_set: str,
     quote_mode: str = "always",
@@ -190,7 +196,7 @@ def set_key(
 
 
 def unset_key(
-    dotenv_path: Union[str, os.PathLike],
+    dotenv_path: StrPath,
     key_to_unset: str,
     quote_mode: str = "always",
     encoding: Optional[str] = "utf-8",
@@ -305,7 +311,7 @@ def find_dotenv(
 
 
 def load_dotenv(
-    dotenv_path: Optional[Union[str, 'os.PathLike[str]']] = None,
+    dotenv_path: Optional[StrPath] = None,
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
     override: bool = False,
@@ -343,7 +349,7 @@ def load_dotenv(
 
 
 def dotenv_values(
-    dotenv_path: Union[str, os.PathLike, None] = None,
+    dotenv_path: Optional[StrPath] = None,
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
     interpolate: bool = True,
