@@ -305,7 +305,7 @@ def find_dotenv(
 
 
 def load_dotenv(
-    dotenv_path: Union[str, 'os.PathLike[str]', 'os.PathLike[bytes]', None] = None,
+    dotenv_path: Optional[Union[str, bytes, 'os.PathLike[Union[str, bytes]]', int]] = None,
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
     override: bool = False,
