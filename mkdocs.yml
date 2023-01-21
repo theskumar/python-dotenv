@@ -11,8 +11,6 @@ theme:
 
 markdown_extensions:
   - mdx_truly_sane_lists
-  - toc:
-      toc_depth: 2
 
 plugins:
   - mkdocstrings:
