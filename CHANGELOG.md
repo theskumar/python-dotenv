@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.21.1] - 2022-09-03
+
+### Added
+* Use Python 3.11 non-beta in CI (#438 by @bbc2)
+* Modernize variables code (#434 by @Nougat-Waffle)
+* Modernize main.py and parser.py code (#435 by @Nougat-Waffle)
+* Improve conciseness of cli.py and __init__.py (#439 by @Nougat-Waffle)
+* Improve error message for `get` and `list` commands when env file can't be opened (#441 by @bbc2)
+* Updated Licence to align with BSD OSI template (#433 by @lsmith77)
+
+
+### Fixed
+* Fix Out-of-scope error when "dest" variable is undefined (#413 by @theGOTOguy)
+* Fix IPython test warning about deprecated `magic` (#440 by @bbc2)
+* Fix type hint for dotenv_path var, add StrPath alias (#432 by @eaf)
+
 ## [0.21.0] - 2022-09-03
 
 ### Added
@@ -16,9 +33,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * Drop Python 3.5 and 3.6 and upgrade GA (#393 by @eggplants)
 * Use `open` instead of `io.open`. (#389 by @rabinadk1)
 * Improve documentation for variables without a value (#390 by @bbc2)
-* Add `parse_it` to Related Projects by (#410 by @naorlivne)
-* Update README.md by (#415 by @harveer07)
-* Improve documentation with direct use of MkDocs by (#398 by @bbc2)
+* Add `parse_it` to Related Projects (#410 by @naorlivne)
+* Update README.md (#415 by @harveer07)
+* Improve documentation with direct use of MkDocs (#398 by @bbc2)
 
 ## [0.20.0] - 2022-03-24
 
