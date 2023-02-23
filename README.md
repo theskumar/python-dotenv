@@ -231,6 +231,7 @@ defined in the following list:
 -   [environs](https://github.com/sloria/environs)
 -   [dynaconf](https://github.com/rochacbruno/dynaconf)
 -   [parse_it](https://github.com/naorlivne/parse_it)
+-   [python-decouple](https://github.com/HBNetwork/python-decouple)
 
 ## Acknowledgements
 
