@@ -17,8 +17,22 @@ from .main import dotenv_values, set_key, unset_key
 from .version import __version__
 
 
+def enumerate_env():
+    """
+    Return a path for the ${pwd}/.env file.
+
+    If pwd does not exist, return None.
+    """
+    try:
+        cwd = os.getcwd()
+    except FileNotFoundError:
+        return None
+    path = os.path.join(cwd, '.env')
+    return path
+
+
 @click.group()
-@click.option('-f', '--file', default=os.path.join(os.getcwd(), '.env'),
+@click.option('-f', '--file', default=enumerate_env(),
               type=click.Path(file_okay=True),
               help="Location of the .env file, defaults to .env file in current working directory.")
 @click.option('-q', '--quote', default='always',
