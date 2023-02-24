@@ -1,0 +1,785 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.2.16">
+    
+    
+      
+        <title>python-dotenv</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.1c3799f8.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.cc9b2e1e.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4cae4f">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="green" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#python-dotenv" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="python-dotenv" class="md-header__button md-logo" aria-label="python-dotenv" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            python-dotenv
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/theskumar/python-dotenv" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="python-dotenv" class="md-nav__button md-logo" aria-label="python-dotenv" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    python-dotenv
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/theskumar/python-dotenv" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Home
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    Getting Started
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-use-cases" class="md-nav__link">
+    Other Use Cases
+  </a>
+  
+    <nav class="md-nav" aria-label="Other Use Cases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#load-configuration-without-altering-the-environment" class="md-nav__link">
+    Load configuration without altering the environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parse-configuration-as-a-stream" class="md-nav__link">
+    Parse configuration as a stream
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-env-files-in-ipython" class="md-nav__link">
+    Load .env files in IPython
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-interface" class="md-nav__link">
+    Command-line Interface
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-format" class="md-nav__link">
+    File format
+  </a>
+  
+    <nav class="md-nav" aria-label="File format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiline-values" class="md-nav__link">
+    Multiline values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-without-a-value" class="md-nav__link">
+    Variable without a value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-expansion" class="md-nav__link">
+    Variable expansion
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-projects" class="md-nav__link">
+    Related Projects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acknowledgements" class="md-nav__link">
+    Acknowledgements
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="changelog/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/" class="md-nav__link">
+        Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="license/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    Getting Started
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-use-cases" class="md-nav__link">
+    Other Use Cases
+  </a>
+  
+    <nav class="md-nav" aria-label="Other Use Cases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#load-configuration-without-altering-the-environment" class="md-nav__link">
+    Load configuration without altering the environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parse-configuration-as-a-stream" class="md-nav__link">
+    Parse configuration as a stream
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-env-files-in-ipython" class="md-nav__link">
+    Load .env files in IPython
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-interface" class="md-nav__link">
+    Command-line Interface
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-format" class="md-nav__link">
+    File format
+  </a>
+  
+    <nav class="md-nav" aria-label="File format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiline-values" class="md-nav__link">
+    Multiline values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-without-a-value" class="md-nav__link">
+    Variable without a value
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-expansion" class="md-nav__link">
+    Variable expansion
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-projects" class="md-nav__link">
+    Related Projects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#acknowledgements" class="md-nav__link">
+    Acknowledgements
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="python-dotenv">python-dotenv</h1>
+<p><a href="https://github.com/theskumar/python-dotenv/actions/workflows/test.yml"><img alt="Build Status" src="https://github.com/theskumar/python-dotenv/actions/workflows/test.yml/badge.svg" /></a>
+<a href="http://badge.fury.io/py/python-dotenv"><img alt="PyPI version" src="https://badge.fury.io/py/python-dotenv.svg" /></a></p>
+<p>Python-dotenv reads key-value pairs from a <code>.env</code> file and can set them as environment
+variables. It helps in the development of applications following the
+<a href="http://12factor.net/">12-factor</a> principles.</p>
+<ul>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#other-use-cases">Other Use Cases</a><ul>
+<li><a href="#load-configuration-without-altering-the-environment">Load configuration without altering the environment</a></li>
+<li><a href="#parse-configuration-as-a-stream">Parse configuration as a stream</a></li>
+<li><a href="#load-env-files-in-ipython">Load .env files in IPython</a></li>
+</ul>
+</li>
+<li><a href="#command-line-interface">Command-line Interface</a></li>
+<li><a href="#file-format">File format</a><ul>
+<li><a href="#multiline-values">Multiline values</a></li>
+<li><a href="#variable-expansion">Variable expansion</a></li>
+</ul>
+</li>
+<li><a href="#related-projects">Related Projects</a></li>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<pre><code class="language-shell">pip install python-dotenv
+</code></pre>
+<p>If your application takes its configuration from environment variables, like a 12-factor
+application, launching it in development is not very practical because you have to set
+those environment variables yourself.</p>
+<p>To help you with that, you can add Python-dotenv to your application to make it load the
+configuration from a <code>.env</code> file when it is present (e.g. in development) while remaining
+configurable via the environment:</p>
+<pre><code class="language-python">from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
+# Code of your application, which uses environment variables (e.g. from `os.environ` or
+# `os.getenv`) as if they came from the actual environment.
+</code></pre>
+<p>By default, <code>load_dotenv</code> doesn't override existing environment variables.</p>
+<p>To configure the development environment, add a <code>.env</code> in the root directory of your
+project:</p>
+<pre><code>.
+├── .env
+└── foo.py
+</code></pre>
+<p>The syntax of <code>.env</code> files supported by python-dotenv is similar to that of Bash:</p>
+<pre><code class="language-bash"># Development settings
+DOMAIN=example.org
+ADMIN_EMAIL=admin@${DOMAIN}
+ROOT_URL=${DOMAIN}/app
+</code></pre>
+<p>If you use variables in values, ensure they are surrounded with <code>{</code> and <code>}</code>, like
+<code>${DOMAIN}</code>, as bare variables such as <code>$DOMAIN</code> are not expanded.</p>
+<p>You will probably want to add <code>.env</code> to your <code>.gitignore</code>, especially if it contains
+secrets like a password.</p>
+<p>See the section "File format" below for more information about what you can write in a
+<code>.env</code> file.</p>
+<h2 id="other-use-cases">Other Use Cases</h2>
+<h3 id="load-configuration-without-altering-the-environment">Load configuration without altering the environment</h3>
+<p>The function <code>dotenv_values</code> works more or less the same way as <code>load_dotenv</code>, except it
+doesn't touch the environment, it just returns a <code>dict</code> with the values parsed from the
+<code>.env</code> file.</p>
+<pre><code class="language-python">from dotenv import dotenv_values
+
+config = dotenv_values(&quot;.env&quot;)  # config = {&quot;USER&quot;: &quot;foo&quot;, &quot;EMAIL&quot;: &quot;foo@example.org&quot;}
+</code></pre>
+<p>This notably enables advanced configuration management:</p>
+<pre><code class="language-python">import os
+from dotenv import dotenv_values
+
+config = {
+    **dotenv_values(&quot;.env.shared&quot;),  # load shared development variables
+    **dotenv_values(&quot;.env.secret&quot;),  # load sensitive variables
+    **os.environ,  # override loaded values with environment variables
+}
+</code></pre>
+<h3 id="parse-configuration-as-a-stream">Parse configuration as a stream</h3>
+<p><code>load_dotenv</code> and <code>dotenv_values</code> accept <a href="https://docs.python.org/3/library/io.html">streams</a> via their <code>stream</code>
+argument.  It is thus possible to load the variables from sources other than the
+filesystem (e.g. the network).</p>
+<pre><code class="language-python">from io import StringIO
+
+from dotenv import load_dotenv
+
+config = StringIO(&quot;USER=foo\nEMAIL=foo@example.org&quot;)
+load_dotenv(stream=config)
+</code></pre>
+<h3 id="load-env-files-in-ipython">Load .env files in IPython</h3>
+<p>You can use dotenv in IPython.  By default, it will use <code>find_dotenv</code> to search for a
+<code>.env</code> file:</p>
+<pre><code class="language-python">%load_ext dotenv
+%dotenv
+</code></pre>
+<p>You can also specify a path:</p>
+<pre><code class="language-python">%dotenv relative/or/absolute/path/to/.env
+</code></pre>
+<p>Optional flags:</p>
+<ul>
+<li><code>-o</code> to override existing variables.</li>
+<li><code>-v</code> for increased verbosity.</li>
+</ul>
+<h2 id="command-line-interface">Command-line Interface</h2>
+<p>A CLI interface <code>dotenv</code> is also included, which helps you manipulate the <code>.env</code> file
+without manually opening it.</p>
+<pre><code class="language-shell">$ pip install &quot;python-dotenv[cli]&quot;
+$ dotenv set USER foo
+$ dotenv set EMAIL foo@example.org
+$ dotenv list
+USER=foo
+EMAIL=foo@example.org
+$ dotenv list --format=json
+{
+  &quot;USER&quot;: &quot;foo&quot;,
+  &quot;EMAIL&quot;: &quot;foo@example.org&quot;
+}
+$ dotenv run -- python foo.py
+</code></pre>
+<p>Run <code>dotenv --help</code> for more information about the options and subcommands.</p>
+<h2 id="file-format">File format</h2>
+<p>The format is not formally specified and still improves over time.  That being said,
+<code>.env</code> files should mostly look like Bash files.</p>
+<p>Keys can be unquoted or single-quoted. Values can be unquoted, single- or double-quoted.
+Spaces before and after keys, equal signs, and values are ignored. Values can be followed
+by a comment.  Lines can start with the <code>export</code> directive, which does not affect their
+interpretation.</p>
+<p>Allowed escape sequences:</p>
+<ul>
+<li>in single-quoted values: <code>\\</code>, <code>\'</code></li>
+<li>in double-quoted values: <code>\\</code>, <code>\'</code>, <code>\"</code>, <code>\a</code>, <code>\b</code>, <code>\f</code>, <code>\n</code>, <code>\r</code>, <code>\t</code>, <code>\v</code></li>
+</ul>
+<h3 id="multiline-values">Multiline values</h3>
+<p>It is possible for single- or double-quoted values to span multiple lines.  The following
+examples are equivalent:</p>
+<pre><code class="language-bash">FOO=&quot;first line
+second line&quot;
+</code></pre>
+<pre><code class="language-bash">FOO=&quot;first line\nsecond line&quot;
+</code></pre>
+<h3 id="variable-without-a-value">Variable without a value</h3>
+<p>A variable can have no value:</p>
+<pre><code class="language-bash">FOO
+</code></pre>
+<p>It results in <code>dotenv_values</code> associating that variable name with the value <code>None</code> (e.g.
+<code>{"FOO": None}</code>. <code>load_dotenv</code>, on the other hand, simply ignores such variables.</p>
+<p>This shouldn't be confused with <code>FOO=</code>, in which case the variable is associated with the
+empty string.</p>
+<h3 id="variable-expansion">Variable expansion</h3>
+<p>Python-dotenv can interpolate variables using POSIX variable expansion.</p>
+<p>With <code>load_dotenv(override=True)</code> or <code>dotenv_values()</code>, the value of a variable is the
+first of the values defined in the following list:</p>
+<ul>
+<li>Value of that variable in the <code>.env</code> file.</li>
+<li>Value of that variable in the environment.</li>
+<li>Default value, if provided.</li>
+<li>Empty string.</li>
+</ul>
+<p>With <code>load_dotenv(override=False)</code>, the value of a variable is the first of the values
+defined in the following list:</p>
+<ul>
+<li>Value of that variable in the environment.</li>
+<li>Value of that variable in the <code>.env</code> file.</li>
+<li>Default value, if provided.</li>
+<li>Empty string.</li>
+</ul>
+<h2 id="related-projects">Related Projects</h2>
+<ul>
+<li><a href="https://github.com/nickstenning/honcho">Honcho</a> - For managing
+    Procfile-based applications.</li>
+<li><a href="https://github.com/jpadilla/django-dotenv">django-dotenv</a></li>
+<li><a href="https://github.com/joke2k/django-environ">django-environ</a></li>
+<li><a href="https://github.com/sergeyklay/django-environ-2">django-environ-2</a></li>
+<li><a href="https://github.com/jezdez/django-configurations">django-configuration</a></li>
+<li><a href="https://github.com/sobolevn/dump-env">dump-env</a></li>
+<li><a href="https://github.com/sloria/environs">environs</a></li>
+<li><a href="https://github.com/rochacbruno/dynaconf">dynaconf</a></li>
+<li><a href="https://github.com/naorlivne/parse_it">parse_it</a></li>
+<li><a href="https://github.com/HBNetwork/python-decouple">python-decouple</a></li>
+</ul>
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>This project is currently maintained by <a href="https://saurabh-kumar.com">Saurabh Kumar</a> and
+<a href="https://github.com/bbc2">Bertrand Bonnefoy-Claudet</a> and would not have been possible
+without the support of these <a href="https://github.com/theskumar/python-dotenv/graphs/contributors">awesome
+people</a>.</p>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+      
+        
+        <a href="changelog/" class="md-footer__link md-footer__link--next" aria-label="Next: Changelog" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Changelog
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": ["toc.follow", "navigation.sections"], "search": "assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.3a4b43e5.min.js"></script>
+      
+    
+  </body>
+</html>
