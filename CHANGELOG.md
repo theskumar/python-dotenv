@@ -5,17 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-**Added**
-
-*
+## [1.0.0]
 
 **Fixed**
 
-*
-
-
+* Drop support for python 3.7, add python 3.12-dev (#449 by [@theskumar])
+* Handle situations where the cwd does not exist. (#446 by [@jctanner])
 
 ## [0.21.1] - 2022-01-21
 
@@ -352,6 +347,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@greyli]: https://github.com/greyli
 [@harveer07]: https://github.com/@harveer07
 [@jadutter]: https://github.com/jadutter
+[@jctanner]: https://github.com/jctanner
 [@larsks]: https://github.com/@larsks
 [@lsmith77]: https://github.com/lsmith77
 [@mgorny]: https://github.com/mgorny
@@ -371,7 +367,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@zueve]: https://github.com/zueve
 
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v0.21.1...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v1.0.0
 [0.21.1]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v0.21.1
 [0.21.0]: https://github.com/theskumar/python-dotenv/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/theskumar/python-dotenv/compare/v0.19.2...v0.20.0
