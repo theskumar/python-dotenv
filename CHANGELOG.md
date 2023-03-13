@@ -12,7 +12,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * Drop support for python 3.7, add python 3.12-dev (#449 by [@theskumar])
 * Handle situations where the cwd does not exist. (#446 by [@jctanner])
 
-## [0.21.1] - 2022-01-21
+## [0.21.1] - 2023-01-21
 
 **Added**
 
