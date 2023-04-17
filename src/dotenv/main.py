@@ -291,7 +291,9 @@ def find_dotenv(
         frame = sys._getframe()
         current_file = __file__
 
-        while frame.f_code.co_filename == current_file:
+        while frame.f_code.co_filename == current_file or not os.path.exists(
+            frame.f_code.co_filename
+        ):
             assert frame.f_back is not None
             frame = frame.f_back
         frame_filename = frame.f_code.co_filename
