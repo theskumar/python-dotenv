@@ -40,7 +40,14 @@ def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'list'])
 
     assert result.exit_code == 2, result.output
-    assert "does not exist" in result.output
+    assert "Error opening env file" in result.output
+
+
+def test_list_not_a_file(cli):
+    result = cli.invoke(dotenv_cli, ['--file', '.', 'list'])
+
+    assert result.exit_code == 2, result.output
+    assert "Error opening env file" in result.output
 
 
 def test_list_no_file(cli):
@@ -64,11 +71,18 @@ def test_get_non_existent_value(cli, dotenv_file):
     assert (result.exit_code, result.output) == (1, "")
 
 
-def test_get_no_file(cli):
+def test_get_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'get', 'a'])
 
     assert result.exit_code == 2
-    assert "does not exist" in result.output
+    assert "Error opening env file" in result.output
+
+
+def test_get_not_a_file(cli):
+    result = cli.invoke(dotenv_cli, ['--file', '.', 'get', 'a'])
+
+    assert result.exit_code == 2
+    assert "Error opening env file" in result.output
 
 
 def test_unset_existing_value(cli, dotenv_file):
@@ -139,61 +153,61 @@ def test_set_no_file(cli):
 
 
 def test_get_default_path(tmp_path):
-    sh.cd(str(tmp_path))
-    with open(str(tmp_path / ".env"), "w") as f:
-        f.write("a=b")
+    with sh.pushd(str(tmp_path)):
+        with open(str(tmp_path / ".env"), "w") as f:
+            f.write("a=b")
 
-    result = sh.dotenv("get", "a")
+        result = sh.dotenv("get", "a")
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+    with sh.pushd(str(tmp_path)):
+        dotenv_file = str(tmp_path / ".env")
+        with open(dotenv_file, "w") as f:
+            f.write("a=b")
 
-    result = sh.dotenv("run", "printenv", "a")
+        result = sh.dotenv("run", "printenv", "a")
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run_with_existing_variable(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
-    env = dict(os.environ)
-    env.update({"LANG": "en_US.UTF-8", "a": "c"})
+    with sh.pushd(str(tmp_path)):
+        dotenv_file = str(tmp_path / ".env")
+        with open(dotenv_file, "w") as f:
+            f.write("a=b")
+        env = dict(os.environ)
+        env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-    result = sh.dotenv("run", "printenv", "a", _env=env)
+        result = sh.dotenv("run", "printenv", "a", _env=env)
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run_with_existing_variable_not_overridden(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
-    env = dict(os.environ)
-    env.update({"LANG": "en_US.UTF-8", "a": "c"})
+    with sh.pushd(str(tmp_path)):
+        dotenv_file = str(tmp_path / ".env")
+        with open(dotenv_file, "w") as f:
+            f.write("a=b")
+        env = dict(os.environ)
+        env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-    result = sh.dotenv("run", "--no-override", "printenv", "a", _env=env)
+        result = sh.dotenv("run", "--no-override", "printenv", "a", _env=env)
 
-    assert result == "c\n"
+        assert result == "c\n"
 
 
 def test_run_with_none_value(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b\nc")
+    with sh.pushd(str(tmp_path)):
+        dotenv_file = str(tmp_path / ".env")
+        with open(dotenv_file, "w") as f:
+            f.write("a=b\nc")
 
-    result = sh.dotenv("run", "printenv", "a")
+        result = sh.dotenv("run", "printenv", "a")
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run_with_other_env(dotenv_file):
