@@ -13,7 +13,7 @@ def test_ipython_existing_variable_no_override(tmp_path):
 
     dotenv_file = tmp_path / ".env"
     dotenv_file.write_text("a=b\n")
-    os.chdir(str(tmp_path))
+    os.chdir(tmp_path)
     os.environ["a"] = "c"
 
     ipshell = InteractiveShellEmbed()
@@ -29,7 +29,7 @@ def test_ipython_existing_variable_override(tmp_path):
 
     dotenv_file = tmp_path / ".env"
     dotenv_file.write_text("a=b\n")
-    os.chdir(str(tmp_path))
+    os.chdir(tmp_path)
     os.environ["a"] = "c"
 
     ipshell = InteractiveShellEmbed()
@@ -45,7 +45,7 @@ def test_ipython_new_variable(tmp_path):
 
     dotenv_file = tmp_path / ".env"
     dotenv_file.write_text("a=b\n")
-    os.chdir(str(tmp_path))
+    os.chdir(tmp_path)
 
     ipshell = InteractiveShellEmbed()
     ipshell.run_line_magic("load_ext", "dotenv")

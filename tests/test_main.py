@@ -12,14 +12,14 @@ import dotenv
 
 
 def test_set_key_no_file(tmp_path):
-    nx_file = str(tmp_path / "nx")
+    nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "warning"):
-        result = dotenv.set_key(nx_file, "foo", "bar")
+        result = dotenv.set_key(nx_path, "foo", "bar")
 
     assert result == (True, "foo", "bar")
-    assert os.path.exists(nx_file)
+    assert nx_path.exists()
 
 
 @pytest.mark.parametrize(
@@ -40,162 +40,151 @@ def test_set_key_no_file(tmp_path):
         ("a=b", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
     ],
 )
-def test_set_key(dotenv_file, before, key, value, expected, after):
+def test_set_key(dotenv_path, before, key, value, expected, after):
     logger = logging.getLogger("dotenv.main")
-    with open(dotenv_file, "w") as f:
-        f.write(before)
+    dotenv_path.write_text(before)
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.set_key(dotenv_file, key, value)
+        result = dotenv.set_key(dotenv_path, key, value)
 
     assert result == expected
-    assert open(dotenv_file, "r").read() == after
+    assert dotenv_path.read_text() == after
     mock_warning.assert_not_called()
 
 
-def test_set_key_encoding(dotenv_file):
+def test_set_key_encoding(dotenv_path):
     encoding = "latin-1"
 
-    result = dotenv.set_key(dotenv_file, "a", "é", encoding=encoding)
+    result = dotenv.set_key(dotenv_path, "a", "é", encoding=encoding)
 
     assert result == (True, "a", "é")
-    assert open(dotenv_file, "r", encoding=encoding).read() == "a='é'\n"
+    assert dotenv_path.read_text(encoding=encoding) == "a='é'\n"
 
 
-def test_set_key_permission_error(dotenv_file):
-    os.chmod(dotenv_file, 0o000)
+def test_set_key_permission_error(dotenv_path):
+    dotenv_path.chmod(0o000)
 
     with pytest.raises(Exception):
-        dotenv.set_key(dotenv_file, "a", "b")
+        dotenv.set_key(dotenv_path, "a", "b")
 
-    os.chmod(dotenv_file, 0o600)
-    with open(dotenv_file, "r") as fp:
-        assert fp.read() == ""
+    dotenv_path.chmod(0o600)
+    assert dotenv_path.read_text() == ""
 
 
 def test_get_key_no_file(tmp_path):
-    nx_file = str(tmp_path / "nx")
+    nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info, \
             mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.get_key(nx_file, "foo")
+        result = dotenv.get_key(nx_path, "foo")
 
     assert result is None
     mock_info.assert_has_calls(
         calls=[
-            mock.call("Python-dotenv could not find configuration file %s.", nx_file)
+            mock.call("Python-dotenv could not find configuration file %s.", nx_path)
         ],
     )
     mock_warning.assert_has_calls(
         calls=[
-            mock.call("Key %s not found in %s.", "foo", nx_file)
+            mock.call("Key %s not found in %s.", "foo", nx_path)
         ],
     )
 
 
-def test_get_key_not_found(dotenv_file):
+def test_get_key_not_found(dotenv_path):
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.get_key(dotenv_file, "foo")
+        result = dotenv.get_key(dotenv_path, "foo")
 
     assert result is None
-    mock_warning.assert_called_once_with("Key %s not found in %s.", "foo", dotenv_file)
+    mock_warning.assert_called_once_with("Key %s not found in %s.", "foo", dotenv_path)
 
 
-def test_get_key_ok(dotenv_file):
+def test_get_key_ok(dotenv_path):
     logger = logging.getLogger("dotenv.main")
-    with open(dotenv_file, "w") as f:
-        f.write("foo=bar")
+    dotenv_path.write_text("foo=bar")
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.get_key(dotenv_file, "foo")
+        result = dotenv.get_key(dotenv_path, "foo")
 
     assert result == "bar"
     mock_warning.assert_not_called()
 
 
-def test_get_key_encoding(dotenv_file):
+def test_get_key_encoding(dotenv_path):
     encoding = "latin-1"
-    with open(dotenv_file, "w", encoding=encoding) as f:
-        f.write("é=è")
+    dotenv_path.write_text("é=è", encoding=encoding)
 
-    result = dotenv.get_key(dotenv_file, "é", encoding=encoding)
+    result = dotenv.get_key(dotenv_path, "é", encoding=encoding)
 
     assert result == "è"
 
 
-def test_get_key_none(dotenv_file):
+def test_get_key_none(dotenv_path):
     logger = logging.getLogger("dotenv.main")
-    with open(dotenv_file, "w") as f:
-        f.write("foo")
+    dotenv_path.write_text("foo")
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.get_key(dotenv_file, "foo")
+        result = dotenv.get_key(dotenv_path, "foo")
 
     assert result is None
     mock_warning.assert_not_called()
 
 
-def test_unset_with_value(dotenv_file):
+def test_unset_with_value(dotenv_path):
     logger = logging.getLogger("dotenv.main")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b\nc=d")
+    dotenv_path.write_text("a=b\nc=d")
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.unset_key(dotenv_file, "a")
+        result = dotenv.unset_key(dotenv_path, "a")
 
     assert result == (True, "a")
-    with open(dotenv_file, "r") as f:
-        assert f.read() == "c=d"
+    assert dotenv_path.read_text() == "c=d"
     mock_warning.assert_not_called()
 
 
-def test_unset_no_value(dotenv_file):
+def test_unset_no_value(dotenv_path):
     logger = logging.getLogger("dotenv.main")
-    with open(dotenv_file, "w") as f:
-        f.write("foo")
+    dotenv_path.write_text("foo")
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.unset_key(dotenv_file, "foo")
+        result = dotenv.unset_key(dotenv_path, "foo")
 
     assert result == (True, "foo")
-    with open(dotenv_file, "r") as f:
-        assert f.read() == ""
+    assert dotenv_path.read_text() == ""
     mock_warning.assert_not_called()
 
 
-def test_unset_encoding(dotenv_file):
+def test_unset_encoding(dotenv_path):
     encoding = "latin-1"
-    with open(dotenv_file, "w", encoding=encoding) as f:
-        f.write("é=x")
+    dotenv_path.write_text("é=x", encoding=encoding)
 
-    result = dotenv.unset_key(dotenv_file, "é", encoding=encoding)
+    result = dotenv.unset_key(dotenv_path, "é", encoding=encoding)
 
     assert result == (True, "é")
-    with open(dotenv_file, "r", encoding=encoding) as f:
-        assert f.read() == ""
+    assert dotenv_path.read_text(encoding=encoding) == ""
 
 
-def test_set_key_unauthorized_file(dotenv_file):
-    os.chmod(dotenv_file, 0o000)
+def test_set_key_unauthorized_file(dotenv_path):
+    dotenv_path.chmod(0o000)
 
     with pytest.raises(PermissionError):
-        dotenv.set_key(dotenv_file, "a", "x")
+        dotenv.set_key(dotenv_path, "a", "x")
 
 
 def test_unset_non_existent_file(tmp_path):
-    nx_file = str(tmp_path / "nx")
+    nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.unset_key(nx_file, "foo")
+        result = dotenv.unset_key(nx_path, "foo")
 
     assert result == (None, "foo")
     mock_warning.assert_called_once_with(
         "Can't delete from %s - it doesn't exist.",
-        nx_file,
+        nx_path,
     )
 
 
@@ -213,27 +202,22 @@ def prepare_file_hierarchy(path):
     Then try to automatically `find_dotenv` starting in `child4`
     """
 
-    curr_dir = path
-    dirs = []
-    for f in ['child1', 'child2', 'child3', 'child4']:
-        curr_dir /= f
-        dirs.append(curr_dir)
-        curr_dir.mkdir()
-
-    return (dirs[0], dirs[-1])
+    leaf = path / "child1" / "child2" / "child3" / "child4"
+    leaf.mkdir(parents=True, exist_ok=True)
+    return leaf
 
 
 def test_find_dotenv_no_file_raise(tmp_path):
-    (root, leaf) = prepare_file_hierarchy(tmp_path)
-    os.chdir(str(leaf))
+    leaf = prepare_file_hierarchy(tmp_path)
+    os.chdir(leaf)
 
     with pytest.raises(IOError):
         dotenv.find_dotenv(raise_error_if_not_found=True, usecwd=True)
 
 
 def test_find_dotenv_no_file_no_raise(tmp_path):
-    (root, leaf) = prepare_file_hierarchy(tmp_path)
-    os.chdir(str(leaf))
+    leaf = prepare_file_hierarchy(tmp_path)
+    os.chdir(leaf)
 
     result = dotenv.find_dotenv(usecwd=True)
 
@@ -241,22 +225,21 @@ def test_find_dotenv_no_file_no_raise(tmp_path):
 
 
 def test_find_dotenv_found(tmp_path):
-    (root, leaf) = prepare_file_hierarchy(tmp_path)
-    os.chdir(str(leaf))
-    dotenv_file = root / ".env"
-    dotenv_file.write_bytes(b"TEST=test\n")
+    leaf = prepare_file_hierarchy(tmp_path)
+    os.chdir(leaf)
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_bytes(b"TEST=test\n")
 
     result = dotenv.find_dotenv(usecwd=True)
 
-    assert result == str(dotenv_file)
+    assert result == str(dotenv_path)
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
-def test_load_dotenv_existing_file(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_load_dotenv_existing_file(dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    result = dotenv.load_dotenv(dotenv_file)
+    result = dotenv.load_dotenv(dotenv_path)
 
     assert result is True
     assert os.environ == {"a": "b"}
@@ -273,44 +256,40 @@ def test_load_dotenv_no_file_verbose():
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
-def test_load_dotenv_existing_variable_no_override(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_load_dotenv_existing_variable_no_override(dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    result = dotenv.load_dotenv(dotenv_file, override=False)
+    result = dotenv.load_dotenv(dotenv_path, override=False)
 
     assert result is True
     assert os.environ == {"a": "c"}
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
-def test_load_dotenv_existing_variable_override(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_load_dotenv_existing_variable_override(dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    result = dotenv.load_dotenv(dotenv_file, override=True)
+    result = dotenv.load_dotenv(dotenv_path, override=True)
 
     assert result is True
     assert os.environ == {"a": "b"}
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
-def test_load_dotenv_redefine_var_used_in_file_no_override(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write('a=b\nd="${a}"')
+def test_load_dotenv_redefine_var_used_in_file_no_override(dotenv_path):
+    dotenv_path.write_text('a=b\nd="${a}"')
 
-    result = dotenv.load_dotenv(dotenv_file)
+    result = dotenv.load_dotenv(dotenv_path)
 
     assert result is True
     assert os.environ == {"a": "c", "d": "c"}
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
-def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write('a=b\nd="${a}"')
+def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_path):
+    dotenv_path.write_text('a=b\nd="${a}"')
 
-    result = dotenv.load_dotenv(dotenv_file, override=True)
+    result = dotenv.load_dotenv(dotenv_path, override=True)
 
     assert result is True
     assert os.environ == {"a": "b", "d": "b"}
@@ -327,11 +306,10 @@ def test_load_dotenv_string_io_utf_8():
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
-def test_load_dotenv_file_stream(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_load_dotenv_file_stream(dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    with open(dotenv_file, "r") as f:
+    with dotenv_path.open() as f:
         result = dotenv.load_dotenv(stream=f)
 
     assert result is True
@@ -349,18 +327,17 @@ def test_load_dotenv_in_current_dir(tmp_path):
         dotenv.load_dotenv(verbose=True)
         print(os.environ['a'])
     """))
-    os.chdir(str(tmp_path))
+    os.chdir(tmp_path)
 
     result = sh.Command(sys.executable)(code_path)
 
     assert result == 'b\n'
 
 
-def test_dotenv_values_file(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_dotenv_values_file(dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    result = dotenv.dotenv_values(dotenv_file)
+    result = dotenv.dotenv_values(dotenv_path)
 
     assert result == {"a": "b"}
 
@@ -415,11 +392,10 @@ def test_dotenv_values_string_io(env, string, interpolate, expected):
         assert result == expected
 
 
-def test_dotenv_values_file_stream(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_dotenv_values_file_stream(dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    with open(dotenv_file, "r") as f:
+    with dotenv_path.open() as f:
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
