@@ -5,7 +5,7 @@
 
 Python-dotenv reads key-value pairs from a `.env` file and can set them as environment
 variables. It helps in the development of applications following the
-[12-factor](http://12factor.net/) principles.
+[12-factor](https://12factor.net/) principles.
 
 - [Getting Started](#getting-started)
 - [Other Use Cases](#other-use-cases)
@@ -243,5 +243,5 @@ people](https://github.com/theskumar/python-dotenv/graphs/contributors).
 [build_status_badge]: https://github.com/theskumar/python-dotenv/actions/workflows/test.yml/badge.svg
 [build_status_link]: https://github.com/theskumar/python-dotenv/actions/workflows/test.yml
 [pypi_badge]: https://badge.fury.io/py/python-dotenv.svg
-[pypi_link]: http://badge.fury.io/py/python-dotenv
+[pypi_link]: https://badge.fury.io/py/python-dotenv
 [python_streams]: https://docs.python.org/3/library/io.html
