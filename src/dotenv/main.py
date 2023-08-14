@@ -58,7 +58,7 @@ class DotEnv:
             yield self.stream
         else:
             if self.verbose:
-                logger.info(
+                logger.warning(
                     "Python-dotenv could not find configuration file %s.",
                     self.dotenv_path or '.env',
                 )
