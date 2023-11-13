@@ -1,6 +1,6 @@
 import pytest
 
-from dotenv.variables import Literal, Variable, parse_variables
+from dotenv.variables import Literal, Variable, Action, parse_variables
 
 
 @pytest.mark.parametrize(
@@ -8,22 +8,36 @@ from dotenv.variables import Literal, Variable, parse_variables
     [
         ("", []),
         ("a", [Literal(value="a")]),
-        ("${a}", [Variable(name="a", default=None)]),
-        ("${a:-b}", [Variable(name="a", default="b")]),
+        ("${a}", [Variable(name="a", action=None)]),
+
+        ("${a:-b}", [Variable(name="a", action=Action(":-","b"))]),
+        ("${a-b}", [Variable(name="a", action=Action("-","b"))]),
+
+        ("${a:+b}", [Variable(name="a", action=Action(":+","b"))]),
+        ("${a+b}", [Variable(name="a", action=Action("+","b"))]),
+
+        ("${a:?b}", [Variable(name="a", action=Action(":?","b"))]),
+        ("${a?b}", [Variable(name="a", action=Action("?","b"))]),
+        ("${a??b}", [Variable(name="a", action=Action("?","?b"))]),
+
+        # Unsupported
+        ("${a:b}", [Literal(value="${a:b}")]),
+        ("${a!b}", [Variable(name="a!b", action=None)]),
+
         (
             "${a}${b}",
             [
-                Variable(name="a", default=None),
-                Variable(name="b", default=None),
+                Variable(name="a", action=None),
+                Variable(name="b", action=None),
             ],
         ),
         (
             "a${b}c${d}e",
             [
                 Literal(value="a"),
-                Variable(name="b", default=None),
+                Variable(name="b", action=None),
                 Literal(value="c"),
-                Variable(name="d", default=None),
+                Variable(name="d", action=None),
                 Literal(value="e"),
             ],
         ),
