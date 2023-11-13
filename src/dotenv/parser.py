@@ -33,6 +33,7 @@ class Original(NamedTuple):
 class Binding(NamedTuple):
     key: Optional[str]
     value: Optional[str]
+    quote: Optional[str]
     original: Original
     error: bool
 
@@ -118,6 +119,11 @@ def parse_unquoted_value(reader: Reader) -> str:
     return re.sub(r"\s+#.*", "", part).rstrip()
 
 
+def peek_quote(reader: Reader) -> Optional[str]:
+    char = reader.peek(1)
+    return char if  char in [u'"', u"'"] else None
+
+
 def parse_value(reader: Reader) -> str:
     char = reader.peek(1)
     if char == u"'":
@@ -140,6 +146,7 @@ def parse_binding(reader: Reader) -> Binding:
             return Binding(
                 key=None,
                 value=None,
+                quote=None,
                 original=reader.get_marked(),
                 error=False,
             )
@@ -148,14 +155,16 @@ def parse_binding(reader: Reader) -> Binding:
         reader.read_regex(_whitespace)
         if reader.peek(1) == "=":
             reader.read_regex(_equal_sign)
+            quote: Optional[str] = peek_quote(reader)
             value: Optional[str] = parse_value(reader)
         else:
-            value = None
+            value = quote = None
         reader.read_regex(_comment)
         reader.read_regex(_end_of_line)
         return Binding(
             key=key,
             value=value,
+            quote=quote,
             original=reader.get_marked(),
             error=False,
         )
@@ -164,6 +173,7 @@ def parse_binding(reader: Reader) -> Binding:
         return Binding(
             key=None,
             value=None,
+            quote=None,
             original=reader.get_marked(),
             error=True,
         )

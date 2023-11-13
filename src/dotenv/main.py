@@ -39,6 +39,7 @@ class DotEnv:
         verbose: bool = False,
         encoding: Optional[str] = None,
         interpolate: bool = True,
+        single_quotes_expand: bool = True,
         override: bool = True,
     ) -> None:
         self.dotenv_path: Optional[StrPath] = dotenv_path
@@ -47,6 +48,7 @@ class DotEnv:
         self.verbose: bool = verbose
         self.encoding: Optional[str] = encoding
         self.interpolate: bool = interpolate
+        self.single_quotes_expand: bool = single_quotes_expand
         self.override: bool = override
 
     @contextmanager
@@ -69,20 +71,30 @@ class DotEnv:
         if self._dict:
             return self._dict
 
-        raw_values = self.parse()
-
         if self.interpolate:
-            self._dict = OrderedDict(resolve_variables(raw_values, override=self.override))
+            bindings = self.parse_to_bindings()
+            self._dict = OrderedDict(
+                resolve_variables(
+                    bindings,
+                    override=self.override,
+                    single_quotes_expand=self.single_quotes_expand,
+                )
+            )
         else:
+            raw_values = self.parse()
             self._dict = OrderedDict(raw_values)
 
         return self._dict
 
-    def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
+    def parse_to_bindings(self) -> Iterator[Binding]:
         with self._get_stream() as stream:
             for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
                 if mapping.key is not None:
-                    yield mapping.key, mapping.value
+                    yield mapping
+
+    def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
+        for mapping in self.parse_to_bindings():
+            yield mapping.key, mapping.value
 
     def set_as_environment_variables(self) -> bool:
         """
@@ -225,14 +237,19 @@ def unset_key(
 
 
 def resolve_variables(
-    values: Iterable[Tuple[str, Optional[str]]],
+    bindings: Iterable[Binding],
     override: bool,
+    single_quotes_expand: bool,
 ) -> Mapping[str, Optional[str]]:
     new_values: Dict[str, Optional[str]] = {}
 
-    for (name, value) in values:
+    for binding in bindings:
+        name = binding.key
+        value = binding.value
         if value is None:
             result = None
+        elif not single_quotes_expand and binding.quote == "'":
+            result = value
         else:
             atoms = parse_variables(value)
             env: Dict[str, Optional[str]] = {}
@@ -316,6 +333,7 @@ def load_dotenv(
     verbose: bool = False,
     override: bool = False,
     interpolate: bool = True,
+    single_quotes_expand: bool = True,
     encoding: Optional[str] = "utf-8",
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
@@ -342,6 +360,7 @@ def load_dotenv(
         stream=stream,
         verbose=verbose,
         interpolate=interpolate,
+        single_quotes_expand=single_quotes_expand,
         override=override,
         encoding=encoding,
     )
@@ -353,6 +372,7 @@ def dotenv_values(
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
     interpolate: bool = True,
+    single_quotes_expand: bool = True,
     encoding: Optional[str] = "utf-8",
 ) -> Dict[str, Optional[str]]:
     """
@@ -379,6 +399,7 @@ def dotenv_values(
         stream=stream,
         verbose=verbose,
         interpolate=interpolate,
+        single_quotes_expand=single_quotes_expand,
         override=True,
         encoding=encoding,
     ).dict()
