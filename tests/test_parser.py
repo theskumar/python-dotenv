@@ -129,7 +129,7 @@ from dotenv.parser import Binding, Original, parse_stream
     (
         u'a="\nb=c',
         [
-            Binding(key=None, value=None, quote='"', original=Original(string=u'a="\n', line=1), error=True),
+            Binding(key=None, value=None, quote=None, original=Original(string=u'a="\n', line=1), error=True),
             Binding(key=u"b", value=u"c", quote=None, original=Original(string=u"b=c", line=2), error=False),
         ]
     ),
