@@ -12,7 +12,7 @@ os.environ["EMPTY"] = ""
 
 
 def test(str):
-    print(str, dotenv.dotenv_values(stream=io.StringIO(str)))
+    print(str, dotenv.dotenv_values(stream=io.StringIO(str), single_quotes_expand=False))
 
 
 test("FOO=bar")
