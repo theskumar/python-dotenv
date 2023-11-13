@@ -104,7 +104,8 @@ class DotEnv:
             return False
 
         for k, v in self.dict().items():
-            if k in os.environ and not self.override:
+            key_present = k in os.environ or (os.name == 'nt' and k.upper() in os.environ)
+            if key_present and not self.override:
                 continue
             if v is not None:
                 os.environ[k] = v

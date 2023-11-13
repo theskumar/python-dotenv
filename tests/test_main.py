@@ -6,9 +6,21 @@ import textwrap
 from unittest import mock
 
 import pytest
-import sh
+try:
+    import sh
+    with_sh=True
+except ImportError:
+    with_sh=False
 
 import dotenv
+
+
+def as_env(d: dict):
+    if os.name == 'nt':
+        # Environment variables are always uppercase for Python on Windows
+        return {k.upper():v for k,v in d.items()}
+    else:
+        return d
 
 
 def test_set_key_no_file(tmp_path):
@@ -242,7 +254,7 @@ def test_load_dotenv_existing_file(dotenv_path):
     result = dotenv.load_dotenv(dotenv_path)
 
     assert result is True
-    assert os.environ == {"a": "b"}
+    assert os.environ == as_env({"a": "b"})
 
 
 def test_load_dotenv_no_file_verbose():
@@ -262,7 +274,7 @@ def test_load_dotenv_existing_variable_no_override(dotenv_path):
     result = dotenv.load_dotenv(dotenv_path, override=False)
 
     assert result is True
-    assert os.environ == {"a": "c"}
+    assert os.environ == as_env({"a": "c"})
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
@@ -272,7 +284,7 @@ def test_load_dotenv_existing_variable_override(dotenv_path):
     result = dotenv.load_dotenv(dotenv_path, override=True)
 
     assert result is True
-    assert os.environ == {"a": "b"}
+    assert os.environ == as_env({"a": "b"})
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
@@ -282,7 +294,12 @@ def test_load_dotenv_redefine_var_used_in_file_no_override(dotenv_path):
     result = dotenv.load_dotenv(dotenv_path)
 
     assert result is True
-    assert os.environ == {"a": "c", "d": "c"}
+    if os.name == 'nt':
+        # Variable is not overwritten, but variable expansion
+        # uses the lowercase variable that was just defined in the file.
+        assert os.environ == as_env({"a": "c", "d": "b"})
+    else:
+        assert os.environ == as_env({"a": "c", "d": "c"})
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
@@ -292,7 +309,7 @@ def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_path):
     result = dotenv.load_dotenv(dotenv_path, override=True)
 
     assert result is True
-    assert os.environ == {"a": "b", "d": "b"}
+    assert os.environ == as_env({"a": "b", "d": "b"})
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
@@ -302,7 +319,7 @@ def test_load_dotenv_string_io_utf_8():
     result = dotenv.load_dotenv(stream=stream)
 
     assert result is True
-    assert os.environ == {"a": "à"}
+    assert os.environ == as_env({"a": "à"})
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
@@ -313,9 +330,9 @@ def test_load_dotenv_file_stream(dotenv_path):
         result = dotenv.load_dotenv(stream=f)
 
     assert result is True
-    assert os.environ == {"a": "b"}
+    assert os.environ == as_env({"a": "b"})
 
-
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_load_dotenv_in_current_dir(tmp_path):
     dotenv_path = tmp_path / '.env'
     dotenv_path.write_bytes(b'a=b')
@@ -345,13 +362,15 @@ def test_dotenv_values_file(dotenv_path):
 @pytest.mark.parametrize(
     "env,string,interpolate,expected",
     [
+        # Use uppercase when setting up the env to be compatible with Windows
+
         # Defined in environment, with and without interpolation
-        ({"b": "c"}, "a=$b", False, {"a": "$b"}),
-        ({"b": "c"}, "a=$b", True, {"a": "$b"}),
-        ({"b": "c"}, "a=${b}", False, {"a": "${b}"}),
-        ({"b": "c"}, "a=${b}", True, {"a": "c"}),
-        ({"b": "c"}, "a=${b:-d}", False, {"a": "${b:-d}"}),
-        ({"b": "c"}, "a=${b:-d}", True, {"a": "c"}),
+        ({"B": "c"}, "a=$B", False, {"a": "$B"}),
+        ({"B": "c"}, "a=$B", True, {"a": "$B"}),
+        ({"B": "c"}, "a=${B}", False, {"a": "${B}"}),
+        ({"B": "c"}, "a=${B}", True, {"a": "c"}),
+        ({"B": "c"}, "a=${B:-d}", False, {"a": "${B:-d}"}),
+        ({"B": "c"}, "a=${B:-d}", True, {"a": "c"}),
 
         # Defined in file
         ({}, "b=c\na=${b}", True, {"a": "c", "b": "c"}),
@@ -361,23 +380,23 @@ def test_dotenv_values_file(dotenv_path):
         ({}, "a=${b:-d}", True, {"a": "d"}),
 
         # With quotes
-        ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),
-        ({"b": "c"}, "a='${b}'", True, {"a": "c"}),
+        ({"B": "c"}, 'a="${B}"', True, {"a": "c"}),
+        ({"B": "c"}, "a='${B}'", True, {"a": "c"}),
 
         # With surrounding text
-        ({"b": "c"}, "a=x${b}y", True, {"a": "xcy"}),
+        ({"B": "c"}, "a=x${B}y", True, {"a": "xcy"}),
 
         # Self-referential
-        ({"a": "b"}, "a=${a}", True, {"a": "b"}),
+        ({"A": "b"}, "A=${A}", True, {"A": "b"}),
         ({}, "a=${a}", True, {"a": ""}),
-        ({"a": "b"}, "a=${a:-c}", True, {"a": "b"}),
+        ({"A": "b"}, "A=${A:-c}", True, {"A": "b"}),
         ({}, "a=${a:-c}", True, {"a": "c"}),
 
         # Reused
-        ({"b": "c"}, "a=${b}${b}", True, {"a": "cc"}),
+        ({"B": "c"}, "a=${B}${B}", True, {"a": "cc"}),
 
         # Re-defined and used in file
-        ({"b": "c"}, "b=d\na=${b}", True, {"a": "d", "b": "d"}),
+        ({"B": "c"}, "B=d\na=${B}", True, {"a": "d", "B": "d"}),
         ({}, "a=b\na=c\nd=${a}", True, {"a": "c", "d": "c"}),
         ({}, "a=b\nc=${a}\nd=e\nc=${d}", True, {"a": "b", "c": "e", "d": "e"}),
     ],

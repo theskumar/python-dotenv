@@ -1,5 +1,9 @@
 import os
-import sh
+try:
+    import sh
+    with_sh=True
+except ImportError:
+    with_sh=False
 from pathlib import Path
 from typing import Optional
 
@@ -151,6 +155,7 @@ def test_set_no_file(cli):
     assert "Missing argument" in result.output
 
 
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_get_default_path(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -160,6 +165,7 @@ def test_get_default_path(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_run(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -169,6 +175,7 @@ def test_run(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_run_with_existing_variable(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -180,6 +187,7 @@ def test_run_with_existing_variable(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_run_with_existing_variable_not_overridden(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -191,6 +199,7 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
         assert result == "c\n"
 
 
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_run_with_none_value(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b\nc")
@@ -200,6 +209,7 @@ def test_run_with_none_value(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_run_with_other_env(dotenv_path):
     dotenv_path.write_text("a=b")
 
