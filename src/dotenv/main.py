@@ -94,6 +94,7 @@ class DotEnv:
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         for mapping in self.parse_to_bindings():
+            assert mapping.key is not None
             yield mapping.key, mapping.value
 
     def set_as_environment_variables(self) -> bool:
@@ -246,6 +247,8 @@ def resolve_variables(
 
     for binding in bindings:
         name = binding.key
+        if name is None:
+            continue
         value = binding.value
         if value is None:
             result = None
