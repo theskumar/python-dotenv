@@ -219,6 +219,10 @@ defined in the following list:
 - Default value, if provided.
 - Empty string.
 
+Note that on Windows environment variable names in `os.environ` are
+[always uppercase](https://docs.python.org/3/library/os.html#os.environ)!
+This may lead to some unexpected expansions if your variables are not all uppercase.
+
 ## Related Projects
 
 -   [Honcho](https://github.com/nickstenning/honcho) - For managing
