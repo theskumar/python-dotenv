@@ -465,8 +465,29 @@ def test_required_variable_throws(string, message):
         ("XX=$TEST", "$TEST"),
         ("XX=${TEST}", "tt"),
         ("XX=\"${TEST}\"", "tt"),
+        ("XX='${TEST}'", "tt"),
         ("XX='$TEST'", "$TEST"),
+        ("XX='\\$\\{TEST\\}'", "\\$\\{TEST\\}"),
         ("XX=\\$\\{TEST\\}", "\\$\\{TEST\\}"),
+        ("XX=\"\\$\\{TEST\\}\"", "\\$\\{TEST\\}"),
+    ],
+)
+def test_document_expansions(string, expected_xx):
+    test_env = {"TEST": "tt"}
+    with mock.patch.dict(os.environ, test_env, clear=True):
+        stream = io.StringIO(string)
+        stream.seek(0)
+
+        result = dotenv.dotenv_values(stream=stream, interpolate=True)
+
+        assert result["XX"] == expected_xx
+
+
+@pytest.mark.parametrize(
+    "string,expected_xx",
+    [
+        ("XX=${TEST}", "tt"),
+        ("XX=\"${TEST}\"", "tt"),
         ("XX='${TEST}'", "${TEST}"),
     ],
 )
