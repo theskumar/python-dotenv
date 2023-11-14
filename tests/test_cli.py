@@ -1,13 +1,13 @@
 import os
-try:
-    import sh
-    with_sh=True
-except ImportError:
-    with_sh=False
 from pathlib import Path
 from typing import Optional
 
 import pytest
+try:
+    import sh
+    with_sh = True
+except ImportError:
+    with_sh = False
 
 import dotenv
 from dotenv.cli import cli as dotenv_cli

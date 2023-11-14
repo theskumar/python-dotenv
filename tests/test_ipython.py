@@ -3,16 +3,10 @@ from unittest import mock
 
 import pytest
 
+from .utils import as_env
+
 
 pytest.importorskip("IPython")
-
-
-def as_env(d: dict):
-    if os.name == 'nt':
-        # Environment variables are always uppercase for Python on Windows
-        return {k.upper():v for k,v in d.items()}
-    else:
-        return d
 
 
 @mock.patch.dict(os.environ, {}, clear=True)

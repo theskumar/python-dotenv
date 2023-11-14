@@ -1,10 +1,17 @@
 import os
 import sys
-import sh
 import textwrap
 from typing import List
 from unittest import mock
 from zipfile import ZipFile
+
+import pytest
+
+try:
+    import sh
+    with_sh = True
+except ImportError:
+    with_sh = False
 
 
 def walk_to_root(path: str):
@@ -61,6 +68,7 @@ def test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file(tmp_path):
     import child1.child2.test  # noqa
 
 
+@pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_load_dotenv_outside_zip_file_when_called_in_zipfile(tmp_path):
     zip_file_path = setup_zipfile(
         tmp_path,

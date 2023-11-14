@@ -6,21 +6,16 @@ import textwrap
 from unittest import mock
 
 import pytest
+
 try:
     import sh
-    with_sh=True
+    with_sh = True
 except ImportError:
-    with_sh=False
+    with_sh = False
+
+from .utils import as_env
 
 import dotenv
-
-
-def as_env(d: dict):
-    if os.name == 'nt':
-        # Environment variables are always uppercase for Python on Windows
-        return {k.upper():v for k,v in d.items()}
-    else:
-        return d
 
 
 def test_set_key_no_file(tmp_path):
@@ -332,6 +327,7 @@ def test_load_dotenv_file_stream(dotenv_path):
     assert result is True
     assert os.environ == as_env({"a": "b"})
 
+
 @pytest.mark.skipif(not with_sh, reason="sh module is not available")
 def test_load_dotenv_in_current_dir(tmp_path):
     dotenv_path = tmp_path / '.env'
@@ -409,6 +405,80 @@ def test_dotenv_values_string_io(env, string, interpolate, expected):
         result = dotenv.dotenv_values(stream=stream, interpolate=interpolate)
 
         assert result == expected
+
+
+@pytest.mark.parametrize(
+    "string,expected_xx",
+    [
+        ("XX=${NOT_DEFINED-ok}", "ok"),
+        ("XX=${NOT_DEFINED:-ok}", "ok"),
+        ("XX=${EMPTY-ok}", ""),
+        ("XX=${EMPTY:-ok}", "ok"),
+        ("XX=${TEST-ok}", "tt"),
+        ("XX=${TEST:-ok}",  "tt"),
+
+        ("XX=${NOT_DEFINED+ok}", ""),
+        ("XX=${NOT_DEFINED:+ok}", ""),
+        ("XX=${EMPTY+ok}",  "ok"),
+        ("XX=${EMPTY:+ok}",  ""),
+        ("XX=${TEST+ok}", "ok"),
+        ("XX=${TEST:+ok}", "ok"),
+
+        ("XX=${EMPTY?no throw}", ""),
+        ("XX=${TEST?no throw}",  "tt"),
+        ("XX=${TEST:?no throw}",  "tt"),
+    ],
+)
+def test_variable_expansions(string, expected_xx):
+    test_env = {"TEST": "tt", "EMPTY": "", }
+    with mock.patch.dict(os.environ, test_env, clear=True):
+        stream = io.StringIO(string)
+        stream.seek(0)
+
+        result = dotenv.dotenv_values(stream=stream, interpolate=True)
+
+        assert result["XX"] == expected_xx
+
+
+@pytest.mark.parametrize(
+    "string,message",
+    [
+        ("XX=${EMPTY:?throw}", "EMPTY: throw"),
+        ("XX=${NOT_DEFINED:?throw}", "NOT_DEFINED: throw"),
+        ("XX=${NOT_DEFINED?throw}", "NOT_DEFINED: throw"),
+    ],
+)
+def test_required_variable_throws(string, message):
+    test_env = {"TEST": "tt", "EMPTY": "", }
+    with mock.patch.dict(os.environ, test_env, clear=True):
+        stream = io.StringIO(string)
+        stream.seek(0)
+
+        with pytest.raises(LookupError, match=message):
+            dotenv.dotenv_values(stream=stream, interpolate=True)
+
+
+@pytest.mark.parametrize(
+    "string,expected_xx",
+    [
+        ("XX=TEST", "TEST"),
+        ("XX=$TEST", "$TEST"),
+        ("XX=${TEST}", "tt"),
+        ("XX=\"${TEST}\"", "tt"),
+        ("XX='$TEST'", "$TEST"),
+        ("XX=\\$\\{TEST\\}", "\\$\\{TEST\\}"),
+        ("XX='${TEST}'", "${TEST}"),
+    ],
+)
+def test_single_quote_expansions(string, expected_xx):
+    test_env = {"TEST": "tt"}
+    with mock.patch.dict(os.environ, test_env, clear=True):
+        stream = io.StringIO(string)
+        stream.seek(0)
+
+        result = dotenv.dotenv_values(stream=stream, interpolate=True, single_quotes_expand=False)
+
+        assert result["XX"] == expected_xx
 
 
 def test_dotenv_values_file_stream(dotenv_path):

@@ -121,7 +121,7 @@ def parse_unquoted_value(reader: Reader) -> str:
 
 def peek_quote(reader: Reader) -> Optional[str]:
     char = reader.peek(1)
-    return char if  char in [u'"', u"'"] else None
+    return char if char in [u'"', u"'"] else None
 
 
 def parse_value(reader: Reader) -> str:

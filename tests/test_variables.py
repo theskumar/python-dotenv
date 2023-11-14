@@ -10,15 +10,15 @@ from dotenv.variables import Literal, Variable, Action, parse_variables
         ("a", [Literal(value="a")]),
         ("${a}", [Variable(name="a", action=None)]),
 
-        ("${a:-b}", [Variable(name="a", action=Action(":-","b"))]),
-        ("${a-b}", [Variable(name="a", action=Action("-","b"))]),
+        ("${a:-b}", [Variable(name="a", action=Action(":-", "b"))]),
+        ("${a-b}", [Variable(name="a", action=Action("-", "b"))]),
 
-        ("${a:+b}", [Variable(name="a", action=Action(":+","b"))]),
-        ("${a+b}", [Variable(name="a", action=Action("+","b"))]),
+        ("${a:+b}", [Variable(name="a", action=Action(":+", "b"))]),
+        ("${a+b}", [Variable(name="a", action=Action("+", "b"))]),
 
-        ("${a:?b}", [Variable(name="a", action=Action(":?","b"))]),
-        ("${a?b}", [Variable(name="a", action=Action("?","b"))]),
-        ("${a??b}", [Variable(name="a", action=Action("?","?b"))]),
+        ("${a:?b}", [Variable(name="a", action=Action(":?", "b"))]),
+        ("${a?b}", [Variable(name="a", action=Action("?", "b"))]),
+        ("${a??b}", [Variable(name="a", action=Action("?", "?b"))]),
 
         # Unsupported
         ("${a:b}", [Literal(value="${a:b}")]),
