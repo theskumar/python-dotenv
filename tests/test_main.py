@@ -356,6 +356,62 @@ def test_dotenv_values_file(dotenv_path):
 
 
 @pytest.mark.parametrize(
+    "env,variables,override,expected",
+    [
+        ({"B": "c"}, {"a": "$B"}.items(), True, {"a": "$B"}),
+        ({"B": "c"}, {"a": "${B}"}.items(), False, {"a": "c"}),
+
+        ({"B": "c"}, [("B", "d"), ("a", "${B}")], False, {"a": "c", "B": "d"}),
+        ({"B": "c"}, [("B", "d"), ("a", "${B}")], True, {"a": "d", "B": "d"}),
+
+        ({"B": "c"}, [("B", "${X:-d}"), ("a", "${B}")], True, {"a": "d", "B": "d"}),
+
+        ({"B": "c"}, {"a": "x${B}y"}.items(), True, {"a": "xcy"}),
+
+        # Unfortunate sequence
+        ({"B": "c"}, [("C", "${B}"), ("B", "${A}"), ("A", "1")], True, {"C": "c", "B": "", "A": "1"}),
+        ({"B": "c"}, [("C", "${B}"), ("B", "${A}"), ("A", "1")], False, {"C": "c", "B": "", "A": "1"}),
+
+        ({"B": "c"}, [("B", "x"), ("B", "${B}"), ("B", "${B}")], True, {"B": "x"}),
+        ({"B": "c"}, [("B", "x"), ("B", "${B}"), ("B", "${B}")], False, {"B": "c"}),
+        ({"B": "c"}, [("B", "x"), ("B", "${B}"), ("B", "y")], False, {"B": "y"}),
+    ],
+)
+def test_resolve_variables(env, variables, override, expected):
+    with mock.patch.dict(os.environ, env, clear=True):
+        result = dotenv.main.resolve_variables(variables, override=override)
+        assert result == expected
+
+
+@pytest.mark.parametrize(
+    "env,variables,value,override,expected",
+    [
+        ({"B": "c"}, {"B": "d"}, "$B", True, "$B"),
+        ({"B": "c"}, {"B": "d"}, "${B}", True, "d"),
+        ({"B": "c"}, {"B": "d"}, "${B}", False, "c"),
+
+        ({}, {"B": "d"}, "${B}", False, "d"),
+        ({"B": "c"}, {}, "${B}", True, "c"),
+
+        ({"B": "c"}, {"A": "d"}, "${B}${A}", True, "cd"),
+
+        ({"B": "c"}, {"B": "d"}, "$B$B$B", True, "$B$B$B"),
+        ({"B": "c"}, {"B": "d"}, "${B}${B}${B}", True, "ddd"),
+        ({"B": "c"}, {"B": "d"}, "${B}${B}${B}", False, "ccc"),
+
+        ({"B": "c"}, {"B": "d"}, "${C}", False, ""),
+        ({"B": "c"}, {"B": "d"}, "${C}", True, ""),
+        ({"B": "c"}, {"B": "d"}, "${C}${C}${C}", True, ""),
+        ({"B": "c"}, {"B": "d"}, "${C}a${C}b${C}", True, "ab"),
+    ],
+)
+def test_resolve_variable(env, variables, value, override, expected):
+    with mock.patch.dict(os.environ, env, clear=True):
+        result = dotenv.main.resolve_variable(value, variables, override=override)
+        assert result == expected
+
+
+@pytest.mark.parametrize(
     "env,string,interpolate,expected",
     [
         # Use uppercase when setting up the env to be compatible with Windows

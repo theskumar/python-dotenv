@@ -74,7 +74,7 @@ class DotEnv:
         if self.interpolate:
             bindings = self.parse_to_bindings()
             self._dict = OrderedDict(
-                resolve_variables(
+                _resolve_bindings(
                     bindings,
                     override=self.override,
                     single_quotes_expand=self.single_quotes_expand,
@@ -238,7 +238,7 @@ def unset_key(
     return removed, key_to_unset
 
 
-def resolve_variables(
+def _resolve_bindings(
     bindings: Iterable[Binding],
     override: bool,
     single_quotes_expand: bool,
@@ -249,25 +249,61 @@ def resolve_variables(
         name = binding.key
         if name is None:
             continue
+
         value = binding.value
-        if value is None:
-            result = None
-        elif not single_quotes_expand and binding.quote == "'":
+        if not single_quotes_expand and binding.quote == "'":
             result = value
         else:
-            atoms = parse_variables(value)
-            env: Dict[str, Optional[str]] = {}
-            if override:
-                env.update(os.environ)  # type: ignore
-                env.update(new_values)
-            else:
-                env.update(new_values)
-                env.update(os.environ)  # type: ignore
-            result = "".join(atom.resolve(env) for atom in atoms)
+            result = resolve_variable(value, new_values, override)
 
         new_values[name] = result
 
     return new_values
+
+
+def resolve_variables(
+    values: Iterable[Tuple[str, Optional[str]]],
+    override: bool,
+) -> Mapping[str, Optional[str]]:
+    """
+    Expand POSIX variables present in the provided dictionary.
+
+    Resolved `values` and `os.environ` are used as defined variables.
+    New values take precedence over `os.environ` if `override` is True.
+
+    Note the `values` is a sequence of pairs, not a dictionary.
+    """
+    new_values: Dict[str, Optional[str]] = {}
+
+    for (name, value) in values:
+        new_values[name] = resolve_variable(value, new_values, override)
+
+    return new_values
+
+
+def resolve_variable(
+    value: Optional[str],
+    variables: Dict[str, Optional[str]],
+    override: bool
+) -> Optional[str]:
+    """
+    Expand POSIX variables present in the provided value.
+
+    `variables` and `os.environ` are used as defined variables.
+    `variables` take precedence over `os.environ` if `override` is True.
+    """
+    if value is None:
+        return value
+
+    atoms = parse_variables(value)
+    env: Dict[str, Optional[str]] = {}
+    if override:
+        env.update(os.environ)  # type: ignore
+        env.update(variables)
+    else:
+        env.update(variables)
+        env.update(os.environ)  # type: ignore
+    return "".join(atom.resolve(env) for atom in atoms)
 
 
 def _walk_to_root(path: str) -> Iterator[str]:
