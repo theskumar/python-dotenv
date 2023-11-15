@@ -266,12 +266,10 @@ def resolve_variables(
     override: bool,
 ) -> Mapping[str, Optional[str]]:
     """
-    Expand POSIX variables present in the provided dictionary.
+    Expand POSIX variables present in the provided sequence of key-value pairs.
 
     Resolved `values` and `os.environ` are used as defined variables.
     New values take precedence over `os.environ` if `override` is True.
-
-    Note the `values` is a sequence of pairs, not a dictionary.
     """
     new_values: Dict[str, Optional[str]] = {}
 
