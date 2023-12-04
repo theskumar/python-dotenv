@@ -33,7 +33,7 @@ def enumerate_env():
 
 @click.group()
 @click.option('-f', '--file', default=enumerate_env(),
-              type=click.Path(file_okay=True), # TODO: unsure about this
+              type=click.Path(file_okay=True),  # TODO: unsure about this
               multiple=True,
               help="Location of the .env file, defaults to .env file in current working directory.")
 @click.option('-q', '--quote', default='always',
@@ -103,14 +103,12 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
     quote = ctx.obj['QUOTE']
     export = ctx.obj['EXPORT']
 
-    for file in ctx.obj['FILES']:
+    for file in files:
         success, key, value = set_key(file, key, value, quote, export)
         if success:
             click.echo(f'{key}={value}')
         else:
             exit(1)
-
-
 
 
 @cli.command()
@@ -125,7 +123,7 @@ def get(ctx: click.Context, key: Any) -> None:
         with stream_file(file) as stream:
             file_values = dotenv_values(stream=stream)
             values.update(file_values)
-    
+
     stored_value = values.get(key)
     if stored_value:
         click.echo(stored_value)
@@ -144,12 +142,12 @@ def unset(ctx: click.Context, key: Any) -> None:
 
     global_success = False
     success_files = []
-    for file in ctx.obj['FILES']:
+    for file in files:
         success, key = unset_key(file, key, quote)
         if success:
             global_success = True
             success_files.append(file)
-    
+
     if global_success:
         source = success_files[0] if len(success_files) == 1 else success_files
         click.echo("Successfully removed %s from %s" % (key, source))
@@ -184,8 +182,7 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
             if v is not None and (override or k not in os.environ)
         }
         dotenv_as_dict.update(file_dotenv_as_dict)
-    
-    
+
     if not commandline:
         click.echo('No command given.')
         exit(1)

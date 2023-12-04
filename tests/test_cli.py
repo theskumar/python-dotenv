@@ -68,7 +68,7 @@ def test_get_existing_value(cli, dotenv_path):
 def test_get_non_existent_value(cli, dotenv_path):
     result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'get', 'a'])
 
-    assert (result.exit_code, result.output) == (1, f"Key a not found in {dotenv_file}.\n")
+    assert (result.exit_code, result.output) == (1, "Key a not found.\n")
 
 
 def test_get_non_existent_file(cli):
