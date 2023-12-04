@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import shlex
 import sys
@@ -15,6 +16,8 @@ except ImportError:
 
 from .main import dotenv_values, set_key, unset_key
 from .version import __version__
+
+logger = logging.getLogger(__name__)
 
 
 def enumerate_env():
@@ -44,9 +47,9 @@ def enumerate_env():
               help="Whether to write the dot file as an executable bash script.")
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx: click.Context, files: list[Any], quote: Any, export: Any) -> None:
+def cli(ctx: click.Context, file: list[Any], quote: Any, export: Any) -> None:
     """This script is used to set, get or unset values from a .env file."""
-    ctx.obj = {'QUOTE': quote, 'EXPORT': export, 'FILES': files}
+    ctx.obj = {'QUOTE': quote, 'EXPORT': export, 'FILES': file}
 
 
 @contextmanager
@@ -103,12 +106,15 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
     quote = ctx.obj['QUOTE']
     export = ctx.obj['EXPORT']
 
+    successes = []
     for file in files:
         success, key, value = set_key(file, key, value, quote, export)
-        if success:
-            click.echo(f'{key}={value}')
-        else:
-            exit(1)
+        successes.append(success)
+
+    if all(successes):
+        click.echo(f'{key}={value}')
+    else:
+        exit(1)
 
 
 @cli.command()
@@ -143,16 +149,17 @@ def unset(ctx: click.Context, key: Any) -> None:
     global_success = False
     success_files = []
     for file in files:
-        success, key = unset_key(file, key, quote)
+        success, key = unset_key(file, key, quote, warn_key_not_found=False)
         if success:
             global_success = True
             success_files.append(file)
 
     if global_success:
         source = success_files[0] if len(success_files) == 1 else success_files
-        click.echo("Successfully removed %s from %s" % (key, source))
-
+        click.echo("Successfully removed %s from %s." % (key, source))
     else:
+        source = files[0] if len(files) == 1 else files
+        logger.warning("Key %s not removed from %s - key doesn't exist.", key, source)
         exit(1)
 
 
