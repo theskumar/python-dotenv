@@ -10,7 +10,7 @@ def cli():
 
 
 @pytest.fixture
-def dotenv_file(tmp_path):
-    file_ = tmp_path / '.env'
-    file_.write_bytes(b'')
-    yield str(file_)
+def dotenv_path(tmp_path):
+    path = tmp_path / '.env'
+    path.write_bytes(b'')
+    yield path
