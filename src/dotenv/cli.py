@@ -47,7 +47,7 @@ def enumerate_env():
               help="Whether to write the dot file as an executable bash script.")
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx: click.Context, file: list[Any], quote: Any, export: Any) -> None:
+def cli(ctx: click.Context, file: List[Any], quote: Any, export: Any) -> None:
     """This script is used to set, get or unset values from a .env file."""
     ctx.obj = {'QUOTE': quote, 'EXPORT': export, 'FILES': file}
 
