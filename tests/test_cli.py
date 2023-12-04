@@ -1,7 +1,7 @@
 import os
 import sh
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import pytest
 
@@ -25,10 +25,38 @@ from dotenv.version import __version__
         ("export", "x='a b c'", '''export x='a b c'\n'''),
     )
 )
-def test_list(cli, dotenv_path, format: Optional[str], content: str, expected: str):
+def test_list_single_file(cli, dotenv_path, format: Optional[str], content: str, expected: str):
     dotenv_path.write_text(content + '\n')
 
     args = ['--file', dotenv_path, 'list']
+    if format is not None:
+        args.extend(['--format', format])
+
+    result = cli.invoke(dotenv_cli, args)
+
+    assert (result.exit_code, result.output) == (0, expected)
+
+
+@pytest.mark.parametrize(
+    "format,contents,expected",
+    (
+        (None, ["x='a b c'", "y='a b c'"], '''x=a b c\ny=a b c\n'''),
+        (None, ["x='a b c'", "x='d e f'"], '''x=d e f\n'''),
+        (None, ["x='a b c'\ny=d e f", "x='x y z'"], '''x=x y z\ny=d e f\n'''),
+    )
+)
+def test_list_multi_file(
+    cli,
+    dotenv_path,
+    extra_dotenv_path,
+    format: Optional[str],
+    contents: List[str],
+    expected: str
+):
+    dotenv_path.write_text(contents[0] + '\n')
+    extra_dotenv_path.write_text(contents[1] + '\n')
+
+    args = ['--file', dotenv_path, '--file', extra_dotenv_path, 'list']
     if format is not None:
         args.extend(['--format', format])
 
