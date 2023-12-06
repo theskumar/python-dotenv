@@ -518,6 +518,13 @@ def test_required_variable_throws(string, message):
     "string,expected_xx",
     [
         ("XX=TEST", "TEST"),
+        ("XX=\"TE\"ST", "TEST"),
+        ("XX='TE\'ST", "TEST"),
+        ("XX=\"TE\"'ST'", "TEST"),
+        ("XX=TE'ST'", "TEST"),
+        ("XX=TE\"ST\"", "TEST"),
+        ("XX=TE ST", "TE ST"),
+        ("XX=TE \"ST\"", "TE ST"),
         ("XX=$TEST", "$TEST"),
         ("XX=${TEST}", "tt"),
         ("XX=\"${TEST}\"", "tt"),

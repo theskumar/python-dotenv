@@ -95,7 +95,7 @@ class DotEnv:
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         for mapping in self.parse_to_bindings():
             assert mapping.key is not None
-            yield mapping.key, mapping.value
+            yield mapping.key, ''.join([v.value for v in mapping.value])
 
     def set_as_environment_variables(self) -> bool:
         """
@@ -250,11 +250,15 @@ def _resolve_bindings(
         if name is None:
             continue
 
-        value = binding.value
-        if not single_quotes_expand and binding.quote == "'":
-            result = value
+        if binding.value is None:
+            result = None
         else:
-            result = resolve_variable(value, new_values, override)
+            result = ''
+            for quote, value in binding.value:
+                if not single_quotes_expand and quote == "'":
+                    result += value
+                else:
+                    result += resolve_variable(value, new_values, override)
 
         new_values[name] = result
 

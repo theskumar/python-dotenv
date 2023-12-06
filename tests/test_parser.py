@@ -2,7 +2,7 @@ import io
 
 import pytest
 
-from dotenv.parser import Binding, Original, parse_stream
+from dotenv.parser import Binding, Original, ValuePart, parse_stream
 
 
 @pytest.mark.parametrize(
@@ -14,8 +14,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b", line=1),
                     error=False,
                 )
@@ -26,8 +25,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="'a'=b", line=1),
                     error=False,
                 )
@@ -38,8 +36,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="[",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="[=b", line=1),
                     error=False,
                 )
@@ -50,8 +47,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string=" a = b ", line=1),
                     error=False,
                 )
@@ -62,8 +58,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="export a=b", line=1),
                     error=False,
                 )
@@ -74,8 +69,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string=" export 'a'=b", line=1),
                     error=False,
                 )
@@ -87,7 +81,6 @@ from dotenv.parser import Binding, Original, parse_stream
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="# a=b", line=1),
                     error=False,
                 )
@@ -98,8 +91,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b#c",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b#c")],
                     original=Original(string="a=b#c", line=1),
                     error=False,
                 )
@@ -110,8 +102,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b #c", line=1),
                     error=False,
                 )
@@ -122,8 +113,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b\t#c", line=1),
                     error=False,
                 )
@@ -134,8 +124,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b c",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b c")],
                     original=Original(string="a=b c", line=1),
                     error=False,
                 )
@@ -146,8 +135,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b\tc",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b\tc")],
                     original=Original(string="a=b\tc", line=1),
                     error=False,
                 )
@@ -158,8 +146,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b  c",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b  c")],
                     original=Original(string="a=b  c", line=1),
                     error=False,
                 )
@@ -170,8 +157,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b\u00a0 c",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b\u00a0 c")],
                     original=Original(string="a=b\u00a0 c", line=1),
                     error=False,
                 )
@@ -182,8 +168,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b c",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b c")],
                     original=Original(string="a=b c ", line=1),
                     error=False,
                 )
@@ -194,8 +179,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b c ",
-                    quote="'",
+                    value=[ValuePart(quote="'", value="b c ")],
                     original=Original(string="a='b c '", line=1),
                     error=False,
                 )
@@ -206,8 +190,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b c ",
-                    quote='"',
+                    value=[ValuePart(quote='"', value="b c ")],
                     original=Original(string='a="b c "', line=1),
                     error=False,
                 )
@@ -218,8 +201,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="export_a",
-                    value="1",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="1")],
                     original=Original(string="export export_a=1", line=1),
                     error=False,
                 )
@@ -230,8 +212,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="port",
-                    value="8000",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="8000")],
                     original=Original(string="export port=8000", line=1),
                     error=False,
                 )
@@ -242,8 +223,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b\nc",
-                    quote='"',
+                    value=[ValuePart(quote='"', value="b\nc")],
                     original=Original(string='a="b\nc"', line=1),
                     error=False,
                 )
@@ -254,8 +234,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b\nc",
-                    quote="'",
+                    value=[ValuePart(quote="'", value="b\nc")],
                     original=Original(string="a='b\nc'", line=1),
                     error=False,
                 )
@@ -266,8 +245,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b\nc",
-                    quote='"',
+                    value=[ValuePart(quote='"', value="b\nc")],
                     original=Original(string='a="b\nc"', line=1),
                     error=False,
                 )
@@ -278,8 +256,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b\nc",
-                    quote='"',
+                    value=[ValuePart(quote='"', value="b\nc")],
                     original=Original(string='a="b\\nc"', line=1),
                     error=False,
                 )
@@ -290,8 +267,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b\\nc",
-                    quote="'",
+                    value=[ValuePart(quote="'", value="b\\nc")],
                     original=Original(string="a='b\\nc'", line=1),
                     error=False,
                 )
@@ -302,8 +278,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value='b"c',
-                    quote='"',
+                    value=[ValuePart(quote='"', value='b"c')],
                     original=Original(string='a="b\\"c"', line=1),
                     error=False,
                 )
@@ -314,8 +289,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b'c",
-                    quote="'",
+                    value=[ValuePart(quote="'", value="b'c")],
                     original=Original(string="a='b\\'c'", line=1),
                     error=False,
                 )
@@ -326,8 +300,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="à",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="à")],
                     original=Original(string="a=à", line=1),
                     error=False,
                 )
@@ -338,8 +311,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="à",
-                    quote='"',
+                    value=[ValuePart(quote='"', value="à")],
                     original=Original(string='a="à"', line=1),
                     error=False,
                 )
@@ -351,7 +323,6 @@ from dotenv.parser import Binding, Original, parse_stream
                 Binding(
                     key="no_value_var",
                     value=None,
-                    quote=None,
                     original=Original(string="no_value_var", line=1),
                     error=False,
                 )
@@ -363,7 +334,6 @@ from dotenv.parser import Binding, Original, parse_stream
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="a: b", line=1),
                     error=True,
                 )
@@ -374,15 +344,13 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key="c",
-                    value="d",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="d")],
                     original=Original(string="c=d", line=2),
                     error=False,
                 ),
@@ -393,15 +361,13 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b\r", line=1),
                     error=False,
                 ),
                 Binding(
                     key="c",
-                    value="d",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="d")],
                     original=Original(string="c=d", line=2),
                     error=False,
                 ),
@@ -412,15 +378,13 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b\r\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key="c",
-                    value="d",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="d")],
                     original=Original(string="c=d", line=2),
                     error=False,
                 ),
@@ -431,15 +395,13 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="",
-                    quote=None,
+                    value=[],
                     original=Original(string="a=\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key="b",
-                    value="c",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="c")],
                     original=Original(string="b=c", line=2),
                     error=False,
                 ),
@@ -451,7 +413,6 @@ from dotenv.parser import Binding, Original, parse_stream
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="\n\n", line=1),
                     error=False,
                 ),
@@ -462,15 +423,13 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="\n", line=2),
                     error=False,
                 ),
@@ -481,15 +440,13 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key="c",
-                    value="d",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="d")],
                     original=Original(string="\nc=d", line=2),
                     error=False,
                 ),
@@ -501,14 +458,12 @@ from dotenv.parser import Binding, Original, parse_stream
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string='a="\n', line=1),
                     error=True,
                 ),
                 Binding(
                     key="b",
-                    value="c",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="c")],
                     original=Original(string="b=c", line=2),
                     error=False,
                 ),
@@ -520,21 +475,18 @@ from dotenv.parser import Binding, Original, parse_stream
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="# comment\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key="a",
-                    value="b\nc",
-                    quote='"',
+                    value=[ValuePart(quote='"', value="b\nc")],
                     original=Original(string='a="b\nc"\n', line=2),
                     error=False,
                 ),
                 Binding(
                     key="d",
-                    value="e",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="e")],
                     original=Original(string="d=e\n", line=4),
                     error=False,
                 ),
@@ -545,15 +497,13 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="# comment 1", line=2),
                     error=False,
                 ),
@@ -565,14 +515,12 @@ from dotenv.parser import Binding, Original, parse_stream
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="# comment 1\n", line=1),
                     error=False,
                 ),
                 Binding(
                     key=None,
                     value=None,
-                    quote=None,
                     original=Original(string="# comment 2", line=2),
                     error=False,
                 ),
@@ -583,8 +531,7 @@ from dotenv.parser import Binding, Original, parse_stream
             [
                 Binding(
                     key="uglyKey[%$",
-                    value="S3cr3t_P4ssw#rD",
-                    quote='"',
+                    value=[ValuePart(quote='"', value="S3cr3t_P4ssw#rD")],
                     original=Original(
                         string='uglyKey[%$="S3cr3t_P4ssw#rD" #\n', line=1
                     ),
@@ -592,11 +539,94 @@ from dotenv.parser import Binding, Original, parse_stream
                 ),
                 Binding(
                     key="a",
-                    value="b",
-                    quote=None,
+                    value=[ValuePart(quote=None, value="b")],
                     original=Original(string="a=b", line=2),
                     error=False,
                 ),
+            ],
+        ),
+        (
+            "a=aa\"bc\"'xx'",
+            [
+                Binding(
+                    key="a",
+                    value=[
+                        ValuePart(quote=None, value="aa"),
+                        ValuePart(quote='"', value="bc"),
+                        ValuePart(quote="'", value="xx"),
+                    ],
+                    original=Original(string="a=aa\"bc\"'xx'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a = aa \"b\nc\" 'xx'",
+            [
+                Binding(
+                    key="a",
+                    value=[
+                        ValuePart(quote=None, value="aa "),
+                        ValuePart(quote='"', value="b\nc"),
+                        ValuePart(quote=None, value=" "),
+                        ValuePart(quote="'", value="xx"),
+                    ],
+                    original=Original(string="a = aa \"b\nc\" 'xx'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=\"bc\"'xx'    #comment",
+            [
+                Binding(
+                    key="a",
+                    value=[
+                        ValuePart(quote='"', value="bc"),
+                        ValuePart(quote="'", value="xx"),
+                    ],
+                    original=Original(string="a=\"bc\"'xx'    #comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="bc"xx  \t #comment',
+            [
+                Binding(
+                    key="a",
+                    value=[
+                        ValuePart(quote='"', value="bc"),
+                        ValuePart(quote=None, value="xx"),
+                    ],
+                    original=Original(string='a="bc"xx  \t #comment', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="bc"#comment',
+            [
+                Binding(
+                    key="a",
+                    value=[
+                        ValuePart(quote='"', value="bc"),
+                        ValuePart(quote=None, value="#comment"),
+                    ],
+                    original=Original(string='a="bc"#comment', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="bc" #comment"ups"',
+            [
+                Binding(
+                    key="a",
+                    value=[ValuePart(quote='"', value="bc")],
+                    original=Original(string='a="bc" #comment"ups"', line=1),
+                    error=False,
+                )
             ],
         ),
     ],

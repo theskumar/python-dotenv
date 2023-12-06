@@ -1,6 +1,6 @@
 import codecs
 import re
-from typing import (IO, Iterator, Match, NamedTuple, Optional,  # noqa:F401
+from typing import (IO, Iterator, List, Match, NamedTuple, Optional,  # noqa:F401
                     Pattern, Sequence, Tuple)
 
 
@@ -17,9 +17,10 @@ _unquoted_key = make_regex(r"([^=\#\s]+)")
 _equal_sign = make_regex(r"(=[^\S\r\n]*)")
 _single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
 _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
-_unquoted_value = make_regex(r"([^\r\n]*)")
+_unquoted_value = make_regex(r"((?:\\'|\\\"|[^'\"\r\n])*)")
 _comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")
 _end_of_line = make_regex(r"[^\S\r\n]*(?:\r\n|\n|\r|$)")
+_until_end_of_line = make_regex(r"[^\r\n]*")
 _rest_of_line = make_regex(r"[^\r\n]*(?:\r|\n|\r\n)?")
 _double_quote_escapes = make_regex(r"\\[\\'\"abfnrtv]")
 _single_quote_escapes = make_regex(r"\\[\\']")
@@ -30,10 +31,14 @@ class Original(NamedTuple):
     line: int
 
 
+class ValuePart(NamedTuple):
+    quote: str
+    value: str
+
+
 class Binding(NamedTuple):
     key: Optional[str]
-    value: Optional[str]
-    quote: Optional[str]
+    value: Optional[List[ValuePart]]
     original: Original
     error: bool
 
@@ -114,9 +119,10 @@ def parse_key(reader: Reader) -> Optional[str]:
     return key
 
 
-def parse_unquoted_value(reader: Reader) -> str:
+def parse_unquoted_value(reader: Reader) -> Tuple[str, bool]:
     (part,) = reader.read_regex(_unquoted_value)
-    return re.sub(r"\s+#.*", "", part).rstrip()
+    stripped_comment = re.sub(r"\s+#.*", "", part)
+    return stripped_comment, part != stripped_comment
 
 
 def peek_quote(reader: Reader) -> Optional[str]:
@@ -124,16 +130,16 @@ def peek_quote(reader: Reader) -> Optional[str]:
     return char if char in [u'"', u"'"] else None
 
 
-def parse_value(reader: Reader) -> str:
+def parse_value(reader: Reader) -> Tuple[str, bool]:
     char = reader.peek(1)
     if char == u"'":
         (value,) = reader.read_regex(_single_quoted_value)
-        return decode_escapes(_single_quote_escapes, value)
+        return decode_escapes(_single_quote_escapes, value), False
     elif char == u'"':
         (value,) = reader.read_regex(_double_quoted_value)
-        return decode_escapes(_double_quote_escapes, value)
+        return decode_escapes(_double_quote_escapes, value), False
     elif char in (u"", u"\n", u"\r"):
-        return u""
+        return u"", False
     else:
         return parse_unquoted_value(reader)
 
@@ -146,7 +152,6 @@ def parse_binding(reader: Reader) -> Binding:
             return Binding(
                 key=None,
                 value=None,
-                quote=None,
                 original=reader.get_marked(),
                 error=False,
             )
@@ -155,16 +160,28 @@ def parse_binding(reader: Reader) -> Binding:
         reader.read_regex(_whitespace)
         if reader.peek(1) == "=":
             reader.read_regex(_equal_sign)
-            quote: Optional[str] = peek_quote(reader)
-            value: Optional[str] = parse_value(reader)
+
+            strings: List[ValuePart] = []
+            start_comment: bool = False
+            while reader.has_next() and not reader.peek(1) in (u"", u"\n", u"\r") and not start_comment:
+                quote: Optional[str] = peek_quote(reader)
+                value, start_comment = parse_value(reader)
+                strings.append(ValuePart(quote, value))
+            if strings and strings[-1].quote is None:
+                stripped = strings[-1].value.rstrip()
+                if len(stripped) > 0:
+                    strings[-1] = ValuePart(None, stripped)
+                else:
+                    strings = strings[:-1]
+            if start_comment:
+                reader.read_regex(_until_end_of_line)
         else:
-            value = quote = None
+            strings = None
         reader.read_regex(_comment)
         reader.read_regex(_end_of_line)
         return Binding(
             key=key,
-            value=value,
-            quote=quote,
+            value=strings,
             original=reader.get_marked(),
             error=False,
         )
@@ -173,7 +190,6 @@ def parse_binding(reader: Reader) -> Binding:
         return Binding(
             key=None,
             value=None,
-            quote=None,
             original=reader.get_marked(),
             error=True,
         )
