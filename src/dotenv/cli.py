@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import shlex
 import sys
@@ -16,8 +15,6 @@ except ImportError:
 
 from .main import dotenv_values, set_key, unset_key
 from .version import __version__
-
-logger = logging.getLogger(__name__)
 
 
 def enumerate_env():
@@ -36,7 +33,7 @@ def enumerate_env():
 
 @click.group()
 @click.option('-f', '--file', default=enumerate_env(),
-              type=click.Path(file_okay=True),  # TODO: unsure about this
+              type=click.Path(file_okay=True),
               multiple=True,
               help="Location of the .env file, defaults to .env file in current working directory.")
 @click.option('-q', '--quote', default='always',
