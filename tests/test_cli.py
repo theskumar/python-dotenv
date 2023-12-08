@@ -40,9 +40,9 @@ def test_list_single_file(cli, dotenv_path, format: Optional[str], content: str,
 @pytest.mark.parametrize(
     "format,contents,expected",
     (
-        (None, ["x='a b c'", "y='a b c'"], '''x=a b c\ny=a b c\n'''),
-        (None, ["x='a b c'", "x='d e f'"], '''x=d e f\n'''),
-        (None, ["x='a b c'\ny=d e f", "x='x y z'"], '''x=x y z\ny=d e f\n'''),
+        (None, ["x='1'", "y='2'"], '''x=1\ny=2\n'''),
+        (None, ["x='1'", "x='2'"], '''x=2\n'''),
+        (None, ["x='1'\ny='2'", "y='20'\nz='30'"], '''x=1\ny=20\nz=30\n'''),
     )
 )
 def test_list_multi_file(
