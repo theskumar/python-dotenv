@@ -3,7 +3,7 @@
 [![Build Status][build_status_badge]][build_status_link]
 [![PyPI version][pypi_badge]][pypi_link]
 
-Python-dotenv reads key-value pairs from a `.env` file and can set them as environment
+Python-dotenv reads key-value pairs from `.env` files and can set them as environment
 variables. It helps in the development of applications following the
 [12-factor](https://12factor.net/) principles.
 
@@ -152,6 +152,17 @@ $ dotenv list --format=json
   "EMAIL": "foo@example.org"
 }
 $ dotenv run -- python foo.py
+```
+
+The CLI interface also supports reading from multiple `.env` files.
+
+```shell
+$ echo -e "a=1\nb=2\n" > .env1
+$ echo -e "b=20\nc=30\n" > .env2
+$ python -m dotenv -f .env1 -f .env2 list
+a=1
+b=20
+c=30
 ```
 
 Run `dotenv --help` for more information about the options and subcommands.
