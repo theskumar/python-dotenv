@@ -1,7 +1,7 @@
 import os
 import sh
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import pytest
 
@@ -38,27 +38,18 @@ def test_list_single_file(cli, dotenv_path, format: Optional[str], content: str,
 
 
 @pytest.mark.parametrize(
-    "format,contents,expected",
+    "contents,expected",
     (
-        (None, ["x='1'", "y='2'"], '''x=1\ny=2\n'''),
-        (None, ["x='1'", "x='2'"], '''x=2\n'''),
-        (None, ["x='1'\ny='2'", "y='20'\nz='30'"], '''x=1\ny=20\nz=30\n'''),
+        (["x='1'", "y='2'"], '''x=1\ny=2\n'''),
+        (["x='1'", "x='2'"], '''x=2\n'''),
+        (["x='1'\ny='2'", "y='20'\nz='30'"], '''x=1\ny=20\nz=30\n'''),
     )
 )
-def test_list_multi_file(
-    cli,
-    dotenv_path,
-    extra_dotenv_path,
-    format: Optional[str],
-    contents: List[str],
-    expected: str
-):
+def test_list_multi_file(cli, dotenv_path, extra_dotenv_path, contents: List[str], expected: str):
     dotenv_path.write_text(contents[0] + '\n')
     extra_dotenv_path.write_text(contents[1] + '\n')
 
     args = ['--file', dotenv_path, '--file', extra_dotenv_path, 'list']
-    if format is not None:
-        args.extend(['--format', format])
 
     result = cli.invoke(dotenv_cli, args)
 
@@ -101,7 +92,13 @@ def test_get_existing_value_single_file(cli, dotenv_path):
         (["a=1", "a=2"], {"a": "2"}),
     )
 )
-def test_get_existing_value_multi_file(cli, contents, expected_values, dotenv_path, extra_dotenv_path):
+def test_get_existing_value_multi_file(
+    cli,
+    dotenv_path,
+    extra_dotenv_path,
+    contents: List[str],
+    expected_values: Dict[str, str]
+):
     dotenv_path.write_text(contents[0])
     extra_dotenv_path.write_text(contents[1])
 
@@ -273,7 +270,7 @@ def test_run_with_other_env(dotenv_path):
         (["a=1", "a=2"], {"a": "2"}),
     )
 )
-def test_run_with_multiple_envs(contents, expected_values, dotenv_path, extra_dotenv_path):
+def test_run_with_multi_envs(dotenv_path, extra_dotenv_path, contents: List[str], expected_values: Dict[str, str]):
     dotenv_path.write_text(contents[0])
     extra_dotenv_path.write_text(contents[1])
 
