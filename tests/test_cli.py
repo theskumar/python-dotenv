@@ -184,6 +184,12 @@ def test_set_no_file(cli):
     assert "Missing argument" in result.output
 
 
+def test_set_multi_file_not_allowed(cli, dotenv_path, extra_dotenv_path):
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, '--file', extra_dotenv_path, 'set', 'a', 'b'])
+    assert result.exit_code == 1
+    assert result.output == f"Set is not supported for multiple files: ['{dotenv_path}', '{extra_dotenv_path}'].\n"
+
+
 def test_get_default_path(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")

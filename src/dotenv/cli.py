@@ -103,12 +103,14 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
     quote = ctx.obj['QUOTE']
     export = ctx.obj['EXPORT']
 
-    successes = []
-    for file in files:
-        success, key, value = set_key(file, key, value, quote, export)
-        successes.append(success)
+    if len(files) > 1:
+        click.echo(f"Set is not supported for multiple files: {[str(f) for f in files]}.")
+        exit(1)
 
-    if all(successes):
+    file = files[0]
+
+    success, key, value = set_key(file, key, value, quote, export)
+    if success:
         click.echo(f'{key}={value}')
     else:
         exit(1)
