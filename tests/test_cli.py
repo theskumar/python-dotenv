@@ -95,8 +95,7 @@ def test_get_existing_value(cli, dotenv_path):
 
 def test_get_non_existent_value(cli, dotenv_path):
     result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'get', 'a'])
-
-    assert (result.exit_code, result.output) == (1, "Key a not found in {}.\n".format(dotenv_path))
+    assert (result.exit_code, result.output) == (1, "")
 
 
 def test_get_non_existent_file(cli):
@@ -117,7 +116,6 @@ def test_unset_existing_value(cli, dotenv_path):
     dotenv_path.write_text("a=b")
 
     result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'unset', 'a'])
-    print(result.output)
 
     assert (result.exit_code, result.output) == (0, "Successfully removed a\n")
     assert dotenv_path.read_text() == ""

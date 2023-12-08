@@ -134,7 +134,6 @@ def get(ctx: click.Context, key: Any) -> None:
     if stored_value:
         click.echo(stored_value)
     else:
-        click.echo(f"Key {key} not found in {files[0] if len(files) == 1 else files}.", err=True)
         exit(1)
 
 
