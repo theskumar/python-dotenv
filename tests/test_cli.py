@@ -265,6 +265,24 @@ def test_run_with_other_env(dotenv_path):
     assert result == "b\n"
 
 
+@pytest.mark.parametrize(
+    "contents,expected_values",
+    (
+        (["a=1", "b=2"], {"a": "1", "b": "2"}),
+        (["b=2", "a=1"], {"a": "1", "b": "2"}),
+        (["a=1", "a=2"], {"a": "2"}),
+    )
+)
+def test_run_with_multiple_envs(contents, expected_values, dotenv_path, extra_dotenv_path):
+    dotenv_path.write_text(contents[0])
+    extra_dotenv_path.write_text(contents[1])
+
+    for key, value in expected_values.items():
+        result = sh.dotenv("--file", dotenv_path, '--file', extra_dotenv_path, "run", "printenv", key)
+
+        assert result == f"{value}\n"
+
+
 def test_run_without_cmd(cli):
     result = cli.invoke(dotenv_cli, ['run'])
 
