@@ -85,12 +85,30 @@ def test_list_no_file(cli):
     assert (result.exit_code, result.output) == (1, "")
 
 
-def test_get_existing_value(cli, dotenv_path):
+def test_get_existing_value_single_file(cli, dotenv_path):
     dotenv_path.write_text("a=b")
 
     result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'get', 'a'])
 
     assert (result.exit_code, result.output) == (0, "b\n")
+
+
+@pytest.mark.parametrize(
+    "contents,expected_values",
+    (
+        (["a=1", "b=2"], {"a": "1", "b": "2"}),
+        (["b=2", "a=1"], {"a": "1", "b": "2"}),
+        (["a=1", "a=2"], {"a": "2"}),
+    )
+)
+def test_get_existing_value_multi_file(cli, contents, expected_values, dotenv_path, extra_dotenv_path):
+    dotenv_path.write_text(contents[0])
+    extra_dotenv_path.write_text(contents[1])
+
+    for key, value in expected_values.items():
+        result = cli.invoke(dotenv_cli, ['--file', dotenv_path, '--file', extra_dotenv_path, 'get', key])
+
+        assert (result.exit_code, result.output) == (0, f"{value}\n")
 
 
 def test_get_non_existent_value(cli, dotenv_path):
