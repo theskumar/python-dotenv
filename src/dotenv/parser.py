@@ -32,7 +32,7 @@ class Original(NamedTuple):
 
 
 class ValuePart(NamedTuple):
-    quote: str
+    quote: Optional[str]
     value: str
 
 
@@ -158,10 +158,12 @@ def parse_binding(reader: Reader) -> Binding:
         reader.read_regex(_export)
         key = parse_key(reader)
         reader.read_regex(_whitespace)
+
+        strings: Optional[List[ValuePart]] = None
         if reader.peek(1) == "=":
             reader.read_regex(_equal_sign)
 
-            strings: List[ValuePart] = []
+            strings = []
             start_comment: bool = False
             while reader.has_next() and not reader.peek(1) in (u"", u"\n", u"\r") and not start_comment:
                 quote: Optional[str] = peek_quote(reader)
@@ -175,8 +177,7 @@ def parse_binding(reader: Reader) -> Binding:
                     strings = strings[:-1]
             if start_comment:
                 reader.read_regex(_until_end_of_line)
-        else:
-            strings = None
+
         reader.read_regex(_comment)
         reader.read_regex(_end_of_line)
         return Binding(
