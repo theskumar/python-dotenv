@@ -146,20 +146,16 @@ def unset(ctx: click.Context, key: Any) -> None:
     files = ctx.obj['FILES']
     quote = ctx.obj['QUOTE']
 
-    global_success = False
-    success_files = []
-    for file in files:
-        success, key = unset_key(file, key, quote, warn_key_not_found=False)
-        if success:
-            global_success = True
-            success_files.append(file)
+    if len(files) > 1:
+        click.echo(f"Unset is not supported for multiple files: {[str(f) for f in files]}.")
+        exit(1)
 
-    if global_success:
-        source = success_files[0] if len(success_files) == 1 else success_files
-        click.echo("Successfully removed %s from %s." % (key, source))
+    file = files[0]
+
+    success, key = unset_key(file, key, quote)
+    if success:
+        click.echo(f"Successfully removed {key}")
     else:
-        source = files[0] if len(files) == 1 else files
-        logger.warning("Key %s not removed from %s - key doesn't exist.", key, source)
         exit(1)
 
 

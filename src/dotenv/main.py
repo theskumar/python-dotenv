@@ -199,7 +199,6 @@ def unset_key(
     key_to_unset: str,
     quote_mode: str = "always",
     encoding: Optional[str] = "utf-8",
-    warn_key_not_found: bool = True,
 ) -> Tuple[Optional[bool], str]:
     """
     Removes a given key from the given `.env` file.
@@ -219,7 +218,7 @@ def unset_key(
             else:
                 dest.write(mapping.original.string)
 
-    if not removed and warn_key_not_found:
+    if not removed:
         logger.warning("Key %s not removed from %s - key doesn't exist.", key_to_unset, dotenv_path)
         return None, key_to_unset
 

@@ -119,7 +119,7 @@ def test_unset_existing_value(cli, dotenv_path):
     result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'unset', 'a'])
     print(result.output)
 
-    assert (result.exit_code, result.output) == (0, "Successfully removed a from {}.\n".format(dotenv_path))
+    assert (result.exit_code, result.output) == (0, "Successfully removed a\n")
     assert dotenv_path.read_text() == ""
 
 
@@ -128,6 +128,12 @@ def test_unset_non_existent_value(cli, dotenv_path):
 
     assert (result.exit_code, result.output) == (1, "")
     assert dotenv_path.read_text() == ""
+
+
+def test_unset_multi_file_not_allowed(cli, dotenv_path, extra_dotenv_path):
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, '--file', extra_dotenv_path, 'unset', 'a'])
+    assert result.exit_code == 1
+    assert result.output == f"Unset is not supported for multiple files: ['{dotenv_path}', '{extra_dotenv_path}'].\n"
 
 
 @pytest.mark.parametrize(
