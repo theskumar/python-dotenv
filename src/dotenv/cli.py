@@ -104,7 +104,7 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
     export = ctx.obj['EXPORT']
 
     if len(files) > 1:
-        click.echo(f"Set is not supported for multiple files: {[str(f) for f in files]}.")
+        click.echo(f"Set is not supported for multiple files: {[str(f) for f in files]}.", err=True)
         exit(1)
 
     file = files[0]
@@ -145,7 +145,7 @@ def unset(ctx: click.Context, key: Any) -> None:
     quote = ctx.obj['QUOTE']
 
     if len(files) > 1:
-        click.echo(f"Unset is not supported for multiple files: {[str(f) for f in files]}.")
+        click.echo(f"Unset is not supported for multiple files: {[str(f) for f in files]}.", err=True)
         exit(1)
 
     file = files[0]
