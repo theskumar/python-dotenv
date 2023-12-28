@@ -3,7 +3,7 @@
 [![Build Status][build_status_badge]][build_status_link]
 [![PyPI version][pypi_badge]][pypi_link]
 
-Python-dotenv reads key-value pairs from `.env` files and can set them as environment
+Python-dotenv reads key-value pairs from a `.env` file and can set them as environment
 variables. It helps in the development of applications following the
 [12-factor](https://12factor.net/) principles.
 
