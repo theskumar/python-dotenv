@@ -155,6 +155,7 @@ $ dotenv run -- python foo.py
 ```
 
 The CLI interface also supports reading from multiple `.env` files.
+Each file overrides the previous: if there are duplicate keys, the last file determines the final value.
 
 ```shell
 $ echo -e "a=1\nb=2\n" > .env1
