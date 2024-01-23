@@ -121,7 +121,6 @@ def get(ctx: click.Context, key: Any) -> None:
     else:
         exit(1)
 
-
 @cli.command()
 @click.pass_context
 @click.argument('key', required=True)
@@ -163,6 +162,34 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
         exit(1)
     ret = run_command(commandline, dotenv_as_dict)
     exit(ret)
+
+
+@cli.command()
+@click.pass_context
+def generate_sample(ctx: click.Context) -> None:
+    '''Generates a .example.env file without values.'''
+    filedir = ctx.obj['FILE'].replace("\\", "/")
+    if not os.path.isfile(filedir):
+        raise click.BadParameter(
+            'Path "%s" does not exist.' % (filedir),
+            ctx=ctx
+        )
+    newEnvList = []
+    with open(filedir, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if line[0] != "#":
+                line = line.replace(" ", "").replace("=", " = ").split("=", 1)[0] + "="
+            else:
+                line = "# " + line[1:].strip()  # inserts space between comment and '#'
+            newEnvList.append(line)  # slicing removes trailing newline
+        newEnvList[-1] += "\n"
+
+    while newEnvList[-1] == "\n":
+        newEnvList.pop(-1)
+
+    for line in newEnvList:
+        click.echo(line)
 
 
 def run_command(command: List[str], env: Dict[str, str]) -> int:
