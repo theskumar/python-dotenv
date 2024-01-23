@@ -280,7 +280,10 @@ def find_dotenv(
 
     def _is_interactive():
         """ Decide whether this is running in a REPL or IPython notebook """
-        main = __import__('__main__', None, None, fromlist=['__file__'])
+        try:
+            main = __import__('__main__', None, None, fromlist=['__file__'])
+        except ModuleNotFoundError:
+            return False
         return not hasattr(main, '__file__')
 
     if usecwd or _is_interactive() or getattr(sys, 'frozen', False):
