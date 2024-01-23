@@ -152,11 +152,11 @@ def rewrite(
 def set_key(
     dotenv_path: StrPath,
     key_to_set: str,
-    value_to_set: str,
+    value_to_set: Optional[str],
     quote_mode: str = "always",
     export: bool = False,
     encoding: Optional[str] = "utf-8",
-) -> Tuple[Optional[bool], str, str]:
+) -> Tuple[Optional[bool], str, Optional[str]]:
     """
     Adds or Updates a key/value to the given .env
 
@@ -166,19 +166,25 @@ def set_key(
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
 
-    quote = (
-        quote_mode == "always"
-        or (quote_mode == "auto" and not value_to_set.isalnum())
-    )
+    if value_to_set is None:
+        if export:
+            line_out = f'export {key_to_set}\n'
+        else:
+            line_out = f"{key_to_set}\n"
+    else:
+        quote = (
+            quote_mode == "always"
+            or (quote_mode == "auto" and not value_to_set.isalnum())
+        )
 
-    if quote:
-        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
-    else:
-        value_out = value_to_set
-    if export:
-        line_out = f'export {key_to_set}={value_out}\n'
-    else:
-        line_out = f"{key_to_set}={value_out}\n"
+        if quote:
+            value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
+        else:
+            value_out = value_to_set
+        if export:
+            line_out = f'export {key_to_set}={value_out}\n'
+        else:
+            line_out = f"{key_to_set}={value_out}\n"
 
     with rewrite(dotenv_path, encoding=encoding) as (source, dest):
         replaced = False

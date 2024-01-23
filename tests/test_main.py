@@ -26,6 +26,7 @@ def test_set_key_no_file(tmp_path):
     "before,key,value,expected,after",
     [
         ("", "a", "", (True, "a", ""), "a=''\n"),
+        ("", "a", None, (True, "a", None), "a\n"),
         ("", "a", "b", (True, "a", "b"), "a='b'\n"),
         ("", "a", "'b'", (True, "a", "'b'"), "a='\\'b\\''\n"),
         ("", "a", "\"b\"", (True, "a", '"b"'), "a='\"b\"'\n"),
