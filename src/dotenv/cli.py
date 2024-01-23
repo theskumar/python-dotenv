@@ -26,14 +26,15 @@ def enumerate_env():
     try:
         cwd = os.getcwd()
     except FileNotFoundError:
-        return None
+        return []
     path = os.path.join(cwd, '.env')
-    return path
+    return [path]
 
 
 @click.group()
 @click.option('-f', '--file', default=enumerate_env(),
               type=click.Path(file_okay=True),
+              multiple=True,
               help="Location of the .env file, defaults to .env file in current working directory.")
 @click.option('-q', '--quote', default='always',
               type=click.Choice(['always', 'never', 'auto']),
@@ -43,9 +44,9 @@ def enumerate_env():
               help="Whether to write the dot file as an executable bash script.")
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
+def cli(ctx: click.Context, file: List[Any], quote: Any, export: Any) -> None:
     """This script is used to set, get or unset values from a .env file."""
-    ctx.obj = {'QUOTE': quote, 'EXPORT': export, 'FILE': file}
+    ctx.obj = {'QUOTE': quote, 'EXPORT': export, 'FILES': file}
 
 
 @contextmanager
@@ -72,10 +73,13 @@ def stream_file(path: os.PathLike) -> Iterator[IO[str]]:
                    "which displays name=value without quotes.")
 def list(ctx: click.Context, format: bool) -> None:
     """Display all the stored key/value."""
-    file = ctx.obj['FILE']
+    files = ctx.obj['FILES']
 
-    with stream_file(file) as stream:
-        values = dotenv_values(stream=stream)
+    values = {}
+    for file in files:
+        with stream_file(file) as stream:
+            file_values = dotenv_values(stream=stream)
+            values.update(file_values)
 
     if format == 'json':
         click.echo(json.dumps(values, indent=2, sort_keys=True))
@@ -95,9 +99,16 @@ def list(ctx: click.Context, format: bool) -> None:
 @click.argument('value', required=True)
 def set(ctx: click.Context, key: Any, value: Any) -> None:
     """Store the given key/value."""
-    file = ctx.obj['FILE']
+    files = ctx.obj['FILES']
     quote = ctx.obj['QUOTE']
     export = ctx.obj['EXPORT']
+
+    if len(files) > 1:
+        click.echo(f"Set is not supported for multiple files: {[str(f) for f in files]}.", err=True)
+        exit(1)
+
+    file = files[0]
+
     success, key, value = set_key(file, key, value, quote, export)
     if success:
         click.echo(f'{key}={value}')
@@ -110,10 +121,13 @@ def set(ctx: click.Context, key: Any, value: Any) -> None:
 @click.argument('key', required=True)
 def get(ctx: click.Context, key: Any) -> None:
     """Retrieve the value for the given key."""
-    file = ctx.obj['FILE']
+    files = ctx.obj['FILES']
+    values = {}
 
-    with stream_file(file) as stream:
-        values = dotenv_values(stream=stream)
+    for file in files:
+        with stream_file(file) as stream:
+            file_values = dotenv_values(stream=stream)
+            values.update(file_values)
 
     stored_value = values.get(key)
     if stored_value:
@@ -127,8 +141,15 @@ def get(ctx: click.Context, key: Any) -> None:
 @click.argument('key', required=True)
 def unset(ctx: click.Context, key: Any) -> None:
     """Removes the given key."""
-    file = ctx.obj['FILE']
+    files = ctx.obj['FILES']
     quote = ctx.obj['QUOTE']
+
+    if len(files) > 1:
+        click.echo(f"Unset is not supported for multiple files: {[str(f) for f in files]}.", err=True)
+        exit(1)
+
+    file = files[0]
+
     success, key = unset_key(file, key, quote)
     if success:
         click.echo(f"Successfully removed {key}")
@@ -146,17 +167,22 @@ def unset(ctx: click.Context, key: Any) -> None:
 @click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
 def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     """Run command with environment variables present."""
-    file = ctx.obj['FILE']
-    if not os.path.isfile(file):
-        raise click.BadParameter(
-            f'Invalid value for \'-f\' "{file}" does not exist.',
-            ctx=ctx
-        )
-    dotenv_as_dict = {
-        k: v
-        for (k, v) in dotenv_values(file).items()
-        if v is not None and (override or k not in os.environ)
-    }
+
+    files = ctx.obj['FILES']
+
+    dotenv_as_dict = {}
+    for file in files:
+        if not os.path.isfile(file):
+            raise click.BadParameter(
+                f'Invalid value for \'-f\' "{file}" does not exist.',
+                ctx=ctx
+            )
+        file_dotenv_as_dict = {
+            k: v
+            for (k, v) in dotenv_values(file).items()
+            if v is not None and (override or k not in os.environ)
+        }
+        dotenv_as_dict.update(file_dotenv_as_dict)
 
     if not commandline:
         click.echo('No command given.')

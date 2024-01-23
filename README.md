@@ -154,6 +154,18 @@ $ dotenv list --format=json
 $ dotenv run -- python foo.py
 ```
 
+The CLI interface also supports reading from multiple `.env` files.
+Each file overrides the previous: if there are duplicate keys, the last file determines the final value.
+
+```shell
+$ echo -e "a=1\nb=2\n" > .env1
+$ echo -e "b=20\nc=30\n" > .env2
+$ python -m dotenv -f .env1 -f .env2 list
+a=1
+b=20
+c=30
+```
+
 Run `dotenv --help` for more information about the options and subcommands.
 
 ## File format

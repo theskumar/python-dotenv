@@ -1,7 +1,7 @@
 import os
 import sh
 from pathlib import Path
-from typing import Optional
+from typing import Dict, List, Optional
 
 import pytest
 
@@ -25,12 +25,31 @@ from dotenv.version import __version__
         ("export", "x='a b c'", '''export x='a b c'\n'''),
     )
 )
-def test_list(cli, dotenv_path, format: Optional[str], content: str, expected: str):
+def test_list_single_file(cli, dotenv_path, format: Optional[str], content: str, expected: str):
     dotenv_path.write_text(content + '\n')
 
     args = ['--file', dotenv_path, 'list']
     if format is not None:
         args.extend(['--format', format])
+
+    result = cli.invoke(dotenv_cli, args)
+
+    assert (result.exit_code, result.output) == (0, expected)
+
+
+@pytest.mark.parametrize(
+    "contents,expected",
+    (
+        (["x='1'", "y='2'"], '''x=1\ny=2\n'''),
+        (["x='1'", "x='2'"], '''x=2\n'''),
+        (["x='1'\ny='2'", "y='20'\nz='30'"], '''x=1\ny=20\nz=30\n'''),
+    )
+)
+def test_list_multi_file(cli, dotenv_path, extra_dotenv_path, contents: List[str], expected: str):
+    dotenv_path.write_text(contents[0] + '\n')
+    extra_dotenv_path.write_text(contents[1] + '\n')
+
+    args = ['--file', dotenv_path, '--file', extra_dotenv_path, 'list']
 
     result = cli.invoke(dotenv_cli, args)
 
@@ -57,7 +76,7 @@ def test_list_no_file(cli):
     assert (result.exit_code, result.output) == (1, "")
 
 
-def test_get_existing_value(cli, dotenv_path):
+def test_get_existing_value_single_file(cli, dotenv_path):
     dotenv_path.write_text("a=b")
 
     result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'get', 'a'])
@@ -65,9 +84,32 @@ def test_get_existing_value(cli, dotenv_path):
     assert (result.exit_code, result.output) == (0, "b\n")
 
 
+@pytest.mark.parametrize(
+    "contents,expected_values",
+    (
+        (["a=1", "b=2"], {"a": "1", "b": "2"}),
+        (["b=2", "a=1"], {"a": "1", "b": "2"}),
+        (["a=1", "a=2"], {"a": "2"}),
+    )
+)
+def test_get_existing_value_multi_file(
+    cli,
+    dotenv_path,
+    extra_dotenv_path,
+    contents: List[str],
+    expected_values: Dict[str, str]
+):
+    dotenv_path.write_text(contents[0])
+    extra_dotenv_path.write_text(contents[1])
+
+    for key, value in expected_values.items():
+        result = cli.invoke(dotenv_cli, ['--file', dotenv_path, '--file', extra_dotenv_path, 'get', key])
+
+        assert (result.exit_code, result.output) == (0, f"{value}\n")
+
+
 def test_get_non_existent_value(cli, dotenv_path):
     result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'get', 'a'])
-
     assert (result.exit_code, result.output) == (1, "")
 
 
@@ -99,6 +141,12 @@ def test_unset_non_existent_value(cli, dotenv_path):
 
     assert (result.exit_code, result.output) == (1, "")
     assert dotenv_path.read_text() == ""
+
+
+def test_unset_multi_file_not_allowed(cli, dotenv_path, extra_dotenv_path):
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, '--file', extra_dotenv_path, 'unset', 'a'])
+    assert result.exit_code == 1
+    assert result.output == f"Unset is not supported for multiple files: ['{dotenv_path}', '{extra_dotenv_path}'].\n"
 
 
 @pytest.mark.parametrize(
@@ -149,6 +197,12 @@ def test_set_no_file(cli):
 
     assert result.exit_code == 2
     assert "Missing argument" in result.output
+
+
+def test_set_multi_file_not_allowed(cli, dotenv_path, extra_dotenv_path):
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, '--file', extra_dotenv_path, 'set', 'a', 'b'])
+    assert result.exit_code == 1
+    assert result.output == f"Set is not supported for multiple files: ['{dotenv_path}', '{extra_dotenv_path}'].\n"
 
 
 def test_get_default_path(tmp_path):
@@ -206,6 +260,24 @@ def test_run_with_other_env(dotenv_path):
     result = sh.dotenv("--file", dotenv_path, "run", "printenv", "a")
 
     assert result == "b\n"
+
+
+@pytest.mark.parametrize(
+    "contents,expected_values",
+    (
+        (["a=1", "b=2"], {"a": "1", "b": "2"}),
+        (["b=2", "a=1"], {"a": "1", "b": "2"}),
+        (["a=1", "a=2"], {"a": "2"}),
+    )
+)
+def test_run_with_multi_envs(dotenv_path, extra_dotenv_path, contents: List[str], expected_values: Dict[str, str]):
+    dotenv_path.write_text(contents[0])
+    extra_dotenv_path.write_text(contents[1])
+
+    for key, value in expected_values.items():
+        result = sh.dotenv("--file", dotenv_path, '--file', extra_dotenv_path, "run", "printenv", key)
+
+        assert result == f"{value}\n"
 
 
 def test_run_without_cmd(cli):
