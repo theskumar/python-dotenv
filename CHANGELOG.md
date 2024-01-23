@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0]
+## [1.0.1] - 2024-01-23
+
+**Fixed**
+
+* Gracefully handle code which has been imported from a zipfile ([#456] by [@samwyma])
+* Allow modules using load_dotenv to be reloaded when launched in a separate thread ([#497] by [@freddyaboulton])
+* Fix file not closed after deletion, handle error in the rewrite function ([#469] by [@Qwerty-133])
+
+**Misc**
+* Use pathlib.Path in tests ([#466] by [@eumiro])
+* Fix year in release date in changelog.md ([#454] by [@jankislinger])
+* Use https in README links ([#474] by [@Nicals])
+
+## [1.0.0] - 2023-02-24
 
 **Fixed**
 
@@ -328,6 +341,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [#176]: https://github.com/theskumar/python-dotenv/issues/176
 [#183]: https://github.com/theskumar/python-dotenv/issues/183
 [#359]: https://github.com/theskumar/python-dotenv/issues/359
+[#469]: https://github.com/theskumar/python-dotenv/issues/469
+[#456]: https://github.com/theskumar/python-dotenv/issues/456
+[#466]: https://github.com/theskumar/python-dotenv/issues/466
+[#454]: https://github.com/theskumar/python-dotenv/issues/454
+[#474]: https://github.com/theskumar/python-dotenv/issues/474
 
 [@alanjds]: https://github.com/alanjds
 [@altendky]: https://github.com/altendky
@@ -341,21 +359,27 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@eggplants]: https://github.com/@eggplants
 [@ekohl]: https://github.com/ekohl
 [@elbehery95]: https://github.com/elbehery95
+[@eumiro]: https://github.com/eumiro
 [@Flimm]: https://github.com/Flimm
+[@freddyaboulton]: https://github.com/freddyaboulton
 [@gergelyk]: https://github.com/gergelyk
 [@gongqingkui]: https://github.com/gongqingkui
 [@greyli]: https://github.com/greyli
 [@harveer07]: https://github.com/@harveer07
 [@jadutter]: https://github.com/jadutter
+[@jankislinger]: https://github.com/jankislinger
 [@jctanner]: https://github.com/jctanner
 [@larsks]: https://github.com/@larsks
 [@lsmith77]: https://github.com/lsmith77
 [@mgorny]: https://github.com/mgorny
 [@naorlivne]: https://github.com/@naorlivne
+[@Nicals]: https://github.com/Nicals
 [@Nougat-Waffle]: https://github.com/Nougat-Waffle
 [@qnighy]: https://github.com/qnighy
+[@Qwerty-133]: https://github.com/Qwerty-133
 [@rabinadk1]: https://github.com/@rabinadk1
 [@sammck]: https://github.com/@sammck
+[@samwyma]: https://github.com/samwyma
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
 [@theGOTOguy]: https://github.com/theGOTOguy
@@ -367,7 +391,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@zueve]: https://github.com/zueve
 
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/theskumar/python-dotenv/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v1.0.0
 [0.21.1]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v0.21.1
 [0.21.0]: https://github.com/theskumar/python-dotenv/compare/v0.20.0...v0.21.0
