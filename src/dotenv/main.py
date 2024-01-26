@@ -22,9 +22,20 @@ StrPath = Union[str, 'os.PathLike[str]']
 logger = logging.getLogger(__name__)
 
 
-def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
+def with_warn_for_invalid_lines(mappings: Iterator[Binding], verbose: bool = True) -> Iterator[Binding]:
+    """
+    The function `with_warn_for_invalid_lines` iterates over a collection of `Binding` objects and
+    yields each object, while also logging a warning message if the object has an error and the
+    `verbose` flag is set to `True`.
+
+    Parameters:
+        mappings: An iterator of `Binding` objects. Each `Binding` object represents a line in a file being parsed. It contains information about the line number, the original line content, and any parsing errors encountered
+        verbose: Whether or not to display warnings for invalid lines. If set to True, warnings will be displayed. If set to False, warnings will be suppressed, defaults to True
+    Returns:
+        Iterator[Binding]: An iterator of `Binding` objects, each representing a line in a file being parsed
+    """
     for mapping in mappings:
-        if mapping.error:
+        if mapping.error and verbose:
             logger.warning(
                 "Python-dotenv could not parse statement starting at line %s",
                 mapping.original.line,
@@ -81,7 +92,7 @@ class DotEnv:
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         with self._get_stream() as stream:
-            for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
+            for mapping in with_warn_for_invalid_lines(parse_stream(stream), verbose=self.verbose):
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
@@ -117,6 +128,7 @@ class DotEnv:
 def get_key(
     dotenv_path: StrPath,
     key_to_get: str,
+    verbose: bool = True,
     encoding: Optional[str] = "utf-8",
 ) -> Optional[str]:
     """
@@ -124,7 +136,7 @@ def get_key(
 
     Returns `None` if the key isn't found or doesn't have a value.
     """
-    return DotEnv(dotenv_path, verbose=True, encoding=encoding).get(key_to_get)
+    return DotEnv(dotenv_path, verbose=verbose, encoding=encoding).get(key_to_get)
 
 
 @contextmanager
@@ -155,6 +167,7 @@ def set_key(
     value_to_set: str,
     quote_mode: str = "always",
     export: bool = False,
+    verbose: bool = True,
     encoding: Optional[str] = "utf-8",
 ) -> Tuple[Optional[bool], str, str]:
     """
@@ -183,7 +196,7 @@ def set_key(
     with rewrite(dotenv_path, encoding=encoding) as (source, dest):
         replaced = False
         missing_newline = False
-        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+        for mapping in with_warn_for_invalid_lines(parse_stream(source), verbose=verbose):
             if mapping.key == key_to_set:
                 dest.write(line_out)
                 replaced = True
@@ -202,6 +215,7 @@ def unset_key(
     dotenv_path: StrPath,
     key_to_unset: str,
     quote_mode: str = "always",
+    verbose: bool = True,
     encoding: Optional[str] = "utf-8",
 ) -> Tuple[Optional[bool], str]:
     """
@@ -216,7 +230,7 @@ def unset_key(
 
     removed = False
     with rewrite(dotenv_path, encoding=encoding) as (source, dest):
-        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+        for mapping in with_warn_for_invalid_lines(parse_stream(source), verbose=verbose):
             if mapping.key == key_to_unset:
                 removed = True
             else:
