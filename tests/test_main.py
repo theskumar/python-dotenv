@@ -451,6 +451,10 @@ def test_resolve_variable(env, variables, value, override, expected):
         ({"B": "c"}, "B=d\na=${B}", True, {"a": "d", "B": "d"}),
         ({}, "a=b\na=c\nd=${a}", True, {"a": "c", "d": "c"}),
         ({}, "a=b\nc=${a}\nd=e\nc=${d}", True, {"a": "b", "c": "e", "d": "e"}),
+
+        # No value
+        ({}, "a\nb=${a}", True, {"a": None, "b": ""}),
+        ({}, "a\nb=${a}", False, {"a": None, "b": "${a}"}),
     ],
 )
 def test_dotenv_values_string_io(env, string, interpolate, expected):
@@ -518,6 +522,13 @@ def test_required_variable_throws(string, message):
     "string,expected_xx",
     [
         ("XX=TEST", "TEST"),
+        ("XX=\"TE\"ST", "TEST"),
+        ("XX='TE\'ST", "TEST"),
+        ("XX=\"TE\"'ST'", "TEST"),
+        ("XX=TE'ST'", "TEST"),
+        ("XX=TE\"ST\"", "TEST"),
+        ("XX=TE ST", "TE ST"),
+        ("XX=TE \"ST\"", "TE ST"),
         ("XX=$TEST", "$TEST"),
         ("XX=${TEST}", "tt"),
         ("XX=\"${TEST}\"", "tt"),
