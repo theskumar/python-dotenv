@@ -399,3 +399,17 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+def test_from_dict_and_dumps(dotenv_path):
+    data = {"a": "b", "c": "d"}
+
+    de = dotenv.main.DotEnv(dotenv_path)
+    de.from_dict(data)
+    de_str = de.dumps()
+
+    assert de_str == "a=b\nc=d\n"
+
+    de.dump()
+
+    assert dotenv_path.read_text() == de_str
