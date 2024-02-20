@@ -138,14 +138,13 @@ class DotEnv:
             if v is not None:
                 output += f"{k}={v}\n"
         return output
-    
+
     def dump(self) -> None:
         """
         Write the instance to the .env file.
         """
         with open(self.dotenv_path, "w", encoding=self.encoding) as f:
             f.write(self.dumps())
-
 
 
 def get_key(
