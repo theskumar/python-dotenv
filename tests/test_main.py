@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import textwrap
+from typing import Dict, Optional
 from unittest import mock
 
 import pytest
@@ -402,7 +403,7 @@ def test_dotenv_values_file_stream(dotenv_path):
 
 
 def test_from_dict_and_dumps(dotenv_path):
-    data = {"a": "b", "c": "d"}
+    data: Dict[str, Optional[str]] = {"a": "b", "c": "d"}
 
     de = dotenv.main.DotEnv(dotenv_path)
     de.from_dict(data)

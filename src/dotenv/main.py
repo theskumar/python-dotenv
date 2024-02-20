@@ -127,6 +127,8 @@ class DotEnv:
                         )
                     continue
 
+                if not self._dict:
+                    self._dict = OrderedDict()
                 self._dict[key] = value
 
     def dumps(self) -> str:
@@ -143,8 +145,10 @@ class DotEnv:
         """
         Write the instance to the .env file.
         """
-        with open(self.dotenv_path, "w", encoding=self.encoding) as f:
-            f.write(self.dumps())
+
+        if self.dotenv_path and os.path.isfile(self.dotenv_path):
+            with open(self.dotenv_path, "w", encoding=self.encoding) as f:
+                f.write(self.dumps())
 
 
 def get_key(
