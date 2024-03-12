@@ -399,3 +399,9 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+def test_dotenv_values_with_os_environment():
+    if os.environ.get("USER"):
+        assert "USER" not in dotenv.dotenv_values(with_env=False)
+        assert "USER" in dotenv.dotenv_values(with_env=True)
