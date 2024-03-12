@@ -31,7 +31,7 @@ setup(
     package_data={
         'dotenv': ['py.typed'],
     },
-    python_requires=">=3.5",
+    python_requires=">=3.8",
     extras_require={
         'cli': ['click>=5.0', ],
     },
@@ -45,13 +45,11 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',

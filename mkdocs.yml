@@ -5,8 +5,13 @@ theme:
   name: material
   palette:
     primary: green
+  features:
+    - toc.follow
+    - navigation.sections
+
 markdown_extensions:
   - mdx_truly_sane_lists
+
 plugins:
   - mkdocstrings:
       handlers:
@@ -21,3 +26,4 @@ nav:
   - Changelog: changelog.md
   - Contributing: contributing.md
   - Reference: reference.md
+  - License: license.md

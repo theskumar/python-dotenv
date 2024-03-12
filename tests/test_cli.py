@@ -1,27 +1,54 @@
 import os
+import sh
+from pathlib import Path
+from typing import Optional
 
 import pytest
-import sh
 
 import dotenv
 from dotenv.cli import cli as dotenv_cli
 from dotenv.version import __version__
 
 
-def test_list(cli, dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+@pytest.mark.parametrize(
+    "format,content,expected",
+    (
+        (None, "x='a b c'", '''x=a b c\n'''),
+        ("simple", "x='a b c'", '''x=a b c\n'''),
+        ("simple", """x='"a b c"'""", '''x="a b c"\n'''),
+        ("simple", '''x="'a b c'"''', '''x='a b c'\n'''),
+        ("json", "x='a b c'", '''{\n  "x": "a b c"\n}\n'''),
+        ("shell", "x='a b c'", "x='a b c'\n"),
+        ("shell", """x='"a b c"'""", '''x='"a b c"'\n'''),
+        ("shell", '''x="'a b c'"''', '''x=''"'"'a b c'"'"''\n'''),
+        ("shell", "x='a\nb\nc'", "x='a\nb\nc'\n"),
+        ("export", "x='a b c'", '''export x='a b c'\n'''),
+    )
+)
+def test_list(cli, dotenv_path, format: Optional[str], content: str, expected: str):
+    dotenv_path.write_text(content + '\n')
 
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'list'])
+    args = ['--file', dotenv_path, 'list']
+    if format is not None:
+        args.extend(['--format', format])
 
-    assert (result.exit_code, result.output) == (0, result.output)
+    result = cli.invoke(dotenv_cli, args)
+
+    assert (result.exit_code, result.output) == (0, expected)
 
 
 def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'list'])
 
     assert result.exit_code == 2, result.output
-    assert "does not exist" in result.output
+    assert "Error opening env file" in result.output
+
+
+def test_list_not_a_file(cli):
+    result = cli.invoke(dotenv_cli, ['--file', '.', 'list'])
+
+    assert result.exit_code == 2, result.output
+    assert "Error opening env file" in result.output
 
 
 def test_list_no_file(cli):
@@ -30,43 +57,48 @@ def test_list_no_file(cli):
     assert (result.exit_code, result.output) == (1, "")
 
 
-def test_get_existing_value(cli, dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_get_existing_value(cli, dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'get', 'a'])
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'get', 'a'])
 
     assert (result.exit_code, result.output) == (0, "b\n")
 
 
-def test_get_non_existent_value(cli, dotenv_file):
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'get', 'a'])
+def test_get_non_existent_value(cli, dotenv_path):
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'get', 'a'])
 
     assert (result.exit_code, result.output) == (1, "")
 
 
-def test_get_no_file(cli):
+def test_get_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ['--file', 'nx_file', 'get', 'a'])
 
     assert result.exit_code == 2
-    assert "does not exist" in result.output
+    assert "Error opening env file" in result.output
 
 
-def test_unset_existing_value(cli, dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_get_not_a_file(cli):
+    result = cli.invoke(dotenv_cli, ['--file', '.', 'get', 'a'])
 
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'unset', 'a'])
+    assert result.exit_code == 2
+    assert "Error opening env file" in result.output
+
+
+def test_unset_existing_value(cli, dotenv_path):
+    dotenv_path.write_text("a=b")
+
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'unset', 'a'])
 
     assert (result.exit_code, result.output) == (0, "Successfully removed a\n")
-    assert open(dotenv_file, "r").read() == ""
+    assert dotenv_path.read_text() == ""
 
 
-def test_unset_non_existent_value(cli, dotenv_file):
-    result = cli.invoke(dotenv_cli, ['--file', dotenv_file, 'unset', 'a'])
+def test_unset_non_existent_value(cli, dotenv_path):
+    result = cli.invoke(dotenv_cli, ['--file', dotenv_path, 'unset', 'a'])
 
     assert (result.exit_code, result.output) == (1, "")
-    assert open(dotenv_file, "r").read() == ""
+    assert dotenv_path.read_text() == ""
 
 
 @pytest.mark.parametrize(
@@ -79,31 +111,31 @@ def test_unset_non_existent_value(cli, dotenv_file):
         ("auto", "a", "$", "a='$'\n"),
     )
 )
-def test_set_quote_options(cli, dotenv_file, quote_mode, variable, value, expected):
+def test_set_quote_options(cli, dotenv_path, quote_mode, variable, value, expected):
     result = cli.invoke(
         dotenv_cli,
-        ["--file", dotenv_file, "--export", "false", "--quote", quote_mode, "set", variable, value]
+        ["--file", dotenv_path, "--export", "false", "--quote", quote_mode, "set", variable, value]
     )
 
     assert (result.exit_code, result.output) == (0, "{}={}\n".format(variable, value))
-    assert open(dotenv_file, "r").read() == expected
+    assert dotenv_path.read_text() == expected
 
 
 @pytest.mark.parametrize(
-    "dotenv_file,export_mode,variable,value,expected",
+    "dotenv_path,export_mode,variable,value,expected",
     (
-        (".nx_file", "true", "a", "x", "export a='x'\n"),
-        (".nx_file", "false", "a", "x", "a='x'\n"),
+        (Path(".nx_file"), "true", "a", "x", "export a='x'\n"),
+        (Path(".nx_file"), "false", "a", "x", "a='x'\n"),
     )
 )
-def test_set_export(cli, dotenv_file, export_mode, variable, value, expected):
+def test_set_export(cli, dotenv_path, export_mode, variable, value, expected):
     result = cli.invoke(
         dotenv_cli,
-        ["--file", dotenv_file, "--quote", "always", "--export", export_mode, "set", variable, value]
+        ["--file", dotenv_path, "--quote", "always", "--export", export_mode, "set", variable, value]
     )
 
     assert (result.exit_code, result.output) == (0, "{}={}\n".format(variable, value))
-    assert open(dotenv_file, "r").read() == expected
+    assert dotenv_path.read_text() == expected
 
 
 def test_set_non_existent_file(cli):
@@ -120,68 +152,58 @@ def test_set_no_file(cli):
 
 
 def test_get_default_path(tmp_path):
-    sh.cd(str(tmp_path))
-    with open(str(tmp_path / ".env"), "w") as f:
-        f.write("a=b")
+    with sh.pushd(tmp_path):
+        (tmp_path / ".env").write_text("a=b")
 
-    result = sh.dotenv("get", "a")
+        result = sh.dotenv("get", "a")
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+    with sh.pushd(tmp_path):
+        (tmp_path / ".env").write_text("a=b")
 
-    result = sh.dotenv("run", "printenv", "a")
+        result = sh.dotenv("run", "printenv", "a")
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run_with_existing_variable(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
-    env = dict(os.environ)
-    env.update({"LANG": "en_US.UTF-8", "a": "c"})
+    with sh.pushd(tmp_path):
+        (tmp_path / ".env").write_text("a=b")
+        env = dict(os.environ)
+        env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-    result = sh.dotenv("run", "printenv", "a", _env=env)
+        result = sh.dotenv("run", "printenv", "a", _env=env)
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run_with_existing_variable_not_overridden(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
-    env = dict(os.environ)
-    env.update({"LANG": "en_US.UTF-8", "a": "c"})
+    with sh.pushd(tmp_path):
+        (tmp_path / ".env").write_text("a=b")
+        env = dict(os.environ)
+        env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-    result = sh.dotenv("run", "--no-override", "printenv", "a", _env=env)
+        result = sh.dotenv("run", "--no-override", "printenv", "a", _env=env)
 
-    assert result == "c\n"
+        assert result == "c\n"
 
 
 def test_run_with_none_value(tmp_path):
-    sh.cd(str(tmp_path))
-    dotenv_file = str(tmp_path / ".env")
-    with open(dotenv_file, "w") as f:
-        f.write("a=b\nc")
+    with sh.pushd(tmp_path):
+        (tmp_path / ".env").write_text("a=b\nc")
 
-    result = sh.dotenv("run", "printenv", "a")
+        result = sh.dotenv("run", "printenv", "a")
 
-    assert result == "b\n"
+        assert result == "b\n"
 
 
-def test_run_with_other_env(dotenv_file):
-    with open(dotenv_file, "w") as f:
-        f.write("a=b")
+def test_run_with_other_env(dotenv_path):
+    dotenv_path.write_text("a=b")
 
-    result = sh.dotenv("--file", dotenv_file, "run", "printenv", "a")
+    result = sh.dotenv("--file", dotenv_path, "run", "printenv", "a")
 
     assert result == "b\n"
 
