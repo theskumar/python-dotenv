@@ -1,6 +1,7 @@
 import json
 import os
 import shlex
+import shutil
 import sys
 from contextlib import contextmanager
 from subprocess import Popen
@@ -188,6 +189,11 @@ def run_command(command: List[str], env: Dict[str, str]) -> int:
     # `env`
     cmd_env = os.environ.copy()
     cmd_env.update(env)
+
+    # Resolve path in a consistent way
+    app = shutil.which(command[0])
+    if app is not None:
+        command = (app,) + command[1:]
 
     p = Popen(command,
               universal_newlines=True,
