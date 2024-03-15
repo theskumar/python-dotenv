@@ -33,7 +33,7 @@ def enumerate_env():
 
 
 @click.group()
-@click.option('-f', '--file', default=enumerate_env(),
+@click.option('-f', '--file', default=enumerate_env,
               type=click.Path(file_okay=True),
               help="Location of the .env file, defaults to .env file in current working directory.")
 @click.option('-q', '--quote', default='always',
