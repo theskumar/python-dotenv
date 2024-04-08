@@ -7,6 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       max-parallel: 8
       matrix:
         os:
@@ -17,14 +18,15 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Upgrade pip
+      run: python -m pip install --upgrade pip
+    
     - name: Install dependencies
-      run:
-        python -m pip install --upgrade pip
-        pip install tox tox-gh-actions
+      run: pip install tox tox-gh-actions
 
     - name: Test with tox
       run: tox
