@@ -340,7 +340,9 @@ def load_dotenv(
         Bool: True if at least one environment variable is set else False
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
-    .env file.
+    .env file with it's default parameters. If you need to change the default parameters
+    of `find_dotenv()`, you can explicitly call `find_dotenv()` and pass the result
+    to this function as `dotenv_path`.
     """
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()

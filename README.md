@@ -36,13 +36,13 @@ configurable via the environment:
 ```python
 from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
+load_dotenv()  # take environment variables
 
 # Code of your application, which uses environment variables (e.g. from `os.environ` or
 # `os.getenv`) as if they came from the actual environment.
 ```
 
-By default, `load_dotenv` doesn't override existing environment variables.
+By default, `load_dotenv` doesn't override existing environment variables and looks for a `.env` file in same directory as python script or searches for it incrementally higher up.
 
 To configure the development environment, add a `.env` in the root directory of your
 project:
