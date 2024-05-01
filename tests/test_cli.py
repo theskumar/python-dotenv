@@ -208,18 +208,27 @@ def test_run_with_other_env(dotenv_path):
     assert result == "b\n"
 
 
-def test_run_without_cmd(cli):
+def test_run_without_env(cli):
     result = cli.invoke(dotenv_cli, ['run'])
 
     assert result.exit_code == 2
     assert "Invalid value for '-f'" in result.output
 
 
+def test_run_without_cmd(cli):
+    Path(".env").write_text("")
+    result = cli.invoke(dotenv_cli, ['run'])
+
+    assert result.exit_code == 1
+    assert "No command given" in result.output
+
+
 def test_run_with_invalid_cmd(cli):
+    Path(".env").write_text("")
     result = cli.invoke(dotenv_cli, ['run', 'i_do_not_exist'])
 
-    assert result.exit_code == 2
-    assert "Invalid value for '-f'" in result.output
+    assert result.exit_code == 1
+    assert isinstance(result.exception, FileNotFoundError)
 
 
 def test_run_with_version(cli):

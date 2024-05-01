@@ -1,10 +1,11 @@
 import json
 import os
 import shlex
+import shutil
 import sys
 from contextlib import contextmanager
 from subprocess import Popen
-from typing import Any, Dict, IO, Iterator, List
+from typing import Any, Dict, IO, Iterator, Tuple
 
 try:
     import click
@@ -32,7 +33,7 @@ def enumerate_env():
 
 
 @click.group()
-@click.option('-f', '--file', default=enumerate_env(),
+@click.option('-f', '--file', default=enumerate_env,
               type=click.Path(file_okay=True),
               help="Location of the .env file, defaults to .env file in current working directory.")
 @click.option('-q', '--quote', default='always',
@@ -144,7 +145,7 @@ def unset(ctx: click.Context, key: Any) -> None:
     help="Override variables from the environment file with those from the .env file.",
 )
 @click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
-def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
+def run(ctx: click.Context, override: bool, commandline: Tuple[str, ...]) -> None:
     """Run command with environment variables present."""
     file = ctx.obj['FILE']
     if not os.path.isfile(file):
@@ -165,7 +166,7 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     exit(ret)
 
 
-def run_command(command: List[str], env: Dict[str, str]) -> int:
+def run_command(command: Tuple[str, ...], env: Dict[str, str]) -> int:
     """Run command in sub process.
 
     Runs the command in a sub process with the variables from `env`
@@ -188,6 +189,11 @@ def run_command(command: List[str], env: Dict[str, str]) -> int:
     # `env`
     cmd_env = os.environ.copy()
     cmd_env.update(env)
+
+    # Resolve path in a consistent way
+    app = shutil.which(command[0])
+    if app is not None:
+        command = (app,) + command[1:]
 
     p = Popen(command,
               universal_newlines=True,
