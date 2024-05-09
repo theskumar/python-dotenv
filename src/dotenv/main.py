@@ -35,14 +35,14 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
 class DotEnv:
     def __init__(
         self,
-        dotenv_path: Optional[StrPath],
+        dotenv_path: StrPath,
         stream: Optional[IO[str]] = None,
         verbose: bool = False,
         encoding: Optional[str] = None,
         interpolate: bool = True,
         override: bool = True,
     ) -> None:
-        self.dotenv_path: Optional[StrPath] = dotenv_path
+        self.dotenv_path: StrPath = dotenv_path
         self.stream: Optional[IO[str]] = stream
         self._dict: Optional[Dict[str, Optional[str]]] = None
         self.verbose: bool = verbose
@@ -130,7 +130,7 @@ def get_key(
 @contextmanager
 def rewrite(
     path: StrPath,
-    encoding: Optional[str],
+    encoding: str,
 ) -> Iterator[Tuple[IO[str], IO[str]]]:
     pathlib.Path(path).touch()
 
