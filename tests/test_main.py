@@ -342,6 +342,26 @@ def test_dotenv_values_file(dotenv_path):
     assert result == {"a": "b"}
 
 
+def test_dotenv_parse_error_causes_warning(dotenv_path):
+    logger = logging.getLogger("dotenv.main")
+    dotenv_path.write_text("a='b\nc=d")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.dotenv_values(dotenv_path)
+
+    mock_warning.assert_called_once_with("Python-dotenv could not parse statement starting at line %s", 1)
+    assert result == {"c": "d"}
+
+
+def test_dotenv_parse_error_causes_exception(dotenv_path):
+    dotenv_path.write_text("a='b")
+
+    with pytest.raises(dotenv.main.DotEnvParseError) as excinfo:
+        dotenv.dotenv_values(dotenv_path, raise_on_error=True)
+
+    assert str(excinfo.value) == "Python-dotenv could not parse statement starting at line 1"
+
+
 @pytest.mark.parametrize(
     "env,string,interpolate,expected",
     [
