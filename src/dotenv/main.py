@@ -22,13 +22,24 @@ StrPath = Union[str, 'os.PathLike[str]']
 logger = logging.getLogger(__name__)
 
 
-def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
+class DotEnvParseError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
+def with_warn_for_invalid_lines(mappings: Iterator[Binding], raise_on_error: bool = False) -> Iterator[Binding]:
     for mapping in mappings:
         if mapping.error:
-            logger.warning(
-                "Python-dotenv could not parse statement starting at line %s",
-                mapping.original.line,
-            )
+            if raise_on_error:
+                raise DotEnvParseError(
+                    "Python-dotenv could not parse statement starting at line %s" %
+                    mapping.original.line,
+                )
+            else:
+                logger.warning(
+                    "Python-dotenv could not parse statement starting at line %s",
+                    mapping.original.line,
+                )
         yield mapping
 
 
@@ -41,6 +52,7 @@ class DotEnv:
         encoding: Optional[str] = None,
         interpolate: bool = True,
         override: bool = True,
+        raise_on_error: bool = False,
     ) -> None:
         self.dotenv_path: Optional[StrPath] = dotenv_path
         self.stream: Optional[IO[str]] = stream
@@ -49,6 +61,7 @@ class DotEnv:
         self.encoding: Optional[str] = encoding
         self.interpolate: bool = interpolate
         self.override: bool = override
+        self.raise_on_error: bool = raise_on_error
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
@@ -81,7 +94,7 @@ class DotEnv:
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         with self._get_stream() as stream:
-            for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
+            for mapping in with_warn_for_invalid_lines(parse_stream(stream), self.raise_on_error):
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
@@ -325,6 +338,7 @@ def load_dotenv(
     override: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    raise_on_error: bool = False,
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -354,6 +368,7 @@ def load_dotenv(
         interpolate=interpolate,
         override=override,
         encoding=encoding,
+        raise_on_error=raise_on_error,
     )
     return dotenv.set_as_environment_variables()
 
@@ -364,6 +379,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    raise_on_error: bool = False,
 ) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
@@ -391,4 +407,5 @@ def dotenv_values(
         interpolate=interpolate,
         override=True,
         encoding=encoding,
+        raise_on_error=raise_on_error,
     ).dict()
