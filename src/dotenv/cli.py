@@ -3,7 +3,7 @@ import os
 import shlex
 import sys
 from contextlib import contextmanager
-from typing import Any, Dict, IO, Iterator, List
+from typing import Any, Dict, IO, Iterator, List, Optional
 
 try:
     import click
@@ -16,7 +16,7 @@ from .main import dotenv_values, set_key, unset_key
 from .version import __version__
 
 
-def enumerate_env():
+def enumerate_env() -> Optional[str]:
     """
     Return a path for the ${pwd}/.env file.
 
