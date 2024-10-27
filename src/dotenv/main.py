@@ -318,44 +318,58 @@ def find_dotenv(
     return ''
 
 
+def parse_dotenv(content: str, verbose: bool = False, override: bool = False) -> bool:
+
+    env_vars = {}
+    
+    for line in content.splitlines():
+      
+        if line.strip() and not line.startswith('#'):
+
+            key, value = line.split('=', 1)
+           
+            env_vars[key.strip()] = value.strip().strip("'").strip('"')
+    
+ 
+    for key, value in env_vars.items():
+        if override or key not in os.environ:
+            os.environ[key] = value
+    
+    return True
+
 def load_dotenv(
-    dotenv_path: Optional[StrPath] = None,
+    dotenv_path: Union[str, os.PathLike, None] = None,
     stream: Optional[IO[str]] = None,
+    *,
     verbose: bool = False,
     override: bool = False,
-    interpolate: bool = True,
-    encoding: Optional[str] = "utf-8",
+    **kwargs
 ) -> bool:
-    """Parse a .env file and then load all the variables found as environment variables.
-
-    Parameters:
-        dotenv_path: Absolute or relative path to .env file.
-        stream: Text stream (such as `io.StringIO`) with .env content, used if
-            `dotenv_path` is `None`.
-        verbose: Whether to output a warning the .env file is missing.
-        override: Whether to override the system environment variables with the variables
-            from the `.env` file.
-        encoding: Encoding to be used to read the file.
-    Returns:
-        Bool: True if at least one environment variable is set else False
-
-    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
-    .env file with it's default parameters. If you need to change the default parameters
-    of `find_dotenv()`, you can explicitly call `find_dotenv()` and pass the result
-    to this function as `dotenv_path`.
-    """
-    if dotenv_path is None and stream is None:
-        dotenv_path = find_dotenv()
-
-    dotenv = DotEnv(
-        dotenv_path=dotenv_path,
-        stream=stream,
-        verbose=verbose,
-        interpolate=interpolate,
-        override=override,
-        encoding=encoding,
-    )
-    return dotenv.set_as_environment_variables()
+ 
+    if not hasattr(load_dotenv, "_cache"):
+        load_dotenv._cache = {}
+    
+    encoding = kwargs.get('encoding', {})
+    
+  
+    if dotenv_path:
+        dotenv_path = os.path.abspath(dotenv_path)
+    
+  
+    cache_key = str(dotenv_path)
+    if cache_key in load_dotenv._cache:
+    
+        return load_dotenv._cache[cache_key]
+   
+    with open(dotenv_path or '.env') as f:
+       
+        content = f.read()
+    
+  
+    success = parse_dotenv(content, verbose=verbose, override=override)
+    load_dotenv._cache[cache_key] = success
+    
+    return success
 
 
 def dotenv_values(
