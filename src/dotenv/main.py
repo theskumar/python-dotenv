@@ -65,7 +65,7 @@ class DotEnv:
                 )
             yield io.StringIO('')
 
-    def dict(self) -> Dict[str, Optional[str]]:
+    def dict(self) -> Dict[str, Optional[str]] | OrderedDict[str, Optional[str]]:
         """Return dotenv as dict"""
         if self._dict:
             return self._dict
@@ -364,7 +364,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
-) -> Dict[str, Optional[str]]:
+) -> Dict[str, Optional[str]] | OrderedDict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
 
