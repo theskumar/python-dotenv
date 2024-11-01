@@ -1,6 +1,6 @@
 import os
 import sys
-import sh
+import subprocess
 import textwrap
 from typing import List
 from unittest import mock
@@ -96,6 +96,6 @@ def test_load_dotenv_outside_zip_file_when_called_in_zipfile(tmp_path):
     )
     os.chdir(str(tmp_path))
 
-    result = sh.Command(sys.executable)(code_path)
+    result = subprocess.run([sys.executable, code_path], capture_output=True, text=True, check=True)
 
-    assert result == "b\n"
+    assert result.stdout == "b\n"

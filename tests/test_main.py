@@ -4,9 +4,9 @@ import os
 import sys
 import textwrap
 from unittest import mock
+import subprocess
 
 import pytest
-import sh
 
 import dotenv
 
@@ -195,8 +195,8 @@ def prepare_file_hierarchy(path):
         test_find_dotenv0/
         └── child1
             ├── child2
-            │   └── child3
-            │       └── child4
+            │   └── child3
+            │       └── child4
             └── .env
 
     Then try to automatically `find_dotenv` starting in `child4`
@@ -329,9 +329,12 @@ def test_load_dotenv_in_current_dir(tmp_path):
     """))
     os.chdir(tmp_path)
 
-    result = sh.Command(sys.executable)(code_path)
+    process = subprocess.run([sys.executable, str(code_path)],
+                           capture_output=True,
+                           text=True,
+                           check=True)
 
-    assert result == 'b\n'
+    assert process.stdout == 'b\n'
 
 
 def test_dotenv_values_file(dotenv_path):

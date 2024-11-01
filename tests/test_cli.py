@@ -1,7 +1,8 @@
 import os
-import sh
+import subprocess
 from pathlib import Path
 from typing import Optional
+import contextlib
 
 import pytest
 
@@ -151,61 +152,94 @@ def test_set_no_file(cli):
     assert "Missing argument" in result.output
 
 
+@contextlib.contextmanager
+def cd(path):
+    """Cross platform directory change context manager"""
+    old_dir = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old_dir)
+
+
 def test_get_default_path(tmp_path):
-    with sh.pushd(tmp_path):
+    with cd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
 
-        result = sh.dotenv("get", "a")
+        result = subprocess.run(["dotenv", "get", "a"],
+                              capture_output=True,
+                              text=True,
+                              check=True)
 
-        assert result == "b\n"
+        assert result.stdout == "b\n"
 
 
 def test_run(tmp_path):
-    with sh.pushd(tmp_path):
+    with cd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
 
-        result = sh.dotenv("run", "printenv", "a")
+        cmd = ["dotenv", "run", "printenv" if os.name != 'nt' else "set", "a"]
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
 
-        assert result == "b\n"
+        assert result.stdout.strip() == "b"
 
 
 def test_run_with_existing_variable(tmp_path):
-    with sh.pushd(tmp_path):
+    with cd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
         env = dict(os.environ)
         env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-        result = sh.dotenv("run", "printenv", "a", _env=env)
+        cmd = ["dotenv", "run", "printenv" if os.name != 'nt' else "set", "a"]
+        result = subprocess.run(cmd,
+                              capture_output=True,
+                              text=True,
+                              env=env,
+                              check=True)
 
-        assert result == "b\n"
+        assert result.stdout.strip() == "b"
 
 
 def test_run_with_existing_variable_not_overridden(tmp_path):
-    with sh.pushd(tmp_path):
+    with cd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
         env = dict(os.environ)
         env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-        result = sh.dotenv("run", "--no-override", "printenv", "a", _env=env)
+        cmd = ["dotenv", "run", "--no-override", "printenv" if os.name != 'nt' else "set", "a"]
+        result = subprocess.run(cmd,
+                              capture_output=True,
+                              text=True,
+                              env=env,
+                              check=True)
 
-        assert result == "c\n"
+        assert result.stdout.strip() == "c"
 
 
 def test_run_with_none_value(tmp_path):
-    with sh.pushd(tmp_path):
+    with cd(tmp_path):
         (tmp_path / ".env").write_text("a=b\nc")
 
-        result = sh.dotenv("run", "printenv", "a")
+        cmd = ["dotenv", "run", "printenv" if os.name != 'nt' else "set", "a"]
+        result = subprocess.run(cmd,
+                              capture_output=True,
+                              text=True,
+                              check=True)
 
-        assert result == "b\n"
+        assert result.stdout.strip() == "b"
 
 
 def test_run_with_other_env(dotenv_path):
     dotenv_path.write_text("a=b")
 
-    result = sh.dotenv("--file", dotenv_path, "run", "printenv", "a")
+    cmd = ["dotenv", "--file", str(dotenv_path), "run", "printenv" if os.name != 'nt' else "set", "a"]
+    result = subprocess.run(cmd,
+                          capture_output=True,
+                          text=True,
+                          check=True)
 
-    assert result == "b\n"
+    assert result.stdout.strip() == "b"
 
 
 def test_run_without_cmd(cli):
