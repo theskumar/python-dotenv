@@ -3,7 +3,7 @@
 [![Build Status][build_status_badge]][build_status_link]
 [![PyPI version][pypi_badge]][pypi_link]
 
-Python-dotenv reads key-value pairs from a `.env` file and can set them as environment
+python-dotenv reads key-value pairs from a `.env` file and can set them as environment
 variables. It helps in the development of applications following the
 [12-factor](https://12factor.net/) principles.
 
@@ -29,20 +29,20 @@ If your application takes its configuration from environment variables, like a 1
 application, launching it in development is not very practical because you have to set
 those environment variables yourself.
 
-To help you with that, you can add Python-dotenv to your application to make it load the
+To help you with that, you can add python-dotenv to your application to make it load the
 configuration from a `.env` file when it is present (e.g. in development) while remaining
 configurable via the environment:
 
 ```python
 from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
+load_dotenv()  # take environment variables
 
 # Code of your application, which uses environment variables (e.g. from `os.environ` or
 # `os.getenv`) as if they came from the actual environment.
 ```
 
-By default, `load_dotenv` doesn't override existing environment variables.
+By default, `load_dotenv` doesn't override existing environment variables and looks for a `.env` file in same directory as python script or searches for it incrementally higher up.
 
 To configure the development environment, add a `.env` in the root directory of your
 project:
@@ -201,7 +201,7 @@ empty string.
 
 ### Variable expansion
 
-Python-dotenv can interpolate variables using POSIX variable expansion.
+python-dotenv can interpolate variables using POSIX variable expansion.
 
 With `load_dotenv(override=True)` or `dotenv_values()`, the value of a variable is the
 first of the values defined in the following list:
