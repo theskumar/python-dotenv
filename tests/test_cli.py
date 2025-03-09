@@ -238,8 +238,12 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
 def test_run_with_none_value(tmp_path):
     with pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b\nc")
+        if IS_WINDOWS:
+            printenv_cmd = ["dotenv", "run", "cmd", "/c", "echo", "%a%"]
+        else:
+            printenv_cmd = ["dotenv", "run", "printenv", "a"]
 
-        result = run_command(printenv_cmd, "a")
+        result = run_command(printenv_cmd)
 
         assert result == "b\n"
 
