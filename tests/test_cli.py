@@ -190,7 +190,7 @@ def test_run(tmp_path):
             "run",
             "python",
             "-c",
-            "import os, sys; print(os.environ['a']); sys.stderr.write('stderr_output\\n')",
+            "import os, sys; import json; print(json.dumps(dict(os.environ))); sys.stdout.flush()",
         ]
         result = run_command(printenv_cmd)
 
