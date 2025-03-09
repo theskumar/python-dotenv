@@ -186,28 +186,21 @@ def test_run(tmp_path):
     with pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
 
-        # Use sys.executable to run the command via Python directly
         if IS_WINDOWS:
-            # On Windows, use set command instead of echo with variable expansion
-            printenv_cmd = [
-                sys.executable,
-                "-m",
-                "dotenv",
-                "run",
-                "cmd",
-                "/c",
-                "set",
-                "a",
-            ]
+            # On Windows, use environment variables directly with the Python interpreter
+            # Create a temporary batch file to source the environment and run Python
+            batch_path = tmp_path / "run_test.bat"
+            batch_path.write_text(
+                f"@echo off\ndotenv run {sys.executable} -c \"import os; print(os.environ['a'])\""
+            )
+
+            # Run the batch file directly
+            result = run_command(f"{batch_path}")
         else:
             printenv_cmd = ["dotenv", "run", "printenv", "a"]
+            result = run_command(printenv_cmd)
 
-        result = run_command(printenv_cmd)
-        if IS_WINDOWS:
-            # Windows 'set' command includes variable name, extract just the value
-            assert result.strip().endswith("=b")
-        else:
-            assert result == "b\n"
+        assert result.strip() == "b"
 
 
 def test_run_with_existing_variable(tmp_path):
