@@ -7,8 +7,7 @@ import sys
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
-from typing import (IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple,
-                    Union)
+from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
 from .parser import Binding, parse_stream
 from .variables import parse_variables
@@ -17,7 +16,7 @@ from .variables import parse_variables
 # These paths may flow to `open()` and `shutil.move()`; `shutil.move()`
 # only accepts string paths, not byte paths or file descriptors. See
 # https://github.com/python/typeshed/pull/6832.
-StrPath = Union[str, 'os.PathLike[str]']
+StrPath = Union[str, "os.PathLike[str]"]
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
     for mapping in mappings:
         if mapping.error:
             logger.warning(
-                "Python-dotenv could not parse statement starting at line %s",
+                "python-dotenv could not parse statement starting at line %s",
                 mapping.original.line,
             )
         yield mapping
@@ -60,10 +59,10 @@ class DotEnv:
         else:
             if self.verbose:
                 logger.info(
-                    "Python-dotenv could not find configuration file %s.",
-                    self.dotenv_path or '.env',
+                    "python-dotenv could not find configuration file %s.",
+                    self.dotenv_path or ".env",
                 )
-            yield io.StringIO('')
+            yield io.StringIO("")
 
     def dict(self) -> Dict[str, Optional[str]]:
         """Return dotenv as dict"""
@@ -73,7 +72,9 @@ class DotEnv:
         raw_values = self.parse()
 
         if self.interpolate:
-            self._dict = OrderedDict(resolve_variables(raw_values, override=self.override))
+            self._dict = OrderedDict(
+                resolve_variables(raw_values, override=self.override)
+            )
         else:
             self._dict = OrderedDict(raw_values)
 
@@ -101,8 +102,7 @@ class DotEnv:
         return True
 
     def get(self, key: str) -> Optional[str]:
-        """
-        """
+        """ """
         data = self.dict()
 
         if key in data:
@@ -166,9 +166,8 @@ def set_key(
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
 
-    quote = (
-        quote_mode == "always"
-        or (quote_mode == "auto" and not value_to_set.isalnum())
+    quote = quote_mode == "always" or (
+        quote_mode == "auto" and not value_to_set.isalnum()
     )
 
     if quote:
@@ -176,7 +175,7 @@ def set_key(
     else:
         value_out = value_to_set
     if export:
-        line_out = f'export {key_to_set}={value_out}\n'
+        line_out = f"export {key_to_set}={value_out}\n"
     else:
         line_out = f"{key_to_set}={value_out}\n"
 
@@ -223,7 +222,9 @@ def unset_key(
                 dest.write(mapping.original.string)
 
     if not removed:
-        logger.warning("Key %s not removed from %s - key doesn't exist.", key_to_unset, dotenv_path)
+        logger.warning(
+            "Key %s not removed from %s - key doesn't exist.", key_to_unset, dotenv_path
+        )
         return None, key_to_unset
 
     return removed, key_to_unset
@@ -235,7 +236,7 @@ def resolve_variables(
 ) -> Mapping[str, Optional[str]]:
     new_values: Dict[str, Optional[str]] = {}
 
-    for (name, value) in values:
+    for name, value in values:
         if value is None:
             result = None
         else:
@@ -259,7 +260,7 @@ def _walk_to_root(path: str) -> Iterator[str]:
     Yield directories starting from the given directory up to the root
     """
     if not os.path.exists(path):
-        raise IOError('Starting path not found')
+        raise IOError("Starting path not found")
 
     if os.path.isfile(path):
         path = os.path.dirname(path)
@@ -273,7 +274,7 @@ def _walk_to_root(path: str) -> Iterator[str]:
 
 
 def find_dotenv(
-    filename: str = '.env',
+    filename: str = ".env",
     raise_error_if_not_found: bool = False,
     usecwd: bool = False,
 ) -> str:
@@ -284,14 +285,14 @@ def find_dotenv(
     """
 
     def _is_interactive():
-        """ Decide whether this is running in a REPL or IPython notebook """
+        """Decide whether this is running in a REPL or IPython notebook"""
         try:
-            main = __import__('__main__', None, None, fromlist=['__file__'])
+            main = __import__("__main__", None, None, fromlist=["__file__"])
         except ModuleNotFoundError:
             return False
-        return not hasattr(main, '__file__')
+        return not hasattr(main, "__file__")
 
-    if usecwd or _is_interactive() or getattr(sys, 'frozen', False):
+    if usecwd or _is_interactive() or getattr(sys, "frozen", False):
         # Should work without __file__, e.g. in REPL or IPython notebook.
         path = os.getcwd()
     else:
@@ -313,9 +314,9 @@ def find_dotenv(
             return check_path
 
     if raise_error_if_not_found:
-        raise IOError('File not found')
+        raise IOError("File not found")
 
-    return ''
+    return ""
 
 
 def load_dotenv(
