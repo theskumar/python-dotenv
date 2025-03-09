@@ -7,11 +7,6 @@ from typing import Dict, Optional, Union, List
 
 IS_WINDOWS = platform.system() == "Windows"
 
-if IS_WINDOWS:
-    printenv_cmd = ["cmd", "/c", "echo", "%a%"]
-else:
-    printenv_cmd = ["printenv", "a"]
-
 
 @contextmanager
 def pushd(path):
@@ -51,9 +46,8 @@ def run_command(
     # Convert string command to list for subprocess if needed
     if isinstance(cmd, str):
         if IS_WINDOWS:
-            # Windows needs shell=True for built-ins
             result = subprocess.run(
-                cmd, env=env, shell=True, text=True, capture_output=capture_output
+                cmd, env=env, text=True, capture_output=capture_output
             )
         else:
             # For Unix, better to split the command
