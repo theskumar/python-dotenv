@@ -6,9 +6,10 @@ import textwrap
 from unittest import mock
 
 import pytest
-import sh
 
 import dotenv
+
+from tests.utils import run_command
 
 
 def test_set_key_no_file(tmp_path):
@@ -28,9 +29,9 @@ def test_set_key_no_file(tmp_path):
         ("", "a", "", (True, "a", ""), "a=''\n"),
         ("", "a", "b", (True, "a", "b"), "a='b'\n"),
         ("", "a", "'b'", (True, "a", "'b'"), "a='\\'b\\''\n"),
-        ("", "a", "\"b\"", (True, "a", '"b"'), "a='\"b\"'\n"),
+        ("", "a", '"b"', (True, "a", '"b"'), "a='\"b\"'\n"),
         ("", "a", "b'c", (True, "a", "b'c"), "a='b\\'c'\n"),
-        ("", "a", "b\"c", (True, "a", "b\"c"), "a='b\"c'\n"),
+        ("", "a", 'b"c', (True, "a", 'b"c'), "a='b\"c'\n"),
         ("a=b", "a", "c", (True, "a", "c"), "a='c'\n"),
         ("a=b\n", "a", "c", (True, "a", "c"), "a='c'\n"),
         ("a=b\n\n", "a", "c", (True, "a", "c"), "a='c'\n\n"),
@@ -75,8 +76,10 @@ def test_get_key_no_file(tmp_path):
     nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")
 
-    with mock.patch.object(logger, "info") as mock_info, \
-            mock.patch.object(logger, "warning") as mock_warning:
+    with (
+        mock.patch.object(logger, "info") as mock_info,
+        mock.patch.object(logger, "warning") as mock_warning,
+    ):
         result = dotenv.get_key(nx_path, "foo")
 
     assert result is None
@@ -86,9 +89,7 @@ def test_get_key_no_file(tmp_path):
         ],
     )
     mock_warning.assert_has_calls(
-        calls=[
-            mock.call("Key %s not found in %s.", "foo", nx_path)
-        ],
+        calls=[mock.call("Key %s not found in %s.", "foo", nx_path)],
     )
 
 
@@ -249,10 +250,12 @@ def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
     with mock.patch.object(logger, "info") as mock_info:
-        result = dotenv.load_dotenv('.does_not_exist', verbose=True)
+        result = dotenv.load_dotenv(".does_not_exist", verbose=True)
 
     assert result is False
-    mock_info.assert_called_once_with("Python-dotenv could not find configuration file %s.", ".does_not_exist")
+    mock_info.assert_called_once_with(
+        "Python-dotenv could not find configuration file %s.", ".does_not_exist"
+    )
 
 
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
@@ -317,21 +320,23 @@ def test_load_dotenv_file_stream(dotenv_path):
 
 
 def test_load_dotenv_in_current_dir(tmp_path):
-    dotenv_path = tmp_path / '.env'
-    dotenv_path.write_bytes(b'a=b')
-    code_path = tmp_path / 'code.py'
-    code_path.write_text(textwrap.dedent("""
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_bytes(b"a=b")
+    code_path = tmp_path / "code.py"
+    code_path.write_text(
+        textwrap.dedent("""
         import dotenv
         import os
 
         dotenv.load_dotenv(verbose=True)
         print(os.environ['a'])
-    """))
+    """)
+    )
     os.chdir(tmp_path)
 
-    result = sh.Command(sys.executable)(code_path)
+    result = run_command([sys.executable, str(code_path)])
 
-    assert result == 'b\n'
+    assert result == "b\n"
 
 
 def test_dotenv_values_file(dotenv_path):
@@ -352,30 +357,23 @@ def test_dotenv_values_file(dotenv_path):
         ({"b": "c"}, "a=${b}", True, {"a": "c"}),
         ({"b": "c"}, "a=${b:-d}", False, {"a": "${b:-d}"}),
         ({"b": "c"}, "a=${b:-d}", True, {"a": "c"}),
-
         # Defined in file
         ({}, "b=c\na=${b}", True, {"a": "c", "b": "c"}),
-
         # Undefined
         ({}, "a=${b}", True, {"a": ""}),
         ({}, "a=${b:-d}", True, {"a": "d"}),
-
         # With quotes
         ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),
         ({"b": "c"}, "a='${b}'", True, {"a": "c"}),
-
         # With surrounding text
         ({"b": "c"}, "a=x${b}y", True, {"a": "xcy"}),
-
         # Self-referential
         ({"a": "b"}, "a=${a}", True, {"a": "b"}),
         ({}, "a=${a}", True, {"a": ""}),
         ({"a": "b"}, "a=${a:-c}", True, {"a": "b"}),
         ({}, "a=${a:-c}", True, {"a": "c"}),
-
         # Reused
         ({"b": "c"}, "a=${b}${b}", True, {"a": "cc"}),
-
         # Re-defined and used in file
         ({"b": "c"}, "b=d\na=${b}", True, {"a": "d", "b": "d"}),
         ({}, "a=b\na=c\nd=${a}", True, {"a": "c", "d": "c"}),

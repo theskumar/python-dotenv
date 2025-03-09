@@ -1,10 +1,11 @@
 import os
 import sys
-import sh
 import textwrap
 from typing import List
 from unittest import mock
 from zipfile import ZipFile
+
+from tests.utils import run_command
 
 
 def walk_to_root(path: str):
@@ -96,6 +97,6 @@ def test_load_dotenv_outside_zip_file_when_called_in_zipfile(tmp_path):
     )
     os.chdir(str(tmp_path))
 
-    result = sh.Command(sys.executable)(code_path)
+    result = run_command([sys.executable, str(code_path)])
 
     assert result == "b\n"

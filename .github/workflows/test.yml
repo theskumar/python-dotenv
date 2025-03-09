@@ -12,22 +12,33 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", pypy3.9, pypy3.10]
+          - windows-latest
+        python-version:
+          ["3.9", "3.10", "3.11", "3.12", "3.13", pypy3.9, pypy3.10]
+        exclude:
+          # Exclude PyPy on Windows due to common compatibility issues
+          - os: windows-latest
+            python-version: pypy3.9
+          - os: windows-latest
+            python-version: pypy3.10
+          # Exclude Python 3.13 on Windows until stable
+          - os: windows-latest
+            python-version: "3.13"
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-        allow-prereleases: true
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
 
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
-    
-    - name: Install dependencies
-      run: pip install tox tox-gh-actions
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
 
-    - name: Test with tox
-      run: tox
+      - name: Install dependencies
+        run: pip install tox tox-gh-actions
+
+      - name: Test with tox
+        run: tox
