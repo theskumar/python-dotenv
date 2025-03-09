@@ -57,7 +57,16 @@ def run_command(
             )
     else:
         # List of args (already split)
-        result = subprocess.run(cmd, env=env, text=True, capture_output=capture_output)
+        print(f"cmd_env before subprocess: {env=}")  # Debug: print env
+        result = subprocess.run(
+            cmd,
+            env=env,
+            text=True,
+            capture_output=capture_output,
+            encoding="utf-8",  # Step 1a: Explicit encoding
+            universal_newlines=True,  # Step 1b: Try universal newlines (less critical now with text=True)
+            bufsize=1,  # Step 1c: Line buffering (or 0 for unbuffered - can try 0 too)
+        )
 
     print(f"Subprocess result: {result=}")  # Debug: log result object
     if result.returncode != 0:
