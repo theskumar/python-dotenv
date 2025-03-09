@@ -5,12 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [Unreleased]
+
+- Drop support for Python 3.8
+- Add support for python 3.13
+- Enhance `dotenv run`, switch to `execvpe` for better resource management and signal handling ([#523]) by [@eekstunt]
+
 ## [1.0.1] - 2024-01-23
 
 **Fixed**
 
 * Gracefully handle code which has been imported from a zipfile ([#456] by [@samwyma])
-* Allow modules using load_dotenv to be reloaded when launched in a separate thread ([#497] by [@freddyaboulton])
+* Allow modules using `load_dotenv` to be reloaded when launched in a separate thread ([#497] by [@freddyaboulton])
 * Fix file not closed after deletion, handle error in the rewrite function ([#469] by [@Qwerty-133])
 
 **Misc**
@@ -317,7 +324,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 0.5.1
 
--   Fix find\_dotenv - it now start search from the file where this
+-   Fix `find_dotenv` - it now start search from the file where this
     function is called from.
 
 ## 0.5.0
@@ -346,6 +353,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [#466]: https://github.com/theskumar/python-dotenv/issues/466
 [#454]: https://github.com/theskumar/python-dotenv/issues/454
 [#474]: https://github.com/theskumar/python-dotenv/issues/474
+[#523]: https://github.com/theskumar/python-dotenv/issues/523
 
 [@alanjds]: https://github.com/alanjds
 [@altendky]: https://github.com/altendky
@@ -356,6 +364,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@cjauvin]: https://github.com/cjauvin
 [@eaf]: https://github.com/eaf
 [@earlbread]: https://github.com/earlbread
+[@eekstunt]: https://github.com/eekstunt
 [@eggplants]: https://github.com/@eggplants
 [@ekohl]: https://github.com/ekohl
 [@elbehery95]: https://github.com/elbehery95
