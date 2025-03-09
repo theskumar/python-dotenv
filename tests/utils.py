@@ -44,6 +44,7 @@ def run_command(
         cmd = [sys.executable, "-m", "dotenv"] + cmd[1:]
 
     # Convert string command to list for subprocess if needed
+    print(f"Running command: {cmd=}")  # Debug: log command
     if isinstance(cmd, str):
         if IS_WINDOWS:
             result = subprocess.run(
@@ -58,10 +59,16 @@ def run_command(
         # List of args (already split)
         result = subprocess.run(cmd, env=env, text=True, capture_output=capture_output)
 
+    print(f"Subprocess result: {result=}")  # Debug: log result object
     if result.returncode != 0:
+        print(f"Subprocess stderr: {stderr=}")  # Debug: log stderr
+        print(f"Subprocess stdout: {result.stdout=}")  # Debug: log stdout before error
         stderr = result.stderr if hasattr(result, "stderr") else ""
         raise subprocess.CalledProcessError(
             result.returncode, cmd, result.stdout, stderr
         )
 
+    print(
+        f"Subprocess stdout (returned): {result.stdout=}"
+    )  # Debug: log stdout returned
     return result.stdout

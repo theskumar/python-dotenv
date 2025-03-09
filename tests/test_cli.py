@@ -190,9 +190,11 @@ def test_run(tmp_path):
             "run",
             "python",
             "-c",
-            "import os; print(os.environ['a'])",
+            "import os, sys; print(os.environ['a']); sys.stderr.write('stderr_output\\n')",
         ]
         result = run_command(printenv_cmd)
+
+        print(f"run_command result: {result=}")  # Debug: print result
 
         assert result == "b\n"
 
