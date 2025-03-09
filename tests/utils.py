@@ -58,6 +58,7 @@ def run_command(
     else:
         # List of args (already split)
         print(f"cmd_env before subprocess: {env=}")  # Debug: print env
+        print(f"Running command: {cmd=}")  # Debug: log command
         result = subprocess.run(
             cmd,
             env=env,
