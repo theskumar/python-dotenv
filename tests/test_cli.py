@@ -1,5 +1,4 @@
 import os
-import sys
 from pathlib import Path
 from typing import Optional
 
@@ -9,7 +8,7 @@ import dotenv
 from dotenv.cli import cli as dotenv_cli
 from dotenv.version import __version__
 
-from tests.utils import pushd, run_command, IS_WINDOWS
+from tests.utils import pushd, run_command
 
 
 @pytest.mark.parametrize(
@@ -186,21 +185,16 @@ def test_run(tmp_path):
     with pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
 
-        if IS_WINDOWS:
-            # On Windows, use environment variables directly with the Python interpreter
-            # Create a temporary batch file to source the environment and run Python
-            batch_path = tmp_path / "run_test.bat"
-            batch_path.write_text(
-                f"@echo off\ndotenv run {sys.executable} -c \"import os; print(os.environ['a'])\""
-            )
+        printenv_cmd = [
+            "dotenv",
+            "run",
+            "python",
+            "-c",
+            "import os; print(os.environ['a'])",
+        ]
+        result = run_command(printenv_cmd)
 
-            # Run the batch file directly
-            result = run_command(f"{batch_path}")
-        else:
-            printenv_cmd = ["dotenv", "run", "printenv", "a"]
-            result = run_command(printenv_cmd)
-
-        assert result.strip() == "b"
+        assert result == "b\n"
 
 
 def test_run_with_existing_variable(tmp_path):
@@ -209,24 +203,17 @@ def test_run_with_existing_variable(tmp_path):
         env = dict(os.environ)
         env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-        if IS_WINDOWS:
-            printenv_cmd = [
-                "dotenv",
-                "run",
-                "cmd",
-                "/c",
-                "set",
-                "a",
-            ]
-        else:
-            printenv_cmd = ["dotenv", "run", "printenv", "a"]
+        printenv_cmd = [
+            "dotenv",
+            "run",
+            "--no-override",
+            "python",
+            "-c",
+            "import os; print(os.environ['a'])",
+        ]
 
         result = run_command(printenv_cmd, env=env)
-        if IS_WINDOWS:
-            # Windows 'set' command includes variable name, extract just the value
-            assert result.strip().endswith("=b")
-        else:
-            assert result == "b\n"
+        assert result == "c\n"
 
 
 def test_run_with_existing_variable_not_overridden(tmp_path):
@@ -235,59 +222,50 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
         env = dict(os.environ)
         env.update({"LANG": "en_US.UTF-8", "a": "c"})
 
-        # Use appropriate command for the platform
-        if IS_WINDOWS:
-            printenv_cmd = [
-                "dotenv",
-                "run",
-                "--no-override",
-                "cmd",
-                "/c",
-                "set",
-                "a",
-            ]
-        else:
-            printenv_cmd = ["dotenv", "run", "--no-override", "printenv", "a"]
+        printenv_cmd = [
+            "dotenv",
+            "run",
+            "--no-override",
+            "python",
+            "-c",
+            "import os; print(os.environ['a'])",
+        ]
 
         result = run_command(printenv_cmd, env=env)
-
-        if IS_WINDOWS:
-            # Windows 'set' command includes variable name, extract just the value
-            assert result.strip().endswith("=c")
-        else:
-            assert result == "c\n"
+        assert result == "c\n"
 
 
 def test_run_with_none_value(tmp_path):
     with pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b\nc")
-        # Use sys.executable to run the command via Python directly
-        if IS_WINDOWS:
-            printenv_cmd = [
-                sys.executable,
-                "-m",
-                "dotenv",
-                "run",
-                "cmd",
-                "/c",
-                "set",
-                "a",
-            ]
-        else:
-            printenv_cmd = ["dotenv", "run", "printenv", "a"]
+
+        printenv_cmd = [
+            "dotenv",
+            "run",
+            "--no-override",
+            "python",
+            "-c",
+            "import os; print(os.environ['a'])",
+        ]
 
         result = run_command(printenv_cmd)
-        if IS_WINDOWS:
-            # Windows 'set' command includes variable name, extract just the value
-            assert result.strip().endswith("=b")
-        else:
-            assert result == "b\n"
+        assert result == "b\n"
 
 
 def test_run_with_other_env(dotenv_path):
     dotenv_path.write_text("a=b")
 
-    result = run_command(["dotenv", "--file", dotenv_path, "run", "printenv", "a"])
+    printenv_cmd = [
+        "dotenv",
+        "--file",
+        str(dotenv_path),
+        "run",
+        "python",
+        "-c",
+        "import os; print(os.environ['a'])",
+    ]
+
+    result = run_command(printenv_cmd)
 
     assert result == "b\n"
 
