@@ -1,6 +1,7 @@
 import os
 import platform
 import subprocess
+import sys
 from contextlib import contextmanager
 from typing import Dict, Optional, Union, List
 
@@ -41,6 +42,11 @@ def run_command(
     """
     if env is None:
         env = os.environ.copy()
+
+    # Special handling for 'dotenv' commands - use Python module directly
+    if isinstance(cmd, list) and cmd and cmd[0] == "dotenv":
+        # Replace 'dotenv' with 'python -m dotenv'
+        cmd = [sys.executable, "-m", "dotenv"] + cmd[1:]
 
     # Convert string command to list for subprocess if needed
     if isinstance(cmd, str):
