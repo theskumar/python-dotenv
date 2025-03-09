@@ -1,3 +1,4 @@
+import subprocess
 import json
 import os
 import shlex
@@ -8,8 +9,10 @@ from typing import Any, Dict, IO, Iterator, List, Optional
 try:
     import click
 except ImportError:
-    sys.stderr.write('It seems python-dotenv is not installed with cli option. \n'
-                     'Run pip install "python-dotenv[cli]" to fix this.')
+    sys.stderr.write(
+        "It seems python-dotenv is not installed with cli option. \n"
+        'Run pip install "python-dotenv[cli]" to fix this.'
+    )
     sys.exit(1)
 
 from .main import dotenv_values, set_key, unset_key
@@ -26,25 +29,37 @@ def enumerate_env() -> Optional[str]:
         cwd = os.getcwd()
     except FileNotFoundError:
         return None
-    path = os.path.join(cwd, '.env')
+    path = os.path.join(cwd, ".env")
     return path
 
 
 @click.group()
-@click.option('-f', '--file', default=enumerate_env(),
-              type=click.Path(file_okay=True),
-              help="Location of the .env file, defaults to .env file in current working directory.")
-@click.option('-q', '--quote', default='always',
-              type=click.Choice(['always', 'never', 'auto']),
-              help="Whether to quote or not the variable values. Default mode is always. This does not affect parsing.")
-@click.option('-e', '--export', default=False,
-              type=click.BOOL,
-              help="Whether to write the dot file as an executable bash script.")
+@click.option(
+    "-f",
+    "--file",
+    default=enumerate_env(),
+    type=click.Path(file_okay=True),
+    help="Location of the .env file, defaults to .env file in current working directory.",
+)
+@click.option(
+    "-q",
+    "--quote",
+    default="always",
+    type=click.Choice(["always", "never", "auto"]),
+    help="Whether to quote or not the variable values. Default mode is always. This does not affect parsing.",
+)
+@click.option(
+    "-e",
+    "--export",
+    default=False,
+    type=click.BOOL,
+    help="Whether to write the dot file as an executable bash script.",
+)
 @click.version_option(version=__version__)
 @click.pass_context
 def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
     """This script is used to set, get or unset values from a .env file."""
-    ctx.obj = {'QUOTE': quote, 'EXPORT': export, 'FILE': file}
+    ctx.obj = {"QUOTE": quote, "EXPORT": export, "FILE": file}
 
 
 @contextmanager
@@ -65,51 +80,54 @@ def stream_file(path: os.PathLike) -> Iterator[IO[str]]:
 
 @cli.command()
 @click.pass_context
-@click.option('--format', default='simple',
-              type=click.Choice(['simple', 'json', 'shell', 'export']),
-              help="The format in which to display the list. Default format is simple, "
-                   "which displays name=value without quotes.")
+@click.option(
+    "--format",
+    default="simple",
+    type=click.Choice(["simple", "json", "shell", "export"]),
+    help="The format in which to display the list. Default format is simple, "
+    "which displays name=value without quotes.",
+)
 def list(ctx: click.Context, format: bool) -> None:
     """Display all the stored key/value."""
-    file = ctx.obj['FILE']
+    file = ctx.obj["FILE"]
 
     with stream_file(file) as stream:
         values = dotenv_values(stream=stream)
 
-    if format == 'json':
+    if format == "json":
         click.echo(json.dumps(values, indent=2, sort_keys=True))
     else:
-        prefix = 'export ' if format == 'export' else ''
+        prefix = "export " if format == "export" else ""
         for k in sorted(values):
             v = values[k]
             if v is not None:
-                if format in ('export', 'shell'):
+                if format in ("export", "shell"):
                     v = shlex.quote(v)
-                click.echo(f'{prefix}{k}={v}')
+                click.echo(f"{prefix}{k}={v}")
 
 
 @cli.command()
 @click.pass_context
-@click.argument('key', required=True)
-@click.argument('value', required=True)
+@click.argument("key", required=True)
+@click.argument("value", required=True)
 def set(ctx: click.Context, key: Any, value: Any) -> None:
     """Store the given key/value."""
-    file = ctx.obj['FILE']
-    quote = ctx.obj['QUOTE']
-    export = ctx.obj['EXPORT']
+    file = ctx.obj["FILE"]
+    quote = ctx.obj["QUOTE"]
+    export = ctx.obj["EXPORT"]
     success, key, value = set_key(file, key, value, quote, export)
     if success:
-        click.echo(f'{key}={value}')
+        click.echo(f"{key}={value}")
     else:
         exit(1)
 
 
 @cli.command()
 @click.pass_context
-@click.argument('key', required=True)
+@click.argument("key", required=True)
 def get(ctx: click.Context, key: Any) -> None:
     """Retrieve the value for the given key."""
-    file = ctx.obj['FILE']
+    file = ctx.obj["FILE"]
 
     with stream_file(file) as stream:
         values = dotenv_values(stream=stream)
@@ -123,11 +141,11 @@ def get(ctx: click.Context, key: Any) -> None:
 
 @cli.command()
 @click.pass_context
-@click.argument('key', required=True)
+@click.argument("key", required=True)
 def unset(ctx: click.Context, key: Any) -> None:
     """Removes the given key."""
-    file = ctx.obj['FILE']
-    quote = ctx.obj['QUOTE']
+    file = ctx.obj["FILE"]
+    quote = ctx.obj["QUOTE"]
     success, key = unset_key(file, key, quote)
     if success:
         click.echo(f"Successfully removed {key}")
@@ -135,21 +153,20 @@ def unset(ctx: click.Context, key: Any) -> None:
         exit(1)
 
 
-@cli.command(context_settings={'ignore_unknown_options': True})
+@cli.command(context_settings={"ignore_unknown_options": True})
 @click.pass_context
 @click.option(
     "--override/--no-override",
     default=True,
     help="Override variables from the environment file with those from the .env file.",
 )
-@click.argument('commandline', nargs=-1, type=click.UNPROCESSED)
+@click.argument("commandline", nargs=-1, type=click.UNPROCESSED)
 def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     """Run command with environment variables present."""
-    file = ctx.obj['FILE']
+    file = ctx.obj["FILE"]
     if not os.path.isfile(file):
         raise click.BadParameter(
-            f'Invalid value for \'-f\' "{file}" does not exist.',
-            ctx=ctx
+            f"Invalid value for '-f' \"{file}\" does not exist.", ctx=ctx
         )
     dotenv_as_dict = {
         k: v
@@ -158,7 +175,7 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     }
 
     if not commandline:
-        click.echo('No command given.')
+        click.echo("No command given.")
         exit(1)
     run_command(commandline, dotenv_as_dict)
 
@@ -187,4 +204,14 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
     cmd_env = os.environ.copy()
     cmd_env.update(env)
 
-    os.execvpe(command[0], args=command, env=cmd_env)
+    #    # os.execvpe(command[0], args=command, env=cmd_env) # Original line
+    result = subprocess.run(
+        command, env=cmd_env, capture_output=True, text=True
+    )  # Debug: replace execvpe
+    if result.returncode != 0:  # Debug: check return code
+        print(f"Subprocess failed with return code: {result.returncode}")  # Debug
+        print(f"Stdout: {result.stdout}")  # Debug
+        print(f"Stderr: {result.stderr}")  # Debug
+        exit(result.returncode)  # Debug: exit with subprocess return code
+    else:
+        exit(0)  # Debug: exit with success if subprocess ok.
