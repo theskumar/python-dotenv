@@ -10,12 +10,6 @@ from dotenv.version import __version__
 
 from tests.utils import pushd, run_command, IS_WINDOWS
 
-# Use appropriate command for the platform
-if IS_WINDOWS:
-    printenv_cmd = ["dotenv", "run", "cmd", "/c", "echo", "%a%"]
-else:
-    printenv_cmd = ["dotenv", "run", "printenv", "a"]
-
 
 @pytest.mark.parametrize(
     "format,content,expected",
@@ -190,6 +184,12 @@ def test_get_default_path(tmp_path):
 def test_run(tmp_path):
     with pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
+
+        if IS_WINDOWS:
+            printenv_cmd = ["dotenv", "run", "cmd", "/c", "echo", "%a%"]
+        else:
+            printenv_cmd = ["dotenv", "run", "printenv", "a"]
+
         result = run_command(printenv_cmd)
         assert result == "b\n"
 
@@ -199,6 +199,11 @@ def test_run_with_existing_variable(tmp_path):
         (tmp_path / ".env").write_text("a=b")
         env = dict(os.environ)
         env.update({"LANG": "en_US.UTF-8", "a": "c"})
+
+        if IS_WINDOWS:
+            printenv_cmd = ["dotenv", "run", "cmd", "/c", "echo", "%a%"]
+        else:
+            printenv_cmd = ["dotenv", "run", "printenv", "a"]
 
         result = run_command(printenv_cmd, env=env)
 
@@ -210,6 +215,20 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
         (tmp_path / ".env").write_text("a=b")
         env = dict(os.environ)
         env.update({"LANG": "en_US.UTF-8", "a": "c"})
+
+        # Use appropriate command for the platform
+        if IS_WINDOWS:
+            printenv_cmd = [
+                "dotenv",
+                "run",
+                "--no-override",
+                "cmd",
+                "/c",
+                "echo",
+                "%a%",
+            ]
+        else:
+            printenv_cmd = ["dotenv", "run", "--no-override", "printenv", "a"]
 
         result = run_command(printenv_cmd, env=env)
 
