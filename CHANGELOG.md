@@ -6,11 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [Unrelased]
 
-- Drop support for Python 3.8
+**Feature**
 - Add support for python 3.13
 - Enhance `dotenv run`, switch to `execvpe` for better resource management and signal handling ([#523]) by [@eekstunt]
+
+**Fixed**
+- `find_dotenv` and `load_dotenv` now correctly looks up at the current directory when running in debugger or pdb ([#553] by [@randomseed42])
+
+**Misc**
+- Drop support for Python 3.8
 
 ## [1.0.1] - 2024-01-23
 
@@ -354,6 +360,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [#454]: https://github.com/theskumar/python-dotenv/issues/454
 [#474]: https://github.com/theskumar/python-dotenv/issues/474
 [#523]: https://github.com/theskumar/python-dotenv/issues/523
+[#553]: https://github.com/theskumar/python-dotenv/issues/553
 
 [@alanjds]: https://github.com/alanjds
 [@altendky]: https://github.com/altendky
@@ -398,7 +405,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@x-yuri]: https://github.com/x-yuri
 [@yannham]: https://github.com/yannham
 [@zueve]: https://github.com/zueve
-
+[@randomseed42]: https://github.com/zueve
 
 [Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.0.1...HEAD
 [1.0.1]: https://github.com/theskumar/python-dotenv/compare/v1.0.0...v1.0.1
