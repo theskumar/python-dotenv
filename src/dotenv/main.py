@@ -368,6 +368,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    with_env: bool = False,
 ) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
@@ -381,6 +382,7 @@ def dotenv_values(
         stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
         verbose: Whether to output a warning if the .env file is missing.
         encoding: Encoding to be used to read the file.
+        with_env: include the os.environ() to response.
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
@@ -388,7 +390,7 @@ def dotenv_values(
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
 
-    return DotEnv(
+    result = DotEnv(
         dotenv_path=dotenv_path,
         stream=stream,
         verbose=verbose,
@@ -396,3 +398,10 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+    if with_env:
+        return dict(
+            **os.environ,
+            **result,
+        )
+    else:
+        return result
