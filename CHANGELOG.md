@@ -9,13 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.1.0] - 2025-03-25
 
 **Feature**
+
 - Add support for python 3.13
 - Enhance `dotenv run`, switch to `execvpe` for better resource management and signal handling ([#523]) by [@eekstunt]
 
 **Fixed**
+
 - `find_dotenv` and `load_dotenv` now correctly looks up at the current directory when running in debugger or pdb ([#553] by [@randomseed42])
 
 **Misc**
+
 - Drop support for Python 3.8
 
 ## [1.0.1] - 2024-01-23
@@ -407,7 +410,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@zueve]: https://github.com/zueve
 [@randomseed42]: https://github.com/zueve
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/theskumar/python-dotenv/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/theskumar/python-dotenv/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v1.0.0
 [0.21.1]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v0.21.1
