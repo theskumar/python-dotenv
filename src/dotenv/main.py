@@ -200,7 +200,6 @@ def set_key(
 def unset_key(
     dotenv_path: StrPath,
     key_to_unset: str,
-    quote_mode: str = "always",
     encoding: Optional[str] = "utf-8",
 ) -> Tuple[Optional[bool], str]:
     """
