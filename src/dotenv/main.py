@@ -319,8 +319,6 @@ def find_dotenv(
     if raise_error_if_not_found:
         raise FileNotFoundError("File not found")
     return ""
-        
-
 
 
 def load_dotenv(
