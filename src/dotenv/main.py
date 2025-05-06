@@ -396,3 +396,36 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+
+def set_header(
+    dotenv_path: StrPath,
+    header: str,
+    encoding: Optional[str] = "utf-8",
+) -> Tuple[bool, Optional[str]]:
+    """
+    Adds or Updates a header in the .env file
+
+    Parameters:
+        dotenv_path: Absolute or relative path to .env file.
+        header: The desired header block
+        encoding: Encoding to be used to read the file.
+    Returns:
+        Bool: True if at least one environment variable is set else False
+        Str: The header that was written
+    """
+    with rewrite(dotenv_path, encoding=encoding) as (source, dest):
+        if not header or not header.strip():
+            logger.info("Ignoring empty header.")
+            return False, header
+
+        header = header.strip()
+        lines = header.split("\n")
+        for i, line in enumerate(lines):
+            if not line.startswith("# "):
+                lines[i] = f"# {line}"
+        header = "\n".join(lines)
+        text = "".join(atom for atom in source.readlines() if not atom.startswith("#"))
+        dest.write(f"{header}\n{text}\n")
+
+    return True, header

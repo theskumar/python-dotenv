@@ -396,3 +396,54 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+@pytest.mark.parametrize(
+    "header",
+    [
+        "",
+        " ",
+        None,
+    ],
+)
+def test_set_header_empty(dotenv_path, header):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "info") as mock_info:
+        result, *_ = dotenv.set_header(dotenv_path, header)
+        assert not result
+
+    mock_info.assert_called()
+
+
+@pytest.mark.parametrize(
+    "new_header, expected, expected_header, old_header, content",
+    [
+        ("# header only", True, "# header only", "", ""),
+        ("# single-line header", True, "# single-line header", "", "a=b\nc=d"),
+        ("# multi-line\n# header", True, "# multi-line\n# header", "", "a=b\nc=d"),
+        (
+            "Single-line, no comment header",
+            True,
+            "# Single-line, no comment header",
+            "",
+            "a=b",
+        ),
+        ("# New header", True, "# New header", "# Old header", "a=b\nc=d"),
+    ],
+)
+def test_set_header(
+    dotenv_path, new_header, expected, expected_header, old_header, content
+):
+    logger = logging.getLogger("dotenv.main")
+    dotenv_path.write_text(f"{old_header}\n{content}")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result, written = dotenv.set_header(dotenv_path, new_header)
+        assert result == expected
+        assert written == expected_header
+
+    text = dotenv_path.read_text()
+    assert content in text
+    assert expected_header in text
+    mock_warning.assert_not_called()
