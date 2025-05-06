@@ -429,7 +429,6 @@ def test_set_header_empty(dotenv_path, header):
             "",
             "a=b",
         ),
-        # ("# New header", True, "# New header", "# Old header", "a=b\nc=d"),
     ],
 )
 def test_set_header(
