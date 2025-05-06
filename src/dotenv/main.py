@@ -420,10 +420,8 @@ def set_header(
             logger.info("Ignoring empty header.")
             return False, header
 
-        header = header.replace("\n", " ")
-        lines = textwrap.wrap(header, width=60)
-        for i, line in enumerate(lines):
-            lines[i] = f"# {line}\n"
+        lines = textwrap.wrap(header.replace("\n", " "), width=60)
+        lines = [f"# {line}\n" for line in lines]
         header = "".join(lines)
         dest.write(header)
 
