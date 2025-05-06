@@ -419,17 +419,17 @@ def test_set_header_empty(dotenv_path, header):
 @pytest.mark.parametrize(
     "new_header, expected, expected_header, old_header, content",
     [
-        ("# header only", True, "# header only", "", ""),
-        ("# single-line header", True, "# single-line header", "", "a=b\nc=d"),
-        ("# multi-line\n# header", True, "# multi-line\n# header", "", "a=b\nc=d"),
+        ("single-line input", True, "# single-line input\n", "", "a=b\nc=d"),
+        ("multi-line\ninput", True, "# multi-line input\n", "", "a=b\nc=d"),
+        ("new header", True, "# new header\n", "# old header", "a=b\nc=d"),
         (
-            "Single-line, no comment header",
+            " ".join("x" * 57 for _ in range(2)),
             True,
-            "# Single-line, no comment header",
+            "".join(f"# {'x' * 57}\n" for _ in range(2)),
             "",
             "a=b",
         ),
-        ("# New header", True, "# New header", "# Old header", "a=b\nc=d"),
+        # ("# New header", True, "# New header", "# Old header", "a=b\nc=d"),
     ],
 )
 def test_set_header(

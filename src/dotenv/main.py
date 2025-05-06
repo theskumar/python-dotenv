@@ -5,6 +5,7 @@ import pathlib
 import shutil
 import sys
 import tempfile
+import textwrap
 from collections import OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
@@ -419,13 +420,14 @@ def set_header(
             logger.info("Ignoring empty header.")
             return False, header
 
-        header = header.strip()
-        lines = header.split("\n")
+        header = header.replace("\n", " ")
+        lines = textwrap.wrap(header, width=60)
         for i, line in enumerate(lines):
-            if not line.startswith("# "):
-                lines[i] = f"# {line}"
-        header = "\n".join(lines)
+            lines[i] = f"# {line}\n"
+        header = "".join(lines)
+        dest.write(header)
+
         text = "".join(atom for atom in source.readlines() if not atom.startswith("#"))
-        dest.write(f"{header}\n{text}\n")
+        dest.write(f"{text}\n")
 
     return True, header
