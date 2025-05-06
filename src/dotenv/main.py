@@ -421,8 +421,7 @@ def set_header(
             return False, header
 
         lines = textwrap.wrap(header.replace("\n", " "), width=60)
-        lines = [f"# {line}\n" for line in lines]
-        header = "".join(lines)
+        header = "".join(f"# {line}\n" for line in lines)
         dest.write(header)
 
         text = "".join(atom for atom in source.readlines() if not atom.startswith("#"))
