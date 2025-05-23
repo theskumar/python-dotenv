@@ -61,6 +61,7 @@ def test_set_key_encoding(dotenv_path):
     assert dotenv_path.read_text(encoding=encoding) == "a='é'\n"
 
 
+@pytest.mark.skipif(os.geteuid() == 0, reason="Root user can access files even with 000 permissions.")
 def test_set_key_permission_error(dotenv_path):
     dotenv_path.chmod(0o000)
 
@@ -167,6 +168,7 @@ def test_unset_encoding(dotenv_path):
     assert dotenv_path.read_text(encoding=encoding) == ""
 
 
+@pytest.mark.skipif(os.geteuid() == 0, reason="Root user can access files even with 000 permissions.")
 def test_set_key_unauthorized_file(dotenv_path):
     dotenv_path.chmod(0o000)
 
