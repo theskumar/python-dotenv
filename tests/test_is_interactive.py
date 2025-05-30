@@ -1,5 +1,4 @@
 import sys
-import pytest
 import builtins
 from unittest import mock
 from dotenv.main import find_dotenv
@@ -179,7 +178,6 @@ class TestIsInteractive:
     def test_is_interactive_main_module_with_file_attribute_none(self, tmp_path, monkeypatch):
         """Test _is_interactive when __main__ has __file__ attribute set to None."""
         self._remove_ps_attributes(monkeypatch)
-        dotenv_path = self._create_dotenv_file(tmp_path)
 
         # Mock __main__ module with __file__ = None
         mock_main = mock.MagicMock()
@@ -190,7 +188,7 @@ class TestIsInteractive:
         # Mock sys.gettrace to ensure debugger detection returns False
         monkeypatch.setattr("sys.gettrace", lambda: None)
 
-        self._setup_subdir_and_chdir(tmp_path, monkeypatch)
+        monkeypatch.chdir(tmp_path)
 
         # __file__ = None should still be considered non-interactive
         # and with no debugger, find_dotenv should not search from cwd
