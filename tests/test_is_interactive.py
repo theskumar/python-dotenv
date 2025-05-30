@@ -186,9 +186,14 @@ class TestIsInteractive:
         mock_main.__file__ = None
 
         self._mock_main_import(monkeypatch, mock_main)
+
+        # Mock sys.gettrace to ensure debugger detection returns False
+        monkeypatch.setattr("sys.gettrace", lambda: None)
+
         self._setup_subdir_and_chdir(tmp_path, monkeypatch)
 
         # __file__ = None should still be considered non-interactive
+        # and with no debugger, find_dotenv should not search from cwd
         result = find_dotenv()
         assert result == ""
 
