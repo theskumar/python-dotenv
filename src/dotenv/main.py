@@ -286,6 +286,8 @@ def find_dotenv(
 
     def _is_interactive():
         """Decide whether this is running in a REPL or IPython notebook"""
+        if hasattr(sys, "ps1") or hasattr(sys, "ps2"):
+            return True
         try:
             main = __import__("__main__", None, None, fromlist=["__file__"])
         except ModuleNotFoundError:
