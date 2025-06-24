@@ -5,9 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-06-24
+
+- Add support for disabling of `load_dotenv()` using `PYTHON_DOTENV_DISABLED` env var.
+
 ## [1.1.1] - 2025-06-24
 
-## Fixed
+### Fixed
 
 * CLI: Ensure `find_dotenv` work reliably on python 3.13 by [@theskumar] in [#563](https://github.com/theskumar/python-dotenv/pull/563)
 * CLI: revert the use of execvpe on Windows by [@wrongontheinternet] in [#566](https://github.com/theskumar/python-dotenv/pull/566)

@@ -21,6 +21,16 @@ StrPath = Union[str, "os.PathLike[str]"]
 logger = logging.getLogger(__name__)
 
 
+def _load_dotenv_disabled() -> bool:
+    """
+    Determine if dotenv loading has been disabled.
+    """
+    if "PYTHON_DOTENV_DISABLED" not in os.environ:
+        return False
+    value = os.environ["PYTHON_DOTENV_DISABLED"].casefold()
+    return value in {"1", "true", "t", "yes", "y"}
+
+
 def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
     for mapping in mappings:
         if mapping.error:
@@ -349,11 +359,14 @@ def load_dotenv(
     .env file with it's default parameters. If you need to change the default parameters
     of `find_dotenv()`, you can explicitly call `find_dotenv()` and pass the result
     to this function as `dotenv_path`.
+
+    If the environment variable `PYTHON_DOTENV_DISABLED` is set to a truthy value,
+    .env loading is disabled.
     """
     if _load_dotenv_disabled():
         logger.debug(
-			"python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
-		)
+            "python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
+        )
         return False
 
     if dotenv_path is None and stream is None:
@@ -404,12 +417,3 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
-
-def _load_dotenv_disabled() -> bool:
-    """
-    Determine if dotenv loading has been disabled.
-    """
-    if "PYTHON_DOTENV_DISABLED" not in os.environ:
-        return False
-    value = os.environ["PYTHON_DOTENV_DISABLED"].casefold()
-    return value in {"1", "true", "t", "yes", "y"}
