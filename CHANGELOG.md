@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-06-24
+
+## Fixed
+
+* CLI: Ensure `find_dotenv` work reliably on python 3.13 by [@theskumar] in [#563](https://github.com/theskumar/python-dotenv/pull/563)
+* CLI: revert the use of execvpe on Windows by [@wrongontheinternet] in [#566](https://github.com/theskumar/python-dotenv/pull/566)
+
 
 ## [1.1.0] - 2025-03-25
 
@@ -409,8 +416,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@yannham]: https://github.com/yannham
 [@zueve]: https://github.com/zueve
 [@randomseed42]: https://github.com/zueve
+[@wrongontheinternet]: https://github.com/wrongontheinternet
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/theskumar/python-dotenv/compare/v1.1.0...1.1.1
 [1.1.0]: https://github.com/theskumar/python-dotenv/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/theskumar/python-dotenv/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v1.0.0
