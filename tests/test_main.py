@@ -275,6 +275,7 @@ def test_load_dotenv_disabled(dotenv_path, flag_value):
 @pytest.mark.parametrize(
     "flag_value",
     [
+        "",
         "false",
         "no",
         "0",
@@ -307,7 +308,6 @@ def test_load_dotenv_doesnt_disable_itself(dotenv_path):
 
     assert result is True
     assert os.environ == {"DOTENV_AUTOLOAD_DISABLED": "true"}
-
 
 
 def test_load_dotenv_no_file_verbose():
