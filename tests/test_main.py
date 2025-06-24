@@ -275,6 +275,36 @@ def test_load_dotenv_disabled(dotenv_path, flag_value):
 @pytest.mark.parametrize(
     "flag_value",
     [
+        "true",
+        "yes",
+        "1",
+        "t",
+        "y",
+        "True",
+        "Yes",
+        "TRUE",
+        "YES",
+        "T",
+        "Y",
+    ],
+)
+def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
+    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+        dotenv_path.write_text("a=b")
+
+        logger = logging.getLogger("dotenv.main")
+        with mock.patch.object(logger, "debug") as mock_debug:
+            result = dotenv.load_dotenv(dotenv_path)
+
+        assert result is False
+        mock_debug.assert_called_once_with(
+			"python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
+        )
+
+
+@pytest.mark.parametrize(
+    "flag_value",
+    [
         "",
         "false",
         "no",
@@ -298,6 +328,35 @@ def test_load_dotenv_enabled(dotenv_path, flag_value):
 
         assert result is True
         assert os.environ == expected_environ
+
+
+@pytest.mark.parametrize(
+    "flag_value",
+    [
+        "",
+        "false",
+        "no",
+        "0",
+        "f",
+        "n",
+        "False",
+        "No",
+        "FALSE",
+        "NO",
+        "F",
+        "N",
+    ],
+)
+def test_load_dotenv_enabled_no_notification(dotenv_path, flag_value):
+    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+        dotenv_path.write_text("a=b")
+
+        logger = logging.getLogger("dotenv.main")
+        with mock.patch.object(logger, "debug") as mock_debug:
+            result = dotenv.load_dotenv(dotenv_path)
+
+        assert result is True
+        mock_debug.assert_not_called()
 
 
 @mock.patch.dict(os.environ, {}, clear=True)
