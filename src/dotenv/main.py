@@ -351,9 +351,9 @@ def load_dotenv(
     to this function as `dotenv_path`.
     """
     if _load_dotenv_disabled():
-        logger.warning(
-            "python-dotenv has been disabled by PYTHON_DOTENV_DISABLED environmental variable"
-        )
+        logger.debug(
+			"python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
+		)
         return False
 
     if dotenv_path is None and stream is None:
