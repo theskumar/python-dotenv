@@ -350,6 +350,9 @@ def load_dotenv(
     of `find_dotenv()`, you can explicitly call `find_dotenv()` and pass the result
     to this function as `dotenv_path`.
     """
+    if _dotenv_autoload_disabled():
+        return False
+
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
 
@@ -398,3 +401,12 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+def _dotenv_autoload_disabled() -> bool:
+    """
+    Determine if dotenv autoloading has been disabled.
+    """
+    if "DOTENV_AUTOLOAD_DISABLED" not in os.environ:
+        return False
+    value = os.environ["DOTENV_AUTOLOAD_DISABLED"].casefold()
+    return value in {"1", "true", "t", "yes", "y"}
