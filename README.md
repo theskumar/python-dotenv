@@ -134,6 +134,10 @@ Optional flags:
 - `-o` to override existing variables.
 - `-v` for increased verbosity.
 
+### Disable load_dotenv
+
+Set `PYTHON_DOTENV_DISABLED=1` to disable `load_dotenv()` from loading .env files or streams. Useful when you can't modify third-party package calls or in production.
+
 ## Command-line Interface
 
 A CLI interface `dotenv` is also included, which helps you manipulate the `.env` file

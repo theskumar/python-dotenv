@@ -350,6 +350,12 @@ def load_dotenv(
     of `find_dotenv()`, you can explicitly call `find_dotenv()` and pass the result
     to this function as `dotenv_path`.
     """
+    if _load_dotenv_disabled():
+        logger.debug(
+			"python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
+		)
+        return False
+
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
 
@@ -398,3 +404,12 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+def _load_dotenv_disabled() -> bool:
+    """
+    Determine if dotenv loading has been disabled.
+    """
+    if "PYTHON_DOTENV_DISABLED" not in os.environ:
+        return False
+    value = os.environ["PYTHON_DOTENV_DISABLED"].casefold()
+    return value in {"1", "true", "t", "yes", "y"}
