@@ -5,6 +5,9 @@ import sys
 from contextlib import contextmanager
 from typing import Any, Dict, IO, Iterator, List, Optional
 
+if sys.platform == 'win32':
+    from subprocess import Popen
+
 try:
     import click
 except ImportError:
@@ -187,4 +190,16 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
     cmd_env = os.environ.copy()
     cmd_env.update(env)
 
-    os.execvpe(command[0], args=command, env=cmd_env)
+    if sys.platform == 'win32':
+        # execvpe on Windows returns control immediately
+        # rather than once the command has finished.
+        p = Popen(command,
+                  universal_newlines=True,
+                  bufsize=0,
+                  shell=False,
+                  env=cmd_env)
+        _, _ = p.communicate()
+
+        exit(p.returncode)
+    else:
+        os.execvpe(command[0], args=command, env=cmd_env)
