@@ -262,8 +262,8 @@ def test_load_dotenv_existing_file(dotenv_path):
     ],
 )
 def test_load_dotenv_disabled(dotenv_path, flag_value):
-    expected_environ = {"DOTENV_AUTOLOAD_DISABLED": flag_value}
-    with mock.patch.dict(os.environ, {"DOTENV_AUTOLOAD_DISABLED": flag_value}, clear=True):
+    expected_environ = {"PYTHON_DOTENV_DISABLED": flag_value}
+    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
         dotenv_path.write_text("a=b")
 
         result = dotenv.load_dotenv(dotenv_path)
@@ -290,8 +290,8 @@ def test_load_dotenv_disabled(dotenv_path, flag_value):
     ],
 )
 def test_load_dotenv_enabled(dotenv_path, flag_value):
-    expected_environ = {"DOTENV_AUTOLOAD_DISABLED": flag_value, "a": "b"}
-    with mock.patch.dict(os.environ, {"DOTENV_AUTOLOAD_DISABLED": flag_value}, clear=True):
+    expected_environ = {"PYTHON_DOTENV_DISABLED": flag_value, "a": "b"}
+    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
         dotenv_path.write_text("a=b")
 
         result = dotenv.load_dotenv(dotenv_path)
@@ -302,12 +302,12 @@ def test_load_dotenv_enabled(dotenv_path, flag_value):
 
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_doesnt_disable_itself(dotenv_path):
-    dotenv_path.write_text("DOTENV_AUTOLOAD_DISABLED=true")
+    dotenv_path.write_text("PYTHON_DOTENV_DISABLED=true")
 
     result = dotenv.load_dotenv(dotenv_path)
 
     assert result is True
-    assert os.environ == {"DOTENV_AUTOLOAD_DISABLED": "true"}
+    assert os.environ == {"PYTHON_DOTENV_DISABLED": "true"}
 
 
 def test_load_dotenv_no_file_verbose():

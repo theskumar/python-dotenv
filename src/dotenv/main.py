@@ -350,9 +350,9 @@ def load_dotenv(
     of `find_dotenv()`, you can explicitly call `find_dotenv()` and pass the result
     to this function as `dotenv_path`.
     """
-    if _dotenv_autoload_disabled():
+    if _load_dotenv_disabled():
         logger.warning(
-            "python-dotenv has been disabled by DOTENV_AUTOLOAD_DISABLED environmental variable"
+            "python-dotenv has been disabled by PYTHON_DOTENV_DISABLED environmental variable"
         )
         return False
 
@@ -405,11 +405,11 @@ def dotenv_values(
         encoding=encoding,
     ).dict()
 
-def _dotenv_autoload_disabled() -> bool:
+def _load_dotenv_disabled() -> bool:
     """
-    Determine if dotenv autoloading has been disabled.
+    Determine if dotenv loading has been disabled.
     """
-    if "DOTENV_AUTOLOAD_DISABLED" not in os.environ:
+    if "PYTHON_DOTENV_DISABLED" not in os.environ:
         return False
-    value = os.environ["DOTENV_AUTOLOAD_DISABLED"].casefold()
+    value = os.environ["PYTHON_DOTENV_DISABLED"].casefold()
     return value in {"1", "true", "t", "yes", "y"}
