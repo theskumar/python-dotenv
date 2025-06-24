@@ -5,166 +5,548 @@ import pytest
 from dotenv.parser import Binding, Original, parse_stream
 
 
-@pytest.mark.parametrize("test_input,expected", [
-    (u"", []),
-    (u"a=b", [Binding(key=u"a", value=u"b", original=Original(string=u"a=b", line=1), error=False)]),
-    (u"'a'=b", [Binding(key=u"a", value=u"b", original=Original(string=u"'a'=b", line=1), error=False)]),
-    (u"[=b", [Binding(key=u"[", value=u"b", original=Original(string=u"[=b", line=1), error=False)]),
-    (u" a = b ", [Binding(key=u"a", value=u"b", original=Original(string=u" a = b ", line=1), error=False)]),
-    (u"export a=b", [Binding(key=u"a", value=u"b", original=Original(string=u"export a=b", line=1), error=False)]),
-    (
-        u" export 'a'=b",
-        [Binding(key=u"a", value=u"b", original=Original(string=u" export 'a'=b", line=1), error=False)],
-    ),
-    (u"# a=b", [Binding(key=None, value=None, original=Original(string=u"# a=b", line=1), error=False)]),
-    (u"a=b#c", [Binding(key=u"a", value=u"b#c", original=Original(string=u"a=b#c", line=1), error=False)]),
-    (
-        u'a=b #c',
-        [Binding(key=u"a", value=u"b", original=Original(string=u"a=b #c", line=1), error=False)],
-    ),
-    (
-        u'a=b\t#c',
-        [Binding(key=u"a", value=u"b", original=Original(string=u"a=b\t#c", line=1), error=False)],
-    ),
-    (
-        u"a=b c",
-        [Binding(key=u"a", value=u"b c", original=Original(string=u"a=b c", line=1), error=False)],
-    ),
-    (
-        u"a=b\tc",
-        [Binding(key=u"a", value=u"b\tc", original=Original(string=u"a=b\tc", line=1), error=False)],
-    ),
-    (
-        u"a=b  c",
-        [Binding(key=u"a", value=u"b  c", original=Original(string=u"a=b  c", line=1), error=False)],
-    ),
-    (
-        u"a=b\u00a0 c",
-        [Binding(key=u"a", value=u"b\u00a0 c", original=Original(string=u"a=b\u00a0 c", line=1), error=False)],
-    ),
-    (
-        u"a=b c ",
-        [Binding(key=u"a", value=u"b c", original=Original(string=u"a=b c ", line=1), error=False)],
-    ),
-    (
-        u"a='b c '",
-        [Binding(key=u"a", value=u"b c ", original=Original(string=u"a='b c '", line=1), error=False)],
-    ),
-    (
-        u'a="b c "',
-        [Binding(key=u"a", value=u"b c ", original=Original(string=u'a="b c "', line=1), error=False)],
-    ),
-    (
-        u"export export_a=1",
-        [
-            Binding(key=u"export_a", value=u"1", original=Original(string=u"export export_a=1", line=1), error=False)
-        ],
-    ),
-    (
-        u"export port=8000",
-        [Binding(key=u"port", value=u"8000", original=Original(string=u"export port=8000", line=1), error=False)],
-    ),
-    (u'a="b\nc"', [Binding(key=u"a", value=u"b\nc", original=Original(string=u'a="b\nc"', line=1), error=False)]),
-    (u"a='b\nc'", [Binding(key=u"a", value=u"b\nc", original=Original(string=u"a='b\nc'", line=1), error=False)]),
-    (u'a="b\nc"', [Binding(key=u"a", value=u"b\nc", original=Original(string=u'a="b\nc"', line=1), error=False)]),
-    (u'a="b\\nc"', [Binding(key=u"a", value=u'b\nc', original=Original(string=u'a="b\\nc"', line=1), error=False)]),
-    (u"a='b\\nc'", [Binding(key=u"a", value=u'b\\nc', original=Original(string=u"a='b\\nc'", line=1), error=False)]),
-    (u'a="b\\"c"', [Binding(key=u"a", value=u'b"c', original=Original(string=u'a="b\\"c"', line=1), error=False)]),
-    (u"a='b\\'c'", [Binding(key=u"a", value=u"b'c", original=Original(string=u"a='b\\'c'", line=1), error=False)]),
-    (u"a=à", [Binding(key=u"a", value=u"à", original=Original(string=u"a=à", line=1), error=False)]),
-    (u'a="à"', [Binding(key=u"a", value=u"à", original=Original(string=u'a="à"', line=1), error=False)]),
-    (
-        u'no_value_var',
-        [Binding(key=u'no_value_var', value=None, original=Original(string=u"no_value_var", line=1), error=False)],
-    ),
-    (u'a: b', [Binding(key=None, value=None, original=Original(string=u"a: b", line=1), error=True)]),
-    (
-        u"a=b\nc=d",
-        [
-            Binding(key=u"a", value=u"b", original=Original(string=u"a=b\n", line=1), error=False),
-            Binding(key=u"c", value=u"d", original=Original(string=u"c=d", line=2), error=False),
-        ],
-    ),
-    (
-        u"a=b\rc=d",
-        [
-            Binding(key=u"a", value=u"b", original=Original(string=u"a=b\r", line=1), error=False),
-            Binding(key=u"c", value=u"d", original=Original(string=u"c=d", line=2), error=False),
-        ],
-    ),
-    (
-        u"a=b\r\nc=d",
-        [
-            Binding(key=u"a", value=u"b", original=Original(string=u"a=b\r\n", line=1), error=False),
-            Binding(key=u"c", value=u"d", original=Original(string=u"c=d", line=2), error=False),
-        ],
-    ),
-    (
-        u'a=\nb=c',
-        [
-            Binding(key=u"a", value=u'', original=Original(string=u'a=\n', line=1), error=False),
-            Binding(key=u"b", value=u'c', original=Original(string=u"b=c", line=2), error=False),
-        ]
-    ),
-    (
-        u"\n\n",
-        [
-            Binding(key=None, value=None, original=Original(string=u"\n\n", line=1), error=False),
-        ]
-    ),
-    (
-        u"a=b\n\n",
-        [
-            Binding(key=u"a", value=u"b", original=Original(string=u"a=b\n", line=1), error=False),
-            Binding(key=None, value=None, original=Original(string=u"\n", line=2), error=False),
-        ]
-    ),
-    (
-        u'a=b\n\nc=d',
-        [
-            Binding(key=u"a", value=u"b", original=Original(string=u"a=b\n", line=1), error=False),
-            Binding(key=u"c", value=u"d", original=Original(string=u"\nc=d", line=2), error=False),
-        ]
-    ),
-    (
-        u'a="\nb=c',
-        [
-            Binding(key=None, value=None, original=Original(string=u'a="\n', line=1), error=True),
-            Binding(key=u"b", value=u"c", original=Original(string=u"b=c", line=2), error=False),
-        ]
-    ),
-    (
-        u'# comment\na="b\nc"\nd=e\n',
-        [
-            Binding(key=None, value=None, original=Original(string=u"# comment\n", line=1), error=False),
-            Binding(key=u"a", value=u"b\nc", original=Original(string=u'a="b\nc"\n', line=2), error=False),
-            Binding(key=u"d", value=u"e", original=Original(string=u"d=e\n", line=4), error=False),
-        ],
-    ),
-    (
-        u'a=b\n# comment 1',
-        [
-            Binding(key="a", value="b", original=Original(string=u"a=b\n", line=1), error=False),
-            Binding(key=None, value=None, original=Original(string=u"# comment 1", line=2), error=False),
-        ],
-    ),
-    (
-        u'# comment 1\n# comment 2',
-        [
-            Binding(key=None, value=None, original=Original(string=u"# comment 1\n", line=1), error=False),
-            Binding(key=None, value=None, original=Original(string=u"# comment 2", line=2), error=False),
-        ],
-    ),
-    (
-        u'uglyKey[%$=\"S3cr3t_P4ssw#rD\" #\na=b',
-        [
-            Binding(key=u'uglyKey[%$',
-                    value=u'S3cr3t_P4ssw#rD',
-                    original=Original(string=u"uglyKey[%$=\"S3cr3t_P4ssw#rD\" #\n", line=1), error=False),
-            Binding(key=u"a", value=u"b", original=Original(string=u'a=b', line=2), error=False),
-        ],
-    ),
-])
+@pytest.mark.parametrize(
+    "test_input,expected",
+    [
+        ("", []),
+        (
+            "a=b",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "'a'=b",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="'a'=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "[=b",
+            [
+                Binding(
+                    key="[",
+                    value="b",
+                    original=Original(string="[=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            " a = b ",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string=" a = b ", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "export a=b",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="export a=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            " export 'a'=b",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string=" export 'a'=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "# a=b",
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="# a=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b#c",
+            [
+                Binding(
+                    key="a",
+                    value="b#c",
+                    original=Original(string="a=b#c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b #c",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b #c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b\t#c",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\t#c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b c",
+            [
+                Binding(
+                    key="a",
+                    value="b c",
+                    original=Original(string="a=b c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b\tc",
+            [
+                Binding(
+                    key="a",
+                    value="b\tc",
+                    original=Original(string="a=b\tc", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b  c",
+            [
+                Binding(
+                    key="a",
+                    value="b  c",
+                    original=Original(string="a=b  c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b\u00a0 c",
+            [
+                Binding(
+                    key="a",
+                    value="b\u00a0 c",
+                    original=Original(string="a=b\u00a0 c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=b c ",
+            [
+                Binding(
+                    key="a",
+                    value="b c",
+                    original=Original(string="a=b c ", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a='b c '",
+            [
+                Binding(
+                    key="a",
+                    value="b c ",
+                    original=Original(string="a='b c '", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="b c "',
+            [
+                Binding(
+                    key="a",
+                    value="b c ",
+                    original=Original(string='a="b c "', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "export export_a=1",
+            [
+                Binding(
+                    key="export_a",
+                    value="1",
+                    original=Original(string="export export_a=1", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "export port=8000",
+            [
+                Binding(
+                    key="port",
+                    value="8000",
+                    original=Original(string="export port=8000", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="b\nc"',
+            [
+                Binding(
+                    key="a",
+                    value="b\nc",
+                    original=Original(string='a="b\nc"', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a='b\nc'",
+            [
+                Binding(
+                    key="a",
+                    value="b\nc",
+                    original=Original(string="a='b\nc'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="b\nc"',
+            [
+                Binding(
+                    key="a",
+                    value="b\nc",
+                    original=Original(string='a="b\nc"', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="b\\nc"',
+            [
+                Binding(
+                    key="a",
+                    value="b\nc",
+                    original=Original(string='a="b\\nc"', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a='b\\nc'",
+            [
+                Binding(
+                    key="a",
+                    value="b\\nc",
+                    original=Original(string="a='b\\nc'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="b\\"c"',
+            [
+                Binding(
+                    key="a",
+                    value='b"c',
+                    original=Original(string='a="b\\"c"', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a='b\\'c'",
+            [
+                Binding(
+                    key="a",
+                    value="b'c",
+                    original=Original(string="a='b\\'c'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=à",
+            [
+                Binding(
+                    key="a",
+                    value="à",
+                    original=Original(string="a=à", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="à"',
+            [
+                Binding(
+                    key="a",
+                    value="à",
+                    original=Original(string='a="à"', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "no_value_var",
+            [
+                Binding(
+                    key="no_value_var",
+                    value=None,
+                    original=Original(string="no_value_var", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a: b",
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="a: b", line=1),
+                    error=True,
+                )
+            ],
+        ),
+        (
+            "a=b\nc=d",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a=b\rc=d",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\r", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a=b\r\nc=d",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\r\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a=\nb=c",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a=\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="b",
+                    value="c",
+                    original=Original(string="b=c", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "\n\n",
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="\n\n", line=1),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a=b\n\n",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="\n", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a=b\n\nc=d",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="\nc=d", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            'a="\nb=c',
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string='a="\n', line=1),
+                    error=True,
+                ),
+                Binding(
+                    key="b",
+                    value="c",
+                    original=Original(string="b=c", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            '# comment\na="b\nc"\nd=e\n',
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="# comment\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="a",
+                    value="b\nc",
+                    original=Original(string='a="b\nc"\n', line=2),
+                    error=False,
+                ),
+                Binding(
+                    key="d",
+                    value="e",
+                    original=Original(string="d=e\n", line=4),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a=b\n# comment 1",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="# comment 1", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "# comment 1\n# comment 2",
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="# comment 1\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="# comment 2", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            'uglyKey[%$="S3cr3t_P4ssw#rD" #\na=b',
+            [
+                Binding(
+                    key="uglyKey[%$",
+                    value="S3cr3t_P4ssw#rD",
+                    original=Original(
+                        string='uglyKey[%$="S3cr3t_P4ssw#rD" #\n', line=1
+                    ),
+                    error=False,
+                ),
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+    ],
+)
 def test_parse_stream(test_input, expected):
     result = parse_stream(io.StringIO(test_input))
 

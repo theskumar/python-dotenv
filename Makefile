@@ -24,9 +24,9 @@ sdist: clean
 	ls -l dist
 
 test:
-	pip install -e .
-	flake8 .
-	py.test tests/
+	uv pip install -e .
+	ruff check .
+	pytest tests/
 
 coverage:
 	coverage run --source=dotenv --omit='*tests*' -m py.test tests/ -v --tb=native

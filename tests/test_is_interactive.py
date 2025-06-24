@@ -1,6 +1,7 @@
-import sys
 import builtins
+import sys
 from unittest import mock
+
 from dotenv.main import find_dotenv
 
 
@@ -175,7 +176,9 @@ class TestIsInteractive:
         result = find_dotenv()
         assert result == str(dotenv_path)
 
-    def test_is_interactive_main_module_with_file_attribute_none(self, tmp_path, monkeypatch):
+    def test_is_interactive_main_module_with_file_attribute_none(
+        self, tmp_path, monkeypatch
+    ):
         """Test _is_interactive when __main__ has __file__ attribute set to None."""
         self._remove_ps_attributes(monkeypatch)
 
@@ -195,7 +198,9 @@ class TestIsInteractive:
         result = find_dotenv()
         assert result == ""
 
-    def test_is_interactive_no_ps_attributes_and_normal_execution(self, tmp_path, monkeypatch):
+    def test_is_interactive_no_ps_attributes_and_normal_execution(
+        self, tmp_path, monkeypatch
+    ):
         """Test normal script execution scenario where _is_interactive should return False."""
         self._remove_ps_attributes(monkeypatch)
 

@@ -7,23 +7,29 @@ a pull request.
 
 Executing the tests:
 
-    $ pip install -r requirements.txt
-    $ pip install -e .
-    $ flake8
-    $ pytest
+    $ uv venv
+    $ uv pip install -r requirements.txt
+    $ uv pip install -e .
+    $ uv ruff check .
+    $ uv format .
+    $ uv run pytest
 
 or with [tox](https://pypi.org/project/tox/) installed:
 
     $ tox
 
 
+Use of pre-commit is recommended:
+
+    $ uv run precommit install
+
+
 Documentation is published with [mkdocs]():
 
 ```shell
-$ pip install -r requirements-docs.txt
-$ pip install -e .
-$ mkdocs serve
+$ uv pip install -r requirements-docs.txt
+$ uv pip install -e .
+$ uv run mkdocs serve
 ```
 
 Open http://127.0.0.1:8000/ to view the documentation locally.
-

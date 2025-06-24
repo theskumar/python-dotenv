@@ -1,10 +1,11 @@
 import os
 import sys
-import sh
 import textwrap
 from typing import List
 from unittest import mock
 from zipfile import ZipFile
+
+import sh
 
 
 def walk_to_root(path: str):
@@ -25,16 +26,16 @@ class FileToAdd:
 def setup_zipfile(path, files: List[FileToAdd]):
     zip_file_path = path / "test.zip"
     dirs_init_py_added_to = set()
-    with ZipFile(zip_file_path, "w") as zip:
+    with ZipFile(zip_file_path, "w") as zipfile:
         for f in files:
-            zip.writestr(data=f.content, zinfo_or_arcname=f.path)
-            for dir in walk_to_root(os.path.dirname(f.path)):
-                if dir not in dirs_init_py_added_to:
-                    print(os.path.join(dir, "__init__.py"))
-                    zip.writestr(
-                        data="", zinfo_or_arcname=os.path.join(dir, "__init__.py")
+            zipfile.writestr(data=f.content, zinfo_or_arcname=f.path)
+            for dirname in walk_to_root(os.path.dirname(f.path)):
+                if dirname not in dirs_init_py_added_to:
+                    print(os.path.join(dirname, "__init__.py"))
+                    zipfile.writestr(
+                        data="", zinfo_or_arcname=os.path.join(dirname, "__init__.py")
                     )
-                    dirs_init_py_added_to.add(dir)
+                    dirs_init_py_added_to.add(dirname)
     return zip_file_path
 
 

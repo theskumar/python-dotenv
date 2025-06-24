@@ -1,0 +1,19 @@
+[lint]
+select = [
+    # pycodestyle
+    "E4",
+    "E7",
+    "E9",
+
+    # Pyflakes
+    "F",
+
+    # flake8-bugbear
+    "B",
+
+    # iSort
+    "I",
+
+    # flake8-builtins
+    "A",
+]
