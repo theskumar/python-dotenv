@@ -299,6 +299,17 @@ def test_load_dotenv_enabled(dotenv_path, flag_value):
         assert os.environ == expected_environ
 
 
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_doesnt_disable_itself(dotenv_path):
+    dotenv_path.write_text("DOTENV_AUTOLOAD_DISABLED=true")
+
+    result = dotenv.load_dotenv(dotenv_path)
+
+    assert result is True
+    assert os.environ == {"DOTENV_AUTOLOAD_DISABLED": "true"}
+
+
+
 def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
