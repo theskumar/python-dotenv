@@ -5,6 +5,7 @@ import pathlib
 import shutil
 import sys
 import tempfile
+import textwrap
 from collections import OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
@@ -398,3 +399,34 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+
+def set_header(
+    dotenv_path: StrPath,
+    header: str,
+    encoding: Optional[str] = "utf-8",
+) -> Tuple[bool, Optional[str]]:
+    """
+    Adds or Updates a header in the .env file
+
+    Parameters:
+        dotenv_path: Absolute or relative path to .env file.
+        header: The desired header block
+        encoding: Encoding to be used to read the file.
+    Returns:
+        Bool: True if at least one environment variable is set else False
+        Str: The header that was written
+    """
+    with rewrite(dotenv_path, encoding=encoding) as (source, dest):
+        if not header or not header.strip():
+            logger.info("Ignoring empty header.")
+            return False, header
+
+        lines = textwrap.wrap(header.replace("\n", " "), width=60)
+        header = "".join(f"# {line}\n" for line in lines)
+        dest.write(header)
+
+        text = "".join(atom for atom in source.readlines() if not atom.startswith("#"))
+        dest.write(f"{text}\n")
+
+    return True, header
