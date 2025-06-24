@@ -64,7 +64,7 @@ def test_set_key_encoding(dotenv_path):
 def test_set_key_permission_error(dotenv_path):
     dotenv_path.chmod(0o000)
 
-    with pytest.raises(Exception):
+    with pytest.raises(PermissionError):
         dotenv.set_key(dotenv_path, "a", "b")
 
     dotenv_path.chmod(0o600)

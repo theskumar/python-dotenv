@@ -27,7 +27,7 @@ from dotenv.variables import Literal, Variable, parse_variables
                 Literal(value="e"),
             ],
         ),
-    ]
+    ],
 )
 def test_parse_variables(value, expected):
     result = parse_variables(value)
