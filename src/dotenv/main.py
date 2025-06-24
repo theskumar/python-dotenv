@@ -351,6 +351,9 @@ def load_dotenv(
     to this function as `dotenv_path`.
     """
     if _dotenv_autoload_disabled():
+        logger.warning(
+            "python-dotenv has been disabled by DOTENV_AUTOLOAD_DISABLED environmental variable"
+        )
         return False
 
     if dotenv_path is None and stream is None:
