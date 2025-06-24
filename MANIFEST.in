@@ -1,4 +1,4 @@
-include LICENSE *.md *.yml *.toml
+include LICENSE *.md *.yml *.yaml *.toml
 
 include tox.ini
 recursive-include docs *.md
