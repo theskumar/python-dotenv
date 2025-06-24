@@ -245,6 +245,60 @@ def test_load_dotenv_existing_file(dotenv_path):
     assert os.environ == {"a": "b"}
 
 
+@pytest.mark.parametrize(
+    "flag_value",
+    [
+        "true",
+        "yes",
+        "1",
+        "t",
+        "y",
+        "True",
+        "Yes",
+        "TRUE",
+        "YES",
+        "T",
+        "Y",
+    ],
+)
+def test_load_dotenv_disabled(dotenv_path, flag_value):
+    expected_environ = {"DOTENV_AUTOLOAD_DISABLED": flag_value}
+    with mock.patch.dict(os.environ, {"DOTENV_AUTOLOAD_DISABLED": flag_value}, clear=True):
+        dotenv_path.write_text("a=b")
+
+        result = dotenv.load_dotenv(dotenv_path)
+
+        assert result is False
+        assert os.environ == expected_environ
+
+
+@pytest.mark.parametrize(
+    "flag_value",
+    [
+        "false",
+        "no",
+        "0",
+        "f",
+        "n",
+        "False",
+        "No",
+        "FALSE",
+        "NO",
+        "F",
+        "N",
+    ],
+)
+def test_load_dotenv_enabled(dotenv_path, flag_value):
+    expected_environ = {"DOTENV_AUTOLOAD_DISABLED": flag_value, "a": "b"}
+    with mock.patch.dict(os.environ, {"DOTENV_AUTOLOAD_DISABLED": flag_value}, clear=True):
+        dotenv_path.write_text("a=b")
+
+        result = dotenv.load_dotenv(dotenv_path)
+
+        assert result is True
+        assert os.environ == expected_environ
+
+
 def test_load_dotenv_no_file_verbose():
     logger = logging.getLogger("dotenv.main")
 
