@@ -136,7 +136,7 @@ Optional flags:
 
 ### Disable load_dotenv
 
-You can disable automatic loading of dotenv values by setting the `PYTHON_DOTENV_DISABLED` environmental variable to `true`. This can be useful if you are using a library that uses `load_dotenv` and you want to manage the environment in a different way.
+Set `PYTHON_DOTENV_DISABLED=1` to disable `load_dotenv()` from loading .env files or streams. Useful when you can't modify third-party package calls or in production.
 
 ## Command-line Interface
 
