@@ -77,7 +77,7 @@ def stream_file(path: os.PathLike) -> Iterator[IO[str]]:
             yield stream
     except OSError as exc:
         print(f"Error opening env file: {exc}", file=sys.stderr)
-        exit(2)
+        sys.exit(2)
 
 
 @cli.command(name="list")
@@ -122,7 +122,7 @@ def set_value(ctx: click.Context, key: Any, value: Any) -> None:
     if success:
         click.echo(f"{key}={value}")
     else:
-        exit(1)
+        sys.exit(1)
 
 
 @cli.command()
@@ -139,7 +139,7 @@ def get(ctx: click.Context, key: Any) -> None:
     if stored_value:
         click.echo(stored_value)
     else:
-        exit(1)
+        sys.exit(1)
 
 
 @cli.command()
@@ -153,7 +153,7 @@ def unset(ctx: click.Context, key: Any) -> None:
     if success:
         click.echo(f"Successfully removed {key}")
     else:
-        exit(1)
+        sys.exit(1)
 
 
 @cli.command(context_settings={"ignore_unknown_options": True})
@@ -179,7 +179,7 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
 
     if not commandline:
         click.echo("No command given.")
-        exit(1)
+        sys.exit(1)
     run_command(commandline, dotenv_as_dict)
 
 
@@ -213,6 +213,6 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
         p = Popen(command, universal_newlines=True, bufsize=0, shell=False, env=cmd_env)
         _, _ = p.communicate()
 
-        exit(p.returncode)
+        sys.exit(p.returncode)
     else:
         os.execvpe(command[0], args=command, env=cmd_env)
