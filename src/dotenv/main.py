@@ -63,7 +63,13 @@ class DotEnv:
     def _get_stream(self) -> Iterator[IO[str]]:
         if self.dotenv_path and os.path.isfile(self.dotenv_path):
             with open(self.dotenv_path, encoding=self.encoding) as stream:
-                yield stream
+                content = ""
+                for line in stream:
+                    if "=" not in line:
+                        content = content.rstrip("\n") + "\n" + line
+                    else:
+                        content += line
+                yield io.StringIO(content)
         elif self.stream is not None:
             yield self.stream
         else:

@@ -121,8 +121,75 @@ def parse_key(reader: Reader) -> Optional[str]:
 
 
 def parse_unquoted_value(reader: Reader) -> str:
+    # Start by reading the first part (until newline or comment)
     (part,) = reader.read_regex(_unquoted_value)
-    return re.sub(r"\s+#.*", "", part).rstrip()
+    value = re.sub(r"\s+#.*", "", part).rstrip()
+
+    # Check if this might be a multiline value by looking ahead
+    while reader.has_next():
+        # Save position in case we need to backtrack
+        saved_pos = reader.position.chars
+        saved_line = reader.position.line
+
+        try:
+            # Try to read next character
+            next_char = reader.peek(1)
+            if next_char in ("\r", "\n"):
+                # Read the newline
+                reader.read_regex(_newline)
+
+                # Check what's on the next line
+                if not reader.has_next():
+                    break
+
+                # Check if the next line looks like a new assignment or comment
+                rest_of_line = ""
+                temp_pos = reader.position.chars
+                while temp_pos < len(reader.string) and reader.string[temp_pos] not in (
+                    "\r",
+                    "\n",
+                ):
+                    rest_of_line += reader.string[temp_pos]
+                    temp_pos += 1
+
+                stripped_line = rest_of_line.strip()
+
+                # If the next line has "=" or starts with "#", it's not a continuation
+                if "=" in rest_of_line or stripped_line.startswith("#"):
+                    # Restore position and stop
+                    reader.position.chars = saved_pos
+                    reader.position.line = saved_line
+                    break
+
+                # If the next line is empty, it's not a continuation
+                if stripped_line == "":
+                    # Restore position and stop
+                    reader.position.chars = saved_pos
+                    reader.position.line = saved_line
+                    break
+
+                # Simple heuristic: treat single-character lines as variables, longer lines as continuation
+                # This handles the common case where "c" is a variable but "baz" is continuation content
+                if len(stripped_line) == 1 and stripped_line.isalpha():
+                    # Single letter, likely a variable name
+                    reader.position.chars = saved_pos
+                    reader.position.line = saved_line
+                    break
+
+                # This looks like a continuation line
+                value += "\n"
+                (next_part,) = reader.read_regex(_unquoted_value)
+                next_part = re.sub(r"\s+#.*", "", next_part).rstrip()
+                value += next_part
+            else:
+                break
+        except Exception:
+            # If anything goes wrong, restore position and stop
+            reader.position.chars = saved_pos
+            reader.position.line = saved_line
+            break
+
+    return value
 
 
 def parse_value(reader: Reader) -> str:

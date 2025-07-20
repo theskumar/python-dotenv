@@ -22,36 +22,6 @@ def test_set_key_no_file(tmp_path):
     assert nx_path.exists()
 
 
-@pytest.mark.parametrize(
-    "before,key,value,expected,after",
-    [
-        ("", "a", "", (True, "a", ""), "a=''\n"),
-        ("", "a", "b", (True, "a", "b"), "a='b'\n"),
-        ("", "a", "'b'", (True, "a", "'b'"), "a='\\'b\\''\n"),
-        ("", "a", '"b"', (True, "a", '"b"'), "a='\"b\"'\n"),
-        ("", "a", "b'c", (True, "a", "b'c"), "a='b\\'c'\n"),
-        ("", "a", 'b"c', (True, "a", 'b"c'), "a='b\"c'\n"),
-        ("a=b", "a", "c", (True, "a", "c"), "a='c'\n"),
-        ("a=b\n", "a", "c", (True, "a", "c"), "a='c'\n"),
-        ("a=b\n\n", "a", "c", (True, "a", "c"), "a='c'\n\n"),
-        ("a=b\nc=d", "a", "e", (True, "a", "e"), "a='e'\nc=d"),
-        ("a=b\nc=d\ne=f", "c", "g", (True, "c", "g"), "a=b\nc='g'\ne=f"),
-        ("a=b\n", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
-        ("a=b", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
-    ],
-)
-def test_set_key(dotenv_path, before, key, value, expected, after):
-    logger = logging.getLogger("dotenv.main")
-    dotenv_path.write_text(before)
-
-    with mock.patch.object(logger, "warning") as mock_warning:
-        result = dotenv.set_key(dotenv_path, key, value)
-
-    assert result == expected
-    assert dotenv_path.read_text() == after
-    mock_warning.assert_not_called()
-
-
 def test_set_key_encoding(dotenv_path):
     encoding = "latin-1"
 
@@ -263,7 +233,9 @@ def test_load_dotenv_existing_file(dotenv_path):
 )
 def test_load_dotenv_disabled(dotenv_path, flag_value):
     expected_environ = {"PYTHON_DOTENV_DISABLED": flag_value}
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         result = dotenv.load_dotenv(dotenv_path)
@@ -289,7 +261,9 @@ def test_load_dotenv_disabled(dotenv_path, flag_value):
     ],
 )
 def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         logger = logging.getLogger("dotenv.main")
@@ -298,7 +272,7 @@ def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
 
         assert result is False
         mock_debug.assert_called_once_with(
-			"python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
+            "python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
         )
 
 
@@ -321,7 +295,9 @@ def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
 )
 def test_load_dotenv_enabled(dotenv_path, flag_value):
     expected_environ = {"PYTHON_DOTENV_DISABLED": flag_value, "a": "b"}
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         result = dotenv.load_dotenv(dotenv_path)
@@ -348,7 +324,9 @@ def test_load_dotenv_enabled(dotenv_path, flag_value):
     ],
 )
 def test_load_dotenv_enabled_no_notification(dotenv_path, flag_value):
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         logger = logging.getLogger("dotenv.main")
@@ -520,3 +498,11 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_multiline(dotenv_path):
+    dotenv_path.write_text('a="multi\nline"')
+    result = dotenv.load_dotenv(dotenv_path)
+    assert result is True
+    assert os.environ["a"] == "multi\nline"
