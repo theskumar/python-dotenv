@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
 from .parser import Binding, parse_stream
-from .variables import parse_variables
+from .variables import parse_variables, set_variable_name_pattern
 
 # A type alias for a string path to be used for the paths in this file.
 # These paths may flow to `open()` and `shutil.move()`; `shutil.move()`
@@ -341,6 +341,7 @@ def load_dotenv(
     override: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    varname_pattern: Optional[str] = None,
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -352,6 +353,8 @@ def load_dotenv(
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
         encoding: Encoding to be used to read the file.
+        varname_pattern: Optional regex pattern to restrict variable names.
+            If `None`, the existing pattern is used. The pattern set here is persistent.
     Returns:
         Bool: True if at least one environment variable is set else False
 
@@ -380,6 +383,9 @@ def load_dotenv(
         override=override,
         encoding=encoding,
     )
+
+    if varname_pattern is not None:
+        set_variable_name_pattern(varname_pattern)
     return dotenv.set_as_environment_variables()
 
 
@@ -389,6 +395,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    varname_pattern: Optional[str] = None,
 ) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
@@ -402,6 +409,8 @@ def dotenv_values(
         stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
         verbose: Whether to output a warning if the .env file is missing.
         encoding: Encoding to be used to read the file.
+        varname_pattern: Optional regex pattern to restrict variable names.
+            If `None`, the existing pattern is used. The pattern set here is persistent.
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
@@ -409,6 +418,8 @@ def dotenv_values(
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
 
+    if varname_pattern is not None:
+        set_variable_name_pattern(varname_pattern)
     return DotEnv(
         dotenv_path=dotenv_path,
         stream=stream,
