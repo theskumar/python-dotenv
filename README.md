@@ -46,6 +46,7 @@ load_dotenv()  # reads variables from a .env file and sets them in os.environ
 
 By default, `load_dotenv()` will:
 
+
 - Look for a `.env` file in the same directory as the Python script (or higher up the directory tree).
 - Read each key-value pair and add it to `os.environ`.
 - **Not override** an environment variable that is already set, unless you explicitly pass `override=True`.
