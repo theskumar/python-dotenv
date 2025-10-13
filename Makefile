@@ -20,7 +20,7 @@ release-test: sdist
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 sdist: clean
-	python setup.py sdist bdist_wheel
+	python -m build -d dist .
 	ls -l dist
 
 test:
