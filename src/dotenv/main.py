@@ -341,6 +341,7 @@ def load_dotenv(
     override: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    unlink_after_load: bool = False,
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -352,6 +353,8 @@ def load_dotenv(
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
         encoding: Encoding to be used to read the file.
+        unlink_after_load: Whether to remove the .env file after successfully loading it.
+            Only works when dotenv_path is provided (not with stream). Defaults to False.
     Returns:
         Bool: True if at least one environment variable is set else False
 
@@ -380,7 +383,17 @@ def load_dotenv(
         override=override,
         encoding=encoding,
     )
-    return dotenv.set_as_environment_variables()
+    result = dotenv.set_as_environment_variables()
+    
+    # Unlink the file after loading if requested and file exists
+    if unlink_after_load and dotenv_path and os.path.isfile(dotenv_path):
+        try:
+            os.unlink(dotenv_path)
+            logger.debug("Removed dotenv file: %s", dotenv_path)
+        except OSError as e:
+            logger.debug("Failed to remove dotenv file %s: %s", dotenv_path, e)
+
+    return result
 
 
 def dotenv_values(

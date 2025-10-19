@@ -520,3 +520,187 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+class TestLoadDotenvUnlinkAfterLoad:
+    """Test cases for the unlink_after_load parameter in load_dotenv."""
+    
+    def test_unlink_after_load_true_removes_file(self, tmp_path):
+        """Test that file is removed when unlink_after_load=True."""
+        dotenv_file = tmp_path / ".env"
+        dotenv_file.write_text("TEST_VAR=test_value\n")
+        
+        # Ensure file exists before loading
+        assert dotenv_file.exists()
+        
+        # Load dotenv with unlink_after_load=True
+        result = dotenv.load_dotenv(dotenv_path=str(dotenv_file), unlink_after_load=True)
+        
+        # Verify loading was successful
+        assert result is True
+        assert os.environ.get("TEST_VAR") == "test_value"
+        
+        # Verify file was removed
+        assert not dotenv_file.exists()
+        
+        # Clean up environment
+        if "TEST_VAR" in os.environ:
+            del os.environ["TEST_VAR"]
+    
+    def test_unlink_after_load_false_keeps_file(self, tmp_path):
+        """Test that file is kept when unlink_after_load=False (default)."""
+        dotenv_file = tmp_path / ".env"
+        dotenv_file.write_text("TEST_VAR2=test_value2\n")
+        
+        # Ensure file exists before loading
+        assert dotenv_file.exists()
+        
+        # Load dotenv with unlink_after_load=False (default)
+        result = dotenv.load_dotenv(dotenv_path=str(dotenv_file), unlink_after_load=False)
+        
+        # Verify loading was successful
+        assert result is True
+        assert os.environ.get("TEST_VAR2") == "test_value2"
+        
+        # Verify file still exists
+        assert dotenv_file.exists()
+        
+        # Clean up environment
+        if "TEST_VAR2" in os.environ:
+            del os.environ["TEST_VAR2"]
+    
+    def test_unlink_after_load_default_keeps_file(self, tmp_path):
+        """Test that file is kept when unlink_after_load is not specified (default behavior)."""
+        dotenv_file = tmp_path / ".env"
+        dotenv_file.write_text("TEST_VAR3=test_value3\n")
+        
+        # Ensure file exists before loading
+        assert dotenv_file.exists()
+        
+        # Load dotenv without specifying unlink_after_load
+        result = dotenv.load_dotenv(dotenv_path=str(dotenv_file))
+        
+        # Verify loading was successful
+        assert result is True
+        assert os.environ.get("TEST_VAR3") == "test_value3"
+        
+        # Verify file still exists (default behavior)
+        assert dotenv_file.exists()
+        
+        # Clean up environment
+        if "TEST_VAR3" in os.environ:
+            del os.environ["TEST_VAR3"]
+    
+    def test_unlink_after_load_with_nonexistent_file(self, tmp_path):
+        """Test that no error occurs when trying to unlink a non-existent file."""
+        nonexistent_file = tmp_path / "nonexistent.env"
+        
+        # Ensure file doesn't exist
+        assert not nonexistent_file.exists()
+        
+        # Load dotenv with unlink_after_load=True on non-existent file
+        result = dotenv.load_dotenv(dotenv_path=str(nonexistent_file), unlink_after_load=True)
+        
+        # Verify loading returns False (no variables loaded)
+        assert result is False
+        
+        # Verify no exception was raised and file still doesn't exist
+        assert not nonexistent_file.exists()
+    
+    def test_unlink_after_load_with_stream_ignores_unlink(self, tmp_path):
+        """Test that unlink_after_load is ignored when using stream instead of file path."""
+        dotenv_file = tmp_path / ".env"
+        dotenv_file.write_text("TEST_VAR4=test_value4\n")
+        
+        # Load using stream with unlink_after_load=True
+        with open(dotenv_file, 'r') as f:
+            result = dotenv.load_dotenv(stream=f, unlink_after_load=True)
+        
+        # Verify loading was successful
+        assert result is True
+        assert os.environ.get("TEST_VAR4") == "test_value4"
+        
+        # Verify file still exists (unlink should be ignored with stream)
+        assert dotenv_file.exists()
+        
+        # Clean up environment
+        if "TEST_VAR4" in os.environ:
+            del os.environ["TEST_VAR4"]
+    
+    def test_unlink_after_load_with_empty_file(self, tmp_path):
+        """Test unlink behavior with empty dotenv file."""
+        dotenv_file = tmp_path / ".env"
+        dotenv_file.write_text("")
+        
+        # Ensure file exists before loading
+        assert dotenv_file.exists()
+        
+        # Load empty dotenv with unlink_after_load=True
+        result = dotenv.load_dotenv(dotenv_path=str(dotenv_file), unlink_after_load=True)
+        
+        # Verify loading returns False (no variables loaded)
+        assert result is False
+        
+        # Verify file was still removed even though no variables were loaded
+        assert not dotenv_file.exists()
+    
+    def test_unlink_after_load_with_verbose_logging(self, tmp_path, caplog):
+        """Test that verbose logging shows unlink operation."""
+        dotenv_file = tmp_path / ".env"
+        dotenv_file.write_text("TEST_VAR5=test_value5\n")
+        
+        with caplog.at_level(logging.INFO):
+            result = dotenv.load_dotenv(
+                dotenv_path=str(dotenv_file), 
+                unlink_after_load=True, 
+                verbose=True
+            )
+        
+        # Verify loading was successful
+        assert result is True
+        assert os.environ.get("TEST_VAR5") == "test_value5"
+        
+        # Verify file was removed
+        assert not dotenv_file.exists()
+        
+        # Verify log message about removal
+        assert any("Removed dotenv file" in record.message for record in caplog.records)
+        
+        # Clean up environment
+        if "TEST_VAR5" in os.environ:
+            del os.environ["TEST_VAR5"]
+    
+    def test_unlink_after_load_permission_error(self, tmp_path, caplog, monkeypatch):
+        """Test handling of permission errors when unlinking."""
+        dotenv_file = tmp_path / ".env"
+        dotenv_file.write_text("TEST_VAR6=test_value6\n")
+        
+        # Mock os.unlink to raise a permission error
+        original_unlink = os.unlink
+        def mock_unlink(path):
+            if str(dotenv_file) in str(path):
+                raise PermissionError("Permission denied")
+            return original_unlink(path)
+        
+        monkeypatch.setattr(os, "unlink", mock_unlink)
+        
+        with caplog.at_level(logging.WARNING):
+            result = dotenv.load_dotenv(
+                dotenv_path=str(dotenv_file), 
+                unlink_after_load=True, 
+                verbose=True
+            )
+        
+        # Verify loading was successful despite unlink failure
+        assert result is True
+        assert os.environ.get("TEST_VAR6") == "test_value6"
+        
+        # Verify file still exists due to permission error
+        assert dotenv_file.exists()
+        
+        # Verify warning log message about failed removal
+        assert any("Failed to remove dotenv file" in record.message for record in caplog.records)
+        
+        # Clean up environment
+        if "TEST_VAR6" in os.environ:
+            del os.environ["TEST_VAR6"]
