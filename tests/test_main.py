@@ -263,7 +263,9 @@ def test_load_dotenv_existing_file(dotenv_path):
 )
 def test_load_dotenv_disabled(dotenv_path, flag_value):
     expected_environ = {"PYTHON_DOTENV_DISABLED": flag_value}
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         result = dotenv.load_dotenv(dotenv_path)
@@ -289,7 +291,9 @@ def test_load_dotenv_disabled(dotenv_path, flag_value):
     ],
 )
 def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         logger = logging.getLogger("dotenv.main")
@@ -298,7 +302,7 @@ def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
 
         assert result is False
         mock_debug.assert_called_once_with(
-			"python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
+            "python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"
         )
 
 
@@ -321,7 +325,9 @@ def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
 )
 def test_load_dotenv_enabled(dotenv_path, flag_value):
     expected_environ = {"PYTHON_DOTENV_DISABLED": flag_value, "a": "b"}
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         result = dotenv.load_dotenv(dotenv_path)
@@ -348,7 +354,9 @@ def test_load_dotenv_enabled(dotenv_path, flag_value):
     ],
 )
 def test_load_dotenv_enabled_no_notification(dotenv_path, flag_value):
-    with mock.patch.dict(os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True):
+    with mock.patch.dict(
+        os.environ, {"PYTHON_DOTENV_DISABLED": flag_value}, clear=True
+    ):
         dotenv_path.write_text("a=b")
 
         logger = logging.getLogger("dotenv.main")
