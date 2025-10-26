@@ -37,15 +37,12 @@ configurable via the environment:
 from dotenv import load_dotenv
 
 load_dotenv()  # reads variables from a .env file and sets them in os.environ
-```
-
 
 # Code of your application, which uses environment variables (e.g. from `os.environ` or
 # `os.getenv`) as if they came from the actual environment.
-
+```
 
 By default, `load_dotenv()` will:
-
 
 - Look for a `.env` file in the same directory as the Python script (or higher up the directory tree).
 - Read each key-value pair and add it to `os.environ`.

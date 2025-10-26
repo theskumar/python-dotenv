@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2025-10-26
+
+- Move more config to `pyproject.toml`, removed `setup.cfg`
+- Add support for reading `.env` from FIFOs (Unix) by [@sidharth-sudhir] in [#586]
+
 ## [1.2.0] - 2025-10-26
 
 - Upgrade build system to use PEP 517 & PEP 518 to use `build` and `pyproject.toml` by [@EpicWink] in [#583]
@@ -361,6 +366,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     [@hugochinchilla](https://github.com/hugochinchilla)).
 -   Improved test coverage.
 
+<!-- PR LINKS -->
 [#78]: https://github.com/theskumar/python-dotenv/issues/78
 [#121]: https://github.com/theskumar/python-dotenv/issues/121
 [#148]: https://github.com/theskumar/python-dotenv/issues/148
@@ -379,7 +385,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [#553]: https://github.com/theskumar/python-dotenv/issues/553
 [#569]: https://github.com/theskumar/python-dotenv/issues/569
 [#583]: https://github.com/theskumar/python-dotenv/issues/583
+[#586]: https://github.com/theskumar/python-dotenv/issues/586
 
+<!-- contributors -->
 [@23f3001135]: https://github.com/23f3001135
 [@EpicWink]: https://github.com/EpicWink
 [@Flimm]: https://github.com/Flimm
@@ -418,6 +426,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@randomseed42]: https://github.com/zueve
 [@sammck]: https://github.com/@sammck
 [@samwyma]: https://github.com/samwyma
+[@sidharth-sudhir]: https://github.com/sidharth-sudhir
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
 [@theGOTOguy]: https://github.com/theGOTOguy

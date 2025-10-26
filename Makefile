@@ -4,8 +4,12 @@ clean: clean-build clean-pyc
 
 clean-build:
 	rm -fr build/
+	rm -rf .mypy_cache/
+	rm -rf .tox/
+	rm -rf site/
 	rm -fr dist/
 	rm -fr src/*.egg-info
+	rm .coverage
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
