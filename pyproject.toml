@@ -78,7 +78,7 @@ source = [
 
 [tool.coverage.report]
 show_missing = true
-include = ["*/site-packages/dotenv/*"]
+omit = ["*/tests/*"]
 exclude_lines = [
     "if IS_TYPE_CHECKING:",
     "pragma: no cover",
