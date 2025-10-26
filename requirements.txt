@@ -5,7 +5,7 @@ pytest-cov
 pytest>=3.9
 sh>=2
 tox
-twine
 wheel
 ruff
+build
 pre-commit
