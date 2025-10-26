@@ -3,6 +3,7 @@ import logging
 import os
 import pathlib
 import shutil
+import stat
 import sys
 import tempfile
 from collections import OrderedDict
@@ -61,7 +62,7 @@ class DotEnv:
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
-        if self.dotenv_path and os.path.isfile(self.dotenv_path):
+        if self.dotenv_path and _is_file_or_fifo(self.dotenv_path):
             with open(self.dotenv_path, encoding=self.encoding) as stream:
                 yield stream
         elif self.stream is not None:
@@ -325,7 +326,7 @@ def find_dotenv(
 
     for dirname in _walk_to_root(path):
         check_path = os.path.join(dirname, filename)
-        if os.path.isfile(check_path):
+        if _is_file_or_fifo(check_path):
             return check_path
 
     if raise_error_if_not_found:
@@ -417,3 +418,18 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+
+def _is_file_or_fifo(path: StrPath) -> bool:
+    """
+    Return True if `path` exists and is either a regular file or a FIFO.
+    """
+    if os.path.isfile(path):
+        return True
+
+    try:
+        st = os.stat(path)
+    except (FileNotFoundError, OSError):
+        return False
+
+    return stat.S_ISFIFO(st.st_mode)
