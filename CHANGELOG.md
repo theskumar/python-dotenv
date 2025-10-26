@@ -5,9 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-06-24
+## [1.2.0] - 2025-10-26
 
-- Add support for disabling of `load_dotenv()` using `PYTHON_DOTENV_DISABLED` env var.
+- Upgrade build system to use PEP 517 & PEP 518 to use `build` and `pyproject.toml` by [@EpicWink] in [#583]
+- Add support for Python 3.14 by [@23f3001135] in [#579](https://github.com/theskumar/python-dotenv/pull/563)
+- Add support for disabling of `load_dotenv()` using `PYTHON_DOTENV_DISABLED` env var. by [@matthewfranglen] in [#569]
 
 ## [1.1.1] - 2025-06-24
 
@@ -375,7 +377,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [#474]: https://github.com/theskumar/python-dotenv/issues/474
 [#523]: https://github.com/theskumar/python-dotenv/issues/523
 [#553]: https://github.com/theskumar/python-dotenv/issues/553
+[#569]: https://github.com/theskumar/python-dotenv/issues/569
+[#583]: https://github.com/theskumar/python-dotenv/issues/583
 
+[@23f3001135]: https://github.com/23f3001135
+[@EpicWink]: https://github.com/EpicWink
+[@Flimm]: https://github.com/Flimm
+[@Nicals]: https://github.com/Nicals
+[@Nougat-Waffle]: https://github.com/Nougat-Waffle
+[@Qwerty-133]: https://github.com/Qwerty-133
 [@alanjds]: https://github.com/alanjds
 [@altendky]: https://github.com/altendky
 [@andrewsmith]: https://github.com/andrewsmith
@@ -390,7 +400,6 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@ekohl]: https://github.com/ekohl
 [@elbehery95]: https://github.com/elbehery95
 [@eumiro]: https://github.com/eumiro
-[@Flimm]: https://github.com/Flimm
 [@freddyaboulton]: https://github.com/freddyaboulton
 [@gergelyk]: https://github.com/gergelyk
 [@gongqingkui]: https://github.com/gongqingkui
@@ -401,13 +410,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@jctanner]: https://github.com/jctanner
 [@larsks]: https://github.com/@larsks
 [@lsmith77]: https://github.com/lsmith77
+[@matthewfranglen]: https://github.com/matthewfranglen
 [@mgorny]: https://github.com/mgorny
 [@naorlivne]: https://github.com/@naorlivne
-[@Nicals]: https://github.com/Nicals
-[@Nougat-Waffle]: https://github.com/Nougat-Waffle
 [@qnighy]: https://github.com/qnighy
-[@Qwerty-133]: https://github.com/Qwerty-133
 [@rabinadk1]: https://github.com/@rabinadk1
+[@randomseed42]: https://github.com/zueve
 [@sammck]: https://github.com/@sammck
 [@samwyma]: https://github.com/samwyma
 [@snobu]: https://github.com/snobu
@@ -416,14 +424,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [@theskumar]: https://github.com/theskumar
 [@ulyssessouza]: https://github.com/ulyssessouza
 [@venthur]: https://github.com/venthur
+[@wrongontheinternet]: https://github.com/wrongontheinternet
 [@x-yuri]: https://github.com/x-yuri
 [@yannham]: https://github.com/yannham
 [@zueve]: https://github.com/zueve
-[@randomseed42]: https://github.com/zueve
-[@wrongontheinternet]: https://github.com/wrongontheinternet
 
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.1.1...HEAD
-[1.1.1]: https://github.com/theskumar/python-dotenv/compare/v1.1.0...1.1.1
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/theskumar/python-dotenv/compare/v1.1.1...v1.2.0
+[1.1.1]: https://github.com/theskumar/python-dotenv/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/theskumar/python-dotenv/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/theskumar/python-dotenv/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/theskumar/python-dotenv/compare/v0.21.0...v1.0.0
