@@ -124,6 +124,43 @@ class DotEnv:
 
         return None
 
+    def from_dict(self, data: Dict[str, Optional[str]], override: bool = False) -> None:
+        """
+        Create a DotEnv from a dictionary.
+        """
+        for key, value in data.items():
+            if value is not None:
+                if not override and key in self.dict().keys():
+                    if self.verbose:
+                        logger.warning(
+                            "Key %s already exists and will not be overwritten.",
+                            key,
+                        )
+                    continue
+
+                if not self._dict:
+                    self._dict = OrderedDict()
+                self._dict[key] = value
+
+    def dumps(self) -> str:
+        """
+        Serialize the instance as a string.
+        """
+        output = ""
+        for k, v in self.dict().items():
+            if v is not None:
+                output += f"{k}={v}\n"
+        return output
+
+    def dump(self) -> None:
+        """
+        Write the instance to the .env file.
+        """
+
+        if self.dotenv_path and os.path.isfile(self.dotenv_path):
+            with open(self.dotenv_path, "w", encoding=self.encoding) as f:
+                f.write(self.dumps())
+
 
 def get_key(
     dotenv_path: StrPath,
