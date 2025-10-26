@@ -240,6 +240,7 @@ defined in the following list:
 -   [dynaconf](https://github.com/rochacbruno/dynaconf)
 -   [parse_it](https://github.com/naorlivne/parse_it)
 -   [python-decouple](https://github.com/HBNetwork/python-decouple)
+-   [cattrs-env](https://github.com/henryivesjones/cattrs-env)
 
 ## Acknowledgements
 
