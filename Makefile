@@ -9,7 +9,6 @@ clean-build:
 	rm -rf site/
 	rm -fr dist/
 	rm -fr src/*.egg-info
-	rm .coverage
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
