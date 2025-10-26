@@ -59,3 +59,31 @@ package-data = {dotenv = ["py.typed"]}
 [tool.setuptools.dynamic]
 version = {attr = "dotenv.version.__version__"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
+[tool.coverage.run]
+relative_files = true
+source = ["dotenv"]
+
+[tool.coverage.paths]
+source = [
+    "src/dotenv",
+    ".tox/*/lib/python*/site-packages/dotenv",
+    ".tox/pypy*/site-packages/dotenv",
+]
+
+[tool.coverage.report]
+show_missing = true
+include = ["*/site-packages/dotenv/*"]
+exclude_lines = [
+    "if IS_TYPE_CHECKING:",
+    "pragma: no cover",
+]
+
+[tool.mypy]
+check_untyped_defs = true
+ignore_missing_imports = true

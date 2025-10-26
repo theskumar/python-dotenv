@@ -1,4 +1,4 @@
-.PHONY: clean-pyc clean-build test
+.PHONY: clean-pyc clean-build test fmt
 
 clean: clean-build clean-pyc
 
@@ -20,6 +20,9 @@ test:
 	uv pip install -e .
 	ruff check .
 	pytest tests/
+
+fmt:
+	ruff format src tests
 
 coverage:
 	coverage run --source=dotenv --omit='*tests*' -m py.test tests/ -v --tb=native
