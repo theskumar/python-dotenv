@@ -12,6 +12,8 @@ jobs:
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
+      # Required for pushing to gh-pages branch
+      contents: write
 
     steps:
       - uses: actions/checkout@v5
@@ -32,8 +34,14 @@ jobs:
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-      - name: Publish Documentation
+      - name: Build Documentation
         run: |
           pip install -r requirements-docs.txt
           pip install -e .
-          mkdocs gh-deploy --force
+          mkdocs build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
