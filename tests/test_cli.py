@@ -236,7 +236,7 @@ def test_run_without_cmd(cli):
     result = cli.invoke(dotenv_cli, ["run"])
 
     assert result.exit_code == 2
-    assert "Usage: cli run" in result.output
+    assert "Invalid value for '-f'" in result.output
 
 
 def test_run_with_invalid_cmd(cli):
