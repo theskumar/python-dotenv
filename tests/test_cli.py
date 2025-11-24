@@ -257,7 +257,9 @@ def test_run_subcommand_with_help_uses_subcommand_help(cli, dotenv_path):
     output = sh.dotenv("--file", dotenv_path, "run", "printenv", "--help")
 
     assert "dotenv run" not in output
-    expected_help_output = subprocess.check_output(["printenv", "--help"]).decode("utf-8")
+    expected_help_output = subprocess.check_output(["printenv", "--help"]).decode(
+        "utf-8"
+    )
     assert output == expected_help_output
 
 
