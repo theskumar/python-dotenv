@@ -156,7 +156,7 @@ def unset(ctx: click.Context, key: Any) -> None:
         sys.exit(1)
 
 
-@cli.command(context_settings={"ignore_unknown_options": True}, add_help_option=False, no_args_is_help=True)
+@cli.command(context_settings={"ignore_unknown_options": True}, add_help_option=False)
 @click.pass_context
 @click.option(
     "--override/--no-override",
