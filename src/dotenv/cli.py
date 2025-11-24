@@ -156,7 +156,7 @@ def unset(ctx: click.Context, key: Any) -> None:
         sys.exit(1)
 
 
-@cli.command(context_settings={"ignore_unknown_options": True})
+@cli.command(context_settings={"ignore_unknown_options": True}, add_help_option=False, no_args_is_help=True)
 @click.pass_context
 @click.option(
     "--override/--no-override",
@@ -180,6 +180,9 @@ def run(ctx: click.Context, override: bool, commandline: List[str]) -> None:
     if not commandline:
         click.echo("No command given.")
         sys.exit(1)
+    if len(commandline) == 1 and commandline[0] in ["-h", "--help"]:
+        click.echo(ctx.get_help())
+        sys.exit(0)
     run_command(commandline, dotenv_as_dict)
 
 

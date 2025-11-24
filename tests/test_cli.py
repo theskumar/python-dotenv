@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -249,3 +251,19 @@ def test_run_with_version(cli):
 
     assert result.exit_code == 0
     assert result.output.strip().endswith(__version__)
+
+
+def test_run_subcommand_with_help_uses_subcommand_help(cli, dotenv_path):
+    dotenv_path.write_text("a=b")
+    output = sh.dotenv("--file", dotenv_path, "run", "printenv", "--help")
+
+    assert "dotenv run" not in output
+    expected_help_output = subprocess.check_output(["printenv", "--help"]).decode("utf-8")
+    assert output == expected_help_output
+
+
+def test_run_with_just_help_show_help(cli, dotenv_path):
+    dotenv_path.write_text("a=b")
+    output = sh.dotenv("--file", dotenv_path, "run", "--help")
+
+    assert "dotenv run" in output
