@@ -8,7 +8,7 @@ description = "Read key-value pairs from a .env file and set them as environment
 authors = [
     {name = "Saurabh Kumar", email = "me+github@saurabh-kumar.com"},
 ]
-license = "BSD-3-Clause"
+license = { text = "BSD-3-Clause" }
 keywords = [
     "environment variables",
     "deployments",
