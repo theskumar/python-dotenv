@@ -120,6 +120,72 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a= # comment",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a= # comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=# comment",
+            [
+                Binding(
+                    key="a",
+                    value="# comment",
+                    original=Original(string="a=# comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=\t# comment",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a=\t# comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a=""',
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string='a=""', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=## comment",
+            [
+                Binding(
+                    key="a",
+                    value="## comment",
+                    original=Original(string="a=## comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=# # comment",
+            [
+                Binding(
+                    key="a",
+                    value="#",
+                    original=Original(string="a=# # comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
             "a=b c",
             [
                 Binding(
