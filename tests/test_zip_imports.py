@@ -5,7 +5,10 @@ from typing import List
 from unittest import mock
 from zipfile import ZipFile
 
-import sh
+import pytest
+
+if sys.platform != "win32":
+    import sh
 
 
 def walk_to_root(path: str):
@@ -62,6 +65,7 @@ def test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file(tmp_path):
     import child1.child2.test  # noqa
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_load_dotenv_outside_zip_file_when_called_in_zipfile(tmp_path):
     zip_file_path = setup_zipfile(
         tmp_path,
