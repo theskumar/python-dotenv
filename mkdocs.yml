@@ -13,7 +13,14 @@ markdown_extensions:
   - mdx_truly_sane_lists
 
 plugins:
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            separate_signature: true
+            show_root_heading: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
   - search
 nav:
   - Home: index.md
