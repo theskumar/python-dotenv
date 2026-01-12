@@ -7,9 +7,7 @@ import pytest
 
 from dotenv import load_dotenv
 
-pytestmark = pytest.mark.skipif(
-    sys.platform.startswith("win"), reason="FIFOs are Unix-only"
-)
+pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="FIFOs are Unix-only")
 
 
 def test_load_dotenv_from_fifo(tmp_path: pathlib.Path, monkeypatch):

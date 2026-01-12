@@ -1,14 +1,17 @@
 import io
 import logging
 import os
+import stat
 import sys
 import textwrap
 from unittest import mock
 
 import pytest
-import sh
 
 import dotenv
+
+if sys.platform != "win32":
+    import sh
 
 
 def test_set_key_no_file(tmp_path):
@@ -62,15 +65,25 @@ def test_set_key_encoding(dotenv_path):
 
 
 @pytest.mark.skipif(
-    os.geteuid() == 0, reason="Root user can access files even with 000 permissions."
+    sys.platform != "win32" and os.geteuid() == 0,
+    reason="Root user can access files even with 000 permissions.",
 )
 def test_set_key_permission_error(dotenv_path):
-    dotenv_path.chmod(0o000)
+    if sys.platform == "win32":
+        # On Windows, make file read-only
+        dotenv_path.chmod(stat.S_IREAD)
+    else:
+        # On Unix, remove all permissions
+        dotenv_path.chmod(0o000)
 
     with pytest.raises(PermissionError):
         dotenv.set_key(dotenv_path, "a", "b")
 
-    dotenv_path.chmod(0o600)
+    # Restore permissions
+    if sys.platform == "win32":
+        dotenv_path.chmod(stat.S_IWRITE | stat.S_IREAD)
+    else:
+        dotenv_path.chmod(0o600)
     assert dotenv_path.read_text() == ""
 
 
@@ -170,16 +183,6 @@ def test_unset_encoding(dotenv_path):
     assert dotenv_path.read_text(encoding=encoding) == ""
 
 
-@pytest.mark.skipif(
-    os.geteuid() == 0, reason="Root user can access files even with 000 permissions."
-)
-def test_set_key_unauthorized_file(dotenv_path):
-    dotenv_path.chmod(0o000)
-
-    with pytest.raises(PermissionError):
-        dotenv.set_key(dotenv_path, "a", "x")
-
-
 def test_unset_non_existent_file(tmp_path):
     nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")
@@ -241,6 +244,9 @@ def test_find_dotenv_found(tmp_path):
     assert result == str(dotenv_path)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_existing_file(dotenv_path):
     dotenv_path.write_text("a=b")
@@ -312,6 +318,9 @@ def test_load_dotenv_disabled_notification(dotenv_path, flag_value):
         )
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @pytest.mark.parametrize(
     "flag_value",
     [
@@ -395,6 +404,9 @@ def test_load_dotenv_no_file_verbose():
     )
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
 def test_load_dotenv_existing_variable_no_override(dotenv_path):
     dotenv_path.write_text("a=b")
@@ -405,6 +417,9 @@ def test_load_dotenv_existing_variable_no_override(dotenv_path):
     assert os.environ == {"a": "c"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
 def test_load_dotenv_existing_variable_override(dotenv_path):
     dotenv_path.write_text("a=b")
@@ -415,6 +430,9 @@ def test_load_dotenv_existing_variable_override(dotenv_path):
     assert os.environ == {"a": "b"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
 def test_load_dotenv_redefine_var_used_in_file_no_override(dotenv_path):
     dotenv_path.write_text('a=b\nd="${a}"')
@@ -425,6 +443,9 @@ def test_load_dotenv_redefine_var_used_in_file_no_override(dotenv_path):
     assert os.environ == {"a": "c", "d": "c"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {"a": "c"}, clear=True)
 def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_path):
     dotenv_path.write_text('a=b\nd="${a}"')
@@ -435,6 +456,9 @@ def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_path):
     assert os.environ == {"a": "b", "d": "b"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_string_io_utf_8():
     stream = io.StringIO("a=à")
@@ -445,6 +469,9 @@ def test_load_dotenv_string_io_utf_8():
     assert os.environ == {"a": "à"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_file_stream(dotenv_path):
     dotenv_path.write_text("a=b")
@@ -456,6 +483,7 @@ def test_load_dotenv_file_stream(dotenv_path):
     assert os.environ == {"a": "b"}
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_load_dotenv_in_current_dir(tmp_path):
     dotenv_path = tmp_path / ".env"
     dotenv_path.write_bytes(b"a=b")
@@ -484,6 +512,9 @@ def test_dotenv_values_file(dotenv_path):
     assert result == {"a": "b"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @pytest.mark.parametrize(
     "env,string,interpolate,expected",
     [

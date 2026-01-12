@@ -1,4 +1,5 @@
 import os
+import sys
 from unittest import mock
 
 import pytest
@@ -6,6 +7,9 @@ import pytest
 pytest.importorskip("IPython")
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_ipython_existing_variable_no_override(tmp_path):
     from IPython.terminal.embed import InteractiveShellEmbed
@@ -22,6 +26,9 @@ def test_ipython_existing_variable_no_override(tmp_path):
     assert os.environ == {"a": "c"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_ipython_existing_variable_override(tmp_path):
     from IPython.terminal.embed import InteractiveShellEmbed
@@ -38,6 +45,9 @@ def test_ipython_existing_variable_override(tmp_path):
     assert os.environ == {"a": "b"}
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_ipython_new_variable(tmp_path):
     from IPython.terminal.embed import InteractiveShellEmbed

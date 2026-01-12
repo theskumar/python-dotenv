@@ -1,14 +1,17 @@
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Optional, Sequence
 
 import pytest
-import sh
 
 import dotenv
 from dotenv.cli import cli as dotenv_cli
 from dotenv.version import __version__
+
+if sys.platform != "win32":
+    import sh
 
 
 def invoke_sub(args: Sequence[str]) -> subprocess.CompletedProcess:
@@ -189,6 +192,7 @@ def test_set_no_file(cli):
     assert "Missing argument" in result.output
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_get_default_path(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -198,6 +202,7 @@ def test_get_default_path(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_run(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -207,6 +212,7 @@ def test_run(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_run_with_existing_variable(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -218,6 +224,7 @@ def test_run_with_existing_variable(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_run_with_existing_variable_not_overridden(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b")
@@ -229,6 +236,7 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
         assert result == "c\n"
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_run_with_none_value(tmp_path):
     with sh.pushd(tmp_path):
         (tmp_path / ".env").write_text("a=b\nc")
@@ -238,6 +246,7 @@ def test_run_with_none_value(tmp_path):
         assert result == "b\n"
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_run_with_other_env(dotenv_path):
     dotenv_path.write_text("a=b")
 
