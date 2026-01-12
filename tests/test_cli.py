@@ -1,7 +1,8 @@
 import os
+import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Sequence
 
 import pytest
 
@@ -11,6 +12,21 @@ from dotenv.version import __version__
 
 if sys.platform != "win32":
     import sh
+
+
+def invoke_sub(args: Sequence[str]) -> subprocess.CompletedProcess:
+    """
+    Invoke the `dotenv` CLI in a subprocess.
+
+    This is necessary to test subcommands like `dotenv run` that replace the
+    current process.
+    """
+
+    return subprocess.run(
+        ["dotenv", *args],
+        capture_output=True,
+        text=True,
+    )
 
 
 @pytest.mark.parametrize(
@@ -258,3 +274,29 @@ def test_run_with_version(cli):
 
     assert result.exit_code == 0
     assert result.output.strip().endswith(__version__)
+
+
+def test_run_with_command_flags(dotenv_path):
+    """
+    Check that command flags passed after `dotenv run` are not interpreted.
+
+    Here, we want to run `printenv --version`, not `dotenv --version`.
+    """
+
+    result = invoke_sub(["--file", dotenv_path, "run", "printenv", "--version"])
+
+    assert result.returncode == 0
+    assert result.stdout.strip().startswith("printenv ")
+
+
+def test_run_with_dotenv_and_command_flags(cli, dotenv_path):
+    """
+    Check that dotenv flags supersede command flags.
+    """
+
+    result = invoke_sub(
+        ["--version", "--file", dotenv_path, "run", "printenv", "--version"]
+    )
+
+    assert result.returncode == 0
+    assert result.stdout.strip().startswith("dotenv, version")
