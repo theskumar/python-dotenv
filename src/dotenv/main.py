@@ -2,10 +2,12 @@ import io
 import logging
 import os
 import pathlib
+import select
 import shutil
 import stat
 import sys
 import tempfile
+import time
 from collections import OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
@@ -63,7 +65,11 @@ class DotEnv:
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
         if self.dotenv_path and _is_file_or_fifo(self.dotenv_path):
-            with open(self.dotenv_path, encoding=self.encoding) as stream:
+            # Handle files that may need to wait for content to become available
+            # This includes FIFOs (named pipes) and mounted filesystems that may
+            # initially be empty or not yet populated when first accessed
+            stream = _wait_for_file_content(self.dotenv_path, encoding=self.encoding)
+            with stream:
                 yield stream
         elif self.stream is not None:
             yield self.stream
@@ -418,6 +424,48 @@ def dotenv_values(
         override=True,
         encoding=encoding,
     ).dict()
+
+
+def _wait_for_file_content(
+    path: StrPath,
+    encoding: Optional[str] = None,
+    max_wait_time: float = 5.0,
+) -> IO[str]:
+    """
+    Wait for file content to be available, handling both regular files and pipes (FIFOs).
+
+    Some environments expose .env data via FIFOs; reading the pipe produces content on demand.
+    For FIFOs we block until the pipe is readable, then read once and return a StringIO over
+    the decoded bytes. For regular files we open and return the handle directly.
+    """
+    start_time = time.time()
+
+    try:
+        st = os.stat(path)
+        is_fifo = stat.S_ISFIFO(st.st_mode)
+    except (FileNotFoundError, OSError):
+        is_fifo = False
+
+    if not is_fifo:
+        # Regular file path: open once and return immediately
+        return open(path, encoding=encoding)
+
+    # FIFO path: block until readable (up to max_wait_time), then read once.
+    # Open unbuffered binary so select() reflects readiness accurately before decoding.
+    with open(path, "rb", buffering=0) as fifo:
+        fd = fifo.fileno()
+        timeout = max_wait_time - (time.time() - start_time)
+        if timeout < 0:
+            timeout = 0
+        ready, _, _ = select.select([fd], [], [], timeout)
+        if not ready:
+            # If it never became readable, return empty content for caller to handle
+            return io.StringIO("")
+
+        raw = fifo.read()
+        text = raw.decode(encoding or "utf-8", errors="replace")
+        # Return a fresh StringIO so caller can read from the start
+        return io.StringIO(text)
 
 
 def _is_file_or_fifo(path: StrPath) -> bool:
