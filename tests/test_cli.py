@@ -320,7 +320,7 @@ def test_run_with_multiple_env_files(tmp_path, files: Sequence[str], file_conten
     """
     with sh.pushd(tmp_path):
         file_args = []
-        for file_name, content in zip(files, file_contents):
+        for file_name, content in zip(files, file_contents, strict=True):
             (tmp_path / file_name).write_text(content)
             file_args.extend(["--file", file_name])
 
