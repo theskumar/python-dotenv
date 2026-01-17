@@ -299,3 +299,32 @@ def test_run_with_dotenv_and_command_flags(cli, dotenv_path):
 
     assert result.returncode == 0
     assert result.stdout.strip().startswith("dotenv, version")
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
+@pytest.mark.parametrize(
+    "files,file_contents,expected",
+    (
+        (['.env'], ['a=1'], {"a": "1"}),
+        (['.env', '.env.secondary'], ['a=1', 'b=2'], {"a": "1", "b": "2"}),
+        (['.env', '.env.secondary', '.env.extra'], ['a=1', 'a=3\nb=2', 'a=5\nc=3'], {"a": "5", "b": "2", "c": "3"}),
+    ),
+)
+def test_run_with_multiple_env_files(tmp_path, files: Sequence[str], file_contents: Sequence[str], expected: dict):
+    """
+    Test loading variables from two separate env files using file arguments.
+    
+    This demonstrates the pattern shown in the README where multiple env files
+    are loaded (e.g., .env.shared and .env.secret) and all variables from both
+    files are accessible.
+    """
+    with sh.pushd(tmp_path):
+        file_args = []
+        for file_name, content in zip(files, file_contents):
+            (tmp_path / file_name).write_text(content)
+            file_args.extend(["--file", file_name])
+
+        for key, value in expected.items():
+            result = invoke_sub([*file_args, "run", "printenv", key])
+            assert result.stdout.strip() == value
+
