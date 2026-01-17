@@ -1,11 +1,14 @@
 import re
 from abc import ABCMeta, abstractmethod
-from typing import Iterator, Mapping, Optional, Pattern
+from typing import Iterator, Mapping, Optional
 
-_posix_variable: Pattern[str] = re.compile(
+DEFAULT_VARNAME_RE = r"""[^\}:]*"""
+def _pattern_builder(pattern: Optional[str] = None) -> re.Pattern[str]:
+    """Builds a regex pattern for ${xxx:-yyy} variable substitution."""
+    return re.compile(
     r"""
     \$\{
-        (?P<name>[^\}:]*)
+        (?P<name>""" + (pattern if pattern else DEFAULT_VARNAME_RE) + r""")
         (?::-
             (?P<default>[^\}]*)
         )?
@@ -13,6 +16,18 @@ _posix_variable: Pattern[str] = re.compile(
     """,
     re.VERBOSE,
 )
+
+
+_posix_variable = _pattern_builder()
+
+
+def set_variable_name_pattern(pattern: Optional[str] = None) -> None:
+    """Set the variable name pattern used by `parse_variables`.
+
+    If `pattern` is None, it resets to the default pattern.
+    """
+    global _posix_variable
+    _posix_variable = _pattern_builder(pattern)
 
 
 class Atom(metaclass=ABCMeta):
