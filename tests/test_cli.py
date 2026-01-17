@@ -280,14 +280,13 @@ def test_run_with_command_flags(dotenv_path):
     """
     Check that command flags passed after `dotenv run` are not interpreted.
 
-    Here, we want to run `printenv --version`, not `dotenv --version`.
+    Here, we want to run `echo --version`, not `dotenv --version`.
     """
 
-    result = invoke_sub(["--file", dotenv_path, "run", "printenv", "--version"])
+    result = invoke_sub(["--file", dotenv_path, "run", "echo", "--version"])
 
     assert result.returncode == 0
-    assert result.stdout.strip().startswith("printenv ")
-
+    assert result.stdout.strip() == "--version"
 
 def test_run_with_dotenv_and_command_flags(cli, dotenv_path):
     """
