@@ -3,7 +3,7 @@ import os
 import shlex
 import sys
 from contextlib import contextmanager
-from typing import IO, Any, Dict, Iterator, List, Optional
+from typing import IO, Any, Dict, Iterator, List
 
 if sys.platform == "win32":
     from subprocess import Popen
