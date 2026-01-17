@@ -283,7 +283,7 @@ def test_run_with_command_flags(dotenv_path):
     Here, we want to run `echo --version`, not `dotenv --version`.
     """
 
-    result = invoke_sub(["--file", dotenv_path, "run", "echo", "--version"])
+    result = invoke_sub(["--file", dotenv_path, "run", "printf", "%s\n", "--version"])
 
     assert result.returncode == 0
     assert result.stdout.strip() == "--version"
