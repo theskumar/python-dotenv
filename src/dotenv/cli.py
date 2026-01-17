@@ -21,7 +21,7 @@ from .main import dotenv_values, set_key, unset_key
 from .version import __version__
 
 
-def enumerate_env() -> Optional[str]:
+def enumerate_env() -> tuple[str, ...]:
     """
     Return a path for the ${pwd}/.env file.
 
