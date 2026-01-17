@@ -217,9 +217,20 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
     if sys.platform == "win32":
         # execvpe on Windows returns control immediately
         # rather than once the command has finished.
-        p = Popen(command, universal_newlines=True, bufsize=0, shell=False, env=cmd_env)
+        try:
+            p = Popen(
+                command, universal_newlines=True, bufsize=0, shell=False, env=cmd_env
+            )
+        except FileNotFoundError:
+            print(f"Command not found: {command[0]}", file=sys.stderr)
+            sys.exit(1)
+
         _, _ = p.communicate()
 
         sys.exit(p.returncode)
     else:
-        os.execvpe(command[0], args=command, env=cmd_env)
+        try:
+            os.execvpe(command[0], args=command, env=cmd_env)
+        except FileNotFoundError:
+            print(f"Command not found: {command[0]}", file=sys.stderr)
+            sys.exit(1)
