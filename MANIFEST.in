@@ -9,5 +9,6 @@ include .coveragerc
 include .editorconfig
 include Makefile
 include requirements.txt
+include requirements-ci.txt
 include requirements-docs.txt
 include src/dotenv/py.typed
