@@ -5,13 +5,11 @@ import stat
 import sys
 import textwrap
 from unittest import mock
-from dotenv import dotenv_values
-
-
 
 import pytest
 
 import dotenv
+from dotenv import dotenv_values
 
 if sys.platform != "win32":
     import sh
