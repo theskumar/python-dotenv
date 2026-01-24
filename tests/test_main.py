@@ -567,6 +567,7 @@ def test_dotenv_values_file_stream(dotenv_path):
 
     assert result == {"a": "b"}
 
+
 def _read_dotenv_stream(path):
     """
     Safely read a .env file line by line.
@@ -581,6 +582,7 @@ def _read_dotenv_stream(path):
             return "".join(line for line in f)
     except (OSError, IOError):
         return ""
+
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows-specific test")
 def test_windows_fd_env_file(tmp_path):
