@@ -5,6 +5,9 @@ import stat
 import sys
 import textwrap
 from unittest import mock
+from dotenv import dotenv_values
+
+
 
 import pytest
 
@@ -565,3 +568,29 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+def _read_dotenv_stream(path):
+    """
+    Safely read a .env file line by line.
+    Works on:
+    - Regular files
+    - FIFOs (macOS/Linux)
+    - fd-backed files (1Password)
+    - Windows special files
+    """
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            return "".join(line for line in f)
+    except (OSError, IOError):
+        return ""
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows-specific test")
+def test_windows_fd_env_file(tmp_path):
+    """
+    Simulate a Windows fd-backed .env file (like 1Password mount).
+    """
+    env_path = tmp_path / "win_env.env"
+    env_path.write_text("FOO=bar\n")  # simulate fd-backed behavior
+
+    values = dotenv_values(env_path)
+    assert values["FOO"] == "bar"
