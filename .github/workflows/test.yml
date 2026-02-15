@@ -1,10 +1,19 @@
 name: Run Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
     strategy:
       fail-fast: false
@@ -13,10 +22,16 @@ jobs:
         os:
           - ubuntu-latest
         python-version:
-          ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", pypy3.9, pypy3.10]
+          ["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t", pypy3.11]
+        include:
+          # Windows: Test lowest and highest supported Python versions
+          - os: windows-latest
+            python-version: "3.10"
+          - os: windows-latest
+            python-version: "3.14"
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
