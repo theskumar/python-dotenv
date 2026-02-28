@@ -2,6 +2,7 @@ import io
 import logging
 import os
 import stat
+import subprocess
 import sys
 import textwrap
 from unittest import mock
@@ -9,9 +10,6 @@ from unittest import mock
 import pytest
 
 import dotenv
-
-if sys.platform != "win32":
-    import sh
 
 
 def test_set_key_no_file(tmp_path):
@@ -483,7 +481,6 @@ def test_load_dotenv_file_stream(dotenv_path):
     assert os.environ == {"a": "b"}
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_load_dotenv_in_current_dir(tmp_path):
     dotenv_path = tmp_path / ".env"
     dotenv_path.write_bytes(b"a=b")
@@ -499,9 +496,14 @@ def test_load_dotenv_in_current_dir(tmp_path):
     )
     os.chdir(tmp_path)
 
-    result = sh.Command(sys.executable)(code_path)
+    result = subprocess.run(
+        [sys.executable, str(code_path)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
 
-    assert result == "b\n"
+    assert result.stdout == "b\n"
 
 
 def test_dotenv_values_file(dotenv_path):
