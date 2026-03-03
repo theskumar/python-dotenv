@@ -291,6 +291,12 @@ def resolve_variables(
     values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
 ) -> Mapping[str, Optional[str]]:
+    """
+    Resolve interpolated variables from a .env file,
+    iterating over tuples with pairs that represent the key and value of each variable in the .env file.
+
+    If override is True, .env variables take priority over system environment variables.
+    """
     new_values: Dict[str, Optional[str]] = {}
 
     if override:
