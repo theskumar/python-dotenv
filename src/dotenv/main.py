@@ -397,6 +397,7 @@ def load_dotenv(
         verbose: Whether to output a warning the .env file is missing.
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
+        interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
     Returns:
         Bool: True if at least one environment variable is set else False
@@ -447,6 +448,7 @@ def dotenv_values(
         dotenv_path: Absolute or relative path to the .env file.
         stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
         verbose: Whether to output a warning if the .env file is missing.
+        interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
