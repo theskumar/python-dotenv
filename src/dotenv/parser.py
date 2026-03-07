@@ -133,7 +133,7 @@ def parse_value(reader: Reader) -> str:
     elif char == '"':
         (value,) = reader.read_regex(_double_quoted_value)
         return decode_escapes(_double_quote_escapes, value)
-    elif char in ("", "\n", "\r"):
+    elif char in ("", "\n", "\r", "#"):
         return ""
     else:
         return parse_unquoted_value(reader)
