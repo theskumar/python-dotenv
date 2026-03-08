@@ -67,16 +67,6 @@ coverage.xml
 local_settings.py
 db.sqlite3
 
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 target/
 
@@ -89,9 +79,6 @@ ipython_config.py
 
 # pyenv
 .python-version
-
-# celery beat schedule file
-celerybeat-schedule
 
 # SageMath parsed files
 *.sage.py
@@ -112,7 +99,7 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
+# zensical documentation
 /site
 
 # mypy
@@ -125,5 +112,6 @@ dmypy.json
 
 ### Python Patch ###
 .venv/
+uv.lock
 
 # End of https://www.gitignore.io/api/python

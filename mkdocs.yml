@@ -1,30 +1,79 @@
 site_name: python-dotenv
 repo_url: https://github.com/theskumar/python-dotenv
-edit_uri: ""
 theme:
-  name: material
-  palette:
-    primary: green
   features:
+    - content.action.edit # Edit this page
+    - content.action.view # View source of this pageheme:
+    - content.code.copy
     - toc.follow
     - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: lucide/sun-moon
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: lucide/moon
+        name: Switch to system preference
 
 markdown_extensions:
+  - admonition
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences
   - mdx_truly_sane_lists
+  - pymdownx.snippets:
+      base_path: ["./"] # Folder(s) where snippets are stored
+      check_paths: true # Fail build if a snippet is missing
+      encoding: "utf-8" # Default encoding for reading files
 
 plugins:
   - mkdocstrings:
       handlers:
         python:
           options:
+            docstring_style: google
             separate_signature: true
             show_root_heading: true
             show_symbol_type_heading: true
             show_symbol_type_toc: true
   - search
+
 nav:
   - Home: index.md
+  - Getting Started: getting-started.md
+  - How-to Guides:
+      - guides/index.md
+      - Configuration Patterns: guides/configuration.md
+      - Command line: guides/cli.md
+      - IPython & Jupyter: guides/ipython.md
+      - Advanced Usage: guides/advanced.md
+  - Reference:
+      - reference/index.md
+      - Python API: reference/api.md
+      - CLI Reference: reference/cli.md
+      - File Format: reference/file-format.md
   - Changelog: changelog.md
   - Contributing: contributing.md
-  - Reference: reference.md
   - License: license.md

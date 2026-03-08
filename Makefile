@@ -33,3 +33,8 @@ coverage:
 
 coverage-html: coverage
 	coverage html
+
+serve-docs:
+	uv pip install -r requirements-docs.txt
+	uv pip install -e .
+	uv run zensical serve

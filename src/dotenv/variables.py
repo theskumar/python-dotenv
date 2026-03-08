@@ -16,6 +16,8 @@ _posix_variable: Pattern[str] = re.compile(
 
 
 class Atom(metaclass=ABCMeta):
+    """Base class for the components of a parsed variable-interpolation string."""
+
     def __ne__(self, other: object) -> bool:
         result = self.__eq__(other)
         if result is NotImplemented:
@@ -23,10 +25,14 @@ class Atom(metaclass=ABCMeta):
         return not result
 
     @abstractmethod
-    def resolve(self, env: Mapping[str, Optional[str]]) -> str: ...
+    def resolve(self, env: Mapping[str, Optional[str]]) -> str:
+        """Return the resolved string value using *env* for variable lookups."""
+        ...
 
 
 class Literal(Atom):
+    """Plain text segment that contains no variable references."""
+
     def __init__(self, value: str) -> None:
         self.value = value
 
@@ -46,6 +52,8 @@ class Literal(Atom):
 
 
 class Variable(Atom):
+    """Reference to a variable (``${name}`` or ``${name:-default}``)."""
+
     def __init__(self, name: str, default: Optional[str]) -> None:
         self.name = name
         self.default = default
@@ -68,6 +76,7 @@ class Variable(Atom):
 
 
 def parse_variables(value: str) -> Iterator[Atom]:
+    """Parse *value* into a sequence of :class:`Literal` and :class:`Variable` atoms."""
     cursor = 0
 
     for match in _posix_variable.finditer(value):

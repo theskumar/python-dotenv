@@ -20,9 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def _load_dotenv_disabled() -> bool:
-    """
-    Determine if dotenv loading has been disabled.
-    """
+    """Return ``True`` if the ``PYTHON_DOTENV_DISABLED`` env var is set to a truthy value."""
     if "PYTHON_DOTENV_DISABLED" not in os.environ:
         return False
     value = os.environ["PYTHON_DOTENV_DISABLED"].casefold()
@@ -30,6 +28,7 @@ def _load_dotenv_disabled() -> bool:
 
 
 def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
+    """Yield each binding, logging a warning for any that failed to parse."""
     for mapping in mappings:
         if mapping.error:
             logger.warning(
@@ -40,6 +39,21 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
 
 
 class DotEnv:
+    """Parse a ``.env`` file and expose its key-value pairs.
+
+    Provide the content either as a filesystem path via *dotenv_path* or as an
+    already-opened text stream via *stream*.  Variable interpolation
+    (``${VAR}`` syntax) is performed by default and can be disabled with
+    *interpolate*.
+
+    Attributes:
+        dotenv_path: Path to the ``.env`` file, or ``None`` when using a stream.
+        encoding: Encoding used to open the file.
+        interpolate: Whether ``${VAR}`` references in values are resolved.
+        override: Whether dotenv values take precedence over existing
+            environment variables during interpolation.
+    """
+
     def __init__(
         self,
         dotenv_path: Optional[StrPath],
@@ -73,7 +87,16 @@ class DotEnv:
             yield io.StringIO("")
 
     def dict(self) -> Dict[str, Optional[str]]:
-        """Return dotenv as dict"""
+        """Return the parsed .env content as an ordered dictionary.
+
+        Results are cached after the first call. If interpolation is enabled,
+        variable references (e.g. ``${VAR}``) within values are resolved
+        against previously parsed dotenv values and the system environment.
+
+        Returns:
+            An ordered dict mapping variable names to their values.
+            Keys declared without a value will have ``None`` as their value.
+        """
         if self._dict:
             return self._dict
 
@@ -89,14 +112,17 @@ class DotEnv:
         return self._dict
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
+        """Yield ``(key, value)`` pairs parsed from the ``.env`` source."""
         with self._get_stream() as stream:
             for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
     def set_as_environment_variables(self) -> bool:
-        """
-        Load the current dotenv as system environment variable.
+        """Set all parsed key-value pairs as environment variables.
+
+        Returns:
+            ``True`` if at least one variable was present, ``False`` otherwise.
         """
         if not self.dict():
             return False
@@ -110,7 +136,7 @@ class DotEnv:
         return True
 
     def get(self, key: str) -> Optional[str]:
-        """ """
+        """Return the value for *key*, or ``None`` if it is not present."""
         data = self.dict()
 
         if key in data:
@@ -127,10 +153,9 @@ def get_key(
     key_to_get: str,
     encoding: Optional[str] = "utf-8",
 ) -> Optional[str]:
-    """
-    Get the value of a given key from the given .env.
+    """Return the value of *key_to_get* from the ``.env`` file at *dotenv_path*.
 
-    Returns `None` if the key isn't found or doesn't have a value.
+    Return ``None`` if the key is absent or declared without a value.
     """
     return DotEnv(dotenv_path, verbose=True, encoding=encoding).get(key_to_get)
 
@@ -141,6 +166,25 @@ def rewrite(
     encoding: Optional[str],
     follow_symlinks: bool = False,
 ) -> Iterator[Tuple[IO[str], IO[str]]]:
+    """Context manager for atomically rewriting a file.
+
+    Yields a ``(source, dest)`` pair of text streams. ``source`` is the
+    existing file opened for reading (or an empty ``StringIO`` if the file
+    doesn't exist yet). ``dest`` is a temporary file in the same directory
+    opened for writing. The caller should read from ``source`` and write the
+    desired new content to ``dest``.
+
+    On a clean exit the temporary file is moved into place via
+    ``os.replace()``, preserving the original file's permission bits. If an
+    exception occurs, the temporary file is removed and the original is left
+    untouched.
+
+    Parameters:
+        path: Path to the file to rewrite (created if it doesn't exist).
+        encoding: Encoding used to open both the source and destination files.
+        follow_symlinks: If ``True``, resolve symlinks so the real file is
+            rewritten rather than replacing the symlink itself.
+    """
     if follow_symlinks:
         path = os.path.realpath(path)
 
@@ -199,14 +243,18 @@ def set_key(
     encoding: Optional[str] = "utf-8",
     follow_symlinks: bool = False,
 ) -> Tuple[Optional[bool], str, str]:
-    """
-    Adds or Updates a key/value to the given .env
+    """Add or update a key-value pair in the ``.env`` file at *dotenv_path*.
 
-    The target .env file is created if it doesn't exist.
+    Create the file if it does not already exist.  Symlinks are **not**
+    followed by default to avoid writing to an untrusted target; set
+    *follow_symlinks* to ``True`` to override this.
 
-    This function doesn't follow symlinks by default, to avoid accidentally
-    modifying a file at a potentially untrusted path. If you don't need this
-    protection and need symlinks to be followed, use `follow_symlinks`.
+    Returns:
+        A ``(True, key, value)`` tuple on success.
+
+    Raises:
+        ValueError: If *quote_mode* is not one of ``"always"``,
+            ``"auto"``, or ``"never"``.
     """
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
@@ -252,15 +300,14 @@ def unset_key(
     encoding: Optional[str] = "utf-8",
     follow_symlinks: bool = False,
 ) -> Tuple[Optional[bool], str]:
-    """
-    Removes a given key from the given `.env` file.
+    """Remove *key_to_unset* from the ``.env`` file at *dotenv_path*.
 
-    If the .env path given doesn't exist, fails.
-    If the given key doesn't exist in the .env, fails.
+    Return ``(None, key)`` and log a warning if the file does not exist or the
+    key is not found.  Symlinks are **not** followed by default; set
+    *follow_symlinks* to ``True`` to override this.
 
-    This function doesn't follow symlinks by default, to avoid accidentally
-    modifying a file at a potentially untrusted path. If you don't need this
-    protection and need symlinks to be followed, use `follow_symlinks`.
+    Returns:
+        ``(True, key)`` on success, ``(None, key)`` on failure.
     """
     if not os.path.exists(dotenv_path):
         logger.warning("Can't delete from %s - it doesn't exist.", dotenv_path)
@@ -290,6 +337,26 @@ def resolve_variables(
     values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
 ) -> Mapping[str, Optional[str]]:
+    """Resolve variable interpolations in a sequence of key-value pairs.
+
+    Replace variable references (e.g. ``${VAR}`` or ``$VAR``) within values by
+    looking them up in the already-resolved dotenv values and the system
+    environment. The *override* flag controls precedence: when ``True``, dotenv
+    values take priority over existing environment variables; when ``False``,
+    existing environment variables take priority over dotenv values.
+
+    Parameters:
+        values: An iterable of ``(key, value)`` pairs as produced by
+            :meth:`DotEnv.parse`.  Values may be ``None`` for keys that were
+            declared without an assignment.
+        override: If ``True``, previously parsed dotenv values override system
+            environment variables during interpolation.  If ``False``, system
+            environment variables take precedence.
+
+    Returns:
+        An ordered mapping of resolved key-value pairs, preserving the
+        original iteration order.
+    """
     new_values: Dict[str, Optional[str]] = {}
 
     for name, value in values:
@@ -299,11 +366,11 @@ def resolve_variables(
             atoms = parse_variables(value)
             env: Dict[str, Optional[str]] = {}
             if override:
-                env.update(os.environ)  # type: ignore
+                env.update(os.environ)
                 env.update(new_values)
             else:
                 env.update(new_values)
-                env.update(os.environ)  # type: ignore
+                env.update(os.environ)
             result = "".join(atom.resolve(env) for atom in atoms)
 
         new_values[name] = result
@@ -312,9 +379,7 @@ def resolve_variables(
 
 
 def _walk_to_root(path: str) -> Iterator[str]:
-    """
-    Yield directories starting from the given directory up to the root
-    """
+    """Yield directories starting from *path* up to the filesystem root."""
     if not os.path.exists(path):
         raise IOError("Starting path not found")
 
@@ -334,10 +399,9 @@ def find_dotenv(
     raise_error_if_not_found: bool = False,
     usecwd: bool = False,
 ) -> str:
-    """
-    Search in increasingly higher folders for the given file
+    """Search for a ``.env`` file by walking up from the caller's directory.
 
-    Returns path to the file if found, or an empty string otherwise
+    Return the absolute path if found, or an empty string otherwise.
     """
 
     def _is_interactive():
@@ -398,6 +462,7 @@ def load_dotenv(
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
         encoding: Encoding to be used to read the file.
+
     Returns:
         Bool: True if at least one environment variable is set else False
 
@@ -436,21 +501,21 @@ def dotenv_values(
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
 ) -> Dict[str, Optional[str]]:
-    """
-    Parse a .env file and return its content as a dict.
+    """Parse a ``.env`` file and return its content as a dict.
 
-    The returned dict will have `None` values for keys without values in the .env file.
-    For example, `foo=bar` results in `{"foo": "bar"}` whereas `foo` alone results in
-    `{"foo": None}`
+    Keys declared without a value (e.g. bare ``FOO``) will have ``None`` as
+    their dict value.
 
-    Parameters:
-        dotenv_path: Absolute or relative path to the .env file.
-        stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
-        verbose: Whether to output a warning if the .env file is missing.
-        encoding: Encoding to be used to read the file.
+    Args:
+        dotenv_path: Absolute or relative path to the ``.env`` file.
+        stream: Text stream with ``.env`` content, used if *dotenv_path* is
+            ``None``.
+        verbose: Whether to log a warning when the ``.env`` file is missing.
+        interpolate: Whether to resolve ``${VAR}`` references in values.
+        encoding: Encoding used to read the file.
 
-    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
-    .env file.
+    If both *dotenv_path* and *stream* are ``None``, :func:`find_dotenv` is
+    used to locate the ``.env`` file.
     """
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
@@ -466,9 +531,7 @@ def dotenv_values(
 
 
 def _is_file_or_fifo(path: StrPath) -> bool:
-    """
-    Return True if `path` exists and is either a regular file or a FIFO.
-    """
+    """Return ``True`` if *path* exists and is a regular file or a FIFO."""
     if os.path.isfile(path):
         return True
 
