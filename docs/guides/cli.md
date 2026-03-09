@@ -11,15 +11,27 @@ terminal.
 
 The CLI requires the `click` package. Install it with the `cli` extra:
 
+=== "`pip`"
+
+    ```shell
+    pip install "python-dotenv[cli]"
+    ```
+
+=== "`uv`"
+
+    ```shell
+    uv add "python-dotenv[cli]"
+    ```
+
+Verify the installation by checking the version:
+
 ```shell
-pip install "python-dotenv[cli]"
+dotenv --version
 ```
 
-The CLI can also be invoked as a Python module:
+!!! info
 
-```shell
-python -m dotenv
-```
+    The CLI can also be invoked as a Python module: `python -m dotenv`
 
 ## Set up your .env from the terminal
 

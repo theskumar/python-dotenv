@@ -511,7 +511,7 @@ def dotenv_values(
         dotenv_path: Absolute or relative path to the .env file.
         stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
         verbose: Whether to output a warning if the .env file is missing.
-        interpolate: Whether to interpolate variables using POSIX variable expansion.
+        interpolate: Whether ``${VAR}`` references in values are resolved.
         encoding: Encoding to be used to read the file.
 
     If both *dotenv_path* and *stream* are ``None``, :func:`find_dotenv` is
