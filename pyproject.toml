@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools >= 77.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-dotenv"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+authors = [
+    {name = "Saurabh Kumar", email = "me+github@saurabh-kumar.com"},
+]
+license = { text = "BSD-3-Clause" }
+keywords = [
+    "environment variables",
+    "deployments",
+    "settings",
+    "env",
+    "dotenv",
+    "configurations",
+    "python",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+    "Environment :: Web Environment",
+]
+
+requires-python = ">=3.10"
+
+dynamic = ["version", "readme"]
+
+[project.urls]
+Source = "https://github.com/theskumar/python-dotenv"
+
+[project.optional-dependencies]
+cli = [
+    "click>=5.0",
+]
+
+[project.scripts]
+dotenv = "dotenv.__main__:cli"
+
+[tool.setuptools]
+packages = ["dotenv"]
+package-dir = {"" = "src"}
+package-data = {dotenv = ["py.typed"]}
+
+[tool.setuptools.dynamic]
+version = {attr = "dotenv.version.__version__"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
+[tool.coverage.run]
+relative_files = true
+source = ["dotenv"]
+
+[tool.coverage.paths]
+source = [
+    "src/dotenv",
+    ".tox/*/lib/python*/site-packages/dotenv",
+    ".tox/pypy*/site-packages/dotenv",
+]
+
+[tool.coverage.report]
+show_missing = true
+omit = ["*/tests/*"]
+exclude_lines = [
+    "if IS_TYPE_CHECKING:",
+    "pragma: no cover",
+]
+
+[tool.mypy]
+check_untyped_defs = true
+ignore_missing_imports = true
