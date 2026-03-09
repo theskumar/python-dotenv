@@ -33,11 +33,24 @@ _single_quote_escapes = make_regex(r"\\[\\']")
 
 
 class Original(NamedTuple):
+    """Raw text of a parsed line and its 1-based line number."""
+
     string: str
     line: int
 
 
 class Binding(NamedTuple):
+    """Parsed result for a single line of a ``.env`` file.
+
+    Attributes:
+        key: Variable name, or ``None`` for comments, blank lines, and
+            unparseable lines.
+        value: Assigned value, or ``None`` when the key has no ``=`` sign
+            or the line could not be parsed.
+        original: The raw text and line number this binding was parsed from.
+        error: ``True`` if the line could not be parsed.
+    """
+
     key: Optional[str]
     value: Optional[str]
     original: Original
@@ -67,6 +80,8 @@ class Error(Exception):
 
 
 class Reader:
+    """Stateful reader that consumes a ``.env`` stream character by character."""
+
     def __init__(self, stream: IO[str]) -> None:
         self.string = stream.read()
         self.position = Position.start()
@@ -103,6 +118,8 @@ class Reader:
 
 
 def decode_escapes(regex: Pattern[str], string: str) -> str:
+    """Replace escape sequences matched by *regex* with their decoded characters."""
+
     def decode_match(match: Match[str]) -> str:
         return codecs.decode(match.group(0), "unicode-escape")  # type: ignore
 
@@ -110,6 +127,7 @@ def decode_escapes(regex: Pattern[str], string: str) -> str:
 
 
 def parse_key(reader: Reader) -> Optional[str]:
+    """Parse and return the key portion of a binding, or ``None`` for comments."""
     char = reader.peek(1)
     if char == "#":
         return None
@@ -121,11 +139,13 @@ def parse_key(reader: Reader) -> Optional[str]:
 
 
 def parse_unquoted_value(reader: Reader) -> str:
+    """Parse an unquoted value, stripping inline comments and trailing whitespace."""
     (part,) = reader.read_regex(_unquoted_value)
     return re.sub(r"\s+#.*", "", part).rstrip()
 
 
 def parse_value(reader: Reader) -> str:
+    """Parse a value that may be single-quoted, double-quoted, or unquoted."""
     char = reader.peek(1)
     if char == "'":
         (value,) = reader.read_regex(_single_quoted_value)
@@ -140,6 +160,7 @@ def parse_value(reader: Reader) -> str:
 
 
 def parse_binding(reader: Reader) -> Binding:
+    """Parse the next complete binding (key-value pair, comment, or blank line)."""
     reader.set_mark()
     try:
         reader.read_regex(_multiline_whitespace)
@@ -177,6 +198,7 @@ def parse_binding(reader: Reader) -> Binding:
 
 
 def parse_stream(stream: IO[str]) -> Iterator[Binding]:
+    """Yield :class:`Binding` instances for every line in a ``.env`` stream."""
     reader = Reader(stream)
     while reader.has_next():
         yield parse_binding(reader)

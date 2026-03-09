@@ -1,1 +1,1 @@
-../LICENSE
+--8<-- "LICENSE"

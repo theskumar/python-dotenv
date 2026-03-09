@@ -1,1 +1,1 @@
-../CONTRIBUTING.md
+--8<-- "contributing.md"
