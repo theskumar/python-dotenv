@@ -237,7 +237,21 @@ def test_run_without_cmd(tmp_path):
     assert "Invalid value for '-f'" in result.stderr
 
 
-def test_run_with_invalid_cmd(tmp_path):
+def test_run_with_invalid_cmd(dotenv_path, tmp_path):
+    result = run_dotenv(
+        ["--file", str(dotenv_path), "run", "i_do_not_exist"],
+        cwd=tmp_path,
+    )
+
+    check_process(result, exit_code=1)
+    assert "Command not found: i_do_not_exist" in result.stderr
+
+
+def test_run_with_env_missing_and_invalid_cmd(tmp_path):
+    """
+    Check that an .env file missing takes precedence over a command not found error.
+    """
+
     result = run_dotenv(["run", "i_do_not_exist"], cwd=tmp_path)
 
     check_process(result, exit_code=2)

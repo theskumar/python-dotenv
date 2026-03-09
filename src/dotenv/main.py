@@ -461,6 +461,7 @@ def load_dotenv(
         verbose: Whether to output a warning the .env file is missing.
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
+        interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
 
     Returns:
@@ -506,13 +507,12 @@ def dotenv_values(
     Keys declared without a value (e.g. bare ``FOO``) will have ``None`` as
     their dict value.
 
-    Args:
-        dotenv_path: Absolute or relative path to the ``.env`` file.
-        stream: Text stream with ``.env`` content, used if *dotenv_path* is
-            ``None``.
-        verbose: Whether to log a warning when the ``.env`` file is missing.
-        interpolate: Whether to resolve ``${VAR}`` references in values.
-        encoding: Encoding used to read the file.
+    Parameters:
+        dotenv_path: Absolute or relative path to the .env file.
+        stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
+        verbose: Whether to output a warning if the .env file is missing.
+        interpolate: Whether to interpolate variables using POSIX variable expansion.
+        encoding: Encoding to be used to read the file.
 
     If both *dotenv_path* and *stream* are ``None``, :func:`find_dotenv` is
     used to locate the ``.env`` file.
