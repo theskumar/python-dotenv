@@ -346,7 +346,7 @@ def test_find_dotenv_no_file_raise(tmp_path):
     leaf = prepare_file_hierarchy(tmp_path)
     os.chdir(leaf)
 
-    with pytest.raises(IOError):
+    with pytest.raises(FileNotFoundError):
         dotenv.find_dotenv(raise_error_if_not_found=True, usecwd=True)
 
 
