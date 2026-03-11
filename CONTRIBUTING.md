@@ -10,8 +10,8 @@ Executing the tests:
     $ uv venv
     $ uv pip install -r requirements.txt
     $ uv pip install -e .
-    $ uv ruff check .
-    $ uv format .
+    $ uv run ruff check .
+    $ uv run ruff format .
     $ uv run pytest
 
 or with [tox](https://pypi.org/project/tox/) installed:
@@ -21,7 +21,7 @@ or with [tox](https://pypi.org/project/tox/) installed:
 
 Use of pre-commit is recommended:
 
-    $ uv run precommit install
+    $ uv run pre-commit install
 
 
 Documentation is published with [mkdocs]():
