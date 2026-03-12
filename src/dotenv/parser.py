@@ -59,7 +59,7 @@ class Position:
 
     def advance(self, string: str) -> None:
         self.chars += len(string)
-        self.line += len(re.findall(_newline, string))
+        self.line += string.count("\n") + string.count("\r") - string.count("\r\n")
 
 
 class Error(Exception):
