@@ -21,7 +21,7 @@ _whitespace = make_regex(r"[^\S\r\n]*")
 _export = make_regex(r"(?:export[^\S\r\n]+)?")
 _single_quoted_key = make_regex(r"'([^']+)'")
 _unquoted_key = make_regex(r"([^=\#\s]+)")
-_equal_sign = make_regex(r"(=[^\S\r\n]*)")
+_equal_sign = make_regex(r"(=)")
 _single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
 _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
 _unquoted_value = make_regex(r"([^\r\n]*)")
@@ -155,7 +155,16 @@ def parse_binding(reader: Reader) -> Binding:
         reader.read_regex(_whitespace)
         if reader.peek(1) == "=":
             reader.read_regex(_equal_sign)
-            value: Optional[str] = parse_value(reader)
+
+            start_position = reader.position.chars
+            reader.read_regex(_whitespace)
+            consumed_whitespace = reader.position.chars > start_position
+
+            is_inline_comment = consumed_whitespace and reader.peek(1) == "#"
+            if is_inline_comment:
+                value: Optional[str] = ""
+            else:
+                value = parse_value(reader)
         else:
             value = None
         reader.read_regex(_comment)
