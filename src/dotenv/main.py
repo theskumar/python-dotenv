@@ -285,6 +285,7 @@ def unset_key(
 
     return removed, key_to_unset
 
+
 def resolve_variables(
     values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
@@ -313,6 +314,7 @@ def resolve_variables(
         new_values[name] = result
 
     return new_values
+
 
 def _walk_to_root(path: str) -> Iterator[str]:
     """
