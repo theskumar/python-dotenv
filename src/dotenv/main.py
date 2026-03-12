@@ -500,12 +500,14 @@ _DIRECTIVE_RE = re.compile(
 
 
 def _strip_directives(line: str) -> str:
-    """Remove directive tokens from a line and trim any resulting trailing whitespace."""
+    """Remove directive tokens from a line and clean up artifacts."""
     result = _DIRECTIVE_RE.sub("", line)
     # Preserve the original line ending
     stripped = result.rstrip("\r\n")
     ending = result[len(stripped) :]
-    return stripped.rstrip() + ending
+    # Remove a bare comment marker left after stripping
+    cleaned = re.sub(r"[ \t]*#[ \t]*$", "", stripped)
+    return cleaned.rstrip() + ending
 
 
 def generate_template(
