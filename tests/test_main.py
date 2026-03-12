@@ -695,3 +695,74 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+@pytest.mark.parametrize(
+    "input_text,expected",
+    [
+        # Basic value replacement
+        ("A=hello\nB=world\n", "A=A\nB=B\n"),
+        # Key with no value
+        ("A\n", "A\n"),
+        # Comments and blank lines preserved
+        ("# a comment\nA=b\n\nB=c\n", "# a comment\nA=A\n\nB=B\n"),
+        # Export prefix preserved
+        ("export A=b\n", "export A=A\n"),
+    ],
+)
+def test_generate_template_basic(input_text, expected):
+    stream = io.StringIO(input_text)
+
+    result = dotenv.generate_template(stream=stream)
+
+    assert result == expected
+
+
+def test_generate_template_exclude():
+    stream = io.StringIO("A=secret # ::dotenv-template-exclude\nB=ok\n")
+
+    result = dotenv.generate_template(stream=stream)
+
+    assert result == "B=B\n"
+
+
+def test_generate_template_preserve_strips_directive():
+    stream = io.StringIO('A="example" # ::dotenv-template-preserve\n')
+
+    result = dotenv.generate_template(stream=stream)
+
+    assert result == 'A="example"\n'
+
+
+def test_generate_template_preserve_with_comment():
+    stream = io.StringIO('A="example" # useful hint ::dotenv-template-preserve\n')
+
+    result = dotenv.generate_template(stream=stream)
+
+    assert result == 'A="example" # useful hint\n'
+
+
+def test_generate_template_keep_directives():
+    stream = io.StringIO(
+        'A="example" # ::dotenv-template-preserve\nB=secret # ::dotenv-template-exclude\nC=val\n'
+    )
+
+    result = dotenv.generate_template(stream=stream, keep_directives=True)
+
+    assert result == 'A="example" # ::dotenv-template-preserve\nC=C\n'
+
+
+def test_generate_template_file(dotenv_path):
+    dotenv_path.write_text("A=hello\nB=world\n")
+
+    result = dotenv.generate_template(dotenv_path=dotenv_path)
+
+    assert result == "A=A\nB=B\n"
+
+
+def test_generate_template_empty():
+    stream = io.StringIO("")
+
+    result = dotenv.generate_template(stream=stream)
+
+    assert result == ""
