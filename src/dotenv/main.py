@@ -299,7 +299,7 @@ def resolve_variables(
     new_values: Dict[str, Optional[str]] = {}
 
     if override:
-        env = ChainMap(new_values, os.environ)  # type: ChainMap[str, Optional[str]]
+        env = ChainMap(new_values, os.environ) # type: ChainMap[str, Optional[str]]
     else:
         env = ChainMap(os.environ, new_values) # type: ChainMap[str, Optional[str]]
 
