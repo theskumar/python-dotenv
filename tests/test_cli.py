@@ -293,3 +293,44 @@ def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
 
     check_process(result, exit_code=0)
     assert result.stdout.strip().startswith("dotenv, version")
+
+
+def test_template_stdout(cli, dotenv_path):
+    dotenv_path.write_text("A=hello\nB=world\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "template"])
+
+    assert (result.exit_code, result.output) == (0, "A=A\nB=B\n")
+
+
+def test_template_to_file(cli, dotenv_path, tmp_path):
+    dotenv_path.write_text("A=hello\nB=world\n")
+    output_path = tmp_path / ".env.template"
+
+    result = cli.invoke(
+        dotenv_cli, ["--file", dotenv_path, "template", str(output_path)]
+    )
+
+    assert result.exit_code == 0
+    assert output_path.read_text() == "A=A\nB=B\n"
+    assert "Template written to" in result.output
+
+
+def test_template_keep_directives(cli, dotenv_path):
+    dotenv_path.write_text('A="example" # ::dotenv-template-preserve\nB=val\n')
+
+    result = cli.invoke(
+        dotenv_cli, ["--file", dotenv_path, "template", "--keep-directives"]
+    )
+
+    assert (result.exit_code, result.output) == (
+        0,
+        'A="example" # ::dotenv-template-preserve\nB=B\n',
+    )
+
+
+def test_template_non_existent_file(cli):
+    result = cli.invoke(dotenv_cli, ["--file", "nx_file", "template"])
+
+    assert result.exit_code == 2
+    assert "Error opening env file" in result.output
