@@ -5,8 +5,7 @@ import pathlib
 import stat
 import sys
 import tempfile
-from collections import OrderedDict
-from collections import ChainMap
+from collections import ChainMap, OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
