@@ -2,6 +2,7 @@ import io
 import logging
 import os
 import pathlib
+import re
 import stat
 import sys
 import tempfile
@@ -480,3 +481,91 @@ def _is_file_or_fifo(path: StrPath) -> bool:
         return False
 
     return stat.S_ISFIFO(st.st_mode)
+
+
+_DIRECTIVE_PRESERVE = "::dotenv-template-preserve"
+_DIRECTIVE_EXCLUDE = "::dotenv-template-exclude"
+
+# Matches `= <optional whitespace> <value>` where value is single-quoted,
+# double-quoted, or unquoted (everything up to a comment or end of line).
+_VALUE_RE = re.compile(
+    r"(=[ \t]*)"
+    r"(?:'(?:\\'|[^'])*'|\"(?:\\\"|[^\"])*\"|[^\s#\r\n]*)"
+)
+
+# Matches a directive token and any surrounding horizontal whitespace.
+_DIRECTIVE_RE = re.compile(
+    r"[ \t]*(?:::dotenv-template-preserve|::dotenv-template-exclude)[ \t]*"
+)
+
+
+def _strip_directives(line: str) -> str:
+    """Remove directive tokens from a line and trim any resulting trailing whitespace."""
+    result = _DIRECTIVE_RE.sub("", line)
+    # Preserve the original line ending
+    stripped = result.rstrip("\r\n")
+    ending = result[len(stripped) :]
+    return stripped.rstrip() + ending
+
+
+def generate_template(
+    dotenv_path: Optional[StrPath] = None,
+    stream: Optional[IO[str]] = None,
+    encoding: Optional[str] = "utf-8",
+    keep_directives: bool = False,
+) -> str:
+    """
+    Generate a template from a .env file.
+
+    For each key-value binding, the value is replaced with the key name, unless
+    an inline directive overrides this behavior:
+
+    - ``::dotenv-template-preserve`` keeps the line as-is (value included).
+    - ``::dotenv-template-exclude`` removes the line from the template.
+
+    By default, directive tokens are stripped from the output. Set
+    *keep_directives* to ``True`` to retain them.
+
+    Comments and blank lines are preserved.
+
+    Parameters:
+        dotenv_path: Absolute or relative path to the .env file.
+        stream: ``StringIO`` with .env content, used if *dotenv_path* is ``None``.
+        encoding: Encoding used to read the file.
+        keep_directives: If ``True``, directive comments are kept in the output.
+
+    Returns:
+        The generated template as a string.
+    """
+    if dotenv_path is None and stream is None:
+        dotenv_path = find_dotenv()
+
+    dotenv = DotEnv(
+        dotenv_path=dotenv_path,
+        stream=stream,
+        interpolate=False,
+        encoding=encoding,
+    )
+
+    lines: list[str] = []
+    with dotenv._get_stream() as s:
+        for binding in with_warn_for_invalid_lines(parse_stream(s)):
+            original = binding.original.string
+
+            # Comments, blank lines, and parse errors: preserve as-is
+            if binding.key is None:
+                lines.append(original)
+                continue
+
+            if _DIRECTIVE_EXCLUDE in original:
+                continue
+
+            if _DIRECTIVE_PRESERVE in original:
+                line = original if keep_directives else _strip_directives(original)
+                lines.append(line)
+                continue
+
+            # Replace the value with the key name
+            lines.append(_VALUE_RE.sub(r"\g<1>" + binding.key, original, count=1))
+
+    return "".join(lines)
