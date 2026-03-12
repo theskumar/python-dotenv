@@ -296,6 +296,7 @@ def resolve_variables(
 
     If override is True, .env variables take priority over system environment variables.
     """
+    #test
     new_values: Dict[str, Optional[str]] = {}
 
     env: ChainMap[str, Optional[str]] = (
