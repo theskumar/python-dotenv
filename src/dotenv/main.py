@@ -413,7 +413,8 @@ def load_dotenv(
         dotenv_path: Absolute or relative path to .env file.
         stream: Text stream (such as `io.StringIO`) with .env content, used if
             `dotenv_path` is `None`.
-        verbose: Whether to output a warning the .env file is missing.
+        verbose: Whether to output a warning the .env file is missing. Ignored
+            when ``strict`` is ``True`` (strict raises instead of warning).
         override: Whether to override the system environment variables with the variables
             from the `.env` file.
         interpolate: Whether to interpolate variables using POSIX variable expansion.
@@ -421,6 +422,8 @@ def load_dotenv(
         strict: Whether to raise errors instead of silently ignoring them. When
             ``True``, a ``FileNotFoundError`` is raised if the .env file is not
             found and a ``ValueError`` is raised if any line cannot be parsed.
+            Takes precedence over ``verbose`` — when both are ``True``, the
+            exception is raised without emitting a warning first.
     Returns:
         Bool: True if at least one environment variable is set else False
 
@@ -471,12 +474,15 @@ def dotenv_values(
     Parameters:
         dotenv_path: Absolute or relative path to the .env file.
         stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
-        verbose: Whether to output a warning if the .env file is missing.
+        verbose: Whether to output a warning if the .env file is missing. Ignored
+            when ``strict`` is ``True`` (strict raises instead of warning).
         interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
         strict: Whether to raise errors instead of silently ignoring them. When
             ``True``, a ``FileNotFoundError`` is raised if the .env file is not
             found and a ``ValueError`` is raised if any line cannot be parsed.
+            Takes precedence over ``verbose`` — when both are ``True``, the
+            exception is raised without emitting a warning first.
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
