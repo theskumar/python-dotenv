@@ -29,13 +29,22 @@ def _load_dotenv_disabled() -> bool:
     return value in {"1", "true", "t", "yes", "y"}
 
 
-def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
+def with_warn_for_invalid_lines(
+    mappings: Iterator[Binding],
+    strict: bool = False,
+) -> Iterator[Binding]:
     for mapping in mappings:
         if mapping.error:
-            logger.warning(
-                "python-dotenv could not parse statement starting at line %s",
-                mapping.original.line,
-            )
+            if strict:
+                raise ValueError(
+                    "python-dotenv could not parse statement starting at line %s"
+                    % mapping.original.line,
+                )
+            else:
+                logger.warning(
+                    "python-dotenv could not parse statement starting at line %s",
+                    mapping.original.line,
+                )
         yield mapping
 
 
@@ -48,6 +57,7 @@ class DotEnv:
         encoding: Optional[str] = None,
         interpolate: bool = True,
         override: bool = True,
+        strict: bool = False,
     ) -> None:
         self.dotenv_path: Optional[StrPath] = dotenv_path
         self.stream: Optional[IO[str]] = stream
@@ -56,6 +66,7 @@ class DotEnv:
         self.encoding: Optional[str] = encoding
         self.interpolate: bool = interpolate
         self.override: bool = override
+        self.strict: bool = strict
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
@@ -65,7 +76,12 @@ class DotEnv:
         elif self.stream is not None:
             yield self.stream
         else:
-            if self.verbose:
+            if self.strict:
+                raise FileNotFoundError(
+                    "python-dotenv could not find configuration file %s."
+                    % (self.dotenv_path or ".env"),
+                )
+            elif self.verbose:
                 logger.info(
                     "python-dotenv could not find configuration file %s.",
                     self.dotenv_path or ".env",
@@ -90,7 +106,9 @@ class DotEnv:
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         with self._get_stream() as stream:
-            for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
+            for mapping in with_warn_for_invalid_lines(
+                parse_stream(stream), strict=self.strict
+            ):
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
@@ -387,6 +405,7 @@ def load_dotenv(
     override: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    strict: bool = False,
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -399,6 +418,9 @@ def load_dotenv(
             from the `.env` file.
         interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
+        strict: Whether to raise errors instead of silently ignoring them. When
+            ``True``, a ``FileNotFoundError`` is raised if the .env file is not
+            found and a ``ValueError`` is raised if any line cannot be parsed.
     Returns:
         Bool: True if at least one environment variable is set else False
 
@@ -426,6 +448,7 @@ def load_dotenv(
         interpolate=interpolate,
         override=override,
         encoding=encoding,
+        strict=strict,
     )
     return dotenv.set_as_environment_variables()
 
@@ -436,6 +459,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    strict: bool = False,
 ) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
@@ -450,6 +474,9 @@ def dotenv_values(
         verbose: Whether to output a warning if the .env file is missing.
         interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
+        strict: Whether to raise errors instead of silently ignoring them. When
+            ``True``, a ``FileNotFoundError`` is raised if the .env file is not
+            found and a ``ValueError`` is raised if any line cannot be parsed.
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
@@ -464,6 +491,7 @@ def dotenv_values(
         interpolate=interpolate,
         override=True,
         encoding=encoding,
+        strict=strict,
     ).dict()
 
 
