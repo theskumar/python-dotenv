@@ -695,3 +695,114 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+def test_load_dotenv_strict_file_not_found(tmp_path):
+    nx_path = tmp_path / "nonexistent" / ".env"
+
+    with pytest.raises(FileNotFoundError, match="could not find configuration file"):
+        dotenv.load_dotenv(nx_path, strict=True)
+
+
+def test_load_dotenv_strict_empty_path_not_found(tmp_path):
+    os.chdir(tmp_path)
+
+    with pytest.raises(FileNotFoundError, match="could not find configuration file"):
+        dotenv.load_dotenv(str(tmp_path / ".env"), strict=True)
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_strict_valid_file(dotenv_path):
+    dotenv_path.write_text("a=b")
+
+    result = dotenv.load_dotenv(dotenv_path, strict=True)
+
+    assert result is True
+    assert os.environ == {"a": "b"}
+
+
+def test_load_dotenv_strict_parse_error(dotenv_path):
+    dotenv_path.write_text("a: b")
+
+    with pytest.raises(
+        ValueError, match="could not parse statement starting at line 1"
+    ):
+        dotenv.load_dotenv(dotenv_path, strict=True)
+
+
+def test_load_dotenv_strict_parse_error_line_number(dotenv_path):
+    dotenv_path.write_text("valid=ok\ninvalid: line\n")
+
+    with pytest.raises(ValueError, match="starting at line 2"):
+        dotenv.load_dotenv(dotenv_path, strict=True)
+
+
+def test_load_dotenv_non_strict_file_not_found(tmp_path):
+    nx_path = tmp_path / ".env"
+
+    result = dotenv.load_dotenv(nx_path, strict=False)
+
+    assert result is False
+
+
+def test_load_dotenv_non_strict_parse_error(dotenv_path):
+    dotenv_path.write_text("a: b")
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.load_dotenv(dotenv_path, strict=False)
+
+    assert result is False
+    mock_warning.assert_called_once()
+
+
+def test_dotenv_values_strict_file_not_found(tmp_path):
+    nx_path = tmp_path / ".env"
+
+    with pytest.raises(FileNotFoundError, match="could not find configuration file"):
+        dotenv.dotenv_values(nx_path, strict=True)
+
+
+def test_dotenv_values_strict_valid_file(dotenv_path):
+    dotenv_path.write_text("a=b\nc=d")
+
+    result = dotenv.dotenv_values(dotenv_path, strict=True)
+
+    assert result == {"a": "b", "c": "d"}
+
+
+def test_dotenv_values_strict_parse_error(dotenv_path):
+    dotenv_path.write_text("good=value\nbad: line")
+
+    with pytest.raises(
+        ValueError, match="could not parse statement starting at line 2"
+    ):
+        dotenv.dotenv_values(dotenv_path, strict=True)
+
+
+def test_dotenv_values_strict_with_stream():
+    stream = io.StringIO("a=b")
+
+    result = dotenv.dotenv_values(stream=stream, strict=True)
+
+    assert result == {"a": "b"}
+
+
+def test_dotenv_values_strict_stream_parse_error():
+    stream = io.StringIO("bad: line")
+
+    with pytest.raises(
+        ValueError, match="could not parse statement starting at line 1"
+    ):
+        dotenv.dotenv_values(stream=stream, strict=True)
+
+
+def test_load_dotenv_strict_default_is_false(dotenv_path):
+    dotenv_path.write_text("a: b")
+
+    result = dotenv.load_dotenv(dotenv_path)
+
+    assert result is False
