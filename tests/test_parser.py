@@ -296,6 +296,17 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a='b'\"'\"'c'",
+            [
+                Binding(
+                    key="a",
+                    value="b'c",
+                    original=Original(string="a='b'\"'\"'c'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
             "a=à",
             [
                 Binding(

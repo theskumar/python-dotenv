@@ -23,6 +23,7 @@ _single_quoted_key = make_regex(r"'([^']+)'")
 _unquoted_key = make_regex(r"([^=\#\s]+)")
 _equal_sign = make_regex(r"(=[^\S\r\n]*)")
 _single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
+_single_quote_splice = make_regex('"\'"')
 _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
 _unquoted_value = make_regex(r"([^\r\n]*)")
 _comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")
@@ -125,11 +126,23 @@ def parse_unquoted_value(reader: Reader) -> str:
     return re.sub(r"\s+#.*", "", part).rstrip()
 
 
+def parse_single_quoted_value(reader: Reader) -> str:
+    splice_value = '"\'"'
+    value = ""
+    while True:
+        (part,) = reader.read_regex(_single_quoted_value)
+        value += decode_escapes(_single_quote_escapes, part)
+        if reader.peek(len(splice_value)) != splice_value:
+            break
+        reader.read_regex(_single_quote_splice)
+        value += "'"
+    return value
+
+
 def parse_value(reader: Reader) -> str:
     char = reader.peek(1)
     if char == "'":
-        (value,) = reader.read_regex(_single_quoted_value)
-        return decode_escapes(_single_quote_escapes, value)
+        return parse_single_quoted_value(reader)
     elif char == '"':
         (value,) = reader.read_regex(_double_quoted_value)
         return decode_escapes(_double_quote_escapes, value)
