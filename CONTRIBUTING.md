@@ -24,7 +24,7 @@ Use of pre-commit is recommended:
     $ uv run precommit install
 
 
-Documentation is published with [mkdocs]():
+Documentation is published with [mkdocs](https://www.mkdocs.org/):
 
 ```shell
 $ uv pip install -r requirements-docs.txt
