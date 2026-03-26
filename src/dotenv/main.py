@@ -74,7 +74,7 @@ class DotEnv:
 
     def dict(self) -> Dict[str, Optional[str]]:
         """Return dotenv as dict"""
-        if self._dict:
+        if self._dict is not None:
             return self._dict
 
         raw_values = self.parse()

@@ -10,6 +10,7 @@ from unittest import mock
 import pytest
 
 import dotenv
+from dotenv.main import DotEnv
 
 
 def test_set_key_no_file(tmp_path):
@@ -225,6 +226,18 @@ def test_get_key_none(dotenv_path):
 
     assert result is None
     mock_warning.assert_not_called()
+
+
+def test_empty_dotenv_dict_is_cached(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("")
+    dotenv_obj = DotEnv(dotenv_path)
+
+    with mock.patch.object(dotenv_obj, "parse", wraps=dotenv_obj.parse) as mock_parse:
+        assert dotenv_obj.dict() == {}
+        assert dotenv_obj.dict() == {}
+
+    assert mock_parse.call_count == 1
 
 
 def test_unset_with_value(dotenv_path):
