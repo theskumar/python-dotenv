@@ -7,7 +7,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- ...
+### Fixed
+
+- Strip a leading UTF-8 BOM from `.env` file contents so the first variable is no longer silently lost when the file is saved with BOM (e.g. by some JetBrains IDEs on Windows) by [@h1whelan] in [#640]
 
 ## [1.2.2] - 2026-03-01
 
@@ -432,6 +434,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#563]: https://github.com/theskumar/python-dotenv/pull/563
 [#497]: https://github.com/theskumar/python-dotenv/pull/497
 [#161]: https://github.com/theskumar/python-dotenv/issues/161
+[#640]: https://github.com/theskumar/python-dotenv/pull/640
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -460,6 +463,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@gergelyk]: https://github.com/gergelyk
 [@gongqingkui]: https://github.com/gongqingkui
 [@greyli]: https://github.com/greyli
+[@h1whelan]: https://github.com/h1whelan
 [@harveer07]: https://github.com/harveer07
 [@jadutter]: https://github.com/jadutter
 [@jankislinger]: https://github.com/jankislinger
