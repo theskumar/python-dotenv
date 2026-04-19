@@ -68,7 +68,7 @@ class Error(Exception):
 
 class Reader:
     def __init__(self, stream: IO[str]) -> None:
-        self.string = stream.read()
+        self.string = stream.read().removeprefix("\ufeff")
         self.position = Position.start()
         self.mark = Position.start()
 

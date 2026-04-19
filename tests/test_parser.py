@@ -545,6 +545,35 @@ from dotenv.parser import Binding, Original, parse_stream
                 ),
             ],
         ),
+        # UTF-8 BOM at the start of the file should be stripped
+        (
+            "\ufeffa=b",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "\ufeffa=b\nc=d",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d", line=2),
+                    error=False,
+                ),
+            ],
+        ),
     ],
 )
 def test_parse_stream(test_input, expected):
