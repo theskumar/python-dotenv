@@ -5,7 +5,7 @@ import pathlib
 import stat
 import sys
 import tempfile
-from collections import OrderedDict
+from collections import ChainMap, OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
@@ -290,20 +290,26 @@ def resolve_variables(
     values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
 ) -> Mapping[str, Optional[str]]:
+    """
+    Resolve interpolated variables from a .env file,
+    iterating over tuples with pairs that represent the key and value of each variable in the .env file.
+
+    If override is True, .env variables take priority over system environment variables.
+    """
+    # test
     new_values: Dict[str, Optional[str]] = {}
+
+    env: ChainMap[str, Optional[str]] = (
+        ChainMap(new_values, os.environ)  # type: ignore
+        if override
+        else ChainMap(os.environ, new_values)  # type: ignore
+    )
 
     for name, value in values:
         if value is None:
             result = None
         else:
             atoms = parse_variables(value)
-            env: Dict[str, Optional[str]] = {}
-            if override:
-                env.update(os.environ)  # type: ignore
-                env.update(new_values)
-            else:
-                env.update(new_values)
-                env.update(os.environ)  # type: ignore
             result = "".join(atom.resolve(env) for atom in atoms)
 
         new_values[name] = result
