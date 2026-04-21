@@ -663,6 +663,7 @@ def test_dotenv_values_file(dotenv_path):
         # With quotes
         ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),
         ({"b": "c"}, "a='${b}'", True, {"a": "c"}),
+        ({}, "a='b'\"'\"'c'", True, {"a": "b'c"}),
         # With surrounding text
         ({"b": "c"}, "a=x${b}y", True, {"a": "xcy"}),
         # Self-referential
