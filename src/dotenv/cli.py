@@ -22,10 +22,9 @@ from .version import __version__
 
 
 def enumerate_env() -> Optional[str]:
-    """
-    Return a path for the ${pwd}/.env file.
+    """Return the path to a ``.env`` file in the current working directory.
 
-    If pwd does not exist, return None.
+    Return ``None`` if the working directory no longer exists.
     """
     try:
         cwd = os.getcwd()
@@ -202,23 +201,10 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
 
 
 def run_command(command: List[str], env: Dict[str, str]) -> None:
-    """Replace the current process with the specified command.
+    """Replace the current process with *command*, merging *env* into the environment.
 
-    Replaces the current process with the specified command and the variables from `env`
-    added in the current environment variables.
-
-    Parameters
-    ----------
-    command: List[str]
-        The command and it's parameters
-    env: Dict
-        The additional environment variables
-
-    Returns
-    -------
-    None
-        This function does not return any value. It replaces the current process with the new one.
-
+    On Windows, spawns a subprocess and waits for it instead, because
+    ``execvpe`` returns immediately on that platform.
     """
     # copy the current environment variables and add the vales from
     # `env`

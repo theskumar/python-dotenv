@@ -10,6 +10,8 @@ from .main import find_dotenv, load_dotenv
 
 @magics_class
 class IPythonDotEnv(Magics):
+    """IPython magics for loading ``.env`` files via the ``%dotenv`` command."""
+
     @magic_arguments()
     @argument(
         "-o",
@@ -32,6 +34,7 @@ class IPythonDotEnv(Magics):
     )
     @line_magic
     def dotenv(self, line):
+        """Load a ``.env`` file into the IPython session's environment."""
         args = parse_argstring(self.dotenv, line)
         # Locate the .env file
         dotenv_path = args.dotenv_path

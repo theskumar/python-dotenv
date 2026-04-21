@@ -492,6 +492,9 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@JYOuyang]: https://github.com/JYOuyang
 [@burnout-projects]: https://github.com/burnout-projects
 [@cpackham-atlnz]: https://github.com/cpackham-atlnz
+
+<!-- Releases -->
+
 [Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.2.2...HEAD
 [1.2.2]: https://github.com/theskumar/python-dotenv/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/theskumar/python-dotenv/compare/v1.2.0...v1.2.1
