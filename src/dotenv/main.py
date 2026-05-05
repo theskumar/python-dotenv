@@ -12,6 +12,8 @@ from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 from .parser import Binding, parse_stream
 from .variables import parse_variables
 
+_DUPLICATE_VALUES = ("warn", "raise", "ignore")
+
 # A type alias for a string path to be used for the paths in this file.
 # These paths may flow to `open()` and `os.replace()`.
 StrPath = Union[str, "os.PathLike[str]"]
@@ -48,7 +50,13 @@ class DotEnv:
         encoding: Optional[str] = None,
         interpolate: bool = True,
         override: bool = True,
+        on_duplicate: str = "warn",
     ) -> None:
+        if on_duplicate not in _DUPLICATE_VALUES:
+            raise ValueError(
+                f"Invalid value for on_duplicate: {on_duplicate!r}. "
+                f"Expected one of: {', '.join(_DUPLICATE_VALUES)}"
+            )
         self.dotenv_path: Optional[StrPath] = dotenv_path
         self.stream: Optional[IO[str]] = stream
         self._dict: Optional[Dict[str, Optional[str]]] = None
@@ -56,6 +64,7 @@ class DotEnv:
         self.encoding: Optional[str] = encoding
         self.interpolate: bool = interpolate
         self.override: bool = override
+        self.on_duplicate: str = on_duplicate
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
@@ -90,8 +99,26 @@ class DotEnv:
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         with self._get_stream() as stream:
+            seen_keys: Dict[str, int] = {}
             for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
                 if mapping.key is not None:
+                    if mapping.key in seen_keys:
+                        msg = (
+                            "Duplicate key %r found in %s "
+                            "(first defined on line %d, redefined on line %d)."
+                        )
+                        args = (
+                            mapping.key,
+                            self.dotenv_path or "<stream>",
+                            seen_keys[mapping.key],
+                            mapping.original.line,
+                        )
+                        if self.on_duplicate == "raise":
+                            raise ValueError(msg % args)
+                        elif self.on_duplicate == "warn":
+                            logger.warning(msg, *args)
+                    else:
+                        seen_keys[mapping.key] = mapping.original.line
                     yield mapping.key, mapping.value
 
     def set_as_environment_variables(self) -> bool:
@@ -387,6 +414,7 @@ def load_dotenv(
     override: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    on_duplicate: str = "warn",
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -426,6 +454,7 @@ def load_dotenv(
         interpolate=interpolate,
         override=override,
         encoding=encoding,
+        on_duplicate=on_duplicate,
     )
     return dotenv.set_as_environment_variables()
 
@@ -436,6 +465,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    on_duplicate: str = "warn",
 ) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
@@ -464,6 +494,7 @@ def dotenv_values(
         interpolate=interpolate,
         override=True,
         encoding=encoding,
+        on_duplicate=on_duplicate,
     ).dict()
 
 
