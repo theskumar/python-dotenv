@@ -1,5 +1,4 @@
 import logging
-import os
 from unittest.mock import patch
 
 import pytest
@@ -40,13 +39,13 @@ class TestOnDuplicate:
         with pytest.raises(ValueError, match="Invalid value for on_duplicate"):
             DotEnv(env_file, on_duplicate="bad-value")
 
-    def test_load_dotenv_warn(self, tmp_path):
+    def test_load_dotenv_warn(self, tmp_path, monkeypatch):
         env_file = _write_env(tmp_path, "MYKEY=first\nMYKEY=second\n")
+        monkeypatch.delenv("MYKEY", raising=False)
         with patch.object(logging.getLogger("dotenv.main"), "warning") as mock_warn:
             dotenv.load_dotenv(env_file, override=True, on_duplicate="warn")
         assert mock_warn.called
         assert "Duplicate key" in mock_warn.call_args[0][0]
-        del os.environ["MYKEY"]
 
     def test_load_dotenv_raise(self, tmp_path):
         env_file = _write_env(tmp_path, "MYKEY=first\nMYKEY=second\n")

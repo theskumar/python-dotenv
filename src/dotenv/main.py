@@ -427,6 +427,8 @@ def load_dotenv(
             from the `.env` file.
         interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
+        on_duplicate: How to handle duplicate keys. "warn" logs a warning,
+        "raise" raises a ValueError, "ignore" silently uses the latter value.
     Returns:
         Bool: True if at least one environment variable is set else False
 
