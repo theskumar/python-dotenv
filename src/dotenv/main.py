@@ -423,6 +423,7 @@ def load_dotenv(
         logger.warning("Copying %s to %s", init_dotenv_path, copy_dotenv_path)
         import shutil
 
+        assert init_dotenv_path is not None
         shutil.copyfile(init_dotenv_path, copy_dotenv_path)
 
     if dotenv_path is None and stream is None:
@@ -445,9 +446,9 @@ def should_copy_init(
     stream: Optional[IO[str]],
 ) -> bool:
     dotenv_path = arg_dotenv_path or ".env"
-    return (
+    return bool(
         (stream is None)
-        and init_dotenv_path
+        and (init_dotenv_path is not None)
         and os.path.exists(init_dotenv_path)
         and (not os.path.exists(dotenv_path))
     )
