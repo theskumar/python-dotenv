@@ -382,6 +382,7 @@ def find_dotenv(
 
 def load_dotenv(
     dotenv_path: Optional[StrPath] = None,
+    init_dotenv_path: Optional[StrPath] = None,
     stream: Optional[IO[str]] = None,
     verbose: bool = False,
     override: bool = False,
@@ -416,6 +417,13 @@ def load_dotenv(
         )
         return False
 
+    if should_copy_init(dotenv_path, init_dotenv_path, stream):
+        copy_dotenv_path = dotenv_path or ".env"
+        logger.warning("Copying %s to %s", init_dotenv_path, copy_dotenv_path)
+        import shutil
+
+        shutil.copyfile(init_dotenv_path, copy_dotenv_path)
+
     if dotenv_path is None and stream is None:
         dotenv_path = find_dotenv()
 
@@ -428,6 +436,20 @@ def load_dotenv(
         encoding=encoding,
     )
     return dotenv.set_as_environment_variables()
+
+
+def should_copy_init(
+    arg_dotenv_path: Optional[StrPath],
+    init_dotenv_path: Optional[StrPath],
+    stream: Optional[IO[str]],
+) -> Bool:
+    dotenv_path = arg_dotenv_path or ".env"
+    return (
+        (stream is None)
+        and init_dotenv_path
+        and os.path.exists(init_dotenv_path)
+        and (not os.path.exists(dotenv_path))
+    )
 
 
 def dotenv_values(
