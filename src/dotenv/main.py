@@ -443,7 +443,7 @@ def should_copy_init(
     arg_dotenv_path: Optional[StrPath],
     init_dotenv_path: Optional[StrPath],
     stream: Optional[IO[str]],
-) -> Bool:
+) -> bool:
     dotenv_path = arg_dotenv_path or ".env"
     return (
         (stream is None)
