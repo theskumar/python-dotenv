@@ -393,6 +393,7 @@ def load_dotenv(
 
     Parameters:
         dotenv_path: Absolute or relative path to .env file.
+        init_dotenv_path: TODO
         stream: Text stream (such as `io.StringIO`) with .env content, used if
             `dotenv_path` is `None`.
         verbose: Whether to output a warning the .env file is missing.
