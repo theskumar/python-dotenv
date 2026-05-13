@@ -29,10 +29,11 @@ def test_set_key_no_file(tmp_path):
     [
         ("", "a", "", (True, "a", ""), "a=''\n"),
         ("", "a", "b", (True, "a", "b"), "a='b'\n"),
-        ("", "a", "'b'", (True, "a", "'b'"), "a='\\'b\\''\n"),
+        ("", "a", "'b'", (True, "a", "'b'"), "a=\"'b'\"\n"),
         ("", "a", '"b"', (True, "a", '"b"'), "a='\"b\"'\n"),
-        ("", "a", "b'c", (True, "a", "b'c"), "a='b\\'c'\n"),
+        ("", "a", "b'c", (True, "a", "b'c"), 'a="b\'c"\n'),
         ("", "a", 'b"c', (True, "a", 'b"c'), "a='b\"c'\n"),
+        ("", "a", 'I\'m "in"', (True, "a", 'I\'m "in"'), 'a="I\'m \\"in\\""\n'),
         ("a=b", "a", "c", (True, "a", "c"), "a='c'\n"),
         ("a=b\n", "a", "c", (True, "a", "c"), "a='c'\n"),
         ("a=b\n\n", "a", "c", (True, "a", "c"), "a='c'\n\n"),
@@ -42,7 +43,7 @@ def test_set_key_no_file(tmp_path):
         ("a=b", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
         ("", "a", "b\\c", (True, "a", "b\\c"), "a='b\\\\c'\n"),
         ("", "a", "b\\", (True, "a", "b\\"), "a='b\\\\'\n"),
-        ("", "a", "b\\'c", (True, "a", "b\\'c"), "a='b\\\\\\'c'\n"),
+        ("", "a", "b\\'c", (True, "a", "b\\'c"), 'a="b\\\\\'c"\n'),
     ],
 )
 def test_set_key(dotenv_path, before, key, value, expected, after):

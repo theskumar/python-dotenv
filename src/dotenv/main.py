@@ -216,12 +216,18 @@ def set_key(
     )
 
     if quote:
-        # The single-quoted-value parser decodes `\\` and `\'`, so both have to
-        # be escaped here for the value to survive a write/read round-trip.
-        # Backslashes first, otherwise the backslash added by the quote
-        # escaping would be escaped in turn.
-        escaped = value_to_set.replace("\\", "\\\\").replace("'", "\\'")
-        value_out = f"'{escaped}'"
+        if "'" in value_to_set:
+            # A single quote cannot be escaped inside a single-quoted shell
+            # value, so values containing one are written double-quoted to
+            # keep the file source-able.
+            escaped = value_to_set.replace("\\", "\\\\").replace('"', '\\"')
+            value_out = f'"{escaped}"'
+        else:
+            # The single-quoted-value parser decodes `\\`, so backslashes have
+            # to be escaped here for the value to survive a write/read
+            # round-trip.
+            escaped = value_to_set.replace("\\", "\\\\")
+            value_out = f"'{escaped}'"
     else:
         value_out = value_to_set
     if export:
