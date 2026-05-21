@@ -10,6 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Strip a leading UTF-8 BOM from `.env` file contents so the first variable is no longer silently lost when the file is saved with BOM (e.g. by some JetBrains IDEs on Windows) by [@h1whelan] in [#640]
+- Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml`.
 
 ## [1.2.2] - 2026-03-01
 
