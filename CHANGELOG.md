@@ -9,6 +9,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml`.
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
 
 ## [1.2.3] - 2026-08-16
