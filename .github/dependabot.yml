@@ -1,13 +1,32 @@
-# Keep GitHub Actions up to date with GitHub's Dependabot...
 # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/keeping-your-actions-up-to-date-with-dependabot
-# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
 version: 2
 updates:
+  # Keep GitHub Actions pinned-by-SHA references up to date. Dependabot
+  # rewrites the SHA and the trailing `# vX.Y.Z` version comment together.
   - package-ecosystem: github-actions
     directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: ci
+      include: scope
     groups:
       github-actions:
         patterns:
-          - "*"  # Group all Actions updates into a single larger pull request
+          - "*"
+    labels:
+      - dependencies
+      - github-actions
+
+  - package-ecosystem: pip
+    directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    labels:
+      - dependencies
+      - python
