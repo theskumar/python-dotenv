@@ -50,6 +50,10 @@ class DotEnv:
         override: bool = True,
     ) -> None:
         self.dotenv_path: Optional[StrPath] = dotenv_path
+        if isinstance(dotenv_path, str):
+            self.dotenv_path = os.path.expanduser(dotenv_path)
+        elif dotenv_path is not None:
+            self.dotenv_path = pathlib.Path(dotenv_path).expanduser()
         self.stream: Optional[IO[str]] = stream
         self._dict: Optional[Dict[str, Optional[str]]] = None
         self.verbose: bool = verbose
@@ -208,6 +212,10 @@ def set_key(
     modifying a file at a potentially untrusted path. If you don't need this
     protection and need symlinks to be followed, use `follow_symlinks`.
     """
+    if isinstance(dotenv_path, str):
+        dotenv_path = os.path.expanduser(dotenv_path)
+    else:
+        dotenv_path = pathlib.Path(dotenv_path).expanduser()
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
 
@@ -262,6 +270,10 @@ def unset_key(
     modifying a file at a potentially untrusted path. If you don't need this
     protection and need symlinks to be followed, use `follow_symlinks`.
     """
+    if isinstance(dotenv_path, str):
+        dotenv_path = os.path.expanduser(dotenv_path)
+    else:
+        dotenv_path = pathlib.Path(dotenv_path).expanduser()
     if not os.path.exists(dotenv_path):
         logger.warning("Can't delete from %s - it doesn't exist.", dotenv_path)
         return None, key_to_unset
