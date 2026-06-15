@@ -16,10 +16,12 @@ def get_cli_string(
     value: Optional[str] = None,
     quote: Optional[str] = None,
 ):
-    """Returns a string suitable for running as a shell script.
+    """Return a command string for invoking the dotenv CLI.
 
-    Useful for converting a arguments passed to a fabric task
-    to be passed to a `local` or `run` command.
+    This helper is intended for simple command construction and display. It does
+    not shell-escape arbitrary input. If you pass the returned string to a shell,
+    quote or validate any user-controlled values first. Prefer passing arguments as
+    a list to subprocess APIs when possible.
     """
     command = ["dotenv"]
     if quote:
