@@ -1,6 +1,9 @@
 import pytest
+import tempfile
+import os
 
 from dotenv.variables import Literal, Variable, parse_variables
+from dotenv import dotenv_values
 
 
 @pytest.mark.parametrize(
@@ -31,5 +34,28 @@ from dotenv.variables import Literal, Variable, parse_variables
 )
 def test_parse_variables(value, expected):
     result = parse_variables(value)
-
     assert list(result) == expected
+
+def test_variables_simple_interpolation():
+    with tempfile.NamedTemporaryFile(mode='w+', delete=False) as f:
+        f.write('BASE=base\nFOO=${BASE}/bar\n')
+        f.flush()
+        values = dotenv_values(f.name)
+        assert values == {'BASE': 'base', 'FOO': 'base/bar'}
+    os.remove(f.name)
+
+def test_variables_with_default():
+    with tempfile.NamedTemporaryFile(mode='w+', delete=False) as f:
+        f.write('FOO=${BAR:-default}\n')
+        f.flush()
+        values = dotenv_values(f.name)
+        assert values == {'FOO': 'default'}
+    os.remove(f.name)
+
+def test_variables_escape():
+    with tempfile.NamedTemporaryFile(mode='w+', delete=False) as f:
+        f.write('FOO=$${BAR}\n')
+        f.flush()
+        values = dotenv_values(f.name)
+        assert values == {'FOO': '$'}
+    os.remove(f.name)
