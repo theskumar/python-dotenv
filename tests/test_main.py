@@ -54,6 +54,23 @@ def test_set_key(dotenv_path, before, key, value, expected, after):
     mock_warning.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    "value",
+    [
+        "C:\\Users",
+        "\\d+",
+        "\\",
+        "a\\b",
+        "a\\\\b",
+        "back\\slash and 'quote'",
+    ],
+)
+def test_set_key_roundtrip_with_backslashes(dotenv_path, value):
+    dotenv.set_key(dotenv_path, "a", value)
+
+    assert dotenv.get_key(dotenv_path, "a") == value
+
+
 def test_set_key_encoding(dotenv_path):
     encoding = "latin-1"
 
