@@ -708,3 +708,19 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+@pytest.mark.parametrize(
+    "string,expected",
+    [
+        ("KEY= # comment", {"KEY": ""}),
+        ("KEY=  # comment", {"KEY": ""}),
+        ("KEY=val # comment", {"KEY": "val"}),
+        ("KEY=a#b", {"KEY": "a#b"}),
+        ("KEY=#novalue", {"KEY": "#novalue"}),
+    ],
+)
+def test_dotenv_values_empty_value_with_inline_comment(string, expected):
+    result = dotenv.dotenv_values(stream=io.StringIO(string))
+
+    assert result == expected

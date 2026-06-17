@@ -154,8 +154,15 @@ def parse_binding(reader: Reader) -> Binding:
         key = parse_key(reader)
         reader.read_regex(_whitespace)
         if reader.peek(1) == "=":
-            reader.read_regex(_equal_sign)
-            value: Optional[str] = parse_value(reader)
+            (equal_sign,) = reader.read_regex(_equal_sign)
+            # If there is whitespace after `=` and the value starts with `#`,
+            # the value is empty and the rest of the line is an inline comment
+            # (e.g. `KEY= # comment`). Without whitespace (`KEY=#novalue`) the
+            # `#` is part of the unquoted value.
+            if len(equal_sign) > 1 and reader.peek(1) == "#":
+                value: Optional[str] = ""
+            else:
+                value = parse_value(reader)
         else:
             value = None
         reader.read_regex(_comment)
