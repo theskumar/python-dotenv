@@ -54,6 +54,29 @@ def test_set_key(dotenv_path, before, key, value, expected, after):
     mock_warning.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    "key,value",
+    [
+        ("a", "no backslash"),
+        ("b", r"one \ backslash"),
+        ("c", r"two \\ backslashes"),
+        ("d", r"three \\\ backslashes"),
+        ("e", r"path C:\Users\test"),
+        ("f", r"mix ' quote and \\ backslashes"),
+    ],
+)
+def test_set_key_backslash_roundtrip(tmp_path, key, value):
+    """set_key must round-trip values containing backslashes (gh-issue)."""
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("")
+
+    dotenv.set_key(dotenv_path, key, value)
+    result = dotenv.dotenv_values(dotenv_path)
+    assert result.get(key) == value, (
+        f"Round-trip failed: {value!r} -> {result.get(key)!r}"
+    )
+
+
 def test_set_key_encoding(dotenv_path):
     encoding = "latin-1"
 
