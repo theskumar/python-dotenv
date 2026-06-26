@@ -40,6 +40,11 @@ def test_set_key_no_file(tmp_path):
         ("a=b\nc=d\ne=f", "c", "g", (True, "c", "g"), "a=b\nc='g'\ne=f"),
         ("a=b\n", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
         ("a=b", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
+        # Backslash edge cases (fix for #661)
+        ("", "a", "C:\\Users", (True, "a", "C:\\Users"), "a='C:\\\\Users'\n"),
+        ("", "a", "\\d+", (True, "a", "\\d+"), "a='\\\\d+'\n"),
+        ("", "a", "\\\\server\\share", (True, "a", "\\\\server\\share"), "a='\\\\\\\\server\\\\share'\n"),
+        ("", "a", "it's\\n", (True, "a", "it's\\n"), "a='it\\'s\\\\n'\n"),
     ],
 )
 def test_set_key(dotenv_path, before, key, value, expected, after):
@@ -708,3 +713,24 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+def test_set_key_roundtrip_backslash(tmp_path):
+    """Values with backslashes round-trip correctly through set_key + dotenv_values."""
+    dotenv_path = tmp_path / ".env"
+
+    test_values = [
+        "C:\\Users",
+        "\\d+",
+        "\\\\server\\share",
+        "it's\\n",
+        "regex\\b\\w+",
+    ]
+
+    for original_value in test_values:
+        dotenv.set_key(dotenv_path, "KEY", original_value)
+        result = dotenv.dotenv_values(dotenv_path)
+        assert result["KEY"] == original_value, (
+            f"Round-trip failed for {original_value!r}: got {result['KEY']!r}"
+        )
+        dotenv_path.write_text("")

@@ -216,7 +216,7 @@ def set_key(
     )
 
     if quote:
-        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
+        value_out = "'{}'".format(value_to_set.replace("\\", "\\\\").replace("'", "\\'"))
     else:
         value_out = value_to_set
     if export:
