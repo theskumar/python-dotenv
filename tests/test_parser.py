@@ -340,6 +340,23 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a: b\r\nc=d",
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="a: b\r\n", line=1),
+                    error=True,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
             "a=b\nc=d",
             [
                 Binding(
