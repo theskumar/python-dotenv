@@ -2,6 +2,7 @@ import io
 import logging
 import os
 import pathlib
+import re
 import stat
 import sys
 import tempfile
@@ -17,6 +18,8 @@ from .variables import parse_variables
 StrPath = Union[str, "os.PathLike[str]"]
 
 logger = logging.getLogger(__name__)
+_posix_export_key = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_safe_unquoted_export_value = re.compile(r"^[A-Za-z0-9_@%+=:,./-]+$")
 
 
 def _load_dotenv_disabled() -> bool:
@@ -37,6 +40,27 @@ def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding
                 mapping.original.line,
             )
         yield mapping
+
+
+def _validate_export_key(key: str) -> None:
+    if _posix_export_key.fullmatch(key) is None:
+        raise ValueError(f"Invalid export key: {key}")
+
+
+def _quote_export_value(value: str, quote: bool) -> str:
+    if not quote and _safe_unquoted_export_value.fullmatch(value) is not None:
+        return value
+
+    if "'" not in value:
+        return f"'{value}'"
+
+    escaped = (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("$", "\\$")
+        .replace("`", "\\`")
+    )
+    return f'"{escaped}"'
 
 
 class DotEnv:
@@ -215,13 +239,15 @@ def set_key(
         quote_mode == "auto" and not value_to_set.isalnum()
     )
 
-    if quote:
-        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
-    else:
-        value_out = value_to_set
     if export:
+        _validate_export_key(key_to_set)
+        value_out = _quote_export_value(value_to_set, quote)
         line_out = f"export {key_to_set}={value_out}\n"
     else:
+        if quote:
+            value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
+        else:
+            value_out = value_to_set
         line_out = f"{key_to_set}={value_out}\n"
 
     with rewrite(dotenv_path, encoding=encoding, follow_symlinks=follow_symlinks) as (
