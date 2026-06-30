@@ -63,6 +63,38 @@ def test_set_key_encoding(dotenv_path):
     assert dotenv_path.read_text(encoding=encoding) == "a='é'\n"
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="requires a POSIX shell")
+def test_set_key_export_shell_escapes_single_quote_value(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    marker_path = tmp_path / "pwned"
+    value = f"'; touch {marker_path}; #"
+
+    dotenv.set_key(dotenv_path, "SAFE", value, export=True)
+
+    env = os.environ.copy()
+    env["DOTENV_PATH"] = str(dotenv_path)
+    env["EXPECTED"] = value
+    result = subprocess.run(
+        ["bash", "-c", 'source "$DOTENV_PATH"; test "$SAFE" = "$EXPECTED"'],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert not marker_path.exists()
+
+
+def test_set_key_export_rejects_invalid_shell_key(tmp_path):
+    dotenv_path = tmp_path / ".env"
+
+    with pytest.raises(ValueError, match="Invalid export key"):
+        dotenv.set_key(dotenv_path, "SAFE; touch pwned; #", "value", export=True)
+
+    assert not dotenv_path.exists()
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="file mode bits behave differently on Windows"
 )
