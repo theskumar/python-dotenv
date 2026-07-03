@@ -63,6 +63,25 @@ def test_set_key_encoding(dotenv_path):
     assert dotenv_path.read_text(encoding=encoding) == "a='é'\n"
 
 
+def test_set_key_quote_type_double(dotenv_path):
+    result = dotenv.set_key(dotenv_path, "a", "b'c", quote_type="double")
+
+    assert result == (True, "a", "b'c")
+    assert dotenv_path.read_text() == 'a="b\'c"\n'
+
+
+def test_set_key_quote_type_double_escapes_double_quote(dotenv_path):
+    result = dotenv.set_key(dotenv_path, "a", 'b"c', quote_type="double")
+
+    assert result == (True, "a", 'b"c')
+    assert dotenv_path.read_text() == 'a="b\\"c"\n'
+
+
+def test_set_key_quote_type_invalid(dotenv_path):
+    with pytest.raises(ValueError, match="Unknown quote_type"):
+        dotenv.set_key(dotenv_path, "a", "b", quote_type="invalid")
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="file mode bits behave differently on Windows"
 )
