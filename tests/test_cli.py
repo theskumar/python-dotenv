@@ -133,6 +133,36 @@ def test_set_quote_options(cli, dotenv_path, quote_mode, variable, value, expect
     assert dotenv_path.read_text() == expected
 
 
+def test_set_quote_type_double(cli, dotenv_path):
+    result = cli.invoke(
+        dotenv_cli,
+        [
+            "--file",
+            dotenv_path,
+            "--quote",
+            "always",
+            "--quote-type",
+            "double",
+            "set",
+            "a",
+            'b"c',
+        ],
+    )
+
+    assert (result.exit_code, result.output) == (0, 'a=b"c\n')
+    assert dotenv_path.read_text() == 'a="b\\"c"\n'
+
+
+def test_set_invalid_quote_type(cli, dotenv_path):
+    result = cli.invoke(
+        dotenv_cli,
+        ["--file", dotenv_path, "--quote-type", "invalid", "set", "a", "x"],
+    )
+
+    assert result.exit_code == 2
+    assert "Invalid value for '--quote-type'" in result.output
+
+
 @pytest.mark.parametrize(
     "dotenv_path,export_mode,variable,value,expected",
     (

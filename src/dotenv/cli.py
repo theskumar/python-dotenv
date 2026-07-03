@@ -57,11 +57,24 @@ def enumerate_env() -> Optional[str]:
     type=click.BOOL,
     help="Whether to write the dot file as an executable bash script.",
 )
+@click.option(
+    "--quote-type",
+    default="single",
+    type=click.Choice(["single", "double"]),
+    help="Preferred quote character when values are quoted. Default is single.",
+)
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
+def cli(
+    ctx: click.Context, file: Any, quote: Any, export: Any, quote_type: Any
+) -> None:
     """This script is used to set, get or unset values from a .env file."""
-    ctx.obj = {"QUOTE": quote, "EXPORT": export, "FILE": file}
+    ctx.obj = {
+        "QUOTE": quote,
+        "EXPORT": export,
+        "QUOTE_TYPE": quote_type,
+        "FILE": file,
+    }
 
 
 @contextmanager
@@ -124,7 +137,15 @@ def set_value(ctx: click.Context, key: Any, value: Any) -> None:
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
     export = ctx.obj["EXPORT"]
-    success, key, value = set_key(file, key, value, quote, export)
+    quote_type = ctx.obj["QUOTE_TYPE"]
+    success, key, value = set_key(
+        file,
+        key,
+        value,
+        quote,
+        export,
+        quote_type=quote_type,
+    )
     if success:
         click.echo(f"{key}={value}")
     else:

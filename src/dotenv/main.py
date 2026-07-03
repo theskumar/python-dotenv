@@ -7,7 +7,7 @@ import sys
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
-from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
+from typing import IO, Dict, Iterable, Iterator, Literal, Mapping, Optional, Tuple, Union
 
 from .parser import Binding, parse_stream
 from .variables import parse_variables
@@ -198,6 +198,7 @@ def set_key(
     export: bool = False,
     encoding: Optional[str] = "utf-8",
     follow_symlinks: bool = False,
+    quote_type: Literal["single", "double"] = "single",
 ) -> Tuple[Optional[bool], str, str]:
     """
     Adds or Updates a key/value to the given .env
@@ -210,13 +211,19 @@ def set_key(
     """
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
+    if quote_type not in ("single", "double"):
+        raise ValueError(f"Unknown quote_type: {quote_type}")
 
     quote = quote_mode == "always" or (
         quote_mode == "auto" and not value_to_set.isalnum()
     )
 
     if quote:
-        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
+        if quote_type == "single":
+            value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
+        else:
+            escaped_value = value_to_set.replace("\\", "\\\\").replace('"', '\\"')
+            value_out = '"{}"'.format(escaped_value)
     else:
         value_out = value_to_set
     if export:
