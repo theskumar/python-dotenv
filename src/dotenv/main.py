@@ -216,7 +216,11 @@ def set_key(
     )
 
     if quote:
-        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
+        # The single-quoted-value parser treats backslash as an escape
+        # character, so backslashes must be escaped before single quotes
+        # (order matters) for the written value to round-trip unchanged.
+        escaped = value_to_set.replace("\\", "\\\\").replace("'", "\\'")
+        value_out = "'{}'".format(escaped)
     else:
         value_out = value_to_set
     if export:

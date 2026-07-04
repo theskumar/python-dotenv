@@ -22,7 +22,9 @@ _export = make_regex(r"(?:export[^\S\r\n]+)?")
 _single_quoted_key = make_regex(r"'([^']+)'")
 _unquoted_key = make_regex(r"([^=\#\s]+)")
 _equal_sign = make_regex(r"(=[^\S\r\n]*)")
-_single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
+# Treat every ``\<char>`` as a single escaped unit (including ``\\``), so a
+# value ending in an escaped backslash does not merge with the closing quote.
+_single_quoted_value = make_regex(r"'((?:\\[\s\S]|[^'\\])*)'")
 _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
 _unquoted_value = make_regex(r"([^\r\n]*)")
 _comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")

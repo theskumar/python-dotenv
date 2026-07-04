@@ -274,6 +274,28 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a='b\\\\c'",  # escaped backslash decodes to a single backslash
+            [
+                Binding(
+                    key="a",
+                    value="b\\c",
+                    original=Original(string="a='b\\\\c'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a='b\\\\'",  # trailing escaped backslash must not consume the quote
+            [
+                Binding(
+                    key="a",
+                    value="b\\",
+                    original=Original(string="a='b\\\\'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
             'a="b\\"c"',
             [
                 Binding(
