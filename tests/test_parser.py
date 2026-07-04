@@ -109,6 +109,39 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a= #c",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a= #c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=  # comment",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a=  # comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=#b",
+            [
+                Binding(
+                    key="a",
+                    value="#b",
+                    original=Original(string="a=#b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
             "a=b\t#c",
             [
                 Binding(
