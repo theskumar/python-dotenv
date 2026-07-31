@@ -190,6 +190,21 @@ def rewrite(
         raise error from None
 
 
+def _is_writable_key(key: str, export: bool = False) -> bool:
+    """
+    Whether ``key`` survives a write and read round trip through the parser.
+
+    ``set_key`` interpolates the key into the line it writes, so a key the
+    parser reads back differently, or not at all, would silently store a
+    different variable than the caller asked for. Rather than restating the
+    parser's rules here, write a probe line with a trivial value and check that
+    the parser hands the same key back.
+    """
+    prefix = "export " if export else ""
+    bindings = list(parse_stream(io.StringIO(f"{prefix}{key}=x\n")))
+    return len(bindings) == 1 and bindings[0].key == key
+
+
 def set_key(
     dotenv_path: StrPath,
     key_to_set: str,
@@ -210,6 +225,9 @@ def set_key(
     """
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
+
+    if not _is_writable_key(key_to_set, export=export):
+        raise ValueError(f"Invalid key: {key_to_set!r}")
 
     quote = quote_mode == "always" or (
         quote_mode == "auto" and not value_to_set.isalnum()
