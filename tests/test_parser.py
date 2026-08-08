@@ -120,6 +120,56 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a= #c",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a= #c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=\t#c",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a=\t#c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=#c",
+            [
+                Binding(
+                    key="a",
+                    value="#c",
+                    original=Original(string="a=#c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a= #c\nd=e",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a= #c\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="d",
+                    value="e",
+                    original=Original(string="d=e", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
             "a=b c",
             [
                 Binding(

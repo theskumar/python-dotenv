@@ -120,12 +120,17 @@ def parse_key(reader: Reader) -> Optional[str]:
     return key
 
 
-def parse_unquoted_value(reader: Reader) -> str:
+def parse_unquoted_value(reader: Reader, preceded_by_whitespace: bool = False) -> str:
     (part,) = reader.read_regex(_unquoted_value)
+    # An unquoted value only ends at a `#` that is preceded by whitespace. The
+    # whitespace right after the `=` is consumed by `_equal_sign`, so a value
+    # starting with `#` is a comment only if that whitespace was there.
+    if preceded_by_whitespace and part.startswith("#"):
+        return ""
     return re.sub(r"\s+#.*", "", part).rstrip()
 
 
-def parse_value(reader: Reader) -> str:
+def parse_value(reader: Reader, preceded_by_whitespace: bool = False) -> str:
     char = reader.peek(1)
     if char == "'":
         (value,) = reader.read_regex(_single_quoted_value)
@@ -136,7 +141,7 @@ def parse_value(reader: Reader) -> str:
     elif char in ("", "\n", "\r"):
         return ""
     else:
-        return parse_unquoted_value(reader)
+        return parse_unquoted_value(reader, preceded_by_whitespace)
 
 
 def parse_binding(reader: Reader) -> Binding:
@@ -154,8 +159,10 @@ def parse_binding(reader: Reader) -> Binding:
         key = parse_key(reader)
         reader.read_regex(_whitespace)
         if reader.peek(1) == "=":
-            reader.read_regex(_equal_sign)
-            value: Optional[str] = parse_value(reader)
+            (equal_sign,) = reader.read_regex(_equal_sign)
+            value: Optional[str] = parse_value(
+                reader, preceded_by_whitespace=len(equal_sign) > 1
+            )
         else:
             value = None
         reader.read_regex(_comment)
