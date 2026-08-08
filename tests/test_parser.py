@@ -296,6 +296,75 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a='b\\\\c'",
+            [
+                Binding(
+                    key="a",
+                    value="b\\c",
+                    original=Original(string="a='b\\\\c'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="b\\\\c"',
+            [
+                Binding(
+                    key="a",
+                    value="b\\c",
+                    original=Original(string='a="b\\\\c"', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        # An escaped backslash at the end of the value must not be read as the
+        # start of an escaped quote, which would swallow the following lines.
+        (
+            "a='b\\\\'\nc='d'",
+            [
+                Binding(
+                    key="a",
+                    value="b\\",
+                    original=Original(string="a='b\\\\'\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c='d'", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            'a="b\\\\"\nc="d"',
+            [
+                Binding(
+                    key="a",
+                    value="b\\",
+                    original=Original(string='a="b\\\\"\n', line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string='c="d"', line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a='b\\\\\\'c'",
+            [
+                Binding(
+                    key="a",
+                    value="b\\'c",
+                    original=Original(string="a='b\\\\\\'c'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
             "a=à",
             [
                 Binding(

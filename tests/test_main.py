@@ -40,6 +40,9 @@ def test_set_key_no_file(tmp_path):
         ("a=b\nc=d\ne=f", "c", "g", (True, "c", "g"), "a=b\nc='g'\ne=f"),
         ("a=b\n", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
         ("a=b", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
+        ("", "a", "b\\c", (True, "a", "b\\c"), "a='b\\\\c'\n"),
+        ("", "a", "b\\", (True, "a", "b\\"), "a='b\\\\'\n"),
+        ("", "a", "b\\'c", (True, "a", "b\\'c"), "a='b\\\\\\'c'\n"),
     ],
 )
 def test_set_key(dotenv_path, before, key, value, expected, after):
@@ -52,6 +55,32 @@ def test_set_key(dotenv_path, before, key, value, expected, after):
     assert result == expected
     assert dotenv_path.read_text() == after
     mock_warning.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "C:\\Users",
+        "C:\\Users\\",
+        "\\d+",
+        "back\\",
+        "a\\'b",
+        "it's",
+        'say "hi"',
+        "a\\nb",
+        "plain",
+        "",
+    ],
+)
+def test_set_key_round_trips(dotenv_path, value):
+    dotenv_path.write_text("")
+
+    dotenv.set_key(dotenv_path, "a", value)
+    dotenv.set_key(dotenv_path, "b", "sentinel")
+
+    assert dotenv.get_key(dotenv_path, "a") == value
+    # A value that is mis-tokenized can swallow the lines that follow it.
+    assert dotenv.get_key(dotenv_path, "b") == "sentinel"
 
 
 def test_set_key_encoding(dotenv_path):

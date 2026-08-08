@@ -10,6 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Strip a leading UTF-8 BOM from `.env` file contents so the first variable is no longer silently lost when the file is saved with BOM (e.g. by some JetBrains IDEs on Windows) by [@h1whelan] in [#640]
+- `set_key` now escapes backslashes, so values containing them (Windows paths, regular expressions) survive a write/read round-trip. Quoted values ending in an escaped backslash are no longer mis-parsed as an escaped quote, which used to swallow the following lines by [@dchaudhari7177] in [#661]
 
 ## [1.2.2] - 2026-03-01
 
@@ -435,6 +436,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#497]: https://github.com/theskumar/python-dotenv/pull/497
 [#161]: https://github.com/theskumar/python-dotenv/issues/161
 [#640]: https://github.com/theskumar/python-dotenv/pull/640
+[#661]: https://github.com/theskumar/python-dotenv/issues/661
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -452,6 +454,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@bbc2]: https://github.com/bbc2
 [@befeleme]: https://github.com/befeleme
 [@cjauvin]: https://github.com/cjauvin
+[@dchaudhari7177]: https://github.com/dchaudhari7177
 [@eaf]: https://github.com/eaf
 [@earlbread]: https://github.com/earlbread
 [@eekstunt]: https://github.com/eekstunt
