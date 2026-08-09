@@ -235,13 +235,13 @@ values defined in the following list:
 
 - [environs](https://github.com/sloria/environs)
 - [Honcho](https://github.com/nickstenning/honcho)
-- [dump-env](https://github.com/sobolevn/dump-env)
+- [dump-env](https://github.com/wemake-services/dump-env)
 - [dynaconf](https://github.com/dynaconf/dynaconf)
 - [parse_it](https://github.com/naorlivne/parse_it)
 - [django-dotenv](https://github.com/jpadilla/django-dotenv)
 - [django-environ](https://github.com/joke2k/django-environ)
 - [python-decouple](https://github.com/HBNetwork/python-decouple)
-- [django-configuration](https://github.com/jezdez/django-configurations)
+- [django-configuration](https://github.com/jazzband/django-configurations)
 
 ## Acknowledgements
 
