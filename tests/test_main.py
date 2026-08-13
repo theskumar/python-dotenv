@@ -63,6 +63,21 @@ def test_set_key_encoding(dotenv_path):
     assert dotenv_path.read_text(encoding=encoding) == "a='é'\n"
 
 
+@pytest.mark.parametrize(
+    "value",
+    [
+        "C:\\Users\\name",
+        r"\\d+",
+        r"prefix\\suffix",
+        "backslash\\'quote",
+    ],
+)
+def test_set_key_round_trips_backslashes(dotenv_path, value):
+    dotenv.set_key(dotenv_path, "VALUE", value)
+
+    assert dotenv.get_key(dotenv_path, "VALUE") == value
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="file mode bits behave differently on Windows"
 )

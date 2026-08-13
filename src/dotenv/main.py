@@ -216,7 +216,8 @@ def set_key(
     )
 
     if quote:
-        value_out = "'{}'".format(value_to_set.replace("'", "\\'"))
+        escaped_value = value_to_set.replace("\\", "\\\\").replace("'", "\\'")
+        value_out = f"'{escaped_value}'"
     else:
         value_out = value_to_set
     if export:
