@@ -17,7 +17,7 @@ except ImportError:
     )
     sys.exit(1)
 
-from .main import dotenv_values, set_key, unset_key
+from .main import dotenv_values, generate_template, set_key, unset_key
 from .version import __version__
 
 
@@ -199,6 +199,37 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
         sys.exit(1)
 
     run_command([*commandline, *ctx.args], dotenv_as_dict)
+
+
+@cli.command()
+@click.pass_context
+@click.argument("output", default=None, required=False, type=click.Path())
+@click.option(
+    "--keep-directives",
+    is_flag=True,
+    default=False,
+    help="Keep ::dotenv-template-preserve and ::dotenv-template-exclude directives in output.",
+)
+def template(ctx: click.Context, output: Any, keep_directives: bool) -> None:
+    """Generate a template from the .env file.
+
+    Values are replaced with their key names. Use ::dotenv-template-preserve
+    in a line to keep its value, or ::dotenv-template-exclude to omit it.
+
+    If OUTPUT is given, the template is written to that file. Otherwise it is
+    printed to stdout.
+    """
+    file = ctx.obj["FILE"]
+
+    with stream_file(file) as stream:
+        result = generate_template(stream=stream, keep_directives=keep_directives)
+
+    if output:
+        with open(output, "w") as f:
+            f.write(result)
+        click.echo(f"Template written to {output}")
+    else:
+        click.echo(result, nl=False)
 
 
 def run_command(command: List[str], env: Dict[str, str]) -> None:

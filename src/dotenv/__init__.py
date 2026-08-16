@@ -1,6 +1,14 @@
 from typing import Any, Optional
 
-from .main import dotenv_values, find_dotenv, get_key, load_dotenv, set_key, unset_key
+from .main import (
+    dotenv_values,
+    find_dotenv,
+    generate_template,
+    get_key,
+    load_dotenv,
+    set_key,
+    unset_key,
+)
 
 
 def load_ipython_extension(ipython: Any) -> None:
@@ -43,6 +51,7 @@ __all__ = [
     "get_cli_string",
     "load_dotenv",
     "dotenv_values",
+    "generate_template",
     "get_key",
     "set_key",
     "unset_key",
