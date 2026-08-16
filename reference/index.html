@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -714,6 +714,22 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
           </tr>
           <tr class="doc-section-item">
             <td>
+                <code>interpolate</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether to interpolate variables using POSIX variable expansion.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
                 <code>encoding</code>
             </td>
             <td>
@@ -736,13 +752,7 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/dotenv/main.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">432</span>
-<span class="normal">433</span>
-<span class="normal">434</span>
-<span class="normal">435</span>
-<span class="normal">436</span>
-<span class="normal">437</span>
-<span class="normal">438</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">438</span>
 <span class="normal">439</span>
 <span class="normal">440</span>
 <span class="normal">441</span>
@@ -769,7 +779,14 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 <span class="normal">462</span>
 <span class="normal">463</span>
 <span class="normal">464</span>
-<span class="normal">465</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dotenv_values</span><span class="p">(</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dotenv_values</span><span class="p">(</span>
     <span class="n">dotenv_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StrPath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -787,6 +804,7 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 <span class="sd">        dotenv_path: Absolute or relative path to the .env file.</span>
 <span class="sd">        stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.</span>
 <span class="sd">        verbose: Whether to output a warning if the .env file is missing.</span>
+<span class="sd">        interpolate: Whether to interpolate variables using POSIX variable expansion.</span>
 <span class="sd">        encoding: Encoding to be used to read the file.</span>
 
 <span class="sd">    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the</span>
@@ -828,12 +846,7 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/dotenv/main.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">332</span>
-<span class="normal">333</span>
-<span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span>
-<span class="normal">337</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">337</span>
 <span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
@@ -876,7 +889,12 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 <span class="normal">377</span>
 <span class="normal">378</span>
 <span class="normal">379</span>
-<span class="normal">380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_dotenv</span><span class="p">(</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_dotenv</span><span class="p">(</span>
     <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.env&quot;</span><span class="p">,</span>
     <span class="n">raise_error_if_not_found</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">usecwd</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1153,6 +1171,22 @@ from the <code>.env</code> file.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
+                <code>interpolate</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether to interpolate variables using POSIX variable expansion.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
                 <code>encoding</code>
             </td>
             <td>
@@ -1172,7 +1206,7 @@ from the <code>.env</code> file.</p>
         <p>Returns:
     Bool: True if at least one environment variable is set else False</p>
 <p>If both <code>dotenv_path</code> and <code>stream</code> are <code>None</code>, <code>find_dotenv()</code> is used to find the
-.env file with it's default parameters. If you need to change the default parameters
+.env file with its default parameters. If you need to change the default parameters
 of <code>find_dotenv()</code>, you can explicitly call <code>find_dotenv()</code> and pass the result
 to this function as <code>dotenv_path</code>.</p>
 <p>If the environment variable <code>PYTHON_DOTENV_DISABLED</code> is set to a truthy value,
@@ -1181,12 +1215,7 @@ to this function as <code>dotenv_path</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/dotenv/main.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">383</span>
-<span class="normal">384</span>
-<span class="normal">385</span>
-<span class="normal">386</span>
-<span class="normal">387</span>
-<span class="normal">388</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">388</span>
 <span class="normal">389</span>
 <span class="normal">390</span>
 <span class="normal">391</span>
@@ -1227,7 +1256,13 @@ to this function as <code>dotenv_path</code>.</p>
 <span class="normal">426</span>
 <span class="normal">427</span>
 <span class="normal">428</span>
-<span class="normal">429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_dotenv</span><span class="p">(</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_dotenv</span><span class="p">(</span>
     <span class="n">dotenv_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StrPath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1244,12 +1279,13 @@ to this function as <code>dotenv_path</code>.</p>
 <span class="sd">        verbose: Whether to output a warning the .env file is missing.</span>
 <span class="sd">        override: Whether to override the system environment variables with the variables</span>
 <span class="sd">            from the `.env` file.</span>
+<span class="sd">        interpolate: Whether to interpolate variables using POSIX variable expansion.</span>
 <span class="sd">        encoding: Encoding to be used to read the file.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        Bool: True if at least one environment variable is set else False</span>
 
 <span class="sd">    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the</span>
-<span class="sd">    .env file with it&#39;s default parameters. If you need to change the default parameters</span>
+<span class="sd">    .env file with its default parameters. If you need to change the default parameters</span>
 <span class="sd">    of `find_dotenv()`, you can explicitly call `find_dotenv()` and pass the result</span>
 <span class="sd">    to this function as `dotenv_path`.</span>
 
@@ -1354,7 +1390,12 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
 <span class="normal">242</span>
 <span class="normal">243</span>
 <span class="normal">244</span>
-<span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_key</span><span class="p">(</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_key</span><span class="p">(</span>
     <span class="n">dotenv_path</span><span class="p">:</span> <span class="n">StrPath</span><span class="p">,</span>
     <span class="n">key_to_set</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value_to_set</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1380,7 +1421,12 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">quote</span><span class="p">:</span>
-        <span class="n">value_out</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value_to_set</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&#39;&quot;</span><span class="p">))</span>
+        <span class="c1"># The single-quoted-value parser decodes `\\` and `\&#39;`, so both have to</span>
+        <span class="c1"># be escaped here for the value to survive a write/read round-trip.</span>
+        <span class="c1"># Backslashes first, otherwise the backslash added by the quote</span>
+        <span class="c1"># escaping would be escaped in turn.</span>
+        <span class="n">escaped</span> <span class="o">=</span> <span class="n">value_to_set</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="n">value_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">escaped</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">value_out</span> <span class="o">=</span> <span class="n">value_to_set</span>
     <span class="k">if</span> <span class="n">export</span><span class="p">:</span>
@@ -1436,12 +1482,7 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/dotenv/main.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
 <span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span>
@@ -1474,7 +1515,12 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
 <span class="normal">283</span>
 <span class="normal">284</span>
 <span class="normal">285</span>
-<span class="normal">286</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unset_key</span><span class="p">(</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unset_key</span><span class="p">(</span>
     <span class="n">dotenv_path</span><span class="p">:</span> <span class="n">StrPath</span><span class="p">,</span>
     <span class="n">key_to_unset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">quote_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;always&quot;</span><span class="p">,</span>
@@ -1578,7 +1624,7 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["toc.follow", "navigation.sections"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
