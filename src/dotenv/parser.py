@@ -29,7 +29,7 @@ _double_quoted_value = make_regex(r'"((?:\\.|[^"\\])*)"', extra_flags=re.DOTALL)
 _unquoted_value = make_regex(r"([^\r\n]*)")
 _comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")
 _end_of_line = make_regex(r"[^\S\r\n]*(?:\r\n|\n|\r|$)")
-_rest_of_line = make_regex(r"[^\r\n]*(?:\r|\n|\r\n)?")
+_rest_of_line = make_regex(r"[^\r\n]*(?:\r\n|\n|\r)?")
 _double_quote_escapes = make_regex(r"\\[\\'\"abfnrtv]")
 _single_quote_escapes = make_regex(r"\\[\\']")
 
