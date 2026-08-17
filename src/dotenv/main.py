@@ -215,6 +215,10 @@ def set_key(
         quote_mode == "auto" and not value_to_set.isalnum()
     )
 
+    if not os.path.exists(dotenv_path):
+        logger.warning("Can't set key to %s - it doesn't exist.", dotenv_path)
+        return None, key_to_set, value_to_set
+
     if quote:
         # The single-quoted-value parser decodes `\\` and `\'`, so both have to
         # be escaped here for the value to survive a write/read round-trip.
