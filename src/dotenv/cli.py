@@ -142,7 +142,7 @@ def get(ctx: click.Context, key: Any) -> None:
         values = dotenv_values(stream=stream)
 
     stored_value = values.get(key)
-    if stored_value:
+    if stored_value is not None:
         click.echo(stored_value)
     else:
         sys.exit(1)
