@@ -39,6 +39,15 @@ def test_list(
     assert (result.exit_code, result.output) == (0, expected)
 
 
+def test_list_non_ascii_value(cli, dotenv_path):
+    """`list` must read the file as UTF-8, like the library API does."""
+    dotenv_path.write_text("a=Köln\n", encoding="utf-8")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "list"])
+
+    assert (result.exit_code, result.output) == (0, "a=Köln\n")
+
+
 def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ["--file", "nx_file", "list"])
 
@@ -65,6 +74,15 @@ def test_get_existing_value(cli, dotenv_path):
     result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "get", "a"])
 
     assert (result.exit_code, result.output) == (0, "b\n")
+
+
+def test_get_non_ascii_value(cli, dotenv_path):
+    """`get` must read the file as UTF-8, like the library API does."""
+    dotenv_path.write_text("a=Köln\n", encoding="utf-8")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "get", "a"])
+
+    assert (result.exit_code, result.output) == (0, "Köln\n")
 
 
 def test_get_non_existent_value(cli, dotenv_path):
