@@ -2,7 +2,7 @@ bumpversion
 click
 ipython
 pytest-cov
-pytest>=9.0.3
+pytest>=9.1.1
 tox
 wheel
 ruff
