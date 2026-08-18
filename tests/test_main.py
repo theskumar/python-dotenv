@@ -1,6 +1,7 @@
 import io
 import logging
 import os
+import pathlib
 import stat
 import subprocess
 import sys
@@ -193,6 +194,44 @@ def test_set_key_permission_error(dotenv_path):
     else:
         dotenv_path.chmod(0o600)
     assert dotenv_path.read_text() == ""
+
+
+@pytest.mark.skipif(
+    sys.platform != "win32" and os.geteuid() == 0,
+    reason="Root user can access files even with 000 permissions.",
+)
+def test_set_key_permission_error_leaves_no_temp_file(dotenv_path):
+    if sys.platform == "win32":
+        # On Windows, make file read-only
+        dotenv_path.chmod(stat.S_IREAD)
+    else:
+        # On Unix, remove all permissions
+        dotenv_path.chmod(0o000)
+
+    try:
+        with pytest.raises(PermissionError):
+            dotenv.set_key(dotenv_path, "a", "b")
+
+        assert list(dotenv_path.parent.glob(".tmp_*")) == []
+    finally:
+        # Restore permissions
+        if sys.platform == "win32":
+            dotenv_path.chmod(stat.S_IWRITE | stat.S_IREAD)
+        else:
+            dotenv_path.chmod(0o600)
+
+
+def test_rewrite_reports_original_error_when_cleanup_fails(dotenv_path):
+    replace_error = OSError("replace failed")
+
+    with mock.patch("dotenv.main.os.replace", side_effect=replace_error):
+        with mock.patch.object(
+            pathlib.Path, "unlink", side_effect=OSError("unlink failed")
+        ):
+            with pytest.raises(OSError) as excinfo:
+                dotenv.set_key(dotenv_path, "a", "b")
+
+    assert excinfo.value is replace_error
 
 
 def test_get_key_no_file(tmp_path):
