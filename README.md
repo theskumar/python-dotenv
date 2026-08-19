@@ -231,6 +231,26 @@ values defined in the following list:
 - Default value, if provided.
 - Empty string.
 
+### Command substitution
+
+python-dotenv can run shell commands and use their output as variable values
+using `$(command)` syntax. This is disabled by default; pass
+`execute_commands=True` to `load_dotenv()` or `dotenv_values()` to enable it.
+
+```bash
+GITHUB_TOKEN=$(gh auth token)
+```
+
+Only use command substitution with `.env` files you trust. Commands run with
+the permissions of the current process.
+
+Commands containing `)` inside `$(...)` are not supported (for example,
+`$(python -c "print(1)")`). Use helper scripts or commands without nested
+parentheses instead.
+
+The CLI flag `--execute-commands` enables this for `dotenv list`, `dotenv get`,
+and `dotenv run`.
+
 ## Related Projects
 
 - [environs](https://github.com/sloria/environs)

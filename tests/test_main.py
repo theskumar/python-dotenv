@@ -756,3 +756,101 @@ def test_dotenv_values_empty_value_with_inline_comment(string, expected):
     result = dotenv.dotenv_values(stream=io.StringIO(string))
 
     assert result == expected
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
+@pytest.mark.parametrize(
+    "string,execute_commands,expected",
+    [
+        ("TOKEN=$(echo abc)", False, {"TOKEN": "$(echo abc)"}),
+        ("TOKEN=$(echo abc)", True, {"TOKEN": "abc"}),
+        ('TOKEN="$(echo abc)"', True, {"TOKEN": "abc"}),
+        ("TOKEN='$(echo abc)'", True, {"TOKEN": "abc"}),
+        ("BASE=foo\nTOKEN=$(echo ${BASE})", True, {"BASE": "foo", "TOKEN": "foo"}),
+        (
+            "BASE=foo\nPREFIX=${BASE}-$(echo suffix)",
+            True,
+            {"BASE": "foo", "PREFIX": "foo-suffix"},
+        ),
+        ("TOKEN=$(false)", True, {"TOKEN": ""}),
+    ],
+)
+def test_dotenv_values_execute_commands(string, execute_commands, expected):
+    with mock.patch.dict(os.environ, {}, clear=True):
+        result = dotenv.dotenv_values(
+            stream=io.StringIO(string),
+            execute_commands=execute_commands,
+        )
+
+        assert result == expected
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_dotenv_values_execute_commands_without_interpolate():
+    result = dotenv.dotenv_values(
+        stream=io.StringIO("BASE=foo\nTOKEN=$(echo ${BASE})\nLITERAL=${BASE}"),
+        interpolate=False,
+        execute_commands=True,
+    )
+
+    assert result == {"BASE": "foo", "TOKEN": "foo", "LITERAL": "${BASE}"}
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_dotenv_values_execute_commands_python(tmp_path):
+    helper = tmp_path / "helper.py"
+    helper.write_text('print("secret", end="")')
+    result = dotenv.dotenv_values(
+        stream=io.StringIO(f"TOKEN=$({sys.executable} {helper})"),
+        execute_commands=True,
+    )
+
+    assert result == {"TOKEN": "secret"}
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_execute_commands(dotenv_path):
+    dotenv_path.write_text("TOKEN=$(echo loaded)")
+
+    result = dotenv.load_dotenv(dotenv_path, execute_commands=True)
+
+    assert result is True
+    assert os.environ == {"TOKEN": "loaded"}
+
+
+def test_load_dotenv_execute_commands_in_current_dir(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    helper = tmp_path / "helper.py"
+    helper.write_text('print("from-subprocess", end="")')
+    dotenv_path.write_text(f"TOKEN=$({sys.executable} {helper})")
+    code_path = tmp_path / "code.py"
+    code_path.write_text(
+        textwrap.dedent("""
+        import dotenv
+        import os
+
+        dotenv.load_dotenv(execute_commands=True)
+        print(os.environ['TOKEN'])
+    """)
+    )
+    os.chdir(tmp_path)
+
+    result = subprocess.run(
+        [sys.executable, str(code_path)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    assert result.stdout == "from-subprocess\n"

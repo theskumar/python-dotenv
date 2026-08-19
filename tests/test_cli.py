@@ -39,6 +39,17 @@ def test_list(
     assert (result.exit_code, result.output) == (0, expected)
 
 
+def test_list_with_execute_commands(cli, dotenv_path):
+    dotenv_path.write_text("TOKEN=$(echo resolved)\n")
+
+    result = cli.invoke(
+        dotenv_cli, ["--file", str(dotenv_path), "--execute-commands", "list"]
+    )
+
+    assert result.exit_code == 0
+    assert result.output == "TOKEN=resolved\n"
+
+
 def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ["--file", "nx_file", "list"])
 
@@ -269,16 +280,16 @@ def test_run_with_command_flags(dotenv_path, tmp_path):
     """
     Check that command flags passed after `dotenv run` are not interpreted.
 
-    Here, we want to run `printenv --version`, not `dotenv --version`.
+    Here, we want to run `python --version`, not `dotenv --version`.
     """
 
     result = run_dotenv(
-        ["--file", str(dotenv_path), "run", "printenv", "--version"],
+        ["--file", str(dotenv_path), "run", "python", "--version"],
         cwd=tmp_path,
     )
 
     check_process(result, exit_code=0)
-    assert result.stdout.strip().startswith("printenv ")
+    assert "Python" in result.stdout
 
 
 def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
@@ -287,7 +298,7 @@ def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
     """
 
     result = run_dotenv(
-        ["--version", "--file", str(dotenv_path), "run", "printenv", "--version"],
+        ["--version", "--file", str(dotenv_path), "run", "python", "--version"],
         cwd=tmp_path,
     )
 
