@@ -135,6 +135,25 @@ def get_key(
     return DotEnv(dotenv_path, verbose=True, encoding=encoding).get(key_to_get)
 
 
+def _discard_temp_file(path: pathlib.Path) -> None:
+    """
+    Delete `rewrite`'s temporary file, ignoring any failure to do so.
+
+    This runs while another exception is propagating, so it must not raise:
+    that error is the one worth reporting. On Windows, a file whose mode has
+    no owner-write bit carries the read-only attribute and can't be unlinked,
+    so the mode is reset before a second attempt.
+    """
+    try:
+        path.unlink(missing_ok=True)
+    except OSError:
+        try:
+            path.chmod(stat.S_IWRITE | stat.S_IREAD)
+            path.unlink(missing_ok=True)
+        except OSError:
+            logger.warning("python-dotenv could not remove the temporary file %s", path)
+
+
 @contextmanager
 def rewrite(
     path: StrPath,
@@ -183,10 +202,10 @@ def rewrite(
 
             os.replace(dest_path, path)
         except BaseException:
-            dest_path.unlink(missing_ok=True)
+            _discard_temp_file(dest_path)
             raise
     else:
-        dest_path.unlink(missing_ok=True)
+        _discard_temp_file(dest_path)
         raise error from None
 
 
