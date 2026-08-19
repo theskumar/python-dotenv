@@ -57,11 +57,24 @@ def enumerate_env() -> Optional[str]:
     type=click.BOOL,
     help="Whether to write the dot file as an executable bash script.",
 )
+@click.option(
+    "--execute-commands",
+    is_flag=True,
+    default=False,
+    help="Execute $(command) substitutions in values.",
+)
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
+def cli(
+    ctx: click.Context, file: Any, quote: Any, export: Any, execute_commands: bool
+) -> None:
     """This script is used to set, get or unset values from a .env file."""
-    ctx.obj = {"QUOTE": quote, "EXPORT": export, "FILE": file}
+    ctx.obj = {
+        "QUOTE": quote,
+        "EXPORT": export,
+        "FILE": file,
+        "EXECUTE_COMMANDS": execute_commands,
+    }
 
 
 @contextmanager
@@ -95,7 +108,9 @@ def list_values(ctx: click.Context, output_format: str) -> None:
     file = ctx.obj["FILE"]
 
     with stream_file(file) as stream:
-        values = dotenv_values(stream=stream)
+        values = dotenv_values(
+            stream=stream, execute_commands=ctx.obj["EXECUTE_COMMANDS"]
+        )
 
     if output_format == "json":
         click.echo(json.dumps(values, indent=2, sort_keys=True))
@@ -139,7 +154,9 @@ def get(ctx: click.Context, key: Any) -> None:
     file = ctx.obj["FILE"]
 
     with stream_file(file) as stream:
-        values = dotenv_values(stream=stream)
+        values = dotenv_values(
+            stream=stream, execute_commands=ctx.obj["EXECUTE_COMMANDS"]
+        )
 
     stored_value = values.get(key)
     if stored_value:
@@ -190,7 +207,9 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
         )
     dotenv_as_dict = {
         k: v
-        for (k, v) in dotenv_values(file).items()
+        for (k, v) in dotenv_values(
+            file, execute_commands=ctx.obj["EXECUTE_COMMANDS"]
+        ).items()
         if v is not None and (override or k not in os.environ)
     }
 

@@ -1,6 +1,12 @@
+import logging
+import os
 import re
+import subprocess
 from abc import ABCMeta, abstractmethod
+from re import Match
 from typing import Iterator, Mapping, Optional, Pattern
+
+logger = logging.getLogger(__name__)
 
 _posix_variable: Pattern[str] = re.compile(
     r"""
@@ -13,6 +19,26 @@ _posix_variable: Pattern[str] = re.compile(
     """,
     re.VERBOSE,
 )
+_command: Pattern[str] = re.compile(r"\$\(([^)]+)\)")
+
+
+def resolve_commands(value: str, env: Mapping[str, Optional[str]]) -> str:
+    cmd_env = {**os.environ, **{k: v for k, v in env.items() if v is not None}}
+
+    def run(match: Match[str]) -> str:
+        try:
+            return subprocess.check_output(
+                match.group(1),
+                shell=True,
+                text=True,
+                stderr=subprocess.DEVNULL,
+                env=cmd_env,
+            ).strip()
+        except (subprocess.CalledProcessError, OSError):
+            logger.warning("python-dotenv: command failed: %s", match.group(1))
+            return ""
+
+    return _command.sub(run, value)
 
 
 class Atom(metaclass=ABCMeta):

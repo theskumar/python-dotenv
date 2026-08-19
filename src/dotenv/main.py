@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
 from .parser import Binding, parse_stream
-from .variables import parse_variables
+from .variables import parse_variables, resolve_commands
 
 # A type alias for a string path to be used for the paths in this file.
 # These paths may flow to `open()` and `os.replace()`.
@@ -48,6 +48,7 @@ class DotEnv:
         encoding: Optional[str] = None,
         interpolate: bool = True,
         override: bool = True,
+        execute_commands: bool = False,
     ) -> None:
         self.dotenv_path: Optional[StrPath] = dotenv_path
         self.stream: Optional[IO[str]] = stream
@@ -56,6 +57,7 @@ class DotEnv:
         self.encoding: Optional[str] = encoding
         self.interpolate: bool = interpolate
         self.override: bool = override
+        self.execute_commands: bool = execute_commands
 
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
@@ -79,9 +81,14 @@ class DotEnv:
 
         raw_values = self.parse()
 
-        if self.interpolate:
+        if self.interpolate or self.execute_commands:
             self._dict = OrderedDict(
-                resolve_variables(raw_values, override=self.override)
+                resolve_variables(
+                    raw_values,
+                    override=self.override,
+                    interpolate=self.interpolate,
+                    execute_commands=self.execute_commands,
+                )
             )
         else:
             self._dict = OrderedDict(raw_values)
@@ -294,6 +301,8 @@ def unset_key(
 def resolve_variables(
     values: Iterable[Tuple[str, Optional[str]]],
     override: bool,
+    interpolate: bool = True,
+    execute_commands: bool = False,
 ) -> Mapping[str, Optional[str]]:
     new_values: Dict[str, Optional[str]] = {}
 
@@ -301,7 +310,6 @@ def resolve_variables(
         if value is None:
             result = None
         else:
-            atoms = parse_variables(value)
             env: Dict[str, Optional[str]] = {}
             if override:
                 env.update(os.environ)  # type: ignore
@@ -309,7 +317,15 @@ def resolve_variables(
             else:
                 env.update(new_values)
                 env.update(os.environ)  # type: ignore
-            result = "".join(atom.resolve(env) for atom in atoms)
+
+            if interpolate:
+                atoms = parse_variables(value)
+                result = "".join(atom.resolve(env) for atom in atoms)
+            else:
+                result = value
+
+            if execute_commands:
+                result = resolve_commands(result, env)
 
         new_values[name] = result
 
@@ -392,6 +408,7 @@ def load_dotenv(
     override: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    execute_commands: bool = False,
 ) -> bool:
     """Parse a .env file and then load all the variables found as environment variables.
 
@@ -404,6 +421,7 @@ def load_dotenv(
             from the `.env` file.
         interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
+        execute_commands: Whether to execute `$(command)` substitutions in values.
     Returns:
         Bool: True if at least one environment variable is set else False
 
@@ -431,6 +449,7 @@ def load_dotenv(
         interpolate=interpolate,
         override=override,
         encoding=encoding,
+        execute_commands=execute_commands,
     )
     return dotenv.set_as_environment_variables()
 
@@ -441,6 +460,7 @@ def dotenv_values(
     verbose: bool = False,
     interpolate: bool = True,
     encoding: Optional[str] = "utf-8",
+    execute_commands: bool = False,
 ) -> Dict[str, Optional[str]]:
     """
     Parse a .env file and return its content as a dict.
@@ -455,6 +475,7 @@ def dotenv_values(
         verbose: Whether to output a warning if the .env file is missing.
         interpolate: Whether to interpolate variables using POSIX variable expansion.
         encoding: Encoding to be used to read the file.
+        execute_commands: Whether to execute `$(command)` substitutions in values.
 
     If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the
     .env file.
@@ -469,6 +490,7 @@ def dotenv_values(
         interpolate=interpolate,
         override=True,
         encoding=encoding,
+        execute_commands=execute_commands,
     ).dict()
 
 

@@ -715,6 +715,17 @@ from dotenv.parser import Binding, Original, parse_stream
                 ),
             ],
         ),
+        (
+            "TOKEN=$(echo x)",
+            [
+                Binding(
+                    key="TOKEN",
+                    value="$(echo x)",
+                    original=Original(string="TOKEN=$(echo x)", line=1),
+                    error=False,
+                )
+            ],
+        ),
     ],
 )
 def test_parse_stream(test_input, expected):

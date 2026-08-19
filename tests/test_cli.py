@@ -39,6 +39,17 @@ def test_list(
     assert (result.exit_code, result.output) == (0, expected)
 
 
+def test_list_with_execute_commands(cli, dotenv_path):
+    dotenv_path.write_text("TOKEN=$(echo resolved)\n")
+
+    result = cli.invoke(
+        dotenv_cli, ["--file", str(dotenv_path), "--execute-commands", "list"]
+    )
+
+    assert result.exit_code == 0
+    assert result.output == "TOKEN=resolved\n"
+
+
 def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ["--file", "nx_file", "list"])
 
