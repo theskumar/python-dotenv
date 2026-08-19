@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 
 from dotenv.variables import Literal, Variable, parse_variables, resolve_commands
@@ -43,11 +45,17 @@ def test_parse_variables(value, expected):
         ("prefix-$(echo suffix)", {}, "prefix-suffix"),
         ("$(false)", {}, ""),
         ("$(i_do_not_exist_xyz)", {}, ""),
-        ("$(echo ${PREFIX})", {"PREFIX": "hi"}, "hi"),
     ],
 )
 def test_resolve_commands(value, env, expected):
     assert resolve_commands(value, env) == expected
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="POSIX shell variable syntax is not used on Windows"
+)
+def test_resolve_commands_shell_env_variable():
+    assert resolve_commands("$(echo ${PREFIX})", {"PREFIX": "hi"}) == "hi"
 
 
 def test_resolve_commands_strips_trailing_newline():

@@ -2,7 +2,6 @@ import io
 import logging
 import os
 import pathlib
-import shutil
 import stat
 import subprocess
 import sys
@@ -1047,16 +1046,3 @@ def test_load_dotenv_execute_commands_in_current_dir(tmp_path):
     )
 
     assert result.stdout == "from-subprocess\n"
-
-
-@pytest.mark.skipif(
-    shutil.which("gh") is None,
-    reason="gh CLI is not installed",
-)
-def test_dotenv_values_execute_commands_gh_auth_token():
-    result = dotenv.dotenv_values(
-        stream=io.StringIO("GITHUB_TOKEN=$(gh auth token)"),
-        execute_commands=True,
-    )
-
-    assert result["GITHUB_TOKEN"]

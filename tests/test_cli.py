@@ -482,7 +482,7 @@ def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
     """
 
     result = run_dotenv(
-        ["--version", "--file", str(dotenv_path), "run", "printenv", "--version"],
+        ["--version", "--file", str(dotenv_path), "run", "python", "--version"],
         cwd=tmp_path,
     )
 
