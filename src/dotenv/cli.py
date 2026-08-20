@@ -80,6 +80,49 @@ def stream_file(path: os.PathLike) -> Iterator[IO[str]]:
         sys.exit(2)
 
 
+_SENSITIVE_KEY_SUBSTRINGS = (
+    "KEY",
+    "SECRET",
+    "TOKEN",
+    "PASSWORD",
+    "PASSWD",
+    "PWD",
+    "CREDENTIAL",
+    "AUTH",
+    "PRIVATE",
+    "ACCESS",
+    "CERT",
+    "DSN",
+    "CONNECTION_STRING",
+    "CONN_STRING",
+)
+
+
+def _is_sensitive_key(key: str) -> bool:
+    """
+    Return whether a key looks like it holds a sensitive value.
+
+    Does a case-insensitive substring match against a fixed list of
+    sensitivity keywords (e.g. "MY_API_KEY" matches on "KEY", "DB_PASSWORD"
+    matches on "PASSWORD").
+    """
+    upper_key = key.upper()
+    return any(keyword in upper_key for keyword in _SENSITIVE_KEY_SUBSTRINGS)
+
+
+def _mask_value(value: str) -> str:
+    """
+    Mask a sensitive value for display, leaving only a hint of its content.
+
+    Values longer than 4 characters keep their first and last 2 characters,
+    e.g. "MY_SECRET_KEY" becomes "MY****EY". Values of 4 characters or fewer
+    are fully replaced with "****".
+    """
+    if len(value) > 4:
+        return f"{value[:2]}****{value[-2:]}"
+    return "****"
+
+
 @cli.command(name="list")
 @click.pass_context
 @click.option(
@@ -90,12 +133,25 @@ def stream_file(path: os.PathLike) -> Iterator[IO[str]]:
     help="The format in which to display the list. Default format is simple, "
     "which displays name=value without quotes.",
 )
-def list_values(ctx: click.Context, output_format: str) -> None:
+@click.option(
+    "-m",
+    "--mask",
+    is_flag=True,
+    default=False,
+    help="Mask values whose key looks sensitive, showing only a hint of their content.",
+)
+def list_values(ctx: click.Context, output_format: str, mask: bool) -> None:
     """Display all the stored key/value."""
     file = ctx.obj["FILE"]
 
     with stream_file(file) as stream:
         values = dotenv_values(stream=stream)
+
+    if mask:
+        values = {
+            k: (_mask_value(v) if v is not None and _is_sensitive_key(k) else v)
+            for k, v in values.items()
+        }
 
     if output_format == "json":
         click.echo(json.dumps(values, indent=2, sort_keys=True))

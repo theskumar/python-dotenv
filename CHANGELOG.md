@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add `-m`/`--mask` flag to `dotenv list` to mask displayed values whose key looks sensitive (substring match against a keyword list such as `KEY`, `SECRET`, `TOKEN`, `PASSWORD`), showing the first and last 2 characters for values longer than 4 characters and `****` otherwise; non-sensitive keys and unset values are left unmasked
+
 ### Fixed
 
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]

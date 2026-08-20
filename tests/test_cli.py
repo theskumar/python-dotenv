@@ -39,6 +39,110 @@ def test_list(
     assert (result.exit_code, result.output) == (0, expected)
 
 
+@pytest.mark.parametrize(
+    "output_format,content,expected",
+    (
+        (None, "API_KEY=abcdefgh", """API_KEY=ab****gh\n"""),
+        ("simple", "API_KEY=abcdefgh", """API_KEY=ab****gh\n"""),
+        ("simple", "API_KEY=abcd", """API_KEY=****\n"""),
+        ("simple", "API_KEY=ab", """API_KEY=****\n"""),
+        ("simple", "API_KEY", ""),
+        ("json", "API_KEY=abcdefgh", """{\n  "API_KEY": "ab****gh"\n}\n"""),
+        ("json", "API_KEY=abcd", """{\n  "API_KEY": "****"\n}\n"""),
+        ("json", "API_KEY", """{\n  "API_KEY": null\n}\n"""),
+        ("shell", "API_KEY=abcdefgh", "API_KEY='ab****gh'\n"),
+        ("export", "API_KEY=abcdefgh", "export API_KEY='ab****gh'\n"),
+    ),
+)
+def test_list_mask(
+    cli, dotenv_path, output_format: Optional[str], content: str, expected: str
+):
+    dotenv_path.write_text(content + "\n")
+
+    args = ["--file", dotenv_path, "list", "--mask"]
+    if output_format is not None:
+        args.extend(["--format", output_format])
+
+    result = cli.invoke(dotenv_cli, args)
+
+    assert (result.exit_code, result.output) == (0, expected)
+
+
+def test_list_mask_non_sensitive_key_unmasked(cli, dotenv_path):
+    """--mask must not touch a value whose key doesn't look sensitive."""
+    dotenv_path.write_text("PORT=8080\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "list", "--mask"])
+
+    assert (result.exit_code, result.output) == (0, "PORT=8080\n")
+
+
+def test_list_mask_short_flag(cli, dotenv_path):
+    """The -m alias must behave the same as --mask."""
+    dotenv_path.write_text("API_KEY=abcdefgh\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "list", "-m"])
+
+    assert (result.exit_code, result.output) == (0, "API_KEY=ab****gh\n")
+
+
+def test_list_mask_empty_value(cli, dotenv_path):
+    """An explicit empty value (`KEY=`) is distinct from a bare key (`KEY`,
+    which parses to None and is left unmasked/unprinted). It should mask to
+    the <=4-character bucket."""
+    dotenv_path.write_text("API_KEY=\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "list", "--mask"])
+
+    assert (result.exit_code, result.output) == (0, "API_KEY=****\n")
+
+
+def test_list_mask_five_char_boundary(cli, dotenv_path):
+    """A 5-character value is the first to cross into the partial-reveal
+    (>4 characters) branch."""
+    dotenv_path.write_text("API_KEY=abcde\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "list", "--mask"])
+
+    assert (result.exit_code, result.output) == (0, "API_KEY=ab****de\n")
+
+
+def test_list_mask_custom_file(cli, tmp_path):
+    """--mask works with an explicit, non-default --file path."""
+    custom_path = tmp_path / "custom.env"
+    custom_path.write_text("API_KEY=abcdefgh\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", str(custom_path), "list", "--mask"])
+
+    assert (result.exit_code, result.output) == (0, "API_KEY=ab****gh\n")
+
+
+def test_list_mask_mixed_sensitive_and_non_sensitive(cli, dotenv_path):
+    """Per-key gating is visible within a single result: only the sensitive
+    key is redacted, the non-sensitive key prints unchanged."""
+    dotenv_path.write_text("API_KEY=abcdefgh\nPORT=8080\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "list", "--mask"])
+
+    assert (result.exit_code, result.output) == (
+        0,
+        "API_KEY=ab****gh\nPORT=8080\n",
+    )
+
+
+def test_list_mask_mixed_sensitive_and_non_sensitive_json(cli, dotenv_path):
+    dotenv_path.write_text("API_KEY=abcdefgh\nPORT=8080\n")
+
+    result = cli.invoke(
+        dotenv_cli, ["--file", dotenv_path, "list", "--mask", "--format", "json"]
+    )
+
+    assert (result.exit_code, result.output) == (
+        0,
+        """{\n  "API_KEY": "ab****gh",\n  "PORT": "8080"\n}\n""",
+    )
+
+
 def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ["--file", "nx_file", "list"])
 
