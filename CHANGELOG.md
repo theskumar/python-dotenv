@@ -10,6 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
+- A leading UTF-8 BOM is now preserved when `set_key` or `unset_key` rewrites a `.env` file, instead of being silently dropped by [@MohammedAlkindi] in [#687]
 
 ## [1.2.3] - 2026-08-16
 
@@ -448,6 +449,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#640]: https://github.com/theskumar/python-dotenv/pull/640
 [#663]: https://github.com/theskumar/python-dotenv/pull/663
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
+[#687]: https://github.com/theskumar/python-dotenv/pull/687
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -487,6 +489,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@lsmith77]: https://github.com/lsmith77
 [@matthewfranglen]: https://github.com/matthewfranglen
 [@mgorny]: https://github.com/mgorny
+[@MohammedAlkindi]: https://github.com/MohammedAlkindi
 [@naorlivne]: https://github.com/naorlivne
 [@Noethix55555]: https://github.com/Noethix55555
 [@qnighy]: https://github.com/qnighy
