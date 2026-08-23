@@ -1,6 +1,10 @@
+import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Sequence
+
+_SRC = str(Path(__file__).resolve().parents[1] / "src")
 
 
 def run_dotenv(
@@ -12,12 +16,16 @@ def run_dotenv(
     Run the `dotenv` CLI in a subprocess with the given arguments.
     """
 
+    run_env = {**os.environ, **(env or {})}
+    existing = run_env.get("PYTHONPATH", "")
+    run_env["PYTHONPATH"] = _SRC if not existing else f"{_SRC}{os.pathsep}{existing}"
+
     process = subprocess.run(
-        ["dotenv", *args],
+        [sys.executable, "-m", "dotenv", *args],
         capture_output=True,
         text=True,
         cwd=cwd,
-        env=env,
+        env=run_env,
     )
 
     return process
