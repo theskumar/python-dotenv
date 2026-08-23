@@ -1,3 +1,4 @@
+import errno
 import io
 import logging
 import os
@@ -135,6 +136,22 @@ def get_key(
     return DotEnv(dotenv_path, verbose=True, encoding=encoding).get(key_to_get)
 
 
+# `O_NOFOLLOW` is POSIX-only; on platforms without it the flag is a no-op and
+# `rewrite` falls back to the previous behaviour.
+_O_NOFOLLOW = getattr(os, "O_NOFOLLOW", 0)
+
+# Errors a platform may raise when `O_NOFOLLOW` refuses to open a symlink.
+_SYMLINK_ERRNOS = frozenset(
+    e
+    for e in (getattr(errno, "ELOOP", None), getattr(errno, "EMLINK", None))
+    if e is not None
+)
+
+
+def _opener_no_follow(file: str, flags: int) -> int:
+    return os.open(file, flags | _O_NOFOLLOW)
+
+
 @contextmanager
 def rewrite(
     path: StrPath,
@@ -145,7 +162,14 @@ def rewrite(
         path = os.path.realpath(path)
 
     try:
-        source: IO[str] = open(path, encoding=encoding)
+        # Do not read through a symlink unless asked to: `os.replace` below
+        # replaces the link itself rather than its target, so the target's
+        # contents are not the contents of the file being written.
+        source: IO[str] = open(
+            path,
+            encoding=encoding,
+            opener=None if follow_symlinks else _opener_no_follow,
+        )
         try:
             path_stat = os.lstat(path)
             original_mode: Optional[int] = (
@@ -157,6 +181,13 @@ def rewrite(
             source.close()
             raise
     except FileNotFoundError:
+        source = io.StringIO("")
+        original_mode = None
+    except OSError as exc:
+        if exc.errno not in _SYMLINK_ERRNOS:
+            raise
+        # The path is a symlink and we are not following it, so there is no
+        # existing content to carry over into its replacement.
         source = io.StringIO("")
         original_mode = None
 

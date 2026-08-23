@@ -129,16 +129,19 @@ def test_rewrite_closes_file_handle_on_lstat_failure(tmp_path):
     sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
 )
 def test_set_key_symlink_to_existing_file(tmp_path):
+    # The target holds a different key from the one being set, so that content
+    # read through the symlink would be visible in the result rather than
+    # overwritten by the assignment.
     target = tmp_path / "target.env"
-    target.write_text("a=x\n")
+    target.write_text("b=x\n")
     symlink = tmp_path / ".env"
     symlink.symlink_to(target)
 
     dotenv.set_key(symlink, "a", "y")
 
-    assert target.read_text() == "a=x\n"
+    assert target.read_text() == "b=x\n"
     assert not symlink.is_symlink()
-    assert "a='y'" in symlink.read_text()
+    assert symlink.read_text() == "a='y'\n"
     assert stat.S_IMODE(symlink.stat().st_mode) == 0o600
 
 
@@ -321,14 +324,16 @@ def test_unset_non_existent_file(tmp_path):
     sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
 )
 def test_unset_key_symlink_to_existing_file(tmp_path):
+    # As above, the target holds a different key from the one being unset, so
+    # that content read through the symlink would remain visible in the result.
     target = tmp_path / "target.env"
-    target.write_text("a=x\n")
+    target.write_text("b=x\n")
     symlink = tmp_path / ".env"
     symlink.symlink_to(target)
 
     dotenv.unset_key(symlink, "a")
 
-    assert target.read_text() == "a=x\n"
+    assert target.read_text() == "b=x\n"
     assert not symlink.is_symlink()
     assert symlink.read_text() == ""
 
