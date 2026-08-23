@@ -7,6 +7,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The `dotenv` console script is no longer installed with the base package. A
+  conda/venv `python-dotenv` without `[cli]` was dropping a stub `dotenv` on
+  `PATH` that hid a working user-level `[cli]` install. Run the CLI with
+  `python -m dotenv` after `pip install "python-dotenv[cli]"`. ([#683](https://github.com/theskumar/python-dotenv/issues/683))
+
 ### Fixed
 
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
