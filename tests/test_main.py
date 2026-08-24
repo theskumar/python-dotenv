@@ -173,6 +173,24 @@ def test_set_key_follow_symlinks(tmp_path):
 
 
 @pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_set_key_symlink_keeps_target_contents(tmp_path):
+    # The target holds a key the set does not touch, so losing the contents the
+    # path resolved to would show up here.
+    target = tmp_path / "target.env"
+    target.write_text("b=x\n")
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+
+    dotenv.set_key(symlink, "a", "y")
+
+    assert target.read_text() == "b=x\n"
+    assert not symlink.is_symlink()
+    assert symlink.read_text() == "b=x\na='y'\n"
+
+
+@pytest.mark.skipif(
     sys.platform != "win32" and os.geteuid() == 0,
     reason="Root user can access files even with 000 permissions.",
 )
@@ -363,6 +381,24 @@ def test_unset_key_follow_symlinks(tmp_path):
 
     assert target.read_text() == ""
     assert symlink.is_symlink()
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_unset_key_symlink_keeps_target_contents(tmp_path):
+    # The target holds a second key the unset does not touch, so losing the
+    # contents the path resolved to would show up here.
+    target = tmp_path / "target.env"
+    target.write_text("a=x\nb=y\n")
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+
+    dotenv.unset_key(symlink, "a")
+
+    assert target.read_text() == "a=x\nb=y\n"
+    assert not symlink.is_symlink()
+    assert symlink.read_text() == "b=y\n"
 
 
 def prepare_file_hierarchy(path):
