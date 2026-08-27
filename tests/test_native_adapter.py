@@ -10,6 +10,11 @@ import dotenv._native as native
 import dotenv.parser as parser_module
 from dotenv.parser import Binding, Original, parse_stream
 
+native_only = pytest.mark.skipif(
+    sys.implementation.name == "pypy",
+    reason="native backend contract tests require CPython",
+)
+
 
 def _python_bindings(text):
     return list(parse_stream(io.StringIO(text)))
@@ -37,6 +42,7 @@ def test_missing_backend_falls_back_to_python_parser(monkeypatch):
     ]
 
 
+@native_only
 def test_backend_exception_is_not_hidden_by_python_fallback(monkeypatch):
     class BrokenBackend:
         @staticmethod
@@ -57,6 +63,7 @@ def test_backend_exception_is_not_hidden_by_python_fallback(monkeypatch):
         [("a", "b", "a=b", 0, False)],
     ],
 )
+@native_only
 def test_invalid_backend_records_are_hard_contract_errors(monkeypatch, records):
     class InvalidBackend:
         @staticmethod
@@ -71,6 +78,7 @@ def test_invalid_backend_records_are_hard_contract_errors(monkeypatch, records):
         _python_bindings("a=b\n")
 
 
+@native_only
 def test_backend_import_dependency_error_is_not_hidden(monkeypatch):
     def broken_import(module_name):
         raise ModuleNotFoundError("backend dependency missing", name="dependency")
@@ -99,6 +107,7 @@ def test_pypy_never_attempts_native_import(monkeypatch):
     ]
 
 
+@native_only
 def test_backend_contract_markers_are_required(monkeypatch):
     class UnversionedBackend:
         @staticmethod
@@ -113,6 +122,7 @@ def test_backend_contract_markers_are_required(monkeypatch):
         _python_bindings("a=b\n")
 
 
+@native_only
 def test_backend_contract_marker_mismatch_is_not_hidden(monkeypatch):
     class WrongContractBackend:
         BACKEND_CONTRACT = "wrong.contract"
@@ -130,6 +140,7 @@ def test_backend_contract_marker_mismatch_is_not_hidden(monkeypatch):
         _python_bindings("a=b\n")
 
 
+@native_only
 def test_valid_backend_records_are_adapted_at_parser_boundary(monkeypatch):
     calls = []
 
@@ -161,6 +172,7 @@ def test_valid_backend_records_are_adapted_at_parser_boundary(monkeypatch):
     assert type(result[0].original) is Original
 
 
+@native_only
 def test_legacy_dotenv_core_is_not_used(monkeypatch):
     calls = []
 
@@ -173,10 +185,11 @@ def test_legacy_dotenv_core_is_not_used(monkeypatch):
     assert calls == ["fast_dotenv_rs_backend"]
 
 
+@native_only
 def test_extension_only_backend_can_coexist_with_upstream_package(monkeypatch):
     backend = ModuleType(native._BACKEND_MODULE)
     _mark_backend(backend)
-    backend.parse_bindings = lambda text: [("a", "b", "a=b", 1, False)]
+    backend.__dict__["parse_bindings"] = lambda text: [("a", "b", "a=b", 1, False)]
     monkeypatch.setitem(sys.modules, native._BACKEND_MODULE, backend)
 
     result = list(parse_stream(io.StringIO("a=b")))
