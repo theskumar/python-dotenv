@@ -47,6 +47,9 @@ Source = "https://github.com/theskumar/python-dotenv"
 cli = [
     "click>=5.0",
 ]
+native = [
+    "fast-dotenv-rs-backend>=0.1.1,<0.2; platform_python_implementation != 'PyPy'",
+]
 
 [project.scripts]
 dotenv = "dotenv.__main__:cli"
