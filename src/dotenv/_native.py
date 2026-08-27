@@ -3,7 +3,8 @@
 ``fast-dotenv-rs-backend`` is deliberately separate from the upstream
 ``dotenv`` package.  Its only adapter contract is a ``parse_bindings``
 function returning lossless records in the order
-``(key, value, original_string, original_line, error)``.
+``(key, value, original_string, original_line, error)`` and the versioned
+contract markers ``BACKEND_CONTRACT`` and ``BACKEND_CONTRACT_VERSION``.
 
 The Python parser is the normal path.  It is selected only when the backend
 package is absent (or when running on PyPy).  Once a backend is imported, an
@@ -19,6 +20,8 @@ BindingRecord = Tuple[Optional[str], Optional[str], str, int, bool]
 
 _BACKEND_MODULE = "fast_dotenv_rs_backend"
 _BACKEND_DISTRIBUTION = "fast-dotenv-rs-backend"
+_BACKEND_CONTRACT = "fast-dotenv-rs.backend.binding"
+_BACKEND_CONTRACT_VERSION = 1
 
 
 class NativeBackendContractError(RuntimeError):
@@ -57,6 +60,15 @@ def parse_bindings(text: str) -> Optional[Iterator[BindingRecord]]:
         if error.name == _BACKEND_MODULE:
             return None
         raise
+
+    if (
+        getattr(backend, "BACKEND_CONTRACT", None) != _BACKEND_CONTRACT
+        or type(getattr(backend, "BACKEND_CONTRACT_VERSION", None)) is not int
+        or backend.BACKEND_CONTRACT_VERSION != _BACKEND_CONTRACT_VERSION
+    ):
+        raise NativeBackendContractError(
+            f"{_BACKEND_DISTRIBUTION} does not expose the supported parser contract"
+        )
 
     parser = getattr(backend, "parse_bindings", None)
     if not callable(parser):

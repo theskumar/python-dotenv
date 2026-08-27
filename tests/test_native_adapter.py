@@ -15,6 +15,12 @@ def _python_bindings(text):
     return list(parse_stream(io.StringIO(text)))
 
 
+def _mark_backend(backend):
+    backend.BACKEND_CONTRACT = native._BACKEND_CONTRACT
+    backend.BACKEND_CONTRACT_VERSION = native._BACKEND_CONTRACT_VERSION
+    return backend
+
+
 def test_missing_backend_falls_back_to_python_parser(monkeypatch):
     def missing_backend(module_name):
         raise ModuleNotFoundError(module_name, name=module_name)
@@ -37,7 +43,7 @@ def test_backend_exception_is_not_hidden_by_python_fallback(monkeypatch):
         def parse_bindings(text):
             raise RuntimeError("backend semantic failure")
 
-    monkeypatch.setattr(native, "import_module", lambda _: BrokenBackend)
+    monkeypatch.setattr(native, "import_module", lambda _: _mark_backend(BrokenBackend))
 
     with pytest.raises(RuntimeError, match="backend semantic failure"):
         _python_bindings("a=b\n")
@@ -57,7 +63,9 @@ def test_invalid_backend_records_are_hard_contract_errors(monkeypatch, records):
         def parse_bindings(text):
             return records
 
-    monkeypatch.setattr(native, "import_module", lambda _: InvalidBackend)
+    monkeypatch.setattr(
+        native, "import_module", lambda _: _mark_backend(InvalidBackend)
+    )
 
     with pytest.raises(native.NativeBackendContractError):
         _python_bindings("a=b\n")
@@ -91,6 +99,37 @@ def test_pypy_never_attempts_native_import(monkeypatch):
     ]
 
 
+def test_backend_contract_markers_are_required(monkeypatch):
+    class UnversionedBackend:
+        @staticmethod
+        def parse_bindings(text):
+            return [("a", "b", "a=b\n", 1, False)]
+
+    monkeypatch.setattr(native, "import_module", lambda _: UnversionedBackend)
+
+    with pytest.raises(
+        native.NativeBackendContractError, match="supported parser contract"
+    ):
+        _python_bindings("a=b\n")
+
+
+def test_backend_contract_marker_mismatch_is_not_hidden(monkeypatch):
+    class WrongContractBackend:
+        BACKEND_CONTRACT = "wrong.contract"
+        BACKEND_CONTRACT_VERSION = 99
+
+        @staticmethod
+        def parse_bindings(text):
+            return [("a", "b", "a=b\n", 1, False)]
+
+    monkeypatch.setattr(native, "import_module", lambda _: WrongContractBackend)
+
+    with pytest.raises(
+        native.NativeBackendContractError, match="supported parser contract"
+    ):
+        _python_bindings("a=b\n")
+
+
 def test_valid_backend_records_are_adapted_at_parser_boundary(monkeypatch):
     calls = []
 
@@ -100,7 +139,7 @@ def test_valid_backend_records_are_adapted_at_parser_boundary(monkeypatch):
             calls.append(text)
             return [("a", "b", "a=b\n", 1, False)]
 
-    monkeypatch.setattr(native, "import_module", lambda _: Backend)
+    monkeypatch.setattr(native, "import_module", lambda _: _mark_backend(Backend))
     monkeypatch.setattr(
         parser_module,
         "parse_binding",
@@ -136,6 +175,7 @@ def test_legacy_dotenv_core_is_not_used(monkeypatch):
 
 def test_extension_only_backend_can_coexist_with_upstream_package(monkeypatch):
     backend = ModuleType(native._BACKEND_MODULE)
+    _mark_backend(backend)
     backend.parse_bindings = lambda text: [("a", "b", "a=b", 1, False)]
     monkeypatch.setitem(sys.modules, native._BACKEND_MODULE, backend)
 
