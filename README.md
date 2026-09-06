@@ -166,6 +166,44 @@ $ dotenv run -- python foo.py
 
 Run `dotenv --help` for more information about the options and subcommands.
 
+### Shell completion
+
+The `dotenv` command supports tab completion for Bash, Zsh, Fish, and
+PowerShell. Add the command for your shell to its startup file:
+
+Bash, Zsh, and Fish completion require Click 8.0 or newer. PowerShell
+completion requires Click 8.5 or newer, and Bash requires version 4.4 or newer.
+
+**Bash** (`~/.bashrc`):
+
+```bash
+eval "$(_DOTENV_COMPLETE=bash_source dotenv)"
+```
+
+**Zsh** (`~/.zshrc`):
+
+```zsh
+eval "$(_DOTENV_COMPLETE=zsh_source dotenv)"
+```
+
+**Fish** (`~/.config/fish/config.fish`):
+
+```fish
+_DOTENV_COMPLETE=fish_source dotenv | source
+```
+
+**PowerShell** (the path in `$PROFILE`):
+
+```powershell
+$env:_DOTENV_COMPLETE = 'powershell_source'
+dotenv | Out-String | Invoke-Expression
+Remove-Item Env:_DOTENV_COMPLETE
+```
+
+Restart the shell after updating its startup file. See Click's
+[shell completion documentation](https://click.palletsprojects.com/en/stable/shell-completion/)
+for startup file locations and an alternative that caches the generated script.
+
 ## File format
 
 The format is not formally specified and still improves over time. That being
