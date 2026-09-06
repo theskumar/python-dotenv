@@ -171,6 +171,9 @@ Run `dotenv --help` for more information about the options and subcommands.
 The `dotenv` command supports tab completion for Bash, Zsh, Fish, and
 PowerShell. Add the command for your shell to its startup file:
 
+Bash, Zsh, and Fish completion require Click 8.0 or newer. PowerShell
+completion requires Click 8.5 or newer, and Bash requires version 4.4 or newer.
+
 **Bash** (`~/.bashrc`):
 
 ```bash
