@@ -9,6 +9,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Restore current-directory `.env` discovery in interactive consoles that report
+  pseudo-filenames such as `<input>` by [@cucuwang] in [#596]
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
 
 ## [1.2.3] - 2026-08-16
@@ -436,6 +438,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#583]: https://github.com/theskumar/python-dotenv/issues/583
 [#586]: https://github.com/theskumar/python-dotenv/issues/586
 [#590]: https://github.com/theskumar/python-dotenv/issues/590
+[#596]: https://github.com/theskumar/python-dotenv/issues/596
 [#607]: https://github.com/theskumar/python-dotenv/issues/607
 [#588]: https://github.com/theskumar/python-dotenv/issues/588
 [#579]: https://github.com/theskumar/python-dotenv/pull/579
@@ -508,6 +511,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@JYOuyang]: https://github.com/JYOuyang
 [@burnout-projects]: https://github.com/burnout-projects
 [@cpackham-atlnz]: https://github.com/cpackham-atlnz
+[@cucuwang]: https://github.com/cucuwang
 [Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.2.3...HEAD
 [1.2.3]: https://github.com/theskumar/python-dotenv/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/theskumar/python-dotenv/compare/v1.2.1...v1.2.2
