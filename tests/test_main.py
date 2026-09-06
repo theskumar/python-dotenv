@@ -412,6 +412,35 @@ def test_find_dotenv_found(tmp_path):
     assert result == str(dotenv_path)
 
 
+def test_find_dotenv_from_pseudo_filename(tmp_path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    dotenv_path = project_dir / ".env"
+    dotenv_path.write_text("TEST=test\n")
+
+    console_driver = tmp_path / "console_driver.py"
+    console_driver.write_text(
+        textwrap.dedent(
+            """
+            from dotenv import find_dotenv
+
+            console_code = compile("print(find_dotenv())", "<input>", "exec")
+            exec(console_code)
+            """
+        )
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(console_driver)],
+        cwd=project_dir,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.stdout.strip() == str(dotenv_path)
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="This test assumes case-sensitive variable names"
 )

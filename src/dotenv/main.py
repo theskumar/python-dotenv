@@ -358,6 +358,9 @@ def find_dotenv(
     def _is_debugger():
         return sys.gettrace() is not None
 
+    def _is_pseudo_filename(source_path: str) -> bool:
+        return source_path.startswith("<") and source_path.endswith(">")
+
     if usecwd or _is_interactive() or _is_debugger() or getattr(sys, "frozen", False):
         # Should work without __file__, e.g. in REPL or IPython notebook.
         path = os.getcwd()
@@ -366,13 +369,18 @@ def find_dotenv(
         frame = sys._getframe()
         current_file = __file__
 
-        while frame.f_code.co_filename == current_file or not os.path.exists(
-            frame.f_code.co_filename
+        while frame.f_code.co_filename == current_file or (
+            not _is_pseudo_filename(frame.f_code.co_filename)
+            and not os.path.exists(frame.f_code.co_filename)
         ):
             assert frame.f_back is not None
             frame = frame.f_back
         frame_filename = frame.f_code.co_filename
-        path = os.path.dirname(os.path.abspath(frame_filename))
+        path = (
+            os.getcwd()
+            if _is_pseudo_filename(frame_filename)
+            else os.path.dirname(os.path.abspath(frame_filename))
+        )
 
     for dirname in _walk_to_root(path):
         check_path = os.path.join(dirname, filename)
