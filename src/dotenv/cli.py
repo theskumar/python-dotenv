@@ -17,7 +17,7 @@ except ImportError:
     )
     sys.exit(1)
 
-from .main import dotenv_values, set_key, unset_key
+from .main import DotEnv, dotenv_values, set_key, unset_key
 from .version import __version__
 
 
@@ -190,7 +190,7 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
         )
     dotenv_as_dict = {
         k: v
-        for (k, v) in dotenv_values(file).items()
+        for (k, v) in DotEnv(file, override=override, encoding="utf-8").dict().items()
         if v is not None and (override or k not in os.environ)
     }
 

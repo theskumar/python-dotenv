@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -209,6 +210,39 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
     )
 
     check_process(result, exit_code=0, stdout="C\n")
+
+
+@pytest.mark.parametrize("options", [[], ["--override"], ["--no-override"]])
+@pytest.mark.parametrize("existing_value", [None, "environment", ""])
+def test_run_interpolation_respects_override(tmp_path, options, existing_value):
+    (tmp_path / ".env").write_text(
+        "DOTENV_TEST_BASE=file\nDOTENV_TEST_DERIVED=${DOTENV_TEST_BASE}/suffix\n"
+    )
+    env = dict(os.environ)
+    env.pop("DOTENV_TEST_BASE", None)
+    env.pop("DOTENV_TEST_DERIVED", None)
+    if existing_value is not None:
+        env["DOTENV_TEST_BASE"] = existing_value
+
+    result = run_dotenv(
+        [
+            "run",
+            *options,
+            sys.executable,
+            "-c",
+            "import os; print(os.environ['DOTENV_TEST_BASE']); "
+            "print(os.environ['DOTENV_TEST_DERIVED'])",
+        ],
+        cwd=tmp_path,
+        env=env,
+    )
+
+    expected = (
+        existing_value
+        if options == ["--no-override"] and existing_value is not None
+        else "file"
+    )
+    check_process(result, exit_code=0, stdout=f"{expected}\n{expected}/suffix\n")
 
 
 def test_run_with_none_value(tmp_path):
