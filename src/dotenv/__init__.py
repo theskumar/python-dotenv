@@ -30,8 +30,8 @@ def get_cli_string(
         command.append(action)
         if key:
             command.append(key)
-            if value:
-                if " " in value:
+            if value is not None:
+                if not value or " " in value:
                     command.append(f'"{value}"')
                 else:
                     command.append(value)

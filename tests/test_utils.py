@@ -1,4 +1,8 @@
+import shlex
+
+from dotenv import dotenv_values
 from dotenv import get_cli_string as c
+from dotenv.cli import cli as dotenv_cli
 
 
 def test_to_cli_string():
@@ -17,3 +21,19 @@ def test_to_cli_string():
         c(action="set", key="SECRET", value="a b", quote="always")
         == 'dotenv -q always set SECRET "a b"'
     )
+
+
+def test_to_cli_string_empty_value(cli, dotenv_path):
+    command = c(action="set", key="EMPTY", value="")
+
+    assert command == 'dotenv set EMPTY ""'
+    result = cli.invoke(
+        dotenv_cli, ["--file", str(dotenv_path), *shlex.split(command)[1:]]
+    )
+
+    assert result.exit_code == 0, result.output
+    assert dotenv_values(dotenv_path) == {"EMPTY": ""}
+
+
+def test_to_cli_string_omitted_value():
+    assert c(action="set", key="EMPTY", value=None) == "dotenv set EMPTY"
