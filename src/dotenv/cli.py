@@ -114,17 +114,12 @@ def list_values(ctx: click.Context, output_format: str) -> None:
 @click.argument("key", required=True)
 @click.argument("value", required=True)
 def set_value(ctx: click.Context, key: Any, value: Any) -> None:
-    """
-    Store the given key/value.
-
-    This doesn't follow symlinks, to avoid accidentally modifying a file at a
-    potentially untrusted path.
-    """
+    """Store the given key/value."""
 
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
     export = ctx.obj["EXPORT"]
-    success, key, value = set_key(file, key, value, quote, export)
+    success, key, value = set_key(file, key, value, quote, export, follow_symlinks=True)
     if success:
         click.echo(f"{key}={value}")
     else:
@@ -152,15 +147,10 @@ def get(ctx: click.Context, key: Any) -> None:
 @click.pass_context
 @click.argument("key", required=True)
 def unset(ctx: click.Context, key: Any) -> None:
-    """
-    Removes the given key.
-
-    This doesn't follow symlinks, to avoid accidentally modifying a file at a
-    potentially untrusted path.
-    """
+    """Removes the given key."""
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
-    success, key = unset_key(file, key, quote)
+    success, key = unset_key(file, key, quote, follow_symlinks=True)
     if success:
         click.echo(f"Successfully removed {key}")
     else:
