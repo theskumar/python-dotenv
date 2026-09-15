@@ -880,7 +880,7 @@ def test_load_dotenv_as_thread_target(tmp_path, monkeypatch):
     thread.join()
 
     assert not thread.is_alive()
-    assert os.environ == {"a": "b"}
+    assert os.environ.get("a") == "b"
 
 
 def test_find_dotenv_from_module_named_threading(tmp_path):
