@@ -5,7 +5,7 @@ import pathlib
 import stat
 import sys
 import tempfile
-from collections import OrderedDict
+from collections import ChainMap, OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
@@ -302,13 +302,12 @@ def resolve_variables(
             result = None
         else:
             atoms = parse_variables(value)
-            env: Dict[str, Optional[str]] = {}
+            os_environ: Dict[str, Optional[str]] = {**os.environ}
+            env: Mapping[str, Optional[str]]
             if override:
-                env.update(os.environ)  # type: ignore
-                env.update(new_values)
+                env = ChainMap(new_values, os_environ)
             else:
-                env.update(new_values)
-                env.update(os.environ)  # type: ignore
+                env = ChainMap(os_environ, new_values)
             result = "".join(atom.resolve(env) for atom in atoms)
 
         new_values[name] = result
