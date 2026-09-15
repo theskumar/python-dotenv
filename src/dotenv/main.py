@@ -190,6 +190,13 @@ def rewrite(
         raise error from None
 
 
+def _get_leading_blank_lines(string: str) -> str:
+    """Return complete blank lines before a binding, excluding its indentation."""
+    whitespace = string[: len(string) - len(string.lstrip())]
+    last_newline = max(whitespace.rfind("\n"), whitespace.rfind("\r"))
+    return whitespace[: last_newline + 1]
+
+
 def set_key(
     dotenv_path: StrPath,
     key_to_set: str,
@@ -203,6 +210,8 @@ def set_key(
     Adds or Updates a key/value to the given .env
 
     The target .env file is created if it doesn't exist.
+
+    Blank lines preceding an updated key are preserved.
 
     This function doesn't follow symlinks by default, to avoid accidentally
     modifying a file at a potentially untrusted path. If you don't need this
@@ -237,6 +246,8 @@ def set_key(
         missing_newline = False
         for mapping in with_warn_for_invalid_lines(parse_stream(source)):
             if mapping.key == key_to_set:
+                # The parser includes preceding blank lines in the binding.
+                dest.write(_get_leading_blank_lines(mapping.original.string))
                 dest.write(line_out)
                 replaced = True
             else:
@@ -263,6 +274,8 @@ def unset_key(
     If the .env path given doesn't exist, fails.
     If the given key doesn't exist in the .env, fails.
 
+    Blank lines preceding a removed key are preserved.
+
     This function doesn't follow symlinks by default, to avoid accidentally
     modifying a file at a potentially untrusted path. If you don't need this
     protection and need symlinks to be followed, use `follow_symlinks`.
@@ -278,6 +291,7 @@ def unset_key(
     ):
         for mapping in with_warn_for_invalid_lines(parse_stream(source)):
             if mapping.key == key_to_unset:
+                dest.write(_get_leading_blank_lines(mapping.original.string))
                 removed = True
             else:
                 dest.write(mapping.original.string)
