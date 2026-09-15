@@ -40,6 +40,10 @@ load_dotenv()  # reads variables from a .env file and sets them in os.environ
 
 # Code of your application, which uses environment variables (e.g. from `os.environ` or
 # `os.getenv`) as if they came from the actual environment.
+
+# In tests, unload_dotenv() removes those values from os.environ again:
+# from dotenv import unload_dotenv
+# unload_dotenv()
 ```
 
 By default, `load_dotenv()` will:
