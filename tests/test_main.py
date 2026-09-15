@@ -10,7 +10,7 @@ from unittest import mock
 import pytest
 
 import dotenv
-from dotenv.main import DotEnv
+from dotenv.main import DotEnv, resolve_variables
 
 
 def test_set_key_no_file(tmp_path):
@@ -756,3 +756,50 @@ def test_dotenv_values_empty_value_with_inline_comment(string, expected):
     result = dotenv.dotenv_values(stream=io.StringIO(string))
 
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "env,values,override,expected",
+    [
+        # Interpolation sees earlier file bindings; file wins with override=True
+        (
+            {"A": "env"},
+            [("A", "file"), ("B", "${A}")],
+            True,
+            {"A": "file", "B": "file"},
+        ),
+        # ... while the environment wins with override=False
+        (
+            {"A": "env"},
+            [("A", "file"), ("B", "${A}")],
+            False,
+            {"A": "file", "B": "env"},
+        ),
+        # File values stay visible with override=False when the environment
+        # does not define the interpolated key
+        (
+            {},
+            [("A", "file"), ("B", "${A}")],
+            False,
+            {"A": "file", "B": "file"},
+        ),
+        # Duplicate keys re-resolve against the live, winning source
+        (
+            {"A": "env"},
+            [("A", "first"), ("A", "${A}-more")],
+            True,
+            {"A": "first-more"},
+        ),
+        (
+            {"A": "env"},
+            [("A", "first"), ("A", "${A}-more")],
+            False,
+            {"A": "env-more"},
+        ),
+        # Key without value stays None and resolves to "" elsewhere
+        ({}, [("A", None), ("B", "${A}")], True, {"A": None, "B": ""}),
+    ],
+)
+def test_resolve_variables_override_precedence(env, values, override, expected):
+    with mock.patch.dict(os.environ, env, clear=True):
+        assert dict(resolve_variables(values, override=override)) == expected
