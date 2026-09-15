@@ -5,6 +5,7 @@ import pathlib
 import stat
 import sys
 import tempfile
+import threading
 from collections import OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
@@ -415,7 +416,11 @@ def find_dotenv(
             assert frame.f_back is not None
             frame = frame.f_back
         frame_filename = frame.f_code.co_filename
-        path = os.path.dirname(os.path.abspath(frame_filename))
+        path = (
+            os.getcwd()
+            if frame.f_globals is vars(threading)
+            else os.path.dirname(os.path.abspath(frame_filename))
+        )
 
     for dirname in _walk_to_root(path):
         check_path = os.path.join(dirname, filename)
