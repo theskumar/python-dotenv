@@ -83,6 +83,49 @@ def test_set_key_round_trips(dotenv_path, value):
     assert dotenv.get_key(dotenv_path, "b") == "sentinel"
 
 
+@pytest.mark.parametrize("operation", ["set", "unset"])
+@pytest.mark.parametrize("newline", ["\n", "\r\n"])
+@pytest.mark.parametrize(
+    "before,key,after_set,after_unset",
+    [
+        ("\n\na=old\nb=keep\n", "a", "\n\na='new'\nb=keep\n", "\n\nb=keep\n"),
+        (
+            "# heading\n \t\n\na=old\n\nb=keep\n",
+            "a",
+            "# heading\n \t\n\na='new'\n\nb=keep\n",
+            "# heading\n \t\n\n\nb=keep\n",
+        ),
+        (
+            "a=one\n\n\ta=two\n\nb=keep\n",
+            "a",
+            "a='new'\n\na='new'\n\nb=keep\n",
+            "\n\nb=keep\n",
+        ),
+        (
+            "\n\na='first\n\nsecond'\n\nb=keep\n",
+            "a",
+            "\n\na='new'\n\nb=keep\n",
+            "\n\n\nb=keep\n",
+        ),
+        ("\n'a'=old", "a", "\na='new'\n", "\n"),
+        ("\n\ta\n", "a", "\na='new'\n", "\n"),
+    ],
+)
+def test_modify_key_preserves_blank_lines(
+    dotenv_path, operation, newline, before, key, after_set, after_unset
+):
+    dotenv_path.write_bytes(before.replace("\n", newline).encode("utf-8"))
+
+    if operation == "set":
+        assert dotenv.set_key(dotenv_path, key, "new") == (True, key, "new")
+        expected = after_set
+    else:
+        assert dotenv.unset_key(dotenv_path, key) == (True, key)
+        expected = after_unset
+
+    assert dotenv_path.read_text() == expected
+
+
 def test_set_key_encoding(dotenv_path):
     encoding = "latin-1"
 
