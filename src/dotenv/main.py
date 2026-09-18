@@ -369,10 +369,15 @@ def find_dotenv(
         while frame.f_code.co_filename == current_file or not os.path.exists(
             frame.f_code.co_filename
         ):
-            assert frame.f_back is not None
+            if frame.f_back is None:
+                # No usable caller frame (e.g. stdin, ``python -c``, runpy).
+                # Fall back to cwd instead of raising AssertionError (#499).
+                path = os.getcwd()
+                break
             frame = frame.f_back
-        frame_filename = frame.f_code.co_filename
-        path = os.path.dirname(os.path.abspath(frame_filename))
+        else:
+            frame_filename = frame.f_code.co_filename
+            path = os.path.dirname(os.path.abspath(frame_filename))
 
     for dirname in _walk_to_root(path):
         check_path = os.path.join(dirname, filename)
