@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -269,16 +270,18 @@ def test_run_with_command_flags(dotenv_path, tmp_path):
     """
     Check that command flags passed after `dotenv run` are not interpreted.
 
-    Here, we want to run `printenv --version`, not `dotenv --version`.
+    Use the current interpreter's ``--version`` so this stays portable: GNU
+    printenv accepts ``--version``, but BSD printenv (macOS) does not.
     """
 
     result = run_dotenv(
-        ["--file", str(dotenv_path), "run", "printenv", "--version"],
+        ["--file", str(dotenv_path), "run", sys.executable, "--version"],
         cwd=tmp_path,
     )
 
     check_process(result, exit_code=0)
-    assert result.stdout.strip().startswith("printenv ")
+    combined = (result.stdout + result.stderr).strip()
+    assert combined.startswith("Python ")
 
 
 def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
