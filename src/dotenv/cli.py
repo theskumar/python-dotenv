@@ -73,7 +73,7 @@ def stream_file(path: os.PathLike) -> Iterator[IO[str]]:
     """
 
     try:
-        with open(path) as stream:
+        with open(path, encoding="utf-8") as stream:
             yield stream
     except OSError as exc:
         print(f"Error opening env file: {exc}", file=sys.stderr)
