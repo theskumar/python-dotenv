@@ -702,6 +702,11 @@ def test_dotenv_values_file(dotenv_path):
         # Undefined
         ({}, "a=${b}", True, {"a": ""}),
         ({}, "a=${b:-d}", True, {"a": "d"}),
+        # Defined but empty: POSIX ${name:-default} substitutes on null too
+        ({"b": ""}, "a=${b:-d}", True, {"a": "d"}),
+        ({}, "b=\na=${b:-d}", True, {"a": "d", "b": ""}),
+        ({"b": ""}, "a=${b}", True, {"a": ""}),
+        ({"b": ""}, "a=${b:-}", True, {"a": ""}),
         # With quotes
         ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),
         ({"b": "c"}, "a='${b}'", True, {"a": "c"}),
