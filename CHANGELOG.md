@@ -9,6 +9,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Preserve blank lines before keys updated by `set_key` or removed by `unset_key`.
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
 - `dotenv run --no-override` now expands variable references with the same precedence as `load_dotenv(override=False)`, so a value like `${BASE}/suffix` uses the existing `BASE` from the environment instead of the one from the `.env` file by [@ROTl24] in [#698]
 
