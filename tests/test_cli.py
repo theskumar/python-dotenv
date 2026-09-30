@@ -304,16 +304,24 @@ def test_run_with_command_flags(dotenv_path, tmp_path):
     """
     Check that command flags passed after `dotenv run` are not interpreted.
 
-    Here, we want to run `printenv --version`, not `dotenv --version`.
+    Here, we want the command to receive `--help`, not `dotenv run --help`.
+    `sys.executable` is used instead of a system tool for portability.
     """
 
     result = run_dotenv(
-        ["--file", str(dotenv_path), "run", "printenv", "--version"],
+        [
+            "--file",
+            str(dotenv_path),
+            "run",
+            sys.executable,
+            "-c",
+            "import sys; print(sys.argv[1:])",
+            "--help",
+        ],
         cwd=tmp_path,
     )
 
-    check_process(result, exit_code=0)
-    assert result.stdout.strip().startswith("printenv ")
+    check_process(result, exit_code=0, stdout="['--help']\n")
 
 
 def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
