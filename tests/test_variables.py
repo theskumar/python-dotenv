@@ -1,6 +1,11 @@
 import pytest
 
-from dotenv.variables import Literal, Variable, parse_variables
+from dotenv.variables import (
+    Literal,
+    Variable,
+    parse_variables,
+    set_variable_name_pattern,
+)
 
 
 @pytest.mark.parametrize(
@@ -33,3 +38,19 @@ def test_parse_variables(value, expected):
     result = parse_variables(value)
 
     assert list(result) == expected
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("", []),
+        ("${AB_CD}", [Variable(name="AB_CD", default=None)]),
+        ("${A.B.C.D}", [Literal(value="${A.B.C.D}")]),
+        ("${a}", [Literal(value="${a}")]),
+    ],
+)
+def test_parse_variables_re(value, expected):
+    set_variable_name_pattern(r"""[A-Z0-9_]+""")
+    result = parse_variables(value)
+
+    assert list(result) == expected
+    set_variable_name_pattern(None)
