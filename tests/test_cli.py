@@ -174,6 +174,39 @@ def test_set_no_file(cli):
     assert "Missing argument" in result.output
 
 
+def test_set_missing_directory(cli, tmp_path):
+    dotenv_path = tmp_path / "nx_dir" / ".env"
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "set", "a", "b"])
+
+    assert result.exit_code == 2, result.output
+    assert "Error writing env file" in result.output
+    assert str(dotenv_path) in result.output
+    assert ".tmp_" not in result.output
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32" or os.geteuid() == 0,
+    reason="Directory permissions are not enforced on Windows or for root.",
+)
+def test_unset_read_only_directory(cli, tmp_path):
+    directory = tmp_path / "ro"
+    directory.mkdir()
+    dotenv_path = directory / ".env"
+    dotenv_path.write_text("a=b\n")
+    directory.chmod(0o555)
+
+    try:
+        result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "unset", "a"])
+    finally:
+        directory.chmod(0o755)
+
+    assert result.exit_code == 2, result.output
+    assert "Error writing env file" in result.output
+    assert str(dotenv_path) in result.output
+    assert dotenv_path.read_text() == "a=b\n"
+
+
 def test_get_default_path(tmp_path):
     (tmp_path / ".env").write_text("A=x")
 
