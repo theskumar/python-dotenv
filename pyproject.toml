@@ -48,9 +48,6 @@ cli = [
     "click>=5.0",
 ]
 
-[project.scripts]
-dotenv = "dotenv.__main__:cli"
-
 [tool.setuptools]
 packages = ["dotenv"]
 package-dir = {"" = "src"}

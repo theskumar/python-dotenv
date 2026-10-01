@@ -146,25 +146,26 @@ production.
 
 ## Command-line Interface
 
-A CLI interface `dotenv` is also included, which helps you manipulate the `.env`
-file without manually opening it.
+Install the `[cli]` extra and run it as a module. The package no longer
+installs a `dotenv` console script, so a bare install cannot shadow another
+environment's CLI.
 
 ```shell
 $ pip install "python-dotenv[cli]"
-$ dotenv set USER foo
-$ dotenv set EMAIL foo@example.org
-$ dotenv list
+$ python -m dotenv set USER foo
+$ python -m dotenv set EMAIL foo@example.org
+$ python -m dotenv list
 USER=foo
 EMAIL=foo@example.org
-$ dotenv list --format=json
+$ python -m dotenv list --format=json
 {
   "USER": "foo",
   "EMAIL": "foo@example.org"
 }
-$ dotenv run -- python foo.py
+$ python -m dotenv run -- python foo.py
 ```
 
-Run `dotenv --help` for more information about the options and subcommands.
+Run `python -m dotenv --help` for more information about the options and subcommands.
 
 ## File format
 
