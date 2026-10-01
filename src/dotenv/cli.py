@@ -124,7 +124,11 @@ def set_value(ctx: click.Context, key: Any, value: Any) -> None:
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
     export = ctx.obj["EXPORT"]
-    success, key, value = set_key(file, key, value, quote, export)
+    try:
+        success, key, value = set_key(file, key, value, quote, export)
+    except OSError as exc:
+        print(f"Error writing env file: {exc}", file=sys.stderr)
+        sys.exit(2)
     if success:
         click.echo(f"{key}={value}")
     else:
@@ -159,7 +163,11 @@ def unset(ctx: click.Context, key: Any) -> None:
     """
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
-    success, key = unset_key(file, key, quote)
+    try:
+        success, key = unset_key(file, key, quote)
+    except OSError as exc:
+        print(f"Error writing env file: {exc}", file=sys.stderr)
+        sys.exit(2)
     if success:
         click.echo(f"Successfully removed {key}")
     else:

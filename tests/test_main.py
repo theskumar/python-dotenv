@@ -195,6 +195,38 @@ def test_set_key_permission_error(dotenv_path):
     assert dotenv_path.read_text() == ""
 
 
+def test_set_key_missing_directory(tmp_path):
+    dotenv_path = tmp_path / "nx_dir" / ".env"
+
+    with pytest.raises(FileNotFoundError) as exc_info:
+        dotenv.set_key(dotenv_path, "a", "b")
+
+    assert exc_info.value.filename == str(dotenv_path)
+    assert not dotenv_path.parent.exists()
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32" or os.geteuid() == 0,
+    reason="Directory permissions are not enforced on Windows or for root.",
+)
+def test_set_key_read_only_directory(tmp_path):
+    directory = tmp_path / "ro"
+    directory.mkdir()
+    dotenv_path = directory / ".env"
+    dotenv_path.write_text("a=x\n")
+    directory.chmod(0o555)
+
+    try:
+        with pytest.raises(PermissionError) as exc_info:
+            dotenv.set_key(dotenv_path, "a", "y")
+    finally:
+        directory.chmod(0o755)
+
+    assert exc_info.value.filename == str(dotenv_path)
+    assert dotenv_path.read_text() == "a=x\n"
+    assert list(directory.iterdir()) == [dotenv_path]
+
+
 def test_get_key_no_file(tmp_path):
     nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")

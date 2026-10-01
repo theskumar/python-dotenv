@@ -160,13 +160,21 @@ def rewrite(
         source = io.StringIO("")
         original_mode = None
 
-    with tempfile.NamedTemporaryFile(
-        mode="w",
-        encoding=encoding,
-        delete=False,
-        prefix=".tmp_",
-        dir=os.path.dirname(os.path.abspath(path)),
-    ) as dest:
+    try:
+        temp_file = tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding=encoding,
+            delete=False,
+            prefix=".tmp_",
+            dir=os.path.dirname(os.path.abspath(path)),
+        )
+    except OSError as err:
+        source.close()
+        # Report the target path, not the name of the temporary file.
+        err.filename = os.fspath(path)
+        raise
+
+    with temp_file as dest:
         dest_path = pathlib.Path(dest.name)
         error = None
 

@@ -10,6 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]
+- `set_key`, `unset_key` and the `dotenv set`/`unset` commands now name the `.env` path instead of an internal temporary file when its directory is missing or not writable, and the CLI prints a short error and exits with code 2 instead of a traceback by [@jamalkamaladdin] in [#711]
 
 ## [1.2.4] - 2026-10-01
 
@@ -459,6 +460,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
 [#698]: https://github.com/theskumar/python-dotenv/pull/698
 [#700]: https://github.com/theskumar/python-dotenv/pull/700
+[#711]: https://github.com/theskumar/python-dotenv/pull/711
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -493,6 +495,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@h1whelan]: https://github.com/h1whelan
 [@harveer07]: https://github.com/harveer07
 [@jadutter]: https://github.com/jadutter
+[@jamalkamaladdin]: https://github.com/jamalkamaladdin
 [@jankislinger]: https://github.com/jankislinger
 [@jctanner]: https://github.com/jctanner
 [@kurtmckee]: https://github.com/kurtmckee
