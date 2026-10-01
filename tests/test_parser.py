@@ -120,6 +120,78 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a= #b",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a= #b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=  # b",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a=  # b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=#b",
+            [
+                Binding(
+                    key="a",
+                    value="#b",
+                    original=Original(string="a=#b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=# # comment",
+            [
+                Binding(
+                    key="a",
+                    value="#",
+                    original=Original(string="a=# # comment", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a=\t#c",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a=\t#c", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a= #c\nd=e",
+            [
+                Binding(
+                    key="a",
+                    value="",
+                    original=Original(string="a= #c\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="d",
+                    value="e",
+                    original=Original(string="d=e", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
             "a=b c",
             [
                 Binding(
@@ -291,6 +363,75 @@ from dotenv.parser import Binding, Original, parse_stream
                     key="a",
                     value="b'c",
                     original=Original(string="a='b\\'c'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "a='b\\\\c'",
+            [
+                Binding(
+                    key="a",
+                    value="b\\c",
+                    original=Original(string="a='b\\\\c'", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            'a="b\\\\c"',
+            [
+                Binding(
+                    key="a",
+                    value="b\\c",
+                    original=Original(string='a="b\\\\c"', line=1),
+                    error=False,
+                )
+            ],
+        ),
+        # An escaped backslash at the end of the value must not be read as the
+        # start of an escaped quote, which would swallow the following lines.
+        (
+            "a='b\\\\'\nc='d'",
+            [
+                Binding(
+                    key="a",
+                    value="b\\",
+                    original=Original(string="a='b\\\\'\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c='d'", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            'a="b\\\\"\nc="d"',
+            [
+                Binding(
+                    key="a",
+                    value="b\\",
+                    original=Original(string='a="b\\\\"\n', line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string='c="d"', line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a='b\\\\\\'c'",
+            [
+                Binding(
+                    key="a",
+                    value="b\\'c",
+                    original=Original(string="a='b\\\\\\'c'", line=1),
                     error=False,
                 )
             ],
@@ -541,6 +682,35 @@ from dotenv.parser import Binding, Original, parse_stream
                     key="a",
                     value="b",
                     original=Original(string="a=b", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        # UTF-8 BOM at the start of the file should be stripped
+        (
+            "\ufeffa=b",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b", line=1),
+                    error=False,
+                )
+            ],
+        ),
+        (
+            "\ufeffa=b\nc=d",
+            [
+                Binding(
+                    key="a",
+                    value="b",
+                    original=Original(string="a=b\n", line=1),
+                    error=False,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d", line=2),
                     error=False,
                 ),
             ],

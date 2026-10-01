@@ -17,7 +17,7 @@ except ImportError:
     )
     sys.exit(1)
 
-from .main import dotenv_values, set_key, unset_key
+from .main import DotEnv, dotenv_values, set_key, unset_key
 from .version import __version__
 
 
@@ -114,11 +114,21 @@ def list_values(ctx: click.Context, output_format: str) -> None:
 @click.argument("key", required=True)
 @click.argument("value", required=True)
 def set_value(ctx: click.Context, key: Any, value: Any) -> None:
-    """Store the given key/value."""
+    """
+    Store the given key/value.
+
+    This doesn't follow symlinks, to avoid accidentally modifying a file at a
+    potentially untrusted path.
+    """
+
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
     export = ctx.obj["EXPORT"]
-    success, key, value = set_key(file, key, value, quote, export)
+    try:
+        success, key, value = set_key(file, key, value, quote, export)
+    except OSError as exc:
+        print(f"Error writing env file: {exc}", file=sys.stderr)
+        sys.exit(2)
     if success:
         click.echo(f"{key}={value}")
     else:
@@ -135,21 +145,29 @@ def get(ctx: click.Context, key: Any) -> None:
     with stream_file(file) as stream:
         values = dotenv_values(stream=stream)
 
-    stored_value = values.get(key)
-    if stored_value:
-        click.echo(stored_value)
-    else:
+    # Empty strings are valid values; only missing keys / bare keys (None) fail.
+    if key not in values or values[key] is None:
         sys.exit(1)
+    click.echo(values[key])
 
 
 @cli.command()
 @click.pass_context
 @click.argument("key", required=True)
 def unset(ctx: click.Context, key: Any) -> None:
-    """Removes the given key."""
+    """
+    Removes the given key.
+
+    This doesn't follow symlinks, to avoid accidentally modifying a file at a
+    potentially untrusted path.
+    """
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
-    success, key = unset_key(file, key, quote)
+    try:
+        success, key = unset_key(file, key, quote)
+    except OSError as exc:
+        print(f"Error writing env file: {exc}", file=sys.stderr)
+        sys.exit(2)
     if success:
         click.echo(f"Successfully removed {key}")
     else:
@@ -179,7 +197,7 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
         )
     dotenv_as_dict = {
         k: v
-        for (k, v) in dotenv_values(file).items()
+        for (k, v) in DotEnv(file, override=override, encoding="utf-8").dict().items()
         if v is not None and (override or k not in os.environ)
     }
 
@@ -217,9 +235,20 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
     if sys.platform == "win32":
         # execvpe on Windows returns control immediately
         # rather than once the command has finished.
-        p = Popen(command, universal_newlines=True, bufsize=0, shell=False, env=cmd_env)
+        try:
+            p = Popen(
+                command, universal_newlines=True, bufsize=0, shell=False, env=cmd_env
+            )
+        except FileNotFoundError:
+            print(f"Command not found: {command[0]}", file=sys.stderr)
+            sys.exit(1)
+
         _, _ = p.communicate()
 
         sys.exit(p.returncode)
     else:
-        os.execvpe(command[0], args=command, env=cmd_env)
+        try:
+            os.execvpe(command[0], args=command, env=cmd_env)
+        except FileNotFoundError:
+            print(f"Command not found: {command[0]}", file=sys.stderr)
+            sys.exit(1)

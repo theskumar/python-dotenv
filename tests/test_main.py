@@ -1,7 +1,9 @@
 import io
 import logging
 import os
+import pathlib
 import stat
+import subprocess
 import sys
 import textwrap
 from unittest import mock
@@ -9,9 +11,7 @@ from unittest import mock
 import pytest
 
 import dotenv
-
-if sys.platform != "win32":
-    import sh
+from dotenv.main import DotEnv
 
 
 def test_set_key_no_file(tmp_path):
@@ -41,6 +41,9 @@ def test_set_key_no_file(tmp_path):
         ("a=b\nc=d\ne=f", "c", "g", (True, "c", "g"), "a=b\nc='g'\ne=f"),
         ("a=b\n", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
         ("a=b", "c", "d", (True, "c", "d"), "a=b\nc='d'\n"),
+        ("", "a", "b\\c", (True, "a", "b\\c"), "a='b\\\\c'\n"),
+        ("", "a", "b\\", (True, "a", "b\\"), "a='b\\\\'\n"),
+        ("", "a", "b\\'c", (True, "a", "b\\'c"), "a='b\\\\\\'c'\n"),
     ],
 )
 def test_set_key(dotenv_path, before, key, value, expected, after):
@@ -55,6 +58,32 @@ def test_set_key(dotenv_path, before, key, value, expected, after):
     mock_warning.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    "value",
+    [
+        "C:\\Users",
+        "C:\\Users\\",
+        "\\d+",
+        "back\\",
+        "a\\'b",
+        "it's",
+        'say "hi"',
+        "a\\nb",
+        "plain",
+        "",
+    ],
+)
+def test_set_key_round_trips(dotenv_path, value):
+    dotenv_path.write_text("")
+
+    dotenv.set_key(dotenv_path, "a", value)
+    dotenv.set_key(dotenv_path, "b", "sentinel")
+
+    assert dotenv.get_key(dotenv_path, "a") == value
+    # A value that is mis-tokenized can swallow the lines that follow it.
+    assert dotenv.get_key(dotenv_path, "b") == "sentinel"
+
+
 def test_set_key_encoding(dotenv_path):
     encoding = "latin-1"
 
@@ -62,6 +91,86 @@ def test_set_key_encoding(dotenv_path):
 
     assert result == (True, "a", "é")
     assert dotenv_path.read_text(encoding=encoding) == "a='é'\n"
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="file mode bits behave differently on Windows"
+)
+def test_set_key_preserves_file_mode(dotenv_path):
+    dotenv_path.write_text("a=x\n")
+    dotenv_path.chmod(0o640)
+    mode_before = stat.S_IMODE(dotenv_path.stat().st_mode)
+
+    dotenv.set_key(dotenv_path, "a", "y")
+
+    mode_after = stat.S_IMODE(dotenv_path.stat().st_mode)
+    assert mode_before == mode_after
+
+
+def test_rewrite_closes_file_handle_on_lstat_failure(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+    real_open = open
+    opened_handles = []
+
+    def tracking_open(*args, **kwargs):
+        handle = real_open(*args, **kwargs)
+        opened_handles.append(handle)
+        return handle
+
+    with mock.patch("dotenv.main.os.lstat", side_effect=FileNotFoundError):
+        with mock.patch("dotenv.main.open", side_effect=tracking_open):
+            dotenv.set_key(dotenv_path, "a", "x")
+
+    assert opened_handles, "expected at least one file to be opened"
+    assert all(handle.closed for handle in opened_handles)
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_set_key_symlink_to_existing_file(tmp_path):
+    target = tmp_path / "target.env"
+    target.write_text("a=x\n")
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+
+    dotenv.set_key(symlink, "a", "y")
+
+    assert target.read_text() == "a=x\n"
+    assert not symlink.is_symlink()
+    assert "a='y'" in symlink.read_text()
+    assert stat.S_IMODE(symlink.stat().st_mode) == 0o600
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_set_key_symlink_to_missing_file(tmp_path):
+    target = tmp_path / "nx"
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+
+    dotenv.set_key(symlink, "a", "x")
+
+    assert not target.exists()
+    assert not symlink.is_symlink()
+    assert symlink.read_text() == "a='x'\n"
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_set_key_follow_symlinks(tmp_path):
+    target = tmp_path / "target.env"
+    target.write_text("a=x\n")
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+
+    dotenv.set_key(symlink, "a", "y", follow_symlinks=True)
+
+    assert target.read_text() == "a='y'\n"
+    assert symlink.is_symlink()
 
 
 @pytest.mark.skipif(
@@ -85,6 +194,123 @@ def test_set_key_permission_error(dotenv_path):
     else:
         dotenv_path.chmod(0o600)
     assert dotenv_path.read_text() == ""
+
+
+@pytest.mark.skipif(
+    sys.platform != "win32" and os.geteuid() == 0,
+    reason="Root user can access files even with 000 permissions.",
+)
+def test_set_key_permission_error_leaves_no_temp_file(dotenv_path):
+    if sys.platform == "win32":
+        # On Windows, make file read-only
+        dotenv_path.chmod(stat.S_IREAD)
+    else:
+        # On Unix, remove all permissions
+        dotenv_path.chmod(0o000)
+
+    try:
+        with pytest.raises(PermissionError):
+            dotenv.set_key(dotenv_path, "a", "b")
+
+        assert list(dotenv_path.parent.glob(".tmp_*")) == []
+    finally:
+        # Restore permissions
+        if sys.platform == "win32":
+            dotenv_path.chmod(stat.S_IWRITE | stat.S_IREAD)
+        else:
+            dotenv_path.chmod(0o600)
+
+
+def test_rewrite_reports_original_error_when_cleanup_fails(dotenv_path, caplog):
+    replace_error = OSError("replace failed")
+
+    with mock.patch("dotenv.main.os.replace", side_effect=replace_error):
+        with mock.patch.object(
+            pathlib.Path, "unlink", side_effect=OSError("unlink failed")
+        ):
+            with pytest.raises(OSError) as excinfo:
+                dotenv.set_key(dotenv_path, "a", "b")
+
+    assert excinfo.value is replace_error
+    [temp_file] = dotenv_path.parent.glob(".tmp_*")
+    assert caplog.messages == [
+        f"python-dotenv could not remove the temporary file {temp_file}"
+    ]
+
+
+def test_set_key_missing_directory(tmp_path):
+    dotenv_path = tmp_path / "nx_dir" / ".env"
+
+    with pytest.raises(FileNotFoundError) as exc_info:
+        dotenv.set_key(dotenv_path, "a", "b")
+
+    assert exc_info.value.filename == str(dotenv_path)
+    assert not dotenv_path.parent.exists()
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32" or os.geteuid() == 0,
+    reason="Directory permissions are not enforced on Windows or for root.",
+)
+def test_set_key_read_only_directory(tmp_path):
+    directory = tmp_path / "ro"
+    directory.mkdir()
+    dotenv_path = directory / ".env"
+    dotenv_path.write_text("a=x\n")
+    directory.chmod(0o555)
+
+    try:
+        with pytest.raises(PermissionError) as exc_info:
+            dotenv.set_key(dotenv_path, "a", "y")
+    finally:
+        directory.chmod(0o755)
+
+    assert exc_info.value.filename == str(dotenv_path)
+    assert dotenv_path.read_text() == "a=x\n"
+    assert list(directory.iterdir()) == [dotenv_path]
+
+
+def windows_read_only_semantics(path):
+    # On Windows, a file without the owner-write bit can't be replaced or deleted.
+    return path.exists() and not path.stat().st_mode & stat.S_IWUSR
+
+
+@pytest.mark.parametrize(
+    "rewrite",
+    [
+        lambda path: dotenv.set_key(path, "a", "y"),
+        lambda path: dotenv.unset_key(path, "a"),
+    ],
+    ids=["set_key", "unset_key"],
+)
+def test_rewrite_read_only_file_leaves_no_temp_file(tmp_path, rewrite):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+    dotenv_path.chmod(stat.S_IREAD)
+    real_replace = os.replace
+    real_unlink = pathlib.Path.unlink
+
+    def replace(src, dst):
+        if windows_read_only_semantics(pathlib.Path(dst)):
+            raise PermissionError(
+                13, "Access is denied", os.fspath(src), None, os.fspath(dst)
+            )
+        real_replace(src, dst)
+
+    def unlink(self, missing_ok=False):
+        if windows_read_only_semantics(self):
+            raise PermissionError(13, "Access is denied", str(self))
+        real_unlink(self, missing_ok=missing_ok)
+
+    with mock.patch("dotenv.main.os.replace", side_effect=replace):
+        with mock.patch.object(pathlib.Path, "unlink", unlink):
+            with pytest.raises(PermissionError) as exc_info:
+                rewrite(dotenv_path)
+
+    dotenv_path.chmod(stat.S_IREAD | stat.S_IWRITE)
+    assert exc_info.value.filename2 == str(dotenv_path)
+    assert dotenv_path.read_text() == "a=x\n"
+    assert list(tmp_path.iterdir()) == [dotenv_path]
 
 
 def test_get_key_no_file(tmp_path):
@@ -149,6 +375,18 @@ def test_get_key_none(dotenv_path):
     mock_warning.assert_not_called()
 
 
+def test_empty_dotenv_dict_is_cached(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("")
+    dotenv_obj = DotEnv(dotenv_path)
+
+    with mock.patch.object(dotenv_obj, "parse", wraps=dotenv_obj.parse) as mock_parse:
+        assert dotenv_obj.dict() == {}
+        assert dotenv_obj.dict() == {}
+
+    assert mock_parse.call_count == 1
+
+
 def test_unset_with_value(dotenv_path):
     logger = logging.getLogger("dotenv.main")
     dotenv_path.write_text("a=b\nc=d")
@@ -195,6 +433,54 @@ def test_unset_non_existent_file(tmp_path):
         "Can't delete from %s - it doesn't exist.",
         nx_path,
     )
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_unset_key_symlink_to_existing_file(tmp_path):
+    target = tmp_path / "target.env"
+    target.write_text("a=x\n")
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+
+    dotenv.unset_key(symlink, "a")
+
+    assert target.read_text() == "a=x\n"
+    assert not symlink.is_symlink()
+    assert symlink.read_text() == ""
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_unset_key_symlink_to_missing_file(tmp_path):
+    target = tmp_path / "nx"
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.unset_key(symlink, "a")
+
+    assert result == (None, "a")
+    assert symlink.is_symlink()
+    mock_warning.assert_called_once()
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_unset_key_follow_symlinks(tmp_path):
+    target = tmp_path / "target.env"
+    target.write_text("a=b\n")
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+
+    dotenv.unset_key(symlink, "a", follow_symlinks=True)
+
+    assert target.read_text() == ""
+    assert symlink.is_symlink()
 
 
 def prepare_file_hierarchy(path):
@@ -483,7 +769,6 @@ def test_load_dotenv_file_stream(dotenv_path):
     assert os.environ == {"a": "b"}
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="sh module doesn't support Windows")
 def test_load_dotenv_in_current_dir(tmp_path):
     dotenv_path = tmp_path / ".env"
     dotenv_path.write_bytes(b"a=b")
@@ -499,9 +784,14 @@ def test_load_dotenv_in_current_dir(tmp_path):
     )
     os.chdir(tmp_path)
 
-    result = sh.Command(sys.executable)(code_path)
+    result = subprocess.run(
+        [sys.executable, str(code_path)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
 
-    assert result == "b\n"
+    assert result.stdout == "b\n"
 
 
 def test_dotenv_values_file(dotenv_path):
@@ -565,3 +855,22 @@ def test_dotenv_values_file_stream(dotenv_path):
         result = dotenv.dotenv_values(stream=f)
 
     assert result == {"a": "b"}
+
+
+@pytest.mark.parametrize(
+    "string,expected",
+    [
+        ("KEY= # comment", {"KEY": ""}),
+        ("KEY=  # comment", {"KEY": ""}),
+        ("KEY=val # comment", {"KEY": "val"}),
+        ("KEY=a#b", {"KEY": "a#b"}),
+        ("KEY=#novalue", {"KEY": "#novalue"}),
+        ("KEY=# # comment", {"KEY": "#"}),
+        ("KEY=\t# comment", {"KEY": ""}),
+        ("KEY= # comment\nOTHER=val", {"KEY": "", "OTHER": "val"}),
+    ],
+)
+def test_dotenv_values_empty_value_with_inline_comment(string, expected):
+    result = dotenv.dotenv_values(stream=io.StringIO(string))
+
+    assert result == expected
