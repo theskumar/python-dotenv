@@ -591,6 +591,19 @@ def test_find_dotenv_found(tmp_path):
     assert result == str(dotenv_path)
 
 
+def test_find_dotenv_expands_user(tmp_path, monkeypatch):
+    home = tmp_path / "home"
+    home.mkdir()
+    (home / ".env").write_text("a=x\n")
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))
+    monkeypatch.chdir(tmp_path)
+
+    result = dotenv.find_dotenv("~/.env", usecwd=True)
+
+    assert result == f"{home}/.env"
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="This test assumes case-sensitive variable names"
 )

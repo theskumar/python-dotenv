@@ -61,3 +61,18 @@ def test_ipython_new_variable(tmp_path):
     ipshell.run_line_magic("dotenv", "")
 
     assert os.environ == {"a": "b"}
+
+
+@mock.patch.dict(os.environ, {}, clear=False)
+def test_ipython_path_expands_user(tmp_path, monkeypatch):
+    from IPython.terminal.embed import InteractiveShellEmbed
+
+    (tmp_path / ".env").write_text("dotenv_ipython_home=b\n")
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+
+    ipshell = InteractiveShellEmbed()
+    ipshell.run_line_magic("load_ext", "dotenv")
+    ipshell.run_line_magic("dotenv", "~/.env")
+
+    assert os.environ["dotenv_ipython_home"] == "b"

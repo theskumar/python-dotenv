@@ -131,6 +131,7 @@ You can also specify a path:
 
 ```python
 %dotenv relative/or/absolute/path/to/.env
+%dotenv ~/path/to/.env
 ```
 
 Optional flags:
