@@ -381,8 +381,12 @@ def find_dotenv(
     """
     Search in increasingly higher folders for the given file
 
+    A leading `~` in `filename` is expanded to the user's home directory, and
+    an absolute `filename` is returned as is if it exists.
+
     Returns path to the file if found, or an empty string otherwise
     """
+    filename = os.path.expanduser(filename)
 
     def _is_interactive():
         """Decide whether this is running in a REPL or IPython notebook"""
