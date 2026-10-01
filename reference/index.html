@@ -642,7 +642,7 @@
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">dotenv_values</span><span class="p">(</span><span class="n">dotenv_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">dotenv_values</span><span class="p">(</span><span class="n">dotenv_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -791,14 +791,14 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
     <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">interpolate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Parse a .env file and return its content as a dict.</span>
 
 <span class="sd">    The returned dict will have `None` values for keys without values in the .env file.</span>
-<span class="sd">    For example, `foo=bar` results in `{&quot;foo&quot;: &quot;bar&quot;}` whereas `foo` alone results in</span>
-<span class="sd">    `{&quot;foo&quot;: None}`</span>
+<span class="sd">    For example, `foo=bar` results in `{"foo": "bar"}` whereas `foo` alone results in</span>
+<span class="sd">    `{"foo": None}`</span>
 
 <span class="sd">    Parameters:</span>
 <span class="sd">        dotenv_path: Absolute or relative path to the .env file.</span>
@@ -809,7 +809,7 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 
 <span class="sd">    If both `dotenv_path` and `stream` are `None`, `find_dotenv()` is used to find the</span>
 <span class="sd">    .env file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">dotenv_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dotenv_path</span> <span class="o">=</span> <span class="n">find_dotenv</span><span class="p">()</span>
 
@@ -835,7 +835,7 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">find_dotenv</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;.env&#39;</span><span class="p">,</span> <span class="n">raise_error_if_not_found</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">usecwd</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">find_dotenv</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">'.env'</span><span class="p">,</span> <span class="n">raise_error_if_not_found</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">usecwd</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -895,30 +895,30 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
 <span class="normal">383</span>
 <span class="normal">384</span>
 <span class="normal">385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_dotenv</span><span class="p">(</span>
-    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.env&quot;</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">".env"</span><span class="p">,</span>
     <span class="n">raise_error_if_not_found</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">usecwd</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Search in increasingly higher folders for the given file</span>
 
 <span class="sd">    Returns path to the file if found, or an empty string otherwise</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_interactive</span><span class="p">():</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decide whether this is running in a REPL or IPython notebook&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps2&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Decide whether this is running in a REPL or IPython notebook"""</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"ps1"</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"ps2"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">main</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;__main__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;__file__&quot;</span><span class="p">])</span>
+            <span class="n">main</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="s2">"__main__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">"__file__"</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="s2">&quot;__file__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="s2">"__file__"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_debugger</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">gettrace</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="k">if</span> <span class="n">usecwd</span> <span class="ow">or</span> <span class="n">_is_interactive</span><span class="p">()</span> <span class="ow">or</span> <span class="n">_is_debugger</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;frozen&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">usecwd</span> <span class="ow">or</span> <span class="n">_is_interactive</span><span class="p">()</span> <span class="ow">or</span> <span class="n">_is_debugger</span><span class="p">()</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"frozen"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="c1"># Should work without __file__, e.g. in REPL or IPython notebook.</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
@@ -940,9 +940,9 @@ For example, <code>foo=bar</code> results in <code>{"foo": "bar"}</code> whereas
             <span class="k">return</span> <span class="n">check_path</span>
 
     <span class="k">if</span> <span class="n">raise_error_if_not_found</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;File not found&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">"File not found"</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">""</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1003,27 +1003,27 @@ to be passed to a <code>local</code> or <code>run</code> command.</p>
     <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">quote</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a string suitable for running as a shell script.</span>
+<span class="w">    </span><span class="sd">"""Returns a string suitable for running as a shell script.</span>
 
 <span class="sd">    Useful for converting a arguments passed to a fabric task</span>
 <span class="sd">    to be passed to a `local` or `run` command.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dotenv&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"dotenv"</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">quote</span><span class="p">:</span>
-        <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-q </span><span class="si">{</span><span class="n">quote</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"-q </span><span class="si">{</span><span class="n">quote</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
-        <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-f </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"-f </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">action</span><span class="p">:</span>
         <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span><span class="p">:</span>
             <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">" "</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">"'</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1038,7 +1038,7 @@ to be passed to a <code>local</code> or <code>run</code> command.</p>
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_key</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">key_to_get</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_key</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">key_to_get</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1062,13 +1062,13 @@ to be passed to a <code>local</code> or <code>run</code> command.</p>
 <span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_key</span><span class="p">(</span>
     <span class="n">dotenv_path</span><span class="p">:</span> <span class="n">StrPath</span><span class="p">,</span>
     <span class="n">key_to_get</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the value of a given key from the given .env.</span>
 
-<span class="sd">    Returns `None` if the key isn&#39;t found or doesn&#39;t have a value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Returns `None` if the key isn't found or doesn't have a value.</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">DotEnv</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key_to_get</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1084,7 +1084,7 @@ to be passed to a <code>local</code> or <code>run</code> command.</p>
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">load_dotenv</span><span class="p">(</span><span class="n">dotenv_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">load_dotenv</span><span class="p">(</span><span class="n">dotenv_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1268,9 +1268,9 @@ to this function as <code>dotenv_path</code>.</p>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">override</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">interpolate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a .env file and then load all the variables found as environment variables.</span>
+<span class="w">    </span><span class="sd">"""Parse a .env file and then load all the variables found as environment variables.</span>
 
 <span class="sd">    Parameters:</span>
 <span class="sd">        dotenv_path: Absolute or relative path to .env file.</span>
@@ -1291,10 +1291,10 @@ to this function as <code>dotenv_path</code>.</p>
 
 <span class="sd">    If the environment variable `PYTHON_DOTENV_DISABLED` is set to a truthy value,</span>
 <span class="sd">    .env loading is disabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">_load_dotenv_disabled</span><span class="p">():</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable&quot;</span>
+            <span class="s2">"python-dotenv: .env loading disabled by PYTHON_DOTENV_DISABLED environment variable"</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
 
@@ -1324,7 +1324,7 @@ to this function as <code>dotenv_path</code>.</p>
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_key</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">key_to_set</span><span class="p">,</span> <span class="n">value_to_set</span><span class="p">,</span> <span class="n">quote_mode</span><span class="o">=</span><span class="s1">&#39;always&#39;</span><span class="p">,</span> <span class="n">export</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_key</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">key_to_set</span><span class="p">,</span> <span class="n">value_to_set</span><span class="p">,</span> <span class="n">quote_mode</span><span class="o">=</span><span class="s1">'always'</span><span class="p">,</span> <span class="n">export</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1399,40 +1399,40 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
     <span class="n">dotenv_path</span><span class="p">:</span> <span class="n">StrPath</span><span class="p">,</span>
     <span class="n">key_to_set</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value_to_set</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">quote_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;always&quot;</span><span class="p">,</span>
+    <span class="n">quote_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"always"</span><span class="p">,</span>
     <span class="n">export</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
     <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Adds or Updates a key/value to the given .env</span>
 
-<span class="sd">    The target .env file is created if it doesn&#39;t exist.</span>
+<span class="sd">    The target .env file is created if it doesn't exist.</span>
 
-<span class="sd">    This function doesn&#39;t follow symlinks by default, to avoid accidentally</span>
-<span class="sd">    modifying a file at a potentially untrusted path. If you don&#39;t need this</span>
+<span class="sd">    This function doesn't follow symlinks by default, to avoid accidentally</span>
+<span class="sd">    modifying a file at a potentially untrusted path. If you don't need this</span>
 <span class="sd">    protection and need symlinks to be followed, use `follow_symlinks`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">quote_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;never&quot;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown quote_mode: </span><span class="si">{</span><span class="n">quote_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">quote_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"always"</span><span class="p">,</span> <span class="s2">"auto"</span><span class="p">,</span> <span class="s2">"never"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown quote_mode: </span><span class="si">{</span><span class="n">quote_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">quote</span> <span class="o">=</span> <span class="n">quote_mode</span> <span class="o">==</span> <span class="s2">&quot;always&quot;</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="n">quote_mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">value_to_set</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span>
+    <span class="n">quote</span> <span class="o">=</span> <span class="n">quote_mode</span> <span class="o">==</span> <span class="s2">"always"</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="n">quote_mode</span> <span class="o">==</span> <span class="s2">"auto"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">value_to_set</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">quote</span><span class="p">:</span>
-        <span class="c1"># The single-quoted-value parser decodes `\\` and `\&#39;`, so both have to</span>
+        <span class="c1"># The single-quoted-value parser decodes `\\` and `\'`, so both have to</span>
         <span class="c1"># be escaped here for the value to survive a write/read round-trip.</span>
         <span class="c1"># Backslashes first, otherwise the backslash added by the quote</span>
         <span class="c1"># escaping would be escaped in turn.</span>
-        <span class="n">escaped</span> <span class="o">=</span> <span class="n">value_to_set</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-        <span class="n">value_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">escaped</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="n">escaped</span> <span class="o">=</span> <span class="n">value_to_set</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\\\\</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"'"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\\</span><span class="s2">'"</span><span class="p">)</span>
+        <span class="n">value_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">escaped</span><span class="si">}</span><span class="s2">'"</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">value_out</span> <span class="o">=</span> <span class="n">value_to_set</span>
     <span class="k">if</span> <span class="n">export</span><span class="p">:</span>
-        <span class="n">line_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;export </span><span class="si">{</span><span class="n">key_to_set</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value_out</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">line_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"export </span><span class="si">{</span><span class="n">key_to_set</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value_out</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">line_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key_to_set</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value_out</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">line_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key_to_set</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value_out</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
 
     <span class="k">with</span> <span class="n">rewrite</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
@@ -1446,10 +1446,10 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
                 <span class="n">replaced</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">dest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
-                <span class="n">missing_newline</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">mapping</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">missing_newline</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">mapping</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">replaced</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">missing_newline</span><span class="p">:</span>
-                <span class="n">dest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">dest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">dest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line_out</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">key_to_set</span><span class="p">,</span> <span class="n">value_to_set</span>
@@ -1467,7 +1467,7 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
 
 
 </h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">unset_key</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">key_to_unset</span><span class="p">,</span> <span class="n">quote_mode</span><span class="o">=</span><span class="s1">&#39;always&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">unset_key</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">,</span> <span class="n">key_to_unset</span><span class="p">,</span> <span class="n">quote_mode</span><span class="o">=</span><span class="s1">'always'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1523,22 +1523,22 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
 <span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unset_key</span><span class="p">(</span>
     <span class="n">dotenv_path</span><span class="p">:</span> <span class="n">StrPath</span><span class="p">,</span>
     <span class="n">key_to_unset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">quote_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;always&quot;</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+    <span class="n">quote_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"always"</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">,</span>
     <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Removes a given key from the given `.env` file.</span>
 
-<span class="sd">    If the .env path given doesn&#39;t exist, fails.</span>
-<span class="sd">    If the given key doesn&#39;t exist in the .env, fails.</span>
+<span class="sd">    If the .env path given doesn't exist, fails.</span>
+<span class="sd">    If the given key doesn't exist in the .env, fails.</span>
 
-<span class="sd">    This function doesn&#39;t follow symlinks by default, to avoid accidentally</span>
-<span class="sd">    modifying a file at a potentially untrusted path. If you don&#39;t need this</span>
+<span class="sd">    This function doesn't follow symlinks by default, to avoid accidentally</span>
+<span class="sd">    modifying a file at a potentially untrusted path. If you don't need this</span>
 <span class="sd">    protection and need symlinks to be followed, use `follow_symlinks`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dotenv_path</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t delete from </span><span class="si">%s</span><span class="s2"> - it doesn&#39;t exist.&quot;</span><span class="p">,</span> <span class="n">dotenv_path</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Can't delete from </span><span class="si">%s</span><span class="s2"> - it doesn't exist."</span><span class="p">,</span> <span class="n">dotenv_path</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key_to_unset</span>
 
     <span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1554,7 +1554,7 @@ protection and need symlinks to be followed, use <code>follow_symlinks</code>.</
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">removed</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;Key </span><span class="si">%s</span><span class="s2"> not removed from </span><span class="si">%s</span><span class="s2"> - key doesn&#39;t exist.&quot;</span><span class="p">,</span> <span class="n">key_to_unset</span><span class="p">,</span> <span class="n">dotenv_path</span>
+            <span class="s2">"Key </span><span class="si">%s</span><span class="s2"> not removed from </span><span class="si">%s</span><span class="s2"> - key doesn't exist."</span><span class="p">,</span> <span class="n">key_to_unset</span><span class="p">,</span> <span class="n">dotenv_path</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key_to_unset</span>
 
