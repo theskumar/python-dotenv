@@ -62,9 +62,14 @@ class Variable(Atom):
         return hash((self.__class__, self.name, self.default))
 
     def resolve(self, env: Mapping[str, Optional[str]]) -> str:
-        default = self.default if self.default is not None else ""
-        result = env.get(self.name, default)
-        return result if result is not None else ""
+        # ${name:-default} uses the default when name is missing or empty.
+        # ${name} has no default, so those cases stay empty.
+        result = env.get(self.name)
+        if result:
+            return result
+        if self.default is not None:
+            return self.default
+        return result or ""
 
 
 def parse_variables(value: str) -> Iterator[Atom]:
