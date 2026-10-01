@@ -77,6 +77,14 @@ def test_get_empty_string_value(cli, dotenv_path):
     assert (result.exit_code, result.output) == (0, "\n")
 
 
+def test_get_value_without_equals(cli, dotenv_path):
+    dotenv_path.write_text("a")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "get", "a"])
+
+    assert (result.exit_code, result.output) == (1, "")
+
+
 def test_get_non_existent_value(cli, dotenv_path):
     result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "get", "a"])
 
