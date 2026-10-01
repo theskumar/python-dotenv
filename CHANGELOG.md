@@ -7,6 +7,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-10-01
+
 ### Fixed
 
 - `dotenv get` no longer exits with code 1 for empty string values (`KEY=`) by [@ShamikOfficial] in [#700]
@@ -514,7 +516,8 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@JYOuyang]: https://github.com/JYOuyang
 [@burnout-projects]: https://github.com/burnout-projects
 [@cpackham-atlnz]: https://github.com/cpackham-atlnz
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.2.4...HEAD
+[1.2.4]: https://github.com/theskumar/python-dotenv/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/theskumar/python-dotenv/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/theskumar/python-dotenv/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/theskumar/python-dotenv/compare/v1.2.0...v1.2.1
