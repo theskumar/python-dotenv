@@ -435,7 +435,8 @@ def load_dotenv(
     """Parse a .env file and then load all the variables found as environment variables.
 
     Parameters:
-        dotenv_path: Absolute or relative path to .env file.
+        dotenv_path: Absolute or relative path to .env file. A leading `~` is
+            expanded to the user's home directory.
         stream: Text stream (such as `io.StringIO`) with .env content, used if
             `dotenv_path` is `None`.
         verbose: Whether to output a warning the .env file is missing.
@@ -489,7 +490,8 @@ def dotenv_values(
     `{"foo": None}`
 
     Parameters:
-        dotenv_path: Absolute or relative path to the .env file.
+        dotenv_path: Absolute or relative path to the .env file. A leading `~` is
+            expanded to the user's home directory.
         stream: `StringIO` object with .env content, used if `dotenv_path` is `None`.
         verbose: Whether to output a warning if the .env file is missing.
         interpolate: Whether to interpolate variables using POSIX variable expansion.
