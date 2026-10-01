@@ -12,6 +12,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]
 - `set_key`, `unset_key` and the `dotenv set`/`unset` commands now name the `.env` path instead of an internal temporary file when its directory is missing or not writable, and the CLI prints a short error and exits with code 2 instead of a traceback by [@jamalkamaladdin] in [#711]
 - `set_key` and `unset_key` no longer leave a `.tmp_*` file behind on Windows when writing a read-only `.env` fails, and the error raised is the one from the failed write rather than from cleaning up the temporary file by [@MohammedAlkindi] in [#686]
+- `load_dotenv`, `dotenv_values`, `get_key`, `set_key`, `unset_key` and the CLI `--file` option now expand a leading `~` to the user's home directory by [@veeceey] in [#615]
 
 ## [1.2.4] - 2026-10-01
 
@@ -456,6 +457,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#606]: https://github.com/theskumar/python-dotenv/pull/606
 [#638]: https://github.com/theskumar/python-dotenv/pull/638
 [#640]: https://github.com/theskumar/python-dotenv/pull/640
+[#615]: https://github.com/theskumar/python-dotenv/pull/615
 [#648]: https://github.com/theskumar/python-dotenv/pull/648
 [#663]: https://github.com/theskumar/python-dotenv/pull/663
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
@@ -520,6 +522,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@theGOTOguy]: https://github.com/theGOTOguy
 [@theskumar]: https://github.com/theskumar
 [@ulyssessouza]: https://github.com/ulyssessouza
+[@veeceey]: https://github.com/veeceey
 [@venthur]: https://github.com/venthur
 [@wrongontheinternet]: https://github.com/wrongontheinternet
 [@x-yuri]: https://github.com/x-yuri
