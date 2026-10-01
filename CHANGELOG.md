@@ -9,6 +9,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `dotenv get` no longer exits with code 1 for empty string values (`KEY=`) by [@ShamikOfficial] in [#700]
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
 - `dotenv run --no-override` now expands variable references with the same precedence as `load_dotenv(override=False)`, so a value like `${BASE}/suffix` uses the existing `BASE` from the environment instead of the one from the `.env` file by [@ROTl24] in [#698]
 
@@ -450,6 +451,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#663]: https://github.com/theskumar/python-dotenv/pull/663
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
 [#698]: https://github.com/theskumar/python-dotenv/pull/698
+[#700]: https://github.com/theskumar/python-dotenv/pull/700
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -497,6 +499,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@randomseed42]: https://github.com/randomseed42
 [@sammck]: https://github.com/sammck
 [@samwyma]: https://github.com/samwyma
+[@ShamikOfficial]: https://github.com/ShamikOfficial
 [@sidharth-sudhir]: https://github.com/sidharth-sudhir
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy

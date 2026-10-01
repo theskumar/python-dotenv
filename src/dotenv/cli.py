@@ -141,11 +141,10 @@ def get(ctx: click.Context, key: Any) -> None:
     with stream_file(file) as stream:
         values = dotenv_values(stream=stream)
 
-    stored_value = values.get(key)
-    if stored_value:
-        click.echo(stored_value)
-    else:
+    # Empty strings are valid values; only missing keys / bare keys (None) fail.
+    if key not in values or values[key] is None:
         sys.exit(1)
+    click.echo(values[key])
 
 
 @cli.command()
