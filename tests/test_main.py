@@ -1,4 +1,5 @@
 import io
+from pathlib import Path
 import logging
 import os
 import stat
@@ -410,6 +411,34 @@ def test_find_dotenv_found(tmp_path):
     result = dotenv.find_dotenv(usecwd=True)
 
     assert result == str(dotenv_path)
+
+
+def test_find_dotenv_no_assert_when_stack_exhausted(tmp_path):
+    """Regression for #499: exhausted caller stack must not raise AssertionError.
+
+    ``python -c`` / runpy leaves frames whose ``co_filename`` does not exist on
+    disk; walking past them used to ``assert frame.f_back is not None``. Fall
+    back to cwd instead.
+    """
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("A=1\n")
+    env = {**os.environ, "PYTHONPATH": str(Path(__file__).resolve().parents[1] / "src")}
+    # -c has no real caller file; previously AssertionError.
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "from dotenv import find_dotenv; print(find_dotenv())",
+        ],
+        cwd=str(tmp_path),
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip() == str(dotenv_path)
+
 
 
 @pytest.mark.skipif(
