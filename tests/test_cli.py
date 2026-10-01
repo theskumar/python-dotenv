@@ -196,10 +196,10 @@ def test_set_missing_directory(cli, tmp_path):
 
     result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "set", "a", "b"])
 
-    assert result.exit_code == 2, result.output
-    assert "Error writing env file" in result.output
-    assert str(dotenv_path) in result.output
-    assert ".tmp_" not in result.output
+    assert (result.exit_code, result.output) == (
+        2,
+        f"Error writing env file: [Errno 2] No such file or directory: {str(dotenv_path)!r}\n",
+    )
 
 
 @pytest.mark.skipif(
@@ -218,9 +218,10 @@ def test_unset_read_only_directory(cli, tmp_path):
     finally:
         directory.chmod(0o755)
 
-    assert result.exit_code == 2, result.output
-    assert "Error writing env file" in result.output
-    assert str(dotenv_path) in result.output
+    assert (result.exit_code, result.output) == (
+        2,
+        f"Error writing env file: [Errno 13] Permission denied: {str(dotenv_path)!r}\n",
+    )
     assert dotenv_path.read_text() == "a=b\n"
 
 
