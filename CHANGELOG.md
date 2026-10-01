@@ -10,6 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
+- `dotenv run --no-override` now expands variable references with the same precedence as `load_dotenv(override=False)`, so a value like `${BASE}/suffix` uses the existing `BASE` from the environment instead of the one from the `.env` file by [@ROTl24] in [#698]
 - A leading UTF-8 BOM is now preserved when `set_key` or `unset_key` rewrites a `.env` file, instead of being silently dropped by [@MohammedAlkindi] in [#687]
 
 ## [1.2.3] - 2026-08-16
@@ -450,6 +451,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#663]: https://github.com/theskumar/python-dotenv/pull/663
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
 [#687]: https://github.com/theskumar/python-dotenv/pull/687
+[#698]: https://github.com/theskumar/python-dotenv/pull/698
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -461,6 +463,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@Nougat-Waffle]: https://github.com/Nougat-Waffle
 [@Qwerty-133]: https://github.com/Qwerty-133
 [@ReinerBRO]: https://github.com/ReinerBRO
+[@ROTl24]: https://github.com/ROTl24
 [@alanjds]: https://github.com/alanjds
 [@altendky]: https://github.com/altendky
 [@andrewsmith]: https://github.com/andrewsmith
