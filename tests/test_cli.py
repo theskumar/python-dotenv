@@ -88,6 +88,38 @@ def test_get_not_a_file(cli):
     assert "Error opening env file" in result.output
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks need extra privileges on Windows"
+)
+def test_set_follows_symlink(cli, tmp_path):
+    target = tmp_path / "real.env"
+    target.write_text("a=x\n")
+    link = tmp_path / ".env"
+    link.symlink_to(target)
+
+    result = cli.invoke(dotenv_cli, ["--file", str(link), "set", "a", "y"])
+
+    assert result.exit_code == 0
+    assert link.is_symlink()
+    assert target.read_text() == "a='y'\n"
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks need extra privileges on Windows"
+)
+def test_unset_follows_symlink(cli, tmp_path):
+    target = tmp_path / "real.env"
+    target.write_text("a=b\n")
+    link = tmp_path / ".env"
+    link.symlink_to(target)
+
+    result = cli.invoke(dotenv_cli, ["--file", str(link), "unset", "a"])
+
+    assert result.exit_code == 0
+    assert link.is_symlink()
+    assert target.read_text() == ""
+
+
 def test_unset_existing_value(cli, dotenv_path):
     dotenv_path.write_text("a=b")
 
