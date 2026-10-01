@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]
+
 ## [1.2.4] - 2026-10-01
 
 ### Fixed
@@ -450,6 +454,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#606]: https://github.com/theskumar/python-dotenv/pull/606
 [#638]: https://github.com/theskumar/python-dotenv/pull/638
 [#640]: https://github.com/theskumar/python-dotenv/pull/640
+[#648]: https://github.com/theskumar/python-dotenv/pull/648
 [#663]: https://github.com/theskumar/python-dotenv/pull/663
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
 [#698]: https://github.com/theskumar/python-dotenv/pull/698
@@ -490,6 +495,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@jadutter]: https://github.com/jadutter
 [@jankislinger]: https://github.com/jankislinger
 [@jctanner]: https://github.com/jctanner
+[@kurtmckee]: https://github.com/kurtmckee
 [@larsks]: https://github.com/larsks
 [@lsmith77]: https://github.com/lsmith77
 [@matthewfranglen]: https://github.com/matthewfranglen
