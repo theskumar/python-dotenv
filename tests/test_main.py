@@ -106,6 +106,17 @@ def test_set_key_preserves_file_mode(dotenv_path):
     assert mode_before == mode_after
 
 
+def test_set_key_preserves_byte_order_mark(dotenv_path):
+    dotenv_path.write_bytes(b"\xef\xbb\xbfa=x\n")
+
+    dotenv.set_key(dotenv_path, "b", "y")
+
+    contents = dotenv_path.read_bytes()
+    assert contents.startswith(b"\xef\xbb\xbf")
+    assert contents.count(b"\xef\xbb\xbf") == 1
+    assert dotenv.dotenv_values(dotenv_path) == {"a": "x", "b": "y"}
+
+
 def test_rewrite_closes_file_handle_on_lstat_failure(tmp_path):
     dotenv_path = tmp_path / ".env"
     dotenv_path.write_text("a=x\n")
@@ -301,6 +312,17 @@ def test_unset_encoding(dotenv_path):
 
     assert result == (True, "é")
     assert dotenv_path.read_text(encoding=encoding) == ""
+
+
+def test_unset_preserves_byte_order_mark(dotenv_path):
+    dotenv_path.write_bytes(b"\xef\xbb\xbfa=x\nb=y\n")
+
+    result = dotenv.unset_key(dotenv_path, "b")
+
+    assert result == (True, "b")
+    contents = dotenv_path.read_bytes()
+    assert contents.startswith(b"\xef\xbb\xbf")
+    assert dotenv.dotenv_values(dotenv_path) == {"a": "x"}
 
 
 def test_unset_non_existent_file(tmp_path):

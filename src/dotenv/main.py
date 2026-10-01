@@ -172,6 +172,14 @@ def rewrite(
 
         try:
             with source:
+                # The parser strips a leading BOM, so it never reaches the
+                # bindings the caller writes out.  Carry it across here, or
+                # rewriting a file that has one silently drops it.
+                if source.seekable():
+                    if source.read(1) == "\ufeff":
+                        dest.write("\ufeff")
+                    else:
+                        source.seek(0)
                 yield (source, dest)
         except BaseException as err:
             error = err
