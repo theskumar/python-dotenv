@@ -313,6 +313,67 @@ def test_rewrite_read_only_file_leaves_no_temp_file(tmp_path, rewrite):
     assert list(tmp_path.iterdir()) == [dotenv_path]
 
 
+@pytest.mark.parametrize("path_type", [str, pathlib.Path])
+@pytest.mark.parametrize(
+    "call,expected_result,expected_content",
+    [
+        (lambda path: dotenv.dotenv_values(path), {"a": "x"}, "a=x\n"),
+        (lambda path: dotenv.get_key(path, "a"), "x", "a=x\n"),
+        (lambda path: dotenv.set_key(path, "b", "y"), (True, "b", "y"), "a=x\nb='y'\n"),
+        (lambda path: dotenv.unset_key(path, "a"), (True, "a"), ""),
+    ],
+    ids=["dotenv_values", "get_key", "set_key", "unset_key"],
+)
+def test_dotenv_path_expands_user(
+    tmp_path, monkeypatch, path_type, call, expected_result, expected_content
+):
+    home = tmp_path / "home"
+    home.mkdir()
+    (home / ".env").write_text("a=x\n")
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))
+    monkeypatch.chdir(tmp_path)
+
+    result = call(path_type("~/.env"))
+
+    assert result == expected_result
+    assert (home / ".env").read_text() == expected_content
+    assert sorted(tmp_path.iterdir()) == [home]
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_expands_user(tmp_path, monkeypatch):
+    (tmp_path / ".env").write_text("a=x\n")
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+
+    result = dotenv.load_dotenv("~/.env")
+
+    assert result is True
+    assert os.environ["a"] == "x"
+
+
+@pytest.mark.parametrize(
+    "path,expected",
+    [
+        ("~/.env", "{home}/.env"),
+        (pathlib.Path("~/.env"), pathlib.Path("{home}/.env")),
+        (".env", ".env"),
+        (None, None),
+    ],
+)
+def test_dotenv_path_keeps_type(tmp_path, monkeypatch, path, expected):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    if expected is not None:
+        expected = type(expected)(str(expected).format(home=tmp_path))
+
+    result = DotEnv(path).dotenv_path
+
+    assert result == expected
+    assert type(result) is type(expected)
+
+
 def test_get_key_no_file(tmp_path):
     nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")

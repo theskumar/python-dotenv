@@ -61,6 +61,8 @@ def enumerate_env() -> Optional[str]:
 @click.pass_context
 def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
     """This script is used to set, get or unset values from a .env file."""
+    if file is not None:
+        file = os.path.expanduser(file)
     ctx.obj = {"QUOTE": quote, "EXPORT": export, "FILE": file}
 
 

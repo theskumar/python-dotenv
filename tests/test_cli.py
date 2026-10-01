@@ -316,6 +316,34 @@ def test_run_with_other_env(dotenv_path, tmp_path):
     check_process(result, exit_code=0, stdout="x\n")
 
 
+@pytest.mark.parametrize(
+    "args,expected_stdout,expected_content",
+    [
+        (["list"], "a=x\n", "a=x\n"),
+        (["get", "a"], "x\n", "a=x\n"),
+        (["set", "b", "y"], "b=y\n", "a=x\nb='y'\n"),
+        (["unset", "a"], "Successfully removed a\n", ""),
+        (
+            ["run", sys.executable, "-c", "import os; print(os.environ['a'])"],
+            "x\n",
+            "a=x\n",
+        ),
+    ],
+    ids=["list", "get", "set", "unset", "run"],
+)
+def test_file_option_expands_user(tmp_path, args, expected_stdout, expected_content):
+    home = tmp_path / "home"
+    home.mkdir()
+    (home / ".env").write_text("a=x\n")
+    env = {**os.environ, "HOME": str(home), "USERPROFILE": str(home)}
+
+    result = run_dotenv(["--file", "~/.env", *args], cwd=tmp_path, env=env)
+
+    check_process(result, exit_code=0, stdout=expected_stdout)
+    assert (home / ".env").read_text() == expected_content
+    assert sorted(tmp_path.iterdir()) == [home]
+
+
 def test_run_without_cmd(tmp_path):
     result = run_dotenv(["run"], cwd=tmp_path)
 
