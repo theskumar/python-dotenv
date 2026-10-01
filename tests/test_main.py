@@ -756,3 +756,36 @@ def test_dotenv_values_empty_value_with_inline_comment(string, expected):
     result = dotenv.dotenv_values(stream=io.StringIO(string))
 
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "a=b",  # written verbatim, reads back as key "a" with value "b='x'"
+        "a b",
+        " a",
+        "a\tb",
+        "a#b",
+        "",
+        "a\nb",  # writes a second line, so a spurious extra key appears
+        "export A",
+    ],
+)
+def test_set_key_rejects_key_that_does_not_round_trip(tmp_path, key):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("EXISTING=1\n")
+
+    with pytest.raises(ValueError):
+        dotenv.set_key(dotenv_path, key, "x")
+
+    assert dotenv_path.read_text() == "EXISTING=1\n"
+
+
+@pytest.mark.parametrize("key", ["a", "A_B1", "a.b", "MY-KEY", "a'b", "a$b", "\u00e9"])
+def test_set_key_accepts_key_that_round_trips(tmp_path, key):
+    dotenv_path = tmp_path / ".env"
+
+    result = dotenv.set_key(dotenv_path, key, "x")
+
+    assert result == (True, key, "x")
+    assert dotenv.dotenv_values(dotenv_path) == {key: "x"}
