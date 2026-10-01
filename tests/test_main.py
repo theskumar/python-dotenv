@@ -1,6 +1,7 @@
 import io
 import logging
 import os
+import pathlib
 import stat
 import subprocess
 import sys
@@ -195,6 +196,48 @@ def test_set_key_permission_error(dotenv_path):
     assert dotenv_path.read_text() == ""
 
 
+@pytest.mark.skipif(
+    sys.platform != "win32" and os.geteuid() == 0,
+    reason="Root user can access files even with 000 permissions.",
+)
+def test_set_key_permission_error_leaves_no_temp_file(dotenv_path):
+    if sys.platform == "win32":
+        # On Windows, make file read-only
+        dotenv_path.chmod(stat.S_IREAD)
+    else:
+        # On Unix, remove all permissions
+        dotenv_path.chmod(0o000)
+
+    try:
+        with pytest.raises(PermissionError):
+            dotenv.set_key(dotenv_path, "a", "b")
+
+        assert list(dotenv_path.parent.glob(".tmp_*")) == []
+    finally:
+        # Restore permissions
+        if sys.platform == "win32":
+            dotenv_path.chmod(stat.S_IWRITE | stat.S_IREAD)
+        else:
+            dotenv_path.chmod(0o600)
+
+
+def test_rewrite_reports_original_error_when_cleanup_fails(dotenv_path, caplog):
+    replace_error = OSError("replace failed")
+
+    with mock.patch("dotenv.main.os.replace", side_effect=replace_error):
+        with mock.patch.object(
+            pathlib.Path, "unlink", side_effect=OSError("unlink failed")
+        ):
+            with pytest.raises(OSError) as excinfo:
+                dotenv.set_key(dotenv_path, "a", "b")
+
+    assert excinfo.value is replace_error
+    [temp_file] = dotenv_path.parent.glob(".tmp_*")
+    assert caplog.messages == [
+        f"python-dotenv could not remove the temporary file {temp_file}"
+    ]
+
+
 def test_set_key_missing_directory(tmp_path):
     dotenv_path = tmp_path / "nx_dir" / ".env"
 
@@ -225,6 +268,49 @@ def test_set_key_read_only_directory(tmp_path):
     assert exc_info.value.filename == str(dotenv_path)
     assert dotenv_path.read_text() == "a=x\n"
     assert list(directory.iterdir()) == [dotenv_path]
+
+
+def windows_read_only_semantics(path):
+    # On Windows, a file without the owner-write bit can't be replaced or deleted.
+    return path.exists() and not path.stat().st_mode & stat.S_IWUSR
+
+
+@pytest.mark.parametrize(
+    "rewrite",
+    [
+        lambda path: dotenv.set_key(path, "a", "y"),
+        lambda path: dotenv.unset_key(path, "a"),
+    ],
+    ids=["set_key", "unset_key"],
+)
+def test_rewrite_read_only_file_leaves_no_temp_file(tmp_path, rewrite):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+    dotenv_path.chmod(stat.S_IREAD)
+    real_replace = os.replace
+    real_unlink = pathlib.Path.unlink
+
+    def replace(src, dst):
+        if windows_read_only_semantics(pathlib.Path(dst)):
+            raise PermissionError(
+                13, "Access is denied", os.fspath(src), None, os.fspath(dst)
+            )
+        real_replace(src, dst)
+
+    def unlink(self, missing_ok=False):
+        if windows_read_only_semantics(self):
+            raise PermissionError(13, "Access is denied", str(self))
+        real_unlink(self, missing_ok=missing_ok)
+
+    with mock.patch("dotenv.main.os.replace", side_effect=replace):
+        with mock.patch.object(pathlib.Path, "unlink", unlink):
+            with pytest.raises(PermissionError) as exc_info:
+                rewrite(dotenv_path)
+
+    dotenv_path.chmod(stat.S_IREAD | stat.S_IWRITE)
+    assert exc_info.value.filename2 == str(dotenv_path)
+    assert dotenv_path.read_text() == "a=x\n"
+    assert list(tmp_path.iterdir()) == [dotenv_path]
 
 
 def test_get_key_no_file(tmp_path):

@@ -11,6 +11,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]
 - `set_key`, `unset_key` and the `dotenv set`/`unset` commands now name the `.env` path instead of an internal temporary file when its directory is missing or not writable, and the CLI prints a short error and exits with code 2 instead of a traceback by [@jamalkamaladdin] in [#711]
+- `set_key` and `unset_key` no longer leave a `.tmp_*` file behind on Windows when writing a read-only `.env` fails, and the error raised is the one from the failed write rather than from cleaning up the temporary file by [@MohammedAlkindi] in [#686]
 
 ## [1.2.4] - 2026-10-01
 
@@ -458,6 +459,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#648]: https://github.com/theskumar/python-dotenv/pull/648
 [#663]: https://github.com/theskumar/python-dotenv/pull/663
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
+[#686]: https://github.com/theskumar/python-dotenv/pull/686
 [#698]: https://github.com/theskumar/python-dotenv/pull/698
 [#700]: https://github.com/theskumar/python-dotenv/pull/700
 [#711]: https://github.com/theskumar/python-dotenv/pull/711
@@ -468,6 +470,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@23f3001135]: https://github.com/23f3001135
 [@EpicWink]: https://github.com/EpicWink
 [@Flimm]: https://github.com/Flimm
+[@MohammedAlkindi]: https://github.com/MohammedAlkindi
 [@Nicals]: https://github.com/Nicals
 [@Nougat-Waffle]: https://github.com/Nougat-Waffle
 [@Qwerty-133]: https://github.com/Qwerty-133
