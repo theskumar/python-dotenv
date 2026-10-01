@@ -17,7 +17,7 @@ except ImportError:
     )
     sys.exit(1)
 
-from .main import dotenv_values, set_key, unset_key
+from .main import DotEnv, dotenv_values, set_key, unset_key
 from .version import __version__
 
 
@@ -141,11 +141,10 @@ def get(ctx: click.Context, key: Any) -> None:
     with stream_file(file) as stream:
         values = dotenv_values(stream=stream)
 
-    stored_value = values.get(key)
-    if stored_value:
-        click.echo(stored_value)
-    else:
+    # Empty strings are valid values; only missing keys / bare keys (None) fail.
+    if key not in values or values[key] is None:
         sys.exit(1)
+    click.echo(values[key])
 
 
 @cli.command()
@@ -190,7 +189,7 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
         )
     dotenv_as_dict = {
         k: v
-        for (k, v) in dotenv_values(file).items()
+        for (k, v) in DotEnv(file, override=override, encoding="utf-8").dict().items()
         if v is not None and (override or k not in os.environ)
     }
 
