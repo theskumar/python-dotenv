@@ -17,7 +17,7 @@ except ImportError:
     )
     sys.exit(1)
 
-from .main import dotenv_values, set_key, unset_key
+from .main import DotEnv, dotenv_values, set_key, unset_key
 from .version import __version__
 
 
@@ -124,7 +124,11 @@ def set_value(ctx: click.Context, key: Any, value: Any) -> None:
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
     export = ctx.obj["EXPORT"]
-    success, key, value = set_key(file, key, value, quote, export)
+    try:
+        success, key, value = set_key(file, key, value, quote, export)
+    except OSError as exc:
+        print(f"Error writing env file: {exc}", file=sys.stderr)
+        sys.exit(2)
     if success:
         click.echo(f"{key}={value}")
     else:
@@ -141,11 +145,10 @@ def get(ctx: click.Context, key: Any) -> None:
     with stream_file(file) as stream:
         values = dotenv_values(stream=stream)
 
-    stored_value = values.get(key)
-    if stored_value:
-        click.echo(stored_value)
-    else:
+    # Empty strings are valid values; only missing keys / bare keys (None) fail.
+    if key not in values or values[key] is None:
         sys.exit(1)
+    click.echo(values[key])
 
 
 @cli.command()
@@ -160,7 +163,11 @@ def unset(ctx: click.Context, key: Any) -> None:
     """
     file = ctx.obj["FILE"]
     quote = ctx.obj["QUOTE"]
-    success, key = unset_key(file, key, quote)
+    try:
+        success, key = unset_key(file, key, quote)
+    except OSError as exc:
+        print(f"Error writing env file: {exc}", file=sys.stderr)
+        sys.exit(2)
     if success:
         click.echo(f"Successfully removed {key}")
     else:
@@ -190,7 +197,7 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
         )
     dotenv_as_dict = {
         k: v
-        for (k, v) in dotenv_values(file).items()
+        for (k, v) in DotEnv(file, override=override, encoding="utf-8").dict().items()
         if v is not None and (override or k not in os.environ)
     }
 

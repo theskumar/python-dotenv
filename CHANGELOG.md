@@ -9,7 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]
+- `set_key`, `unset_key` and the `dotenv set`/`unset` commands now name the `.env` path instead of an internal temporary file when its directory is missing or not writable, and the CLI prints a short error and exits with code 2 instead of a traceback by [@jamalkamaladdin] in [#711]
+
+## [1.2.4] - 2026-10-01
+
+### Fixed
+
+- `dotenv get` no longer exits with code 1 for empty string values (`KEY=`) by [@ShamikOfficial] in [#700]
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
+- `dotenv run --no-override` now expands variable references with the same precedence as `load_dotenv(override=False)`, so a value like `${BASE}/suffix` uses the existing `BASE` from the environment instead of the one from the `.env` file by [@ROTl24] in [#698]
 
 ## [1.2.3] - 2026-08-16
 
@@ -446,8 +455,12 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#606]: https://github.com/theskumar/python-dotenv/pull/606
 [#638]: https://github.com/theskumar/python-dotenv/pull/638
 [#640]: https://github.com/theskumar/python-dotenv/pull/640
+[#648]: https://github.com/theskumar/python-dotenv/pull/648
 [#663]: https://github.com/theskumar/python-dotenv/pull/663
 [#680]: https://github.com/theskumar/python-dotenv/pull/680
+[#698]: https://github.com/theskumar/python-dotenv/pull/698
+[#700]: https://github.com/theskumar/python-dotenv/pull/700
+[#711]: https://github.com/theskumar/python-dotenv/pull/711
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -459,6 +472,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@Nougat-Waffle]: https://github.com/Nougat-Waffle
 [@Qwerty-133]: https://github.com/Qwerty-133
 [@ReinerBRO]: https://github.com/ReinerBRO
+[@ROTl24]: https://github.com/ROTl24
 [@alanjds]: https://github.com/alanjds
 [@altendky]: https://github.com/altendky
 [@andrewsmith]: https://github.com/andrewsmith
@@ -481,8 +495,10 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@h1whelan]: https://github.com/h1whelan
 [@harveer07]: https://github.com/harveer07
 [@jadutter]: https://github.com/jadutter
+[@jamalkamaladdin]: https://github.com/jamalkamaladdin
 [@jankislinger]: https://github.com/jankislinger
 [@jctanner]: https://github.com/jctanner
+[@kurtmckee]: https://github.com/kurtmckee
 [@larsks]: https://github.com/larsks
 [@lsmith77]: https://github.com/lsmith77
 [@matthewfranglen]: https://github.com/matthewfranglen
@@ -494,6 +510,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@randomseed42]: https://github.com/randomseed42
 [@sammck]: https://github.com/sammck
 [@samwyma]: https://github.com/samwyma
+[@ShamikOfficial]: https://github.com/ShamikOfficial
 [@sidharth-sudhir]: https://github.com/sidharth-sudhir
 [@snobu]: https://github.com/snobu
 [@techalchemy]: https://github.com/techalchemy
@@ -508,7 +525,8 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@JYOuyang]: https://github.com/JYOuyang
 [@burnout-projects]: https://github.com/burnout-projects
 [@cpackham-atlnz]: https://github.com/cpackham-atlnz
-[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/theskumar/python-dotenv/compare/v1.2.4...HEAD
+[1.2.4]: https://github.com/theskumar/python-dotenv/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/theskumar/python-dotenv/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/theskumar/python-dotenv/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/theskumar/python-dotenv/compare/v1.2.0...v1.2.1

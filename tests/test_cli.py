@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -65,6 +66,23 @@ def test_get_existing_value(cli, dotenv_path):
     result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "get", "a"])
 
     assert (result.exit_code, result.output) == (0, "b\n")
+
+
+def test_get_empty_string_value(cli, dotenv_path):
+    """Empty string values must not be treated as missing (truthiness trap)."""
+    dotenv_path.write_text("a=\n")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "get", "a"])
+
+    assert (result.exit_code, result.output) == (0, "\n")
+
+
+def test_get_value_without_equals(cli, dotenv_path):
+    dotenv_path.write_text("a")
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "get", "a"])
+
+    assert (result.exit_code, result.output) == (1, "")
 
 
 def test_get_non_existent_value(cli, dotenv_path):
@@ -173,6 +191,40 @@ def test_set_no_file(cli):
     assert "Missing argument" in result.output
 
 
+def test_set_missing_directory(cli, tmp_path):
+    dotenv_path = tmp_path / "nx_dir" / ".env"
+
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "set", "a", "b"])
+
+    assert (result.exit_code, result.output) == (
+        2,
+        f"Error writing env file: [Errno 2] No such file or directory: {str(dotenv_path)!r}\n",
+    )
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32" or os.geteuid() == 0,
+    reason="Directory permissions are not enforced on Windows or for root.",
+)
+def test_unset_read_only_directory(cli, tmp_path):
+    directory = tmp_path / "ro"
+    directory.mkdir()
+    dotenv_path = directory / ".env"
+    dotenv_path.write_text("a=b\n")
+    directory.chmod(0o555)
+
+    try:
+        result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "unset", "a"])
+    finally:
+        directory.chmod(0o755)
+
+    assert (result.exit_code, result.output) == (
+        2,
+        f"Error writing env file: [Errno 13] Permission denied: {str(dotenv_path)!r}\n",
+    )
+    assert dotenv_path.read_text() == "a=b\n"
+
+
 def test_get_default_path(tmp_path):
     (tmp_path / ".env").write_text("A=x")
 
@@ -209,6 +261,40 @@ def test_run_with_existing_variable_not_overridden(tmp_path):
     )
 
     check_process(result, exit_code=0, stdout="C\n")
+
+
+@pytest.mark.parametrize(
+    "option,existing_value,expected",
+    [
+        ("--override", "environment", "file\nfile/suffix\n"),
+        ("--no-override", "environment", "environment\nenvironment/suffix\n"),
+        ("--no-override", "", "\n/suffix\n"),
+    ],
+)
+def test_run_interpolation_respects_override(
+    tmp_path, option, existing_value, expected
+):
+    (tmp_path / ".env").write_text(
+        "DOTENV_TEST_BASE=file\nDOTENV_TEST_DERIVED=${DOTENV_TEST_BASE}/suffix\n"
+    )
+    env = dict(os.environ)
+    env.pop("DOTENV_TEST_DERIVED", None)
+    env["DOTENV_TEST_BASE"] = existing_value
+
+    result = run_dotenv(
+        [
+            "run",
+            option,
+            sys.executable,
+            "-c",
+            "import os; print(os.environ['DOTENV_TEST_BASE']); "
+            "print(os.environ['DOTENV_TEST_DERIVED'])",
+        ],
+        cwd=tmp_path,
+        env=env,
+    )
+
+    check_process(result, exit_code=0, stdout=expected)
 
 
 def test_run_with_none_value(tmp_path):
@@ -269,16 +355,24 @@ def test_run_with_command_flags(dotenv_path, tmp_path):
     """
     Check that command flags passed after `dotenv run` are not interpreted.
 
-    Here, we want to run `printenv --version`, not `dotenv --version`.
+    Here, we want the command to receive `--help`, not `dotenv run --help`.
+    `sys.executable` is used instead of a system tool for portability.
     """
 
     result = run_dotenv(
-        ["--file", str(dotenv_path), "run", "printenv", "--version"],
+        [
+            "--file",
+            str(dotenv_path),
+            "run",
+            sys.executable,
+            "-c",
+            "import sys; print(sys.argv[1:])",
+            "--help",
+        ],
         cwd=tmp_path,
     )
 
-    check_process(result, exit_code=0)
-    assert result.stdout.strip().startswith("printenv ")
+    check_process(result, exit_code=0, stdout="['--help']\n")
 
 
 def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
