@@ -459,6 +459,32 @@ def test_load_dotenv_unreadable_file_does_not_raise(tmp_path):
         dotenv_path.chmod(0o600)
 
 
+def test_load_dotenv_permission_error_during_open(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("A=1\n")
+
+    with mock.patch("dotenv.main.open", side_effect=PermissionError("denied")):
+        assert dotenv.dotenv_values(dotenv_path) == {}
+
+
+def test_load_dotenv_permission_error_during_read(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("A=1\n")
+    error = PermissionError("reading failed")
+
+    class FailingStream(io.StringIO):
+        def read(self, *args, **kwargs):
+            raise error
+
+    stream = FailingStream("A=1\n")
+    with mock.patch("dotenv.main.open", return_value=stream):
+        with pytest.raises(PermissionError) as excinfo:
+            dotenv.dotenv_values(dotenv_path)
+
+    assert excinfo.value is error
+    assert stream.closed
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="This test assumes case-sensitive variable names"
 )

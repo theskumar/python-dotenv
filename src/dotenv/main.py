@@ -62,13 +62,15 @@ class DotEnv:
         if self.dotenv_path and _is_file_or_fifo(self.dotenv_path):
             if os.access(self.dotenv_path, os.R_OK):
                 try:
-                    with open(self.dotenv_path, encoding=self.encoding) as stream:
-                        yield stream
-                        return
+                    stream = open(self.dotenv_path, encoding=self.encoding)
                 except PermissionError:
                     # Race with permissions changing between the access check and
                     # open, or sandboxes that block open despite os.access.
                     pass
+                else:
+                    with stream:
+                        yield stream
+                    return
             if self.verbose:
                 logger.info(
                     "python-dotenv could not read configuration file %s.",
