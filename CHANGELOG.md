@@ -9,6 +9,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Resolve the CLI's default `.env` path in the current working directory on each invocation, rather than at import time by [@kokotatan] in [#718]
 - Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]
 - `set_key`, `unset_key` and the `dotenv set`/`unset` commands now name the `.env` path instead of an internal temporary file when its directory is missing or not writable, and the CLI prints a short error and exits with code 2 instead of a traceback by [@jamalkamaladdin] in [#711]
 - `set_key` and `unset_key` no longer leave a `.tmp_*` file behind on Windows when writing a read-only `.env` fails, and the error raised is the one from the failed write rather than from cleaning up the temporary file by [@MohammedAlkindi] in [#686]
@@ -467,6 +468,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#700]: https://github.com/theskumar/python-dotenv/pull/700
 [#711]: https://github.com/theskumar/python-dotenv/pull/711
 [#714]: https://github.com/theskumar/python-dotenv/pull/714
+[#718]: https://github.com/theskumar/python-dotenv/pull/718
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -505,6 +507,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@jamalkamaladdin]: https://github.com/jamalkamaladdin
 [@jankislinger]: https://github.com/jankislinger
 [@jctanner]: https://github.com/jctanner
+[@kokotatan]: https://github.com/kokotatan
 [@kurtmckee]: https://github.com/kurtmckee
 [@larsks]: https://github.com/larsks
 [@lsmith77]: https://github.com/lsmith77
