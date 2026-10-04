@@ -7,6 +7,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The `dotenv` console script is no longer installed with the base package. A
+  conda/venv `python-dotenv` without `[cli]` was dropping a stub `dotenv` on
+  `PATH` that hid a working user-level `[cli]` install. Run the CLI with
+  `python -m dotenv` after `pip install "python-dotenv[cli]"`. ([#683](https://github.com/theskumar/python-dotenv/issues/683))
+
 ### Fixed
 
 - Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]
