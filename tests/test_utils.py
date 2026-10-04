@@ -1,4 +1,10 @@
+import shlex
+from pathlib import Path
+
+import pytest
+
 from dotenv import get_cli_string as c
+from dotenv.cli import cli as dotenv_cli
 
 
 def test_to_cli_string():
@@ -17,3 +23,20 @@ def test_to_cli_string():
         c(action="set", key="SECRET", value="a b", quote="always")
         == 'dotenv -q always set SECRET "a b"'
     )
+
+
+@pytest.mark.parametrize(
+    "directory",
+    ["app", "my app", "app's"],
+)
+@pytest.mark.parametrize("path_type", [str, Path])
+def test_to_cli_string_path(cli, tmp_path, directory, path_type):
+    project = tmp_path / directory
+    project.mkdir()
+    path = project / ".env"
+    path.write_text("DEBUG=True\n")
+
+    command = c(path=path_type(path), action="get", key="DEBUG")
+    result = cli.invoke(dotenv_cli, shlex.split(command)[1:])
+
+    assert (result.exit_code, result.output) == (0, "True\n")
