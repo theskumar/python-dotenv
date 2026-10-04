@@ -1,6 +1,14 @@
 from typing import Any, Optional
 
-from .main import dotenv_values, find_dotenv, get_key, load_dotenv, set_key, unset_key
+from .main import (
+    dotenv_values,
+    find_dotenv,
+    get_key,
+    load_dotenv,
+    set_key,
+    set_variable_name_pattern,
+    unset_key,
+)
 
 
 def load_ipython_extension(ipython: Any) -> None:
@@ -48,4 +56,5 @@ __all__ = [
     "unset_key",
     "find_dotenv",
     "load_ipython_extension",
+    "set_variable_name_pattern",
 ]
