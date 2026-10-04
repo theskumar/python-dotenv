@@ -64,7 +64,13 @@ class Variable(Atom):
     def resolve(self, env: Mapping[str, Optional[str]]) -> str:
         default = self.default if self.default is not None else ""
         result = env.get(self.name, default)
-        return result if result is not None else ""
+        if result is None:
+            return ""
+        if result == "" and self.default is not None:
+            # POSIX: ${name:-default} falls back to the default when name
+            # is unset or empty (issue #715)
+            return default
+        return result
 
 
 def parse_variables(value: str) -> Iterator[Atom]:
