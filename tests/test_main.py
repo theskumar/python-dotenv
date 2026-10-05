@@ -238,6 +238,69 @@ def test_rewrite_reports_original_error_when_cleanup_fails(dotenv_path, caplog):
     ]
 
 
+@pytest.mark.parametrize(
+    "before,rewrite",
+    [
+        (None, lambda path: dotenv.set_key(path, "a", "new")),
+        ("a=old\n", lambda path: dotenv.set_key(path, "a", "new")),
+        ("a=old\nb=keep\n", lambda path: dotenv.unset_key(path, "a")),
+    ],
+    ids=["set_key_new_file", "set_key", "unset_key"],
+)
+def test_rewrite_close_failure_leaves_no_temp_file(tmp_path, before, rewrite):
+    dotenv_path = tmp_path / ".env"
+    if before is not None:
+        dotenv_path.write_text(before)
+    close_error = OSError("buffered write failed while closing")
+    real_temp_file = dotenv.main.tempfile.NamedTemporaryFile
+    opened_files = []
+
+    def failing_temp_file(*args, **kwargs):
+        temp_file = real_temp_file(*args, **kwargs)
+        opened_files.append(temp_file)
+        wrapper = mock.MagicMock(wraps=temp_file)
+        wrapper.name = temp_file.name
+        wrapper.__enter__.return_value = temp_file
+
+        def close(*exc):
+            temp_file.close()
+            raise close_error
+
+        wrapper.__exit__.side_effect = close
+        return wrapper
+
+    with mock.patch("dotenv.main.tempfile.NamedTemporaryFile", failing_temp_file):
+        with mock.patch("dotenv.main.os.replace") as replace:
+            with pytest.raises(OSError) as exc_info:
+                rewrite(dotenv_path)
+
+    assert exc_info.value is close_error
+    assert all(temp_file.closed for temp_file in opened_files)
+    replace.assert_not_called()
+    if before is None:
+        assert not dotenv_path.exists()
+    else:
+        assert dotenv_path.read_text() == before
+    assert list(tmp_path.glob(".tmp_*")) == []
+
+
+@pytest.mark.parametrize("error_type", [ValueError, KeyboardInterrupt])
+def test_rewrite_body_failure_preserves_error_and_target(dotenv_path, error_type):
+    dotenv_path.write_text("a=old\n")
+    error = error_type("rewrite interrupted")
+
+    with pytest.raises(error_type) as exc_info:
+        with dotenv.main.rewrite(dotenv_path, encoding="utf-8") as (source, dest):
+            dest.write("a=new\n")
+            raise error
+
+    assert exc_info.value is error
+    assert source.closed
+    assert dest.closed
+    assert dotenv_path.read_text() == "a=old\n"
+    assert list(dotenv_path.parent.glob(".tmp_*")) == []
+
+
 def test_set_key_missing_directory(tmp_path):
     dotenv_path = tmp_path / "nx_dir" / ".env"
 
