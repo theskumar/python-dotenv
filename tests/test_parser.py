@@ -721,3 +721,16 @@ def test_parse_stream(test_input, expected):
     result = parse_stream(io.StringIO(test_input))
 
     assert list(result) == expected
+
+
+@pytest.mark.parametrize("newline", ["\n", "\r", "\r\n"])
+def test_parse_stream_recovers_after_invalid_lines(newline):
+    lines = ["bad line", "NEXT=ok", "bad again", "LAST=yes"]
+    result = list(parse_stream(io.StringIO(newline.join(lines))))
+
+    assert result == [
+        Binding(None, None, Original(lines[0] + newline, 1), True),
+        Binding("NEXT", "ok", Original(lines[1] + newline, 2), False),
+        Binding(None, None, Original(lines[2] + newline, 3), True),
+        Binding("LAST", "yes", Original(lines[3], 4), False),
+    ]
