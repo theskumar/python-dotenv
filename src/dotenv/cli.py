@@ -17,7 +17,7 @@ except ImportError:
     )
     sys.exit(1)
 
-from .main import DotEnv, dotenv_values, set_key, unset_key
+from .main import DotEnv, _is_file_or_fifo, dotenv_values, set_key, unset_key
 from .version import __version__
 
 
@@ -193,7 +193,7 @@ def unset(ctx: click.Context, key: Any) -> None:
 def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> None:
     """Run command with environment variables present."""
     file = ctx.obj["FILE"]
-    if not os.path.isfile(file):
+    if not _is_file_or_fifo(file):
         raise click.BadParameter(
             f"Invalid value for '-f' \"{file}\" does not exist.", ctx=ctx
         )
