@@ -136,11 +136,11 @@
       "size_bytes": 630
     },
     {
-      "content_digest": "sha256:3e5cd6c31650889b33b57e1f4aa764695519ee95578eee7e8f76b3734aa8473d",
+      "content_digest": "sha256:5636c6b5272d2c8dcf834a87a27a725c400820fd71be40d85c4c270ab77cfb5b",
       "evidence_kind": "source_observation",
       "executable": false,
       "path": "pyproject.toml",
-      "size_bytes": 2120
+      "size_bytes": 2271
     },
     {
       "content_digest": "sha256:9bd719c05023386176dae93f187f1a3b46d457c18d10db5b424eead1fcb4b6e1",
@@ -325,10 +325,10 @@
       "size_bytes": 1212
     }
   ],
-  "fingerprint": "sha256:6bb776a887c46089f345295ecb6424c303982ae5231a4fdcb666d9d45394f632",
-  "product_digest": "sha256:75b9624c33fbb22de52e458a108625282ae17aed36a827b65860fb6a892ad67b",
+  "fingerprint": "sha256:bf862d654d552e711c8f50b3352b994afff5dde119be6eda7107f5ae3889d28a",
+  "product_digest": "sha256:bf2e2f039ab7fd275ca2c06d09ba5061d95262f4714795c72137c45f377b1cad",
   "schema_version": "structrr-source-manifest-v1",
-  "source_revision": "0b2880591780a426b0551436f47a17e7a76d954f",
-  "submission_base": "0b2880591780a426b0551436f47a17e7a76d954f",
+  "source_revision": "8b8e80fbea6bacd6a882b17e0786f0ab8990e1ac",
+  "submission_base": "8b8e80fbea6bacd6a882b17e0786f0ab8990e1ac",
   "taxonomy_fingerprint": "sha256:161c7013b4bd2e88adddfa6791578c89da2e34f1ebf6a39cc7ca3144fe4b4c8d"
 }

@@ -188,7 +188,7 @@ files:
   rationale: Preserve a source anchor for future Structrr context lookup.
   span:
     start_line: 1
-    end_line: 89
+    end_line: 95
   entities:
   - file:pyproject.toml
 - path: requirements-docs.txt
@@ -2941,16 +2941,16 @@ validation_inventory:
     observations:
     - &id004
       kind: bootstrap_baseline
-      status: failed
+      status: passed
       command: *id003
-      returncode: 1
-      stdout_sha256: 83e26e0d9f6e879d10c7e96e0408adb1d77aeb3b56500191ae907095d893a319
-      stderr_sha256: 845a8ff039c2d3a06107076ddffa32984ea5edb519b5eb97c8ac601dbbea6e54
-      error: validation command exited with status 1
+      returncode: 0
+      stdout_sha256: 79d188615226788616e65bab830aa6f575c6518a6d421d3ce4c1acc0b55b905e
+      stderr_sha256: 630bfeedb051ed1afc627f35bd1ca9b370db5e7064de2d8472eab6ad87af70a6
+      error: null
   depends_on: []
   local_reproducibility: unknown
   baseline:
-    status: failed
+    status: passed
     observation: *id004
   unresolved:
   - Tox factor expressions are retained symbolically; concrete environment variants
@@ -3033,7 +3033,7 @@ validation_inventory:
       status: passed
       command: *id005
       returncode: 0
-      stdout_sha256: fba43e7546fb89e02513b0dcc36a7c6db5c5289d58c59dc8d2e1e45d2d807e9a
+      stdout_sha256: 0c8d1402b9e3f78e1f50e5c1ccd63a6c8fb3fc2d14987079e3364a599b5589a6
       stderr_sha256: b5042bb9167a80ab86314cdf669c37f02bf749a1924c31703a264add2301b379
       error: null
   depends_on: []
@@ -3110,7 +3110,7 @@ validation_context:
     digest: sha256:74d25e5e679cf6c217f1b6d142c7510311d472d4be93d7afc209cd6a874e64ea
   - id: input:pyproject.toml
     path: pyproject.toml
-    digest: sha256:3e5cd6c31650889b33b57e1f4aa764695519ee95578eee7e8f76b3734aa8473d
+    digest: sha256:5636c6b5272d2c8dcf834a87a27a725c400820fd71be40d85c4c270ab77cfb5b
   - id: input:requirements-docs.txt
     path: requirements-docs.txt
     digest: sha256:9bd719c05023386176dae93f187f1a3b46d457c18d10db5b424eead1fcb4b6e1
