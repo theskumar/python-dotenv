@@ -1,0 +1,3125 @@
+schema: https://powdrr.io/schema/changelog-v2
+structrr_schema: https://powdrr.io/schema/structrr-bootstrap-v1
+section_versions:
+  intent: 1
+  active_intent: 1
+  human-decisions: 1
+  structured_files: 1
+  files: 1
+  entities: 1
+  entity_relationships: 1
+  source_subjects: 1
+  source_bindings: 1
+  invariants: 1
+  guidance: 1
+  tools: 1
+  validation_inventory: 2
+  validation_context: 1
+  statements: 1
+  features: 1
+  proposed_prs: 1
+change_id: bootstrap
+title: Bootstrap Structrr for python-dotenv
+intent:
+  problem: The repository lacks a validated Structrr snapshot connecting product evidence
+    to source files.
+  goal: Bootstrap a taxonomy-valid, source-anchored Structrr snapshot for subsequent
+    intentional changes.
+active_intent: []
+human-decisions: []
+structured_files: []
+files:
+- path: .bumpversion.cfg
+  type: modified
+  summary: Capture .bumpversion.cfg as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 6
+  entities:
+  - file:.bumpversion.cfg
+- path: .editorconfig
+  type: modified
+  summary: Capture .editorconfig as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 17
+  entities:
+  - file:.editorconfig
+- path: .gitignore
+  type: modified
+  summary: Capture .gitignore as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 129
+  entities:
+  - file:.gitignore
+- path: .pre-commit-config.yaml
+  type: modified
+  summary: Capture .pre-commit-config.yaml as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 8
+  entities:
+  - file:.pre-commit-config.yaml
+- path: CHANGELOG.md
+  type: modified
+  summary: Capture CHANGELOG.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 562
+  entities:
+  - file:CHANGELOG.md
+- path: CONTRIBUTING.md
+  type: modified
+  summary: Capture CONTRIBUTING.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 35
+  entities:
+  - file:CONTRIBUTING.md
+- path: LICENSE
+  type: modified
+  summary: Capture LICENSE as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 27
+  entities:
+  - file:LICENSE
+- path: MANIFEST.in
+  type: modified
+  summary: Capture MANIFEST.in as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 13
+  entities:
+  - file:MANIFEST.in
+- path: Makefile
+  type: modified
+  summary: Capture Makefile as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 50
+  entities:
+  - file:Makefile
+- path: README.md
+  type: modified
+  summary: Capture README.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 260
+  entities:
+  - file:README.md
+- path: RELEASING.md
+  type: modified
+  summary: Capture RELEASING.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 78
+  entities:
+  - file:RELEASING.md
+- path: docs/changelog.md
+  type: modified
+  summary: Capture docs/changelog.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 562
+  entities:
+  - file:docs/changelog.md
+- path: docs/contributing.md
+  type: modified
+  summary: Capture docs/contributing.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 35
+  entities:
+  - file:docs/contributing.md
+- path: docs/index.md
+  type: modified
+  summary: Capture docs/index.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 260
+  entities:
+  - file:docs/index.md
+- path: docs/license.md
+  type: modified
+  summary: Capture docs/license.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 27
+  entities:
+  - file:docs/license.md
+- path: docs/reference.md
+  type: modified
+  summary: Capture docs/reference.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 2
+  entities:
+  - file:docs/reference.md
+- path: mkdocs.yml
+  type: modified
+  summary: Capture mkdocs.yml as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 30
+  entities:
+  - file:mkdocs.yml
+- path: pyproject.toml
+  type: modified
+  summary: Capture pyproject.toml as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 89
+  entities:
+  - file:pyproject.toml
+- path: requirements-docs.txt
+  type: modified
+  summary: Capture requirements-docs.txt as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 5
+  entities:
+  - file:requirements-docs.txt
+- path: requirements.txt
+  type: modified
+  summary: Capture requirements.txt as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 10
+  entities:
+  - file:requirements.txt
+- path: ruff.toml
+  type: modified
+  summary: Capture ruff.toml as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 19
+  entities:
+  - file:ruff.toml
+- path: software_development_entity_taxonomy.md
+  type: modified
+  summary: Capture software_development_entity_taxonomy.md as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 467
+  entities:
+  - file:software_development_entity_taxonomy.md
+- path: src/dotenv/__init__.py
+  type: modified
+  summary: Capture src/dotenv/__init__.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 51
+  entities:
+  - file:src/dotenv/__init__.py
+- path: src/dotenv/__main__.py
+  type: modified
+  summary: Capture src/dotenv/__main__.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 6
+  entities:
+  - file:src/dotenv/__main__.py
+- path: src/dotenv/cli.py
+  type: modified
+  summary: Capture src/dotenv/cli.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 256
+  entities:
+  - file:src/dotenv/cli.py
+- path: src/dotenv/ipython.py
+  type: modified
+  summary: Capture src/dotenv/ipython.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 50
+  entities:
+  - file:src/dotenv/ipython.py
+- path: src/dotenv/main.py
+  type: modified
+  summary: Capture src/dotenv/main.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 532
+  entities:
+  - file:src/dotenv/main.py
+- path: src/dotenv/parser.py
+  type: modified
+  summary: Capture src/dotenv/parser.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 191
+  entities:
+  - file:src/dotenv/parser.py
+- path: src/dotenv/py.typed
+  type: modified
+  summary: Capture src/dotenv/py.typed as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 1
+  entities:
+  - file:src/dotenv/py.typed
+- path: src/dotenv/variables.py
+  type: modified
+  summary: Capture src/dotenv/variables.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 86
+  entities:
+  - file:src/dotenv/variables.py
+- path: src/dotenv/version.py
+  type: modified
+  summary: Capture src/dotenv/version.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 1
+  entities:
+  - file:src/dotenv/version.py
+- path: tests/__init__.py
+  type: modified
+  summary: Capture tests/__init__.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 1
+  entities:
+  - file:tests/__init__.py
+- path: tests/conftest.py
+  type: modified
+  summary: Capture tests/conftest.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 16
+  entities:
+  - file:tests/conftest.py
+- path: tests/test_cli.py
+  type: modified
+  summary: Capture tests/test_cli.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 417
+  entities:
+  - file:tests/test_cli.py
+- path: tests/test_fifo_dotenv.py
+  type: modified
+  summary: Capture tests/test_fifo_dotenv.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 31
+  entities:
+  - file:tests/test_fifo_dotenv.py
+- path: tests/test_ipython.py
+  type: modified
+  summary: Capture tests/test_ipython.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 78
+  entities:
+  - file:tests/test_ipython.py
+- path: tests/test_is_interactive.py
+  type: modified
+  summary: Capture tests/test_is_interactive.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 232
+  entities:
+  - file:tests/test_is_interactive.py
+- path: tests/test_lib.py
+  type: modified
+  summary: Capture tests/test_lib.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 46
+  entities:
+  - file:tests/test_lib.py
+- path: tests/test_main.py
+  type: modified
+  summary: Capture tests/test_main.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 950
+  entities:
+  - file:tests/test_main.py
+- path: tests/test_parser.py
+  type: modified
+  summary: Capture tests/test_parser.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 723
+  entities:
+  - file:tests/test_parser.py
+- path: tests/test_utils.py
+  type: modified
+  summary: Capture tests/test_utils.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 19
+  entities:
+  - file:tests/test_utils.py
+- path: tests/test_variables.py
+  type: modified
+  summary: Capture tests/test_variables.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 35
+  entities:
+  - file:tests/test_variables.py
+- path: tests/test_zip_imports.py
+  type: modified
+  summary: Capture tests/test_zip_imports.py as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 109
+  entities:
+  - file:tests/test_zip_imports.py
+- path: tox.ini
+  type: modified
+  summary: Capture tox.ini as bootstrap source evidence.
+  rationale: Preserve a source anchor for future Structrr context lookup.
+  span:
+    start_line: 1
+    end_line: 59
+  entities:
+  - file:tox.ini
+entities:
+- id: file:.bumpversion.cfg
+  type: Configuration file
+  action: added
+- id: file:.editorconfig
+  type: Source file
+  action: added
+- id: file:.gitignore
+  type: Source file
+  action: added
+- id: file:.pre-commit-config.yaml
+  type: Configuration file
+  action: added
+- id: file:CHANGELOG.md
+  type: Changelog file
+  action: added
+- id: file:CONTRIBUTING.md
+  type: Design doc
+  action: added
+- id: file:LICENSE
+  type: License file
+  action: added
+- id: file:MANIFEST.in
+  type: Source file
+  action: added
+- id: file:Makefile
+  type: Build file
+  action: added
+- id: file:README.md
+  type: README file
+  action: added
+- id: file:RELEASING.md
+  type: Design doc
+  action: added
+- id: file:docs/changelog.md
+  type: Changelog file
+  action: added
+- id: file:docs/contributing.md
+  type: Design doc
+  action: added
+- id: file:docs/index.md
+  type: Design doc
+  action: added
+- id: file:docs/license.md
+  type: License file
+  action: added
+- id: file:docs/reference.md
+  type: Design doc
+  action: added
+- id: file:mkdocs.yml
+  type: Configuration file
+  action: added
+- id: file:pyproject.toml
+  type: Configuration file
+  action: added
+- id: file:requirements-docs.txt
+  type: Source file
+  action: added
+- id: file:requirements.txt
+  type: Source file
+  action: added
+- id: file:ruff.toml
+  type: Configuration file
+  action: added
+- id: file:software_development_entity_taxonomy.md
+  type: Design doc
+  action: added
+- id: file:src/dotenv/__init__.py
+  type: Source file
+  action: added
+- id: file:src/dotenv/__main__.py
+  type: Source file
+  action: added
+- id: file:src/dotenv/cli.py
+  type: Source file
+  action: added
+- id: file:src/dotenv/ipython.py
+  type: Source file
+  action: added
+- id: file:src/dotenv/main.py
+  type: Source file
+  action: added
+- id: file:src/dotenv/parser.py
+  type: Source file
+  action: added
+- id: file:src/dotenv/py.typed
+  type: Source file
+  action: added
+- id: file:src/dotenv/variables.py
+  type: Source file
+  action: added
+- id: file:src/dotenv/version.py
+  type: Source file
+  action: added
+- id: file:tests/__init__.py
+  type: Source file
+  action: added
+- id: file:tests/conftest.py
+  type: Source file
+  action: added
+- id: file:tests/test_cli.py
+  type: Source file
+  action: added
+- id: file:tests/test_fifo_dotenv.py
+  type: Source file
+  action: added
+- id: file:tests/test_ipython.py
+  type: Source file
+  action: added
+- id: file:tests/test_is_interactive.py
+  type: Source file
+  action: added
+- id: file:tests/test_lib.py
+  type: Source file
+  action: added
+- id: file:tests/test_main.py
+  type: Source file
+  action: added
+- id: file:tests/test_parser.py
+  type: Source file
+  action: added
+- id: file:tests/test_utils.py
+  type: Source file
+  action: added
+- id: file:tests/test_variables.py
+  type: Source file
+  action: added
+- id: file:tests/test_zip_imports.py
+  type: Source file
+  action: added
+- id: file:tox.ini
+  type: Configuration file
+  action: added
+- id: repository:python-dotenv
+  type: Repository
+  action: added
+- id: validation:make-sdist
+  type: Tool
+  action: added
+- id: validation:tox-1-default
+  type: Tool
+  action: added
+- id: validation:tox-2-default
+  type: Tool
+  action: added
+entity_relationships: []
+source_subjects:
+- id: python:src/dotenv/__init__.py::src.dotenv
+  stable_key: python::src.dotenv
+  language: python
+  kind: module
+  qualified_name: src.dotenv
+  path: src/dotenv/__init__.py
+  span:
+    start_line: 1
+    end_line: 51
+  file_entity_id: file:src/dotenv/__init__.py
+- id: python:src/dotenv/__init__.py::src.dotenv.get_cli_string
+  stable_key: python::src.dotenv.get_cli_string
+  language: python
+  kind: function
+  qualified_name: src.dotenv.get_cli_string
+  path: src/dotenv/__init__.py
+  span:
+    start_line: 12
+    end_line: 39
+  file_entity_id: file:src/dotenv/__init__.py
+- id: python:src/dotenv/__init__.py::src.dotenv.load_ipython_extension
+  stable_key: python::src.dotenv.load_ipython_extension
+  language: python
+  kind: function
+  qualified_name: src.dotenv.load_ipython_extension
+  path: src/dotenv/__init__.py
+  span:
+    start_line: 6
+    end_line: 9
+  file_entity_id: file:src/dotenv/__init__.py
+- id: python:src/dotenv/__main__.py::src.dotenv.__main__
+  stable_key: python::src.dotenv.__main__
+  language: python
+  kind: module
+  qualified_name: src.dotenv.__main__
+  path: src/dotenv/__main__.py
+  span:
+    start_line: 1
+    end_line: 6
+  file_entity_id: file:src/dotenv/__main__.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli
+  stable_key: python::src.dotenv.cli
+  language: python
+  kind: module
+  qualified_name: src.dotenv.cli
+  path: src/dotenv/cli.py
+  span:
+    start_line: 1
+    end_line: 256
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.cli
+  stable_key: python::src.dotenv.cli.cli
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.cli
+  path: src/dotenv/cli.py
+  span:
+    start_line: 62
+    end_line: 66
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.enumerate_env
+  stable_key: python::src.dotenv.cli.enumerate_env
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.enumerate_env
+  path: src/dotenv/cli.py
+  span:
+    start_line: 24
+    end_line: 35
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.get
+  stable_key: python::src.dotenv.cli.get
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.get
+  path: src/dotenv/cli.py
+  span:
+    start_line: 143
+    end_line: 153
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.list_values
+  stable_key: python::src.dotenv.cli.list_values
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.list_values
+  path: src/dotenv/cli.py
+  span:
+    start_line: 95
+    end_line: 111
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.run
+  stable_key: python::src.dotenv.cli.run
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.run
+  path: src/dotenv/cli.py
+  span:
+    start_line: 193
+    end_line: 210
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.run_command
+  stable_key: python::src.dotenv.cli.run_command
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.run_command
+  path: src/dotenv/cli.py
+  span:
+    start_line: 213
+    end_line: 256
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.set_value
+  stable_key: python::src.dotenv.cli.set_value
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.set_value
+  path: src/dotenv/cli.py
+  span:
+    start_line: 118
+    end_line: 137
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.stream_file
+  stable_key: python::src.dotenv.cli.stream_file
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.stream_file
+  path: src/dotenv/cli.py
+  span:
+    start_line: 70
+    end_line: 82
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/cli.py::src.dotenv.cli.unset
+  stable_key: python::src.dotenv.cli.unset
+  language: python
+  kind: function
+  qualified_name: src.dotenv.cli.unset
+  path: src/dotenv/cli.py
+  span:
+    start_line: 159
+    end_line: 176
+  file_entity_id: file:src/dotenv/cli.py
+- id: python:src/dotenv/ipython.py::src.dotenv.ipython
+  stable_key: python::src.dotenv.ipython
+  language: python
+  kind: module
+  qualified_name: src.dotenv.ipython
+  path: src/dotenv/ipython.py
+  span:
+    start_line: 1
+    end_line: 50
+  file_entity_id: file:src/dotenv/ipython.py
+- id: python:src/dotenv/ipython.py::src.dotenv.ipython.IPythonDotEnv
+  stable_key: python::src.dotenv.ipython.IPythonDotEnv
+  language: python
+  kind: class
+  qualified_name: src.dotenv.ipython.IPythonDotEnv
+  path: src/dotenv/ipython.py
+  span:
+    start_line: 12
+    end_line: 45
+  file_entity_id: file:src/dotenv/ipython.py
+- id: python:src/dotenv/ipython.py::src.dotenv.ipython.IPythonDotEnv.dotenv
+  stable_key: python::src.dotenv.ipython.IPythonDotEnv.dotenv
+  language: python
+  kind: method
+  qualified_name: src.dotenv.ipython.IPythonDotEnv.dotenv
+  path: src/dotenv/ipython.py
+  span:
+    start_line: 34
+    end_line: 45
+  file_entity_id: file:src/dotenv/ipython.py
+- id: python:src/dotenv/ipython.py::src.dotenv.ipython.load_ipython_extension
+  stable_key: python::src.dotenv.ipython.load_ipython_extension
+  language: python
+  kind: function
+  qualified_name: src.dotenv.ipython.load_ipython_extension
+  path: src/dotenv/ipython.py
+  span:
+    start_line: 48
+    end_line: 50
+  file_entity_id: file:src/dotenv/ipython.py
+- id: python:src/dotenv/main.py::src.dotenv.main
+  stable_key: python::src.dotenv.main
+  language: python
+  kind: module
+  qualified_name: src.dotenv.main
+  path: src/dotenv/main.py
+  span:
+    start_line: 1
+    end_line: 532
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.DotEnv
+  stable_key: python::src.dotenv.main.DotEnv
+  language: python
+  kind: class
+  qualified_name: src.dotenv.main.DotEnv
+  path: src/dotenv/main.py
+  span:
+    start_line: 42
+    end_line: 126
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.DotEnv.__init__
+  stable_key: python::src.dotenv.main.DotEnv.__init__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.main.DotEnv.__init__
+  path: src/dotenv/main.py
+  span:
+    start_line: 43
+    end_line: 62
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.DotEnv._get_stream
+  stable_key: python::src.dotenv.main.DotEnv._get_stream
+  language: python
+  kind: method
+  qualified_name: src.dotenv.main.DotEnv._get_stream
+  path: src/dotenv/main.py
+  span:
+    start_line: 65
+    end_line: 77
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.DotEnv.dict
+  stable_key: python::src.dotenv.main.DotEnv.dict
+  language: python
+  kind: method
+  qualified_name: src.dotenv.main.DotEnv.dict
+  path: src/dotenv/main.py
+  span:
+    start_line: 79
+    end_line: 93
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.DotEnv.get
+  stable_key: python::src.dotenv.main.DotEnv.get
+  language: python
+  kind: method
+  qualified_name: src.dotenv.main.DotEnv.get
+  path: src/dotenv/main.py
+  span:
+    start_line: 116
+    end_line: 126
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.DotEnv.parse
+  stable_key: python::src.dotenv.main.DotEnv.parse
+  language: python
+  kind: method
+  qualified_name: src.dotenv.main.DotEnv.parse
+  path: src/dotenv/main.py
+  span:
+    start_line: 95
+    end_line: 99
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.DotEnv.set_as_environment_variables
+  stable_key: python::src.dotenv.main.DotEnv.set_as_environment_variables
+  language: python
+  kind: method
+  qualified_name: src.dotenv.main.DotEnv.set_as_environment_variables
+  path: src/dotenv/main.py
+  span:
+    start_line: 101
+    end_line: 114
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main._discard_temp_file
+  stable_key: python::src.dotenv.main._discard_temp_file
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main._discard_temp_file
+  path: src/dotenv/main.py
+  span:
+    start_line: 142
+    end_line: 158
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main._is_file_or_fifo
+  stable_key: python::src.dotenv.main._is_file_or_fifo
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main._is_file_or_fifo
+  path: src/dotenv/main.py
+  span:
+    start_line: 520
+    end_line: 532
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main._load_dotenv_disabled
+  stable_key: python::src.dotenv.main._load_dotenv_disabled
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main._load_dotenv_disabled
+  path: src/dotenv/main.py
+  span:
+    start_line: 22
+    end_line: 29
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main._walk_to_root
+  stable_key: python::src.dotenv.main._walk_to_root
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main._walk_to_root
+  path: src/dotenv/main.py
+  span:
+    start_line: 358
+    end_line: 373
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.dotenv_values
+  stable_key: python::src.dotenv.main.dotenv_values
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.dotenv_values
+  path: src/dotenv/main.py
+  span:
+    start_line: 482
+    end_line: 517
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.find_dotenv
+  stable_key: python::src.dotenv.main.find_dotenv
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.find_dotenv
+  path: src/dotenv/main.py
+  span:
+    start_line: 376
+    end_line: 428
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.find_dotenv._is_debugger
+  stable_key: python::src.dotenv.main.find_dotenv._is_debugger
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.find_dotenv._is_debugger
+  path: src/dotenv/main.py
+  span:
+    start_line: 401
+    end_line: 402
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.find_dotenv._is_interactive
+  stable_key: python::src.dotenv.main.find_dotenv._is_interactive
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.find_dotenv._is_interactive
+  path: src/dotenv/main.py
+  span:
+    start_line: 391
+    end_line: 399
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.get_key
+  stable_key: python::src.dotenv.main.get_key
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.get_key
+  path: src/dotenv/main.py
+  span:
+    start_line: 129
+    end_line: 139
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.load_dotenv
+  stable_key: python::src.dotenv.main.load_dotenv
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.load_dotenv
+  path: src/dotenv/main.py
+  span:
+    start_line: 431
+    end_line: 479
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.resolve_variables
+  stable_key: python::src.dotenv.main.resolve_variables
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.resolve_variables
+  path: src/dotenv/main.py
+  span:
+    start_line: 333
+    end_line: 355
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.rewrite
+  stable_key: python::src.dotenv.main.rewrite
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.rewrite
+  path: src/dotenv/main.py
+  span:
+    start_line: 162
+    end_line: 221
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.set_key
+  stable_key: python::src.dotenv.main.set_key
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.set_key
+  path: src/dotenv/main.py
+  span:
+    start_line: 224
+    end_line: 285
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.unset_key
+  stable_key: python::src.dotenv.main.unset_key
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.unset_key
+  path: src/dotenv/main.py
+  span:
+    start_line: 288
+    end_line: 330
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/main.py::src.dotenv.main.with_warn_for_invalid_lines
+  stable_key: python::src.dotenv.main.with_warn_for_invalid_lines
+  language: python
+  kind: function
+  qualified_name: src.dotenv.main.with_warn_for_invalid_lines
+  path: src/dotenv/main.py
+  span:
+    start_line: 32
+    end_line: 39
+  file_entity_id: file:src/dotenv/main.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser
+  stable_key: python::src.dotenv.parser
+  language: python
+  kind: module
+  qualified_name: src.dotenv.parser
+  path: src/dotenv/parser.py
+  span:
+    start_line: 1
+    end_line: 191
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Binding
+  stable_key: python::src.dotenv.parser.Binding
+  language: python
+  kind: class
+  qualified_name: src.dotenv.parser.Binding
+  path: src/dotenv/parser.py
+  span:
+    start_line: 42
+    end_line: 46
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Error
+  stable_key: python::src.dotenv.parser.Error
+  language: python
+  kind: class
+  qualified_name: src.dotenv.parser.Error
+  path: src/dotenv/parser.py
+  span:
+    start_line: 67
+    end_line: 68
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Original
+  stable_key: python::src.dotenv.parser.Original
+  language: python
+  kind: class
+  qualified_name: src.dotenv.parser.Original
+  path: src/dotenv/parser.py
+  span:
+    start_line: 37
+    end_line: 39
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Position
+  stable_key: python::src.dotenv.parser.Position
+  language: python
+  kind: class
+  qualified_name: src.dotenv.parser.Position
+  path: src/dotenv/parser.py
+  span:
+    start_line: 49
+    end_line: 64
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Position.__init__
+  stable_key: python::src.dotenv.parser.Position.__init__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Position.__init__
+  path: src/dotenv/parser.py
+  span:
+    start_line: 50
+    end_line: 52
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Position.advance
+  stable_key: python::src.dotenv.parser.Position.advance
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Position.advance
+  path: src/dotenv/parser.py
+  span:
+    start_line: 62
+    end_line: 64
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Position.set
+  stable_key: python::src.dotenv.parser.Position.set
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Position.set
+  path: src/dotenv/parser.py
+  span:
+    start_line: 58
+    end_line: 60
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Position.start
+  stable_key: python::src.dotenv.parser.Position.start
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Position.start
+  path: src/dotenv/parser.py
+  span:
+    start_line: 55
+    end_line: 56
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader
+  stable_key: python::src.dotenv.parser.Reader
+  language: python
+  kind: class
+  qualified_name: src.dotenv.parser.Reader
+  path: src/dotenv/parser.py
+  span:
+    start_line: 71
+    end_line: 104
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader.__init__
+  stable_key: python::src.dotenv.parser.Reader.__init__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Reader.__init__
+  path: src/dotenv/parser.py
+  span:
+    start_line: 72
+    end_line: 75
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader.get_marked
+  stable_key: python::src.dotenv.parser.Reader.get_marked
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Reader.get_marked
+  path: src/dotenv/parser.py
+  span:
+    start_line: 83
+    end_line: 87
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader.has_next
+  stable_key: python::src.dotenv.parser.Reader.has_next
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Reader.has_next
+  path: src/dotenv/parser.py
+  span:
+    start_line: 77
+    end_line: 78
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader.peek
+  stable_key: python::src.dotenv.parser.Reader.peek
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Reader.peek
+  path: src/dotenv/parser.py
+  span:
+    start_line: 89
+    end_line: 90
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader.read
+  stable_key: python::src.dotenv.parser.Reader.read
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Reader.read
+  path: src/dotenv/parser.py
+  span:
+    start_line: 92
+    end_line: 97
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader.read_regex
+  stable_key: python::src.dotenv.parser.Reader.read_regex
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Reader.read_regex
+  path: src/dotenv/parser.py
+  span:
+    start_line: 99
+    end_line: 104
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.Reader.set_mark
+  stable_key: python::src.dotenv.parser.Reader.set_mark
+  language: python
+  kind: method
+  qualified_name: src.dotenv.parser.Reader.set_mark
+  path: src/dotenv/parser.py
+  span:
+    start_line: 80
+    end_line: 81
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.decode_escapes
+  stable_key: python::src.dotenv.parser.decode_escapes
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.decode_escapes
+  path: src/dotenv/parser.py
+  span:
+    start_line: 107
+    end_line: 111
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.decode_escapes.decode_match
+  stable_key: python::src.dotenv.parser.decode_escapes.decode_match
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.decode_escapes.decode_match
+  path: src/dotenv/parser.py
+  span:
+    start_line: 108
+    end_line: 109
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.make_regex
+  stable_key: python::src.dotenv.parser.make_regex
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.make_regex
+  path: src/dotenv/parser.py
+  span:
+    start_line: 14
+    end_line: 15
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.parse_binding
+  stable_key: python::src.dotenv.parser.parse_binding
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.parse_binding
+  path: src/dotenv/parser.py
+  span:
+    start_line: 144
+    end_line: 185
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.parse_key
+  stable_key: python::src.dotenv.parser.parse_key
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.parse_key
+  path: src/dotenv/parser.py
+  span:
+    start_line: 114
+    end_line: 122
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.parse_stream
+  stable_key: python::src.dotenv.parser.parse_stream
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.parse_stream
+  path: src/dotenv/parser.py
+  span:
+    start_line: 188
+    end_line: 191
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.parse_unquoted_value
+  stable_key: python::src.dotenv.parser.parse_unquoted_value
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.parse_unquoted_value
+  path: src/dotenv/parser.py
+  span:
+    start_line: 125
+    end_line: 127
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/parser.py::src.dotenv.parser.parse_value
+  stable_key: python::src.dotenv.parser.parse_value
+  language: python
+  kind: function
+  qualified_name: src.dotenv.parser.parse_value
+  path: src/dotenv/parser.py
+  span:
+    start_line: 130
+    end_line: 141
+  file_entity_id: file:src/dotenv/parser.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables
+  stable_key: python::src.dotenv.variables
+  language: python
+  kind: module
+  qualified_name: src.dotenv.variables
+  path: src/dotenv/variables.py
+  span:
+    start_line: 1
+    end_line: 86
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Atom
+  stable_key: python::src.dotenv.variables.Atom
+  language: python
+  kind: class
+  qualified_name: src.dotenv.variables.Atom
+  path: src/dotenv/variables.py
+  span:
+    start_line: 18
+    end_line: 26
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Atom.__ne__
+  stable_key: python::src.dotenv.variables.Atom.__ne__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Atom.__ne__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 19
+    end_line: 23
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Atom.resolve
+  stable_key: python::src.dotenv.variables.Atom.resolve
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Atom.resolve
+  path: src/dotenv/variables.py
+  span:
+    start_line: 26
+    end_line: 26
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Literal
+  stable_key: python::src.dotenv.variables.Literal
+  language: python
+  kind: class
+  qualified_name: src.dotenv.variables.Literal
+  path: src/dotenv/variables.py
+  span:
+    start_line: 29
+    end_line: 45
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Literal.__eq__
+  stable_key: python::src.dotenv.variables.Literal.__eq__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Literal.__eq__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 36
+    end_line: 39
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Literal.__hash__
+  stable_key: python::src.dotenv.variables.Literal.__hash__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Literal.__hash__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 41
+    end_line: 42
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Literal.__init__
+  stable_key: python::src.dotenv.variables.Literal.__init__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Literal.__init__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 30
+    end_line: 31
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Literal.__repr__
+  stable_key: python::src.dotenv.variables.Literal.__repr__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Literal.__repr__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 33
+    end_line: 34
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Literal.resolve
+  stable_key: python::src.dotenv.variables.Literal.resolve
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Literal.resolve
+  path: src/dotenv/variables.py
+  span:
+    start_line: 44
+    end_line: 45
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Variable
+  stable_key: python::src.dotenv.variables.Variable
+  language: python
+  kind: class
+  qualified_name: src.dotenv.variables.Variable
+  path: src/dotenv/variables.py
+  span:
+    start_line: 48
+    end_line: 67
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Variable.__eq__
+  stable_key: python::src.dotenv.variables.Variable.__eq__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Variable.__eq__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 56
+    end_line: 59
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Variable.__hash__
+  stable_key: python::src.dotenv.variables.Variable.__hash__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Variable.__hash__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 61
+    end_line: 62
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Variable.__init__
+  stable_key: python::src.dotenv.variables.Variable.__init__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Variable.__init__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 49
+    end_line: 51
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Variable.__repr__
+  stable_key: python::src.dotenv.variables.Variable.__repr__
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Variable.__repr__
+  path: src/dotenv/variables.py
+  span:
+    start_line: 53
+    end_line: 54
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.Variable.resolve
+  stable_key: python::src.dotenv.variables.Variable.resolve
+  language: python
+  kind: method
+  qualified_name: src.dotenv.variables.Variable.resolve
+  path: src/dotenv/variables.py
+  span:
+    start_line: 64
+    end_line: 67
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/variables.py::src.dotenv.variables.parse_variables
+  stable_key: python::src.dotenv.variables.parse_variables
+  language: python
+  kind: function
+  qualified_name: src.dotenv.variables.parse_variables
+  path: src/dotenv/variables.py
+  span:
+    start_line: 70
+    end_line: 86
+  file_entity_id: file:src/dotenv/variables.py
+- id: python:src/dotenv/version.py::src.dotenv.version
+  stable_key: python::src.dotenv.version
+  language: python
+  kind: module
+  qualified_name: src.dotenv.version
+  path: src/dotenv/version.py
+  span:
+    start_line: 1
+    end_line: 1
+  file_entity_id: file:src/dotenv/version.py
+- id: python:tests/__init__.py::tests
+  stable_key: python::tests
+  language: python
+  kind: module
+  qualified_name: tests
+  path: tests/__init__.py
+  span:
+    start_line: 1
+    end_line: 1
+  file_entity_id: file:tests/__init__.py
+- id: python:tests/conftest.py::tests.conftest
+  stable_key: python::tests.conftest
+  language: python
+  kind: module
+  qualified_name: tests.conftest
+  path: tests/conftest.py
+  span:
+    start_line: 1
+    end_line: 16
+  file_entity_id: file:tests/conftest.py
+- id: python:tests/conftest.py::tests.conftest.cli
+  stable_key: python::tests.conftest.cli
+  language: python
+  kind: function
+  qualified_name: tests.conftest.cli
+  path: tests/conftest.py
+  span:
+    start_line: 6
+    end_line: 9
+  file_entity_id: file:tests/conftest.py
+- id: python:tests/conftest.py::tests.conftest.dotenv_path
+  stable_key: python::tests.conftest.dotenv_path
+  language: python
+  kind: function
+  qualified_name: tests.conftest.dotenv_path
+  path: tests/conftest.py
+  span:
+    start_line: 13
+    end_line: 16
+  file_entity_id: file:tests/conftest.py
+- id: python:tests/test_cli.py::tests.test_cli
+  stable_key: python::tests.test_cli
+  language: python
+  kind: module
+  qualified_name: tests.test_cli
+  path: tests/test_cli.py
+  span:
+    start_line: 1
+    end_line: 417
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_file_option_expands_user
+  stable_key: python::tests.test_cli.test_file_option_expands_user
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_file_option_expands_user
+  path: tests/test_cli.py
+  span:
+    start_line: 334
+    end_line: 344
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_get_default_path
+  stable_key: python::tests.test_cli.test_get_default_path
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_get_default_path
+  path: tests/test_cli.py
+  span:
+    start_line: 228
+    end_line: 233
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_get_empty_string_value
+  stable_key: python::tests.test_cli.test_get_empty_string_value
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_get_empty_string_value
+  path: tests/test_cli.py
+  span:
+    start_line: 71
+    end_line: 77
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_get_existing_value
+  stable_key: python::tests.test_cli.test_get_existing_value
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_get_existing_value
+  path: tests/test_cli.py
+  span:
+    start_line: 63
+    end_line: 68
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_get_non_existent_file
+  stable_key: python::tests.test_cli.test_get_non_existent_file
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_get_non_existent_file
+  path: tests/test_cli.py
+  span:
+    start_line: 94
+    end_line: 98
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_get_non_existent_value
+  stable_key: python::tests.test_cli.test_get_non_existent_value
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_get_non_existent_value
+  path: tests/test_cli.py
+  span:
+    start_line: 88
+    end_line: 91
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_get_not_a_file
+  stable_key: python::tests.test_cli.test_get_not_a_file
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_get_not_a_file
+  path: tests/test_cli.py
+  span:
+    start_line: 101
+    end_line: 105
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_get_value_without_equals
+  stable_key: python::tests.test_cli.test_get_value_without_equals
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_get_value_without_equals
+  path: tests/test_cli.py
+  span:
+    start_line: 80
+    end_line: 85
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_list
+  stable_key: python::tests.test_cli.test_list
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_list
+  path: tests/test_cli.py
+  span:
+    start_line: 29
+    end_line: 40
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_list_no_file
+  stable_key: python::tests.test_cli.test_list_no_file
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_list_no_file
+  path: tests/test_cli.py
+  span:
+    start_line: 57
+    end_line: 60
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_list_non_existent_file
+  stable_key: python::tests.test_cli.test_list_non_existent_file
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_list_non_existent_file
+  path: tests/test_cli.py
+  span:
+    start_line: 43
+    end_line: 47
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_list_not_a_file
+  stable_key: python::tests.test_cli.test_list_not_a_file
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_list_not_a_file
+  path: tests/test_cli.py
+  span:
+    start_line: 50
+    end_line: 54
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run
+  stable_key: python::tests.test_cli.test_run
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run
+  path: tests/test_cli.py
+  span:
+    start_line: 236
+    end_line: 241
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_interpolation_respects_override
+  stable_key: python::tests.test_cli.test_run_interpolation_respects_override
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_interpolation_respects_override
+  path: tests/test_cli.py
+  span:
+    start_line: 274
+    end_line: 297
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_command_flags
+  stable_key: python::tests.test_cli.test_run_with_command_flags
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_command_flags
+  path: tests/test_cli.py
+  span:
+    start_line: 382
+    end_line: 403
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_dotenv_and_command_flags
+  stable_key: python::tests.test_cli.test_run_with_dotenv_and_command_flags
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_dotenv_and_command_flags
+  path: tests/test_cli.py
+  span:
+    start_line: 406
+    end_line: 417
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_env_missing_and_invalid_cmd
+  stable_key: python::tests.test_cli.test_run_with_env_missing_and_invalid_cmd
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_env_missing_and_invalid_cmd
+  path: tests/test_cli.py
+  span:
+    start_line: 364
+    end_line: 372
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_existing_variable
+  stable_key: python::tests.test_cli.test_run_with_existing_variable
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_existing_variable
+  path: tests/test_cli.py
+  span:
+    start_line: 244
+    end_line: 251
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_existing_variable_not_overridden
+  stable_key: python::tests.test_cli.test_run_with_existing_variable_not_overridden
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_existing_variable_not_overridden
+  path: tests/test_cli.py
+  span:
+    start_line: 254
+    end_line: 263
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_invalid_cmd
+  stable_key: python::tests.test_cli.test_run_with_invalid_cmd
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_invalid_cmd
+  path: tests/test_cli.py
+  span:
+    start_line: 354
+    end_line: 361
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_none_value
+  stable_key: python::tests.test_cli.test_run_with_none_value
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_none_value
+  path: tests/test_cli.py
+  span:
+    start_line: 300
+    end_line: 305
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_other_env
+  stable_key: python::tests.test_cli.test_run_with_other_env
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_other_env
+  path: tests/test_cli.py
+  span:
+    start_line: 308
+    end_line: 316
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_with_version
+  stable_key: python::tests.test_cli.test_run_with_version
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_with_version
+  path: tests/test_cli.py
+  span:
+    start_line: 375
+    end_line: 379
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_run_without_cmd
+  stable_key: python::tests.test_cli.test_run_without_cmd
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_run_without_cmd
+  path: tests/test_cli.py
+  span:
+    start_line: 347
+    end_line: 351
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_set_export
+  stable_key: python::tests.test_cli.test_set_export
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_set_export
+  path: tests/test_cli.py
+  span:
+    start_line: 161
+    end_line: 178
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_set_missing_directory
+  stable_key: python::tests.test_cli.test_set_missing_directory
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_set_missing_directory
+  path: tests/test_cli.py
+  span:
+    start_line: 194
+    end_line: 202
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_set_no_file
+  stable_key: python::tests.test_cli.test_set_no_file
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_set_no_file
+  path: tests/test_cli.py
+  span:
+    start_line: 187
+    end_line: 191
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_set_non_existent_file
+  stable_key: python::tests.test_cli.test_set_non_existent_file
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_set_non_existent_file
+  path: tests/test_cli.py
+  span:
+    start_line: 181
+    end_line: 184
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_set_quote_options
+  stable_key: python::tests.test_cli.test_set_quote_options
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_set_quote_options
+  path: tests/test_cli.py
+  span:
+    start_line: 134
+    end_line: 151
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_unset_existing_value
+  stable_key: python::tests.test_cli.test_unset_existing_value
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_unset_existing_value
+  path: tests/test_cli.py
+  span:
+    start_line: 108
+    end_line: 114
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_unset_non_existent_value
+  stable_key: python::tests.test_cli.test_unset_non_existent_value
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_unset_non_existent_value
+  path: tests/test_cli.py
+  span:
+    start_line: 117
+    end_line: 121
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_cli.py::tests.test_cli.test_unset_read_only_directory
+  stable_key: python::tests.test_cli.test_unset_read_only_directory
+  language: python
+  kind: function
+  qualified_name: tests.test_cli.test_unset_read_only_directory
+  path: tests/test_cli.py
+  span:
+    start_line: 209
+    end_line: 225
+  file_entity_id: file:tests/test_cli.py
+- id: python:tests/test_fifo_dotenv.py::tests.test_fifo_dotenv
+  stable_key: python::tests.test_fifo_dotenv
+  language: python
+  kind: module
+  qualified_name: tests.test_fifo_dotenv
+  path: tests/test_fifo_dotenv.py
+  span:
+    start_line: 1
+    end_line: 31
+  file_entity_id: file:tests/test_fifo_dotenv.py
+- id: python:tests/test_fifo_dotenv.py::tests.test_fifo_dotenv.test_load_dotenv_from_fifo
+  stable_key: python::tests.test_fifo_dotenv.test_load_dotenv_from_fifo
+  language: python
+  kind: function
+  qualified_name: tests.test_fifo_dotenv.test_load_dotenv_from_fifo
+  path: tests/test_fifo_dotenv.py
+  span:
+    start_line: 13
+    end_line: 31
+  file_entity_id: file:tests/test_fifo_dotenv.py
+- id: python:tests/test_fifo_dotenv.py::tests.test_fifo_dotenv.test_load_dotenv_from_fifo.writer
+  stable_key: python::tests.test_fifo_dotenv.test_load_dotenv_from_fifo.writer
+  language: python
+  kind: function
+  qualified_name: tests.test_fifo_dotenv.test_load_dotenv_from_fifo.writer
+  path: tests/test_fifo_dotenv.py
+  span:
+    start_line: 17
+    end_line: 19
+  file_entity_id: file:tests/test_fifo_dotenv.py
+- id: python:tests/test_ipython.py::tests.test_ipython
+  stable_key: python::tests.test_ipython
+  language: python
+  kind: module
+  qualified_name: tests.test_ipython
+  path: tests/test_ipython.py
+  span:
+    start_line: 1
+    end_line: 78
+  file_entity_id: file:tests/test_ipython.py
+- id: python:tests/test_ipython.py::tests.test_ipython.test_ipython_existing_variable_no_override
+  stable_key: python::tests.test_ipython.test_ipython_existing_variable_no_override
+  language: python
+  kind: function
+  qualified_name: tests.test_ipython.test_ipython_existing_variable_no_override
+  path: tests/test_ipython.py
+  span:
+    start_line: 14
+    end_line: 26
+  file_entity_id: file:tests/test_ipython.py
+- id: python:tests/test_ipython.py::tests.test_ipython.test_ipython_existing_variable_override
+  stable_key: python::tests.test_ipython.test_ipython_existing_variable_override
+  language: python
+  kind: function
+  qualified_name: tests.test_ipython.test_ipython_existing_variable_override
+  path: tests/test_ipython.py
+  span:
+    start_line: 33
+    end_line: 45
+  file_entity_id: file:tests/test_ipython.py
+- id: python:tests/test_ipython.py::tests.test_ipython.test_ipython_new_variable
+  stable_key: python::tests.test_ipython.test_ipython_new_variable
+  language: python
+  kind: function
+  qualified_name: tests.test_ipython.test_ipython_new_variable
+  path: tests/test_ipython.py
+  span:
+    start_line: 52
+    end_line: 63
+  file_entity_id: file:tests/test_ipython.py
+- id: python:tests/test_ipython.py::tests.test_ipython.test_ipython_path_expands_user
+  stable_key: python::tests.test_ipython.test_ipython_path_expands_user
+  language: python
+  kind: function
+  qualified_name: tests.test_ipython.test_ipython_path_expands_user
+  path: tests/test_ipython.py
+  span:
+    start_line: 67
+    end_line: 78
+  file_entity_id: file:tests/test_ipython.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive
+  stable_key: python::tests.test_is_interactive
+  language: python
+  kind: module
+  qualified_name: tests.test_is_interactive
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 1
+    end_line: 232
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive
+  stable_key: python::tests.test_is_interactive.TestIsInteractive
+  language: python
+  kind: class
+  qualified_name: tests.test_is_interactive.TestIsInteractive
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 8
+    end_line: 232
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive._create_dotenv_file
+  stable_key: python::tests.test_is_interactive.TestIsInteractive._create_dotenv_file
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive._create_dotenv_file
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 32
+    end_line: 36
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive._mock_main_import
+  stable_key: python::tests.test_is_interactive.TestIsInteractive._mock_main_import
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive._mock_main_import
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 52
+    end_line: 61
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive._mock_main_import.mock_import
+  stable_key: python::tests.test_is_interactive.TestIsInteractive._mock_main_import.mock_import
+  language: python
+  kind: function
+  qualified_name: tests.test_is_interactive.TestIsInteractive._mock_main_import.mock_import
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 56
+    end_line: 59
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive._mock_main_import_error
+  stable_key: python::tests.test_is_interactive.TestIsInteractive._mock_main_import_error
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive._mock_main_import_error
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 63
+    end_line: 72
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive._mock_main_import_error.mock_import
+  stable_key: python::tests.test_is_interactive.TestIsInteractive._mock_main_import_error.mock_import
+  language: python
+  kind: function
+  qualified_name: tests.test_is_interactive.TestIsInteractive._mock_main_import_error.mock_import
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 67
+    end_line: 70
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive._remove_ps_attributes
+  stable_key: python::tests.test_is_interactive.TestIsInteractive._remove_ps_attributes
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive._remove_ps_attributes
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 45
+    end_line: 50
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive._setup_subdir_and_chdir
+  stable_key: python::tests.test_is_interactive.TestIsInteractive._setup_subdir_and_chdir
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive._setup_subdir_and_chdir
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 38
+    end_line: 43
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_module_not_found
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_module_not_found
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_module_not_found
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 100
+    end_line: 111
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_module_with_file_attribute_none
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_module_with_file_attribute_none
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_module_with_file_attribute_none
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 179
+    end_line: 199
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_with_file
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_with_file
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_with_file
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 129
+    end_line: 145
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_without_file
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_without_file
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_main_without_file
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 113
+    end_line: 127
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_no_ps_attributes_and_normal_execution
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_no_ps_attributes_and_normal_execution
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_no_ps_attributes_and_normal_execution
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 201
+    end_line: 216
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_precedence_ps1_over_main
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_precedence_ps1_over_main
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_precedence_ps1_over_main
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 147
+    end_line: 163
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_ps1_and_ps2_both_exist
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_ps1_and_ps2_both_exist
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_ps1_and_ps2_both_exist
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 165
+    end_line: 177
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_ps1
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_ps1
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_ps1
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 74
+    end_line: 85
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_ps2
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_ps2
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_ps2
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 87
+    end_line: 98
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_is_interactive.py::tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_usecwd_override
+  stable_key: python::tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_usecwd_override
+  language: python
+  kind: method
+  qualified_name: tests.test_is_interactive.TestIsInteractive.test_is_interactive_with_usecwd_override
+  path: tests/test_is_interactive.py
+  span:
+    start_line: 218
+    end_line: 232
+  file_entity_id: file:tests/test_is_interactive.py
+- id: python:tests/test_lib.py::tests.test_lib
+  stable_key: python::tests.test_lib
+  language: python
+  kind: module
+  qualified_name: tests.test_lib
+  path: tests/test_lib.py
+  span:
+    start_line: 1
+    end_line: 46
+  file_entity_id: file:tests/test_lib.py
+- id: python:tests/test_lib.py::tests.test_lib.check_process
+  stable_key: python::tests.test_lib.check_process
+  language: python
+  kind: function
+  qualified_name: tests.test_lib.check_process
+  path: tests/test_lib.py
+  span:
+    start_line: 26
+    end_line: 46
+  file_entity_id: file:tests/test_lib.py
+- id: python:tests/test_lib.py::tests.test_lib.run_dotenv
+  stable_key: python::tests.test_lib.run_dotenv
+  language: python
+  kind: function
+  qualified_name: tests.test_lib.run_dotenv
+  path: tests/test_lib.py
+  span:
+    start_line: 6
+    end_line: 23
+  file_entity_id: file:tests/test_lib.py
+- id: python:tests/test_main.py::tests.test_main
+  stable_key: python::tests.test_main
+  language: python
+  kind: module
+  qualified_name: tests.test_main
+  path: tests/test_main.py
+  span:
+    start_line: 1
+    end_line: 950
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.prepare_file_hierarchy
+  stable_key: python::tests.test_main.prepare_file_hierarchy
+  language: python
+  kind: function
+  qualified_name: tests.test_main.prepare_file_hierarchy
+  path: tests/test_main.py
+  span:
+    start_line: 547
+    end_line: 563
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_dotenv_path_expands_user
+  stable_key: python::tests.test_main.test_dotenv_path_expands_user
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_dotenv_path_expands_user
+  path: tests/test_main.py
+  span:
+    start_line: 327
+    end_line: 341
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_dotenv_path_keeps_type
+  stable_key: python::tests.test_main.test_dotenv_path_keeps_type
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_dotenv_path_keeps_type
+  path: tests/test_main.py
+  span:
+    start_line: 365
+    end_line: 374
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_dotenv_values_empty_value_with_inline_comment
+  stable_key: python::tests.test_main.test_dotenv_values_empty_value_with_inline_comment
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_dotenv_values_empty_value_with_inline_comment
+  path: tests/test_main.py
+  span:
+    start_line: 947
+    end_line: 950
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_dotenv_values_file
+  stable_key: python::tests.test_main.test_dotenv_values_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_dotenv_values_file
+  path: tests/test_main.py
+  span:
+    start_line: 871
+    end_line: 876
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_dotenv_values_file_stream
+  stable_key: python::tests.test_main.test_dotenv_values_file_stream
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_dotenv_values_file_stream
+  path: tests/test_main.py
+  span:
+    start_line: 925
+    end_line: 931
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_dotenv_values_string_io
+  stable_key: python::tests.test_main.test_dotenv_values_string_io
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_dotenv_values_string_io
+  path: tests/test_main.py
+  span:
+    start_line: 915
+    end_line: 922
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_empty_dotenv_dict_is_cached
+  stable_key: python::tests.test_main.test_empty_dotenv_dict_is_cached
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_empty_dotenv_dict_is_cached
+  path: tests/test_main.py
+  span:
+    start_line: 439
+    end_line: 448
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_find_dotenv_expands_user
+  stable_key: python::tests.test_main.test_find_dotenv_expands_user
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_find_dotenv_expands_user
+  path: tests/test_main.py
+  span:
+    start_line: 594
+    end_line: 604
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_find_dotenv_found
+  stable_key: python::tests.test_main.test_find_dotenv_found
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_find_dotenv_found
+  path: tests/test_main.py
+  span:
+    start_line: 583
+    end_line: 591
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_find_dotenv_no_file_no_raise
+  stable_key: python::tests.test_main.test_find_dotenv_no_file_no_raise
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_find_dotenv_no_file_no_raise
+  path: tests/test_main.py
+  span:
+    start_line: 574
+    end_line: 580
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_find_dotenv_no_file_raise
+  stable_key: python::tests.test_main.test_find_dotenv_no_file_raise
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_find_dotenv_no_file_raise
+  path: tests/test_main.py
+  span:
+    start_line: 566
+    end_line: 571
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_get_key_encoding
+  stable_key: python::tests.test_main.test_get_key_encoding
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_get_key_encoding
+  path: tests/test_main.py
+  span:
+    start_line: 419
+    end_line: 425
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_get_key_no_file
+  stable_key: python::tests.test_main.test_get_key_no_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_get_key_no_file
+  path: tests/test_main.py
+  span:
+    start_line: 377
+    end_line: 395
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_get_key_none
+  stable_key: python::tests.test_main.test_get_key_none
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_get_key_none
+  path: tests/test_main.py
+  span:
+    start_line: 428
+    end_line: 436
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_get_key_not_found
+  stable_key: python::tests.test_main.test_get_key_not_found
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_get_key_not_found
+  path: tests/test_main.py
+  span:
+    start_line: 398
+    end_line: 405
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_get_key_ok
+  stable_key: python::tests.test_main.test_get_key_ok
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_get_key_ok
+  path: tests/test_main.py
+  span:
+    start_line: 408
+    end_line: 416
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_disabled
+  stable_key: python::tests.test_main.test_load_dotenv_disabled
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_disabled
+  path: tests/test_main.py
+  span:
+    start_line: 636
+    end_line: 646
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_disabled_notification
+  stable_key: python::tests.test_main.test_load_dotenv_disabled_notification
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_disabled_notification
+  path: tests/test_main.py
+  span:
+    start_line: 665
+    end_line: 678
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_doesnt_disable_itself
+  stable_key: python::tests.test_main.test_load_dotenv_doesnt_disable_itself
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_doesnt_disable_itself
+  path: tests/test_main.py
+  span:
+    start_line: 746
+    end_line: 752
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_enabled
+  stable_key: python::tests.test_main.test_load_dotenv_enabled
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_enabled
+  path: tests/test_main.py
+  span:
+    start_line: 701
+    end_line: 711
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_enabled_no_notification
+  stable_key: python::tests.test_main.test_load_dotenv_enabled_no_notification
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_enabled_no_notification
+  path: tests/test_main.py
+  span:
+    start_line: 731
+    end_line: 742
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_existing_file
+  stable_key: python::tests.test_main.test_load_dotenv_existing_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_existing_file
+  path: tests/test_main.py
+  span:
+    start_line: 611
+    end_line: 617
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_existing_variable_no_override
+  stable_key: python::tests.test_main.test_load_dotenv_existing_variable_no_override
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_existing_variable_no_override
+  path: tests/test_main.py
+  span:
+    start_line: 771
+    end_line: 777
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_existing_variable_override
+  stable_key: python::tests.test_main.test_load_dotenv_existing_variable_override
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_existing_variable_override
+  path: tests/test_main.py
+  span:
+    start_line: 784
+    end_line: 790
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_expands_user
+  stable_key: python::tests.test_main.test_load_dotenv_expands_user
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_expands_user
+  path: tests/test_main.py
+  span:
+    start_line: 345
+    end_line: 353
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_file_stream
+  stable_key: python::tests.test_main.test_load_dotenv_file_stream
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_file_stream
+  path: tests/test_main.py
+  span:
+    start_line: 836
+    end_line: 843
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_in_current_dir
+  stable_key: python::tests.test_main.test_load_dotenv_in_current_dir
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_in_current_dir
+  path: tests/test_main.py
+  span:
+    start_line: 846
+    end_line: 868
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_no_file_verbose
+  stable_key: python::tests.test_main.test_load_dotenv_no_file_verbose
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_no_file_verbose
+  path: tests/test_main.py
+  span:
+    start_line: 755
+    end_line: 764
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_redefine_var_used_in_file_no_override
+  stable_key: python::tests.test_main.test_load_dotenv_redefine_var_used_in_file_no_override
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_redefine_var_used_in_file_no_override
+  path: tests/test_main.py
+  span:
+    start_line: 797
+    end_line: 803
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_redefine_var_used_in_file_with_override
+  stable_key: python::tests.test_main.test_load_dotenv_redefine_var_used_in_file_with_override
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_redefine_var_used_in_file_with_override
+  path: tests/test_main.py
+  span:
+    start_line: 810
+    end_line: 816
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_load_dotenv_string_io_utf_8
+  stable_key: python::tests.test_main.test_load_dotenv_string_io_utf_8
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_load_dotenv_string_io_utf_8
+  path: tests/test_main.py
+  span:
+    start_line: 823
+    end_line: 829
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_rewrite_closes_file_handle_on_lstat_failure
+  stable_key: python::tests.test_main.test_rewrite_closes_file_handle_on_lstat_failure
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_rewrite_closes_file_handle_on_lstat_failure
+  path: tests/test_main.py
+  span:
+    start_line: 110
+    end_line: 126
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_rewrite_closes_file_handle_on_lstat_failure.tracking_open
+  stable_key: python::tests.test_main.test_rewrite_closes_file_handle_on_lstat_failure.tracking_open
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_rewrite_closes_file_handle_on_lstat_failure.tracking_open
+  path: tests/test_main.py
+  span:
+    start_line: 116
+    end_line: 119
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file
+  stable_key: python::tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file
+  path: tests/test_main.py
+  span:
+    start_line: 286
+    end_line: 313
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file.replace
+  stable_key: python::tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file.replace
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file.replace
+  path: tests/test_main.py
+  span:
+    start_line: 293
+    end_line: 298
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file.unlink
+  stable_key: python::tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file.unlink
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_rewrite_read_only_file_leaves_no_temp_file.unlink
+  path: tests/test_main.py
+  span:
+    start_line: 300
+    end_line: 303
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_rewrite_reports_original_error_when_cleanup_fails
+  stable_key: python::tests.test_main.test_rewrite_reports_original_error_when_cleanup_fails
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_rewrite_reports_original_error_when_cleanup_fails
+  path: tests/test_main.py
+  span:
+    start_line: 224
+    end_line: 238
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key
+  stable_key: python::tests.test_main.test_set_key
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key
+  path: tests/test_main.py
+  span:
+    start_line: 49
+    end_line: 58
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_encoding
+  stable_key: python::tests.test_main.test_set_key_encoding
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_encoding
+  path: tests/test_main.py
+  span:
+    start_line: 87
+    end_line: 93
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_follow_symlinks
+  stable_key: python::tests.test_main.test_set_key_follow_symlinks
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_follow_symlinks
+  path: tests/test_main.py
+  span:
+    start_line: 164
+    end_line: 173
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_missing_directory
+  stable_key: python::tests.test_main.test_set_key_missing_directory
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_missing_directory
+  path: tests/test_main.py
+  span:
+    start_line: 241
+    end_line: 248
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_no_file
+  stable_key: python::tests.test_main.test_set_key_no_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_no_file
+  path: tests/test_main.py
+  span:
+    start_line: 17
+    end_line: 25
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_permission_error
+  stable_key: python::tests.test_main.test_set_key_permission_error
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_permission_error
+  path: tests/test_main.py
+  span:
+    start_line: 180
+    end_line: 196
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_permission_error_leaves_no_temp_file
+  stable_key: python::tests.test_main.test_set_key_permission_error_leaves_no_temp_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_permission_error_leaves_no_temp_file
+  path: tests/test_main.py
+  span:
+    start_line: 203
+    end_line: 221
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_preserves_file_mode
+  stable_key: python::tests.test_main.test_set_key_preserves_file_mode
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_preserves_file_mode
+  path: tests/test_main.py
+  span:
+    start_line: 99
+    end_line: 107
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_read_only_directory
+  stable_key: python::tests.test_main.test_set_key_read_only_directory
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_read_only_directory
+  path: tests/test_main.py
+  span:
+    start_line: 255
+    end_line: 270
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_round_trips
+  stable_key: python::tests.test_main.test_set_key_round_trips
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_round_trips
+  path: tests/test_main.py
+  span:
+    start_line: 76
+    end_line: 84
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_symlink_to_existing_file
+  stable_key: python::tests.test_main.test_set_key_symlink_to_existing_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_symlink_to_existing_file
+  path: tests/test_main.py
+  span:
+    start_line: 132
+    end_line: 143
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_set_key_symlink_to_missing_file
+  stable_key: python::tests.test_main.test_set_key_symlink_to_missing_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_set_key_symlink_to_missing_file
+  path: tests/test_main.py
+  span:
+    start_line: 149
+    end_line: 158
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_unset_encoding
+  stable_key: python::tests.test_main.test_unset_encoding
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_unset_encoding
+  path: tests/test_main.py
+  span:
+    start_line: 475
+    end_line: 482
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_unset_key_follow_symlinks
+  stable_key: python::tests.test_main.test_unset_key_follow_symlinks
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_unset_key_follow_symlinks
+  path: tests/test_main.py
+  span:
+    start_line: 535
+    end_line: 544
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_unset_key_symlink_to_existing_file
+  stable_key: python::tests.test_main.test_unset_key_symlink_to_existing_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_unset_key_symlink_to_existing_file
+  path: tests/test_main.py
+  span:
+    start_line: 502
+    end_line: 512
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_unset_key_symlink_to_missing_file
+  stable_key: python::tests.test_main.test_unset_key_symlink_to_missing_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_unset_key_symlink_to_missing_file
+  path: tests/test_main.py
+  span:
+    start_line: 518
+    end_line: 529
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_unset_no_value
+  stable_key: python::tests.test_main.test_unset_no_value
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_unset_no_value
+  path: tests/test_main.py
+  span:
+    start_line: 463
+    end_line: 472
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_unset_non_existent_file
+  stable_key: python::tests.test_main.test_unset_non_existent_file
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_unset_non_existent_file
+  path: tests/test_main.py
+  span:
+    start_line: 485
+    end_line: 496
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.test_unset_with_value
+  stable_key: python::tests.test_main.test_unset_with_value
+  language: python
+  kind: function
+  qualified_name: tests.test_main.test_unset_with_value
+  path: tests/test_main.py
+  span:
+    start_line: 451
+    end_line: 460
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_main.py::tests.test_main.windows_read_only_semantics
+  stable_key: python::tests.test_main.windows_read_only_semantics
+  language: python
+  kind: function
+  qualified_name: tests.test_main.windows_read_only_semantics
+  path: tests/test_main.py
+  span:
+    start_line: 273
+    end_line: 275
+  file_entity_id: file:tests/test_main.py
+- id: python:tests/test_parser.py::tests.test_parser
+  stable_key: python::tests.test_parser
+  language: python
+  kind: module
+  qualified_name: tests.test_parser
+  path: tests/test_parser.py
+  span:
+    start_line: 1
+    end_line: 723
+  file_entity_id: file:tests/test_parser.py
+- id: python:tests/test_parser.py::tests.test_parser.test_parse_stream
+  stable_key: python::tests.test_parser.test_parse_stream
+  language: python
+  kind: function
+  qualified_name: tests.test_parser.test_parse_stream
+  path: tests/test_parser.py
+  span:
+    start_line: 720
+    end_line: 723
+  file_entity_id: file:tests/test_parser.py
+- id: python:tests/test_utils.py::tests.test_utils
+  stable_key: python::tests.test_utils
+  language: python
+  kind: module
+  qualified_name: tests.test_utils
+  path: tests/test_utils.py
+  span:
+    start_line: 1
+    end_line: 19
+  file_entity_id: file:tests/test_utils.py
+- id: python:tests/test_utils.py::tests.test_utils.test_to_cli_string
+  stable_key: python::tests.test_utils.test_to_cli_string
+  language: python
+  kind: function
+  qualified_name: tests.test_utils.test_to_cli_string
+  path: tests/test_utils.py
+  span:
+    start_line: 4
+    end_line: 19
+  file_entity_id: file:tests/test_utils.py
+- id: python:tests/test_variables.py::tests.test_variables
+  stable_key: python::tests.test_variables
+  language: python
+  kind: module
+  qualified_name: tests.test_variables
+  path: tests/test_variables.py
+  span:
+    start_line: 1
+    end_line: 35
+  file_entity_id: file:tests/test_variables.py
+- id: python:tests/test_variables.py::tests.test_variables.test_parse_variables
+  stable_key: python::tests.test_variables.test_parse_variables
+  language: python
+  kind: function
+  qualified_name: tests.test_variables.test_parse_variables
+  path: tests/test_variables.py
+  span:
+    start_line: 32
+    end_line: 35
+  file_entity_id: file:tests/test_variables.py
+- id: python:tests/test_zip_imports.py::tests.test_zip_imports
+  stable_key: python::tests.test_zip_imports
+  language: python
+  kind: module
+  qualified_name: tests.test_zip_imports
+  path: tests/test_zip_imports.py
+  span:
+    start_line: 1
+    end_line: 109
+  file_entity_id: file:tests/test_zip_imports.py
+- id: python:tests/test_zip_imports.py::tests.test_zip_imports.FileToAdd
+  stable_key: python::tests.test_zip_imports.FileToAdd
+  language: python
+  kind: class
+  qualified_name: tests.test_zip_imports.FileToAdd
+  path: tests/test_zip_imports.py
+  span:
+    start_line: 20
+    end_line: 23
+  file_entity_id: file:tests/test_zip_imports.py
+- id: python:tests/test_zip_imports.py::tests.test_zip_imports.FileToAdd.__init__
+  stable_key: python::tests.test_zip_imports.FileToAdd.__init__
+  language: python
+  kind: method
+  qualified_name: tests.test_zip_imports.FileToAdd.__init__
+  path: tests/test_zip_imports.py
+  span:
+    start_line: 21
+    end_line: 23
+  file_entity_id: file:tests/test_zip_imports.py
+- id: python:tests/test_zip_imports.py::tests.test_zip_imports.setup_zipfile
+  stable_key: python::tests.test_zip_imports.setup_zipfile
+  language: python
+  kind: function
+  qualified_name: tests.test_zip_imports.setup_zipfile
+  path: tests/test_zip_imports.py
+  span:
+    start_line: 26
+    end_line: 38
+  file_entity_id: file:tests/test_zip_imports.py
+- id: python:tests/test_zip_imports.py::tests.test_zip_imports.test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file
+  stable_key: python::tests.test_zip_imports.test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file
+  language: python
+  kind: function
+  qualified_name: tests.test_zip_imports.test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file
+  path: tests/test_zip_imports.py
+  span:
+    start_line: 42
+    end_line: 61
+  file_entity_id: file:tests/test_zip_imports.py
+- id: python:tests/test_zip_imports.py::tests.test_zip_imports.test_load_dotenv_outside_zip_file_when_called_in_zipfile
+  stable_key: python::tests.test_zip_imports.test_load_dotenv_outside_zip_file_when_called_in_zipfile
+  language: python
+  kind: function
+  qualified_name: tests.test_zip_imports.test_load_dotenv_outside_zip_file_when_called_in_zipfile
+  path: tests/test_zip_imports.py
+  span:
+    start_line: 64
+    end_line: 109
+  file_entity_id: file:tests/test_zip_imports.py
+- id: python:tests/test_zip_imports.py::tests.test_zip_imports.walk_to_root
+  stable_key: python::tests.test_zip_imports.walk_to_root
+  language: python
+  kind: function
+  qualified_name: tests.test_zip_imports.walk_to_root
+  path: tests/test_zip_imports.py
+  span:
+    start_line: 11
+    end_line: 17
+  file_entity_id: file:tests/test_zip_imports.py
+source_bindings: []
+invariants: []
+guidance:
+- id: bootstrap-review-before-edit
+  declared_kind: guidance
+  kind: guidance
+  action: added
+  classification: declared
+  classification_reason: Generated bootstrap review guidance.
+  description: Review inferred entities and relationships before using this snapshot
+    to guide changes.
+tools:
+- id: validation:make-sdist
+  action: added
+  validation_action:
+  - make
+  - sdist
+  source: pyproject.toml
+- id: validation:tox-1-default
+  action: added
+  validation_action:
+  - pip
+  - install
+  - tox
+  - tox-gh-actions
+  source: pyproject.toml
+- id: validation:tox-2-default
+  action: added
+  validation_action:
+  - tox
+  source: pyproject.toml
+validation_inventory:
+- id: validation:tox-1-default
+  schema_version: verification-provider-inventory-v2
+  provider: aggregate
+  profile: tox-1-default
+  component: null
+  purpose: Run the project-declared tox validation environment(s).
+  roles:
+  - validation
+  command: &id001
+  - pip
+  - install
+  - tox
+  - tox-gh-actions
+  execution:
+    kind: argv
+    cwd: .
+    shell: null
+    script: null
+  selectors: []
+  config_files:
+  - tox.ini
+  settings:
+    environments: []
+    configured_commands:
+      '*':
+      - - pytest
+        - --cov
+        - --cov-report=term-missing
+        - '{posargs}'
+  settings_status: declared_only
+  applicability:
+    local: true
+    evaluation: unknown
+  ci_origins: []
+  requiredness:
+    status: unknown
+    evidence: []
+  provenance:
+    declaration: declared
+    evidence:
+    - validation-input:tox.ini
+    - validation-input:.github/workflows/test.yml
+  confirmation:
+    level: execution
+    observations:
+    - &id002
+      kind: bootstrap_baseline
+      status: passed
+      command: *id001
+      returncode: 0
+      stdout_sha256: 8ea219c88ffae04522b84d6576838ace45b1ae826ca42ce6ddc09c05c3bdaadb
+      stderr_sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+      error: null
+  depends_on: []
+  local_reproducibility: unknown
+  baseline:
+    status: passed
+    observation: *id002
+  unresolved:
+  - Tox factor expressions are retained symbolically; concrete environment variants
+    were not expanded.
+  source: tox configuration/CI
+  environment: null
+- id: validation:tox-2-default
+  schema_version: verification-provider-inventory-v2
+  provider: aggregate
+  profile: tox-2-default
+  component: null
+  purpose: Run the project-declared tox validation environment(s).
+  roles:
+  - validation
+  command: &id003
+  - tox
+  execution:
+    kind: argv
+    cwd: .
+    shell: null
+    script: null
+  selectors: []
+  config_files:
+  - tox.ini
+  settings:
+    environments: []
+    configured_commands:
+      '*':
+      - - pytest
+        - --cov
+        - --cov-report=term-missing
+        - '{posargs}'
+  settings_status: declared_only
+  applicability:
+    local: true
+    evaluation: unknown
+  ci_origins: []
+  requiredness:
+    status: unknown
+    evidence: []
+  provenance:
+    declaration: declared
+    evidence:
+    - validation-input:tox.ini
+    - validation-input:.github/workflows/test.yml
+  confirmation:
+    level: execution
+    observations:
+    - &id004
+      kind: bootstrap_baseline
+      status: failed
+      command: *id003
+      returncode: 1
+      stdout_sha256: 83e26e0d9f6e879d10c7e96e0408adb1d77aeb3b56500191ae907095d893a319
+      stderr_sha256: 845a8ff039c2d3a06107076ddffa32984ea5edb519b5eb97c8ac601dbbea6e54
+      error: validation command exited with status 1
+  depends_on: []
+  local_reproducibility: unknown
+  baseline:
+    status: failed
+    observation: *id004
+  unresolved:
+  - Tox factor expressions are retained symbolically; concrete environment variants
+    were not expanded.
+  source: tox configuration/CI
+  environment: null
+- id: validation:make-sdist
+  schema_version: verification-provider-inventory-v2
+  provider: custom
+  profile: make-sdist
+  component: null
+  purpose: Run native Make target(s) recorded in the project.
+  roles: []
+  command: &id005
+  - make
+  - sdist
+  execution:
+    kind: argv
+    cwd: .
+    shell: null
+    script: null
+  selectors:
+  - sdist
+  config_files:
+  - Makefile
+  settings:
+    targets:
+      sdist:
+        prerequisites:
+        - clean
+        recipes:
+        - python -m build -o dist .
+        - ls -l dist
+        source: Makefile
+        phony: false
+      clean:
+        prerequisites:
+        - clean-build
+        - clean-pyc
+        recipes: []
+        source: Makefile
+        phony: false
+      clean-build:
+        prerequisites: []
+        recipes:
+        - rm -fr build/
+        - rm -rf .mypy_cache/
+        - rm -rf .tox/
+        - rm -rf site/
+        - rm -fr dist/
+        - rm -fr src/*.egg-info
+        source: Makefile
+        phony: true
+      clean-pyc:
+        prerequisites: []
+        recipes:
+        - find . -name '*.pyc' -exec rm -f {} +
+        - find . -name '*.pyo' -exec rm -f {} +
+        - find . -name '*~' -exec rm -f {} +
+        source: Makefile
+        phony: true
+  settings_status: declared_only
+  applicability:
+    local: true
+    evaluation: unknown
+  ci_origins: []
+  requiredness:
+    status: unknown
+    evidence: []
+  provenance:
+    declaration: declared
+    evidence:
+    - validation-input:Makefile
+    - validation-input:.github/workflows/release.yml
+  confirmation:
+    level: execution
+    observations:
+    - &id006
+      kind: bootstrap_baseline
+      status: passed
+      command: *id005
+      returncode: 0
+      stdout_sha256: fba43e7546fb89e02513b0dcc36a7c6db5c5289d58c59dc8d2e1e45d2d807e9a
+      stderr_sha256: b5042bb9167a80ab86314cdf669c37f02bf749a1924c31703a264add2301b379
+      error: null
+  depends_on: []
+  local_reproducibility: unknown
+  baseline:
+    status: passed
+    observation: *id006
+  unresolved:
+  - Make target names alone do not establish that the target validates code; inspect
+    the recorded recipe and workflow context.
+  source: Makefile/GitHub Actions
+  environment: null
+validation_context:
+  schema_version: validation-context-v1
+  discovery_status: partial
+  coverage:
+  - currently implemented validation detectors
+  - Python component and environment manifests
+  components:
+  - id: component:python:.
+    language: python
+    path: .
+    package_name: python-dotenv
+    manifests:
+    - pyproject.toml
+    - requirements.txt
+    python_file_count: 8
+    classification: declared
+  environments:
+  - id: environment:python:.
+    component: component:python:.
+    manager: pip
+    detected_managers:
+    - pip
+    python:
+      requires_python: '>=3.10'
+      version_file: null
+    lockfiles: []
+    configuration_files:
+    - requirements.txt
+    selected_groups: []
+    installation_mode: unknown
+    status: declared
+  evidence:
+  - id: validation-input:.github/workflows/release.yml
+    path: .github/workflows/release.yml
+  - id: validation-input:.github/workflows/test.yml
+    path: .github/workflows/test.yml
+  - id: validation-input:.pre-commit-config.yaml
+    path: .pre-commit-config.yaml
+  - id: validation-input:Makefile
+    path: Makefile
+  - id: validation-input:pyproject.toml
+    path: pyproject.toml
+  - id: validation-input:requirements-docs.txt
+    path: requirements-docs.txt
+  - id: validation-input:requirements.txt
+    path: requirements.txt
+  - id: validation-input:tox.ini
+    path: tox.ini
+  diagnostics: []
+  input_fingerprints:
+  - id: input:.github/workflows/release.yml
+    path: .github/workflows/release.yml
+    digest: sha256:69d13192b2218b0d17e433b5f8af1d797fbe5ab03e6806c90119a899e0a26ee9
+  - id: input:.github/workflows/test.yml
+    path: .github/workflows/test.yml
+    digest: sha256:082827a39a4fda006abc1807e2a07ab040d52e2a7e598df134634a4b38cf8c1c
+  - id: input:.pre-commit-config.yaml
+    path: .pre-commit-config.yaml
+    digest: sha256:d01478603c4961aa40eb5e27d6991fec2c41934f7482218a2014a49e8ffb6979
+  - id: input:Makefile
+    path: Makefile
+    digest: sha256:74d25e5e679cf6c217f1b6d142c7510311d472d4be93d7afc209cd6a874e64ea
+  - id: input:pyproject.toml
+    path: pyproject.toml
+    digest: sha256:3e5cd6c31650889b33b57e1f4aa764695519ee95578eee7e8f76b3734aa8473d
+  - id: input:requirements-docs.txt
+    path: requirements-docs.txt
+    digest: sha256:9bd719c05023386176dae93f187f1a3b46d457c18d10db5b424eead1fcb4b6e1
+  - id: input:requirements.txt
+    path: requirements.txt
+    digest: sha256:866b5215434fe1ac6e056fb4122a0a920a2fa5da0319caa90c2ae5d26add5b15
+  - id: input:tox.ini
+    path: tox.ini
+    digest: sha256:28610cc12be03b4adb7c0aa76ee94062c19d7dc63deebcc2c64f23b6d0c44aeb
+statements: []
+features: []
+proposed_prs: []

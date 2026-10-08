@@ -1,0 +1,334 @@
+{
+  "coverage_complete": true,
+  "excluded_paths": [
+    ".git",
+    ".github",
+    ".powdrr",
+    ".pytest_cache",
+    ".venv",
+    ".worktrees",
+    "__pycache__",
+    "docs/changelogs",
+    "docs/structrr/current",
+    "node_modules",
+    "vendor"
+  ],
+  "extraction_errors": [],
+  "extractor_version": "structrr-source-observations-v1",
+  "files": [
+    {
+      "content_digest": "sha256:b4225c9bfd7c7dea85406541f85c2223c82255e3019547dbec49e7a542446dbe",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": ".bumpversion.cfg",
+      "size_bytes": 105
+    },
+    {
+      "content_digest": "sha256:91ca4c8ad16309579982341930d568d2790cd5716e0193ad6e066764ff85d2cc",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": ".editorconfig",
+      "size_bytes": 243
+    },
+    {
+      "content_digest": "sha256:92c064957359c2be81209629f6111dbf57f6b2826e72bfa808d76537fcecb5ec",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": ".gitignore",
+      "size_bytes": 1566
+    },
+    {
+      "content_digest": "sha256:d01478603c4961aa40eb5e27d6991fec2c41934f7482218a2014a49e8ffb6979",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": ".pre-commit-config.yaml",
+      "size_bytes": 182
+    },
+    {
+      "content_digest": "sha256:294cf6e970d269ec701104a322160be2d7ca3c790e48f50007965970d844e3a3",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "CHANGELOG.md",
+      "size_bytes": 22171
+    },
+    {
+      "content_digest": "sha256:986854ef7b3868b0f15758221cd999adf6ab50bbf40e3da1689b085088e3a96a",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "CONTRIBUTING.md",
+      "size_bytes": 700
+    },
+    {
+      "content_digest": "sha256:80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "LICENSE",
+      "size_bytes": 1556
+    },
+    {
+      "content_digest": "sha256:7010f25e274a8127650b35a35a963cef33a1120f93c249cf8c64be4de271e74a",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "MANIFEST.in",
+      "size_bytes": 283
+    },
+    {
+      "content_digest": "sha256:74d25e5e679cf6c217f1b6d142c7510311d472d4be93d7afc209cd6a874e64ea",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "Makefile",
+      "size_bytes": 1352
+    },
+    {
+      "content_digest": "sha256:7d06cf7aa8278a4416873e141b5510d99bcc46bd14b440221ef46eba74009441",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "README.md",
+      "size_bytes": 7997
+    },
+    {
+      "content_digest": "sha256:df7efbaed1027a062d5bb5095d5bd6dc78b022437a0ad254ff453d411edc602a",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "RELEASING.md",
+      "size_bytes": 2803
+    },
+    {
+      "content_digest": "sha256:294cf6e970d269ec701104a322160be2d7ca3c790e48f50007965970d844e3a3",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "docs/changelog.md",
+      "size_bytes": 22171
+    },
+    {
+      "content_digest": "sha256:986854ef7b3868b0f15758221cd999adf6ab50bbf40e3da1689b085088e3a96a",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "docs/contributing.md",
+      "size_bytes": 700
+    },
+    {
+      "content_digest": "sha256:7d06cf7aa8278a4416873e141b5510d99bcc46bd14b440221ef46eba74009441",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "docs/index.md",
+      "size_bytes": 7997
+    },
+    {
+      "content_digest": "sha256:80619b7049f08c81683ad0e01f08f257a840652dd71ee83146d36658c7d2c2b9",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "docs/license.md",
+      "size_bytes": 1556
+    },
+    {
+      "content_digest": "sha256:acf20f0b6b9ee9f0af6b50e9ca0e67fe1f904c71f00b5c450bbdfaa121b3b2d4",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "docs/reference.md",
+      "size_bytes": 14
+    },
+    {
+      "content_digest": "sha256:83ab242553640d2cfaa0ce06cadee5f7e4352c7c24208d73158b4ba47f88fc9f",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "mkdocs.yml",
+      "size_bytes": 630
+    },
+    {
+      "content_digest": "sha256:3e5cd6c31650889b33b57e1f4aa764695519ee95578eee7e8f76b3734aa8473d",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "pyproject.toml",
+      "size_bytes": 2120
+    },
+    {
+      "content_digest": "sha256:9bd719c05023386176dae93f187f1a3b46d457c18d10db5b424eead1fcb4b6e1",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "requirements-docs.txt",
+      "size_bytes": 130
+    },
+    {
+      "content_digest": "sha256:866b5215434fe1ac6e056fb4122a0a920a2fa5da0319caa90c2ae5d26add5b15",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "requirements.txt",
+      "size_bytes": 83
+    },
+    {
+      "content_digest": "sha256:18b8cd8f263b6fb7b3f562e0fedffdb74ab25d43fd03cd85e868d43c70dda41e",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "ruff.toml",
+      "size_bytes": 178
+    },
+    {
+      "content_digest": "sha256:30e8bda9ed7d1ee565f966360b160dbb3f4211ab3abd511015d6073f3d3dbbf2",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "software_development_entity_taxonomy.md",
+      "size_bytes": 8197
+    },
+    {
+      "content_digest": "sha256:6e163e88aeb0c0765a996208e9e482b820165d435d9f64d016610eb97494ed23",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/__init__.py",
+      "size_bytes": 1230
+    },
+    {
+      "content_digest": "sha256:3744612c6ee71c8aad9491f0c1ea48a3ecdb24f371f6c7b0082446639dbc87fe",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/__main__.py",
+      "size_bytes": 129
+    },
+    {
+      "content_digest": "sha256:fd9755edcd5e496b46f141bcfc76310f2f86b961f93e67980ea9c5305d278f8c",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/cli.py",
+      "size_bytes": 7284
+    },
+    {
+      "content_digest": "sha256:74740177d3dc7425298466faed7c32dc6914a8c49d7fd5d4522358c53677b585",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/ipython.py",
+      "size_bytes": 1326
+    },
+    {
+      "content_digest": "sha256:fcb89122cd8756c43209f9052bb3c552dbe440d45493c762295c771f0d1ceaa8",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/main.py",
+      "size_bytes": 16970
+    },
+    {
+      "content_digest": "sha256:0bc1350444eeff987f2c22924400ad0b7727563798118c641cd4c0de55bd30d0",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/parser.py",
+      "size_bytes": 5806
+    },
+    {
+      "content_digest": "sha256:f0f8f2675695a10a5156fb7bd66bafbaae6a13e8d315990af862c792175e6e67",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/py.typed",
+      "size_bytes": 26
+    },
+    {
+      "content_digest": "sha256:083d2a5cebefa41deae51a4140c0fda97eaf1d7ed2c96f92ba2c063054a5b74f",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/variables.py",
+      "size_bytes": 2348
+    },
+    {
+      "content_digest": "sha256:5c1287f04d4b983c6fd3a537f72a8c05b5d96a93844458080840d866cfe446ca",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "src/dotenv/version.py",
+      "size_bytes": 22
+    },
+    {
+      "content_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/__init__.py",
+      "size_bytes": 0
+    },
+    {
+      "content_digest": "sha256:1cc31c9f8e8b5e076780d7469c8f35ff8088e37a25be0bc7e07b68e593beb443",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/conftest.py",
+      "size_bytes": 279
+    },
+    {
+      "content_digest": "sha256:b939dc4f92c3f857069b567fc3051a9e17b4a471e542874110a045cca756a969",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_cli.py",
+      "size_bytes": 11789
+    },
+    {
+      "content_digest": "sha256:b69ecca75f9eb3969aa2cc2d49f66006cccae02da472805a3b3ad4c9fca8f8de",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_fifo_dotenv.py",
+      "size_bytes": 743
+    },
+    {
+      "content_digest": "sha256:aaa10084bffa00032ff6fe9f61c4a1975c77d4f102b4c1e18b6eea0433d93933",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_ipython.py",
+      "size_bytes": 2257
+    },
+    {
+      "content_digest": "sha256:2d4a6a5a4501bbd6c2860b39abeb9d5201a2de3d110347f74236098aa72f2a18",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_is_interactive.py",
+      "size_bytes": 8921
+    },
+    {
+      "content_digest": "sha256:f75073c7317f7cda985b94531774578056519bf8dcb91aa7f3c60a7cf8872199",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_lib.py",
+      "size_bytes": 1122
+    },
+    {
+      "content_digest": "sha256:3b2f4bf1ca0d0a87bfac8c14c7236b42b39f444dcc148f751ef7b3f65c89342a",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_main.py",
+      "size_bytes": 27507
+    },
+    {
+      "content_digest": "sha256:aa9bc882bba648147ec0cf02322360ed9cacffb435828008404a0563321191dd",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_parser.py",
+      "size_bytes": 19179
+    },
+    {
+      "content_digest": "sha256:82e06b9819adbc846b84717f9cc47ffff2dc99c77ebb0a22d93026326eac78a3",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_utils.py",
+      "size_bytes": 747
+    },
+    {
+      "content_digest": "sha256:facea37ceaca30b761c2128fa754ec32c1e50333f2ac1776f7f8063018aaa6fc",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_variables.py",
+      "size_bytes": 884
+    },
+    {
+      "content_digest": "sha256:9224bd859309409c62848bac6564eec0793aa6dffa091c9965ec6c4644a8ef04",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tests/test_zip_imports.py",
+      "size_bytes": 2864
+    },
+    {
+      "content_digest": "sha256:28610cc12be03b4adb7c0aa76ee94062c19d7dc63deebcc2c64f23b6d0c44aeb",
+      "evidence_kind": "source_observation",
+      "executable": false,
+      "path": "tox.ini",
+      "size_bytes": 1212
+    }
+  ],
+  "fingerprint": "sha256:6bb776a887c46089f345295ecb6424c303982ae5231a4fdcb666d9d45394f632",
+  "product_digest": "sha256:75b9624c33fbb22de52e458a108625282ae17aed36a827b65860fb6a892ad67b",
+  "schema_version": "structrr-source-manifest-v1",
+  "source_revision": "0b2880591780a426b0551436f47a17e7a76d954f",
+  "submission_base": "0b2880591780a426b0551436f47a17e7a76d954f",
+  "taxonomy_fingerprint": "sha256:161c7013b4bd2e88adddfa6791578c89da2e34f1ebf6a39cc7ca3144fe4b4c8d"
+}
