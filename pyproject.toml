@@ -87,3 +87,9 @@ exclude_lines = [
 [tool.mypy]
 check_untyped_defs = true
 ignore_missing_imports = true
+
+[tool.check-manifest]
+ignore = [
+    "docs/structrr/current/baseline-bootstrap.yaml",
+    "docs/structrr/current/baseline-bootstrap.manifest.json",
+]
