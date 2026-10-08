@@ -1,5 +1,6 @@
 import io
 import logging
+import ntpath
 import os
 import pathlib
 import stat
@@ -602,6 +603,87 @@ def test_find_dotenv_expands_user(tmp_path, monkeypatch):
     result = dotenv.find_dotenv("~/.env", usecwd=True)
 
     assert result == f"{home}/.env"
+
+
+@pytest.mark.parametrize("filename", ["absolute", "home"])
+@pytest.mark.parametrize("usecwd", [False, True])
+def test_find_dotenv_absolute_path_without_search(
+    tmp_path, monkeypatch, filename, usecwd
+):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    path = str(dotenv_path) if filename == "absolute" else os.path.join("~", ".env")
+
+    with (
+        mock.patch("dotenv.main.os.getcwd", side_effect=FileNotFoundError),
+        mock.patch("dotenv.main.sys._getframe", side_effect=AssertionError),
+    ):
+        result = dotenv.find_dotenv(path, usecwd=usecwd)
+
+    assert result == str(dotenv_path)
+
+
+@pytest.mark.parametrize("exists", [False, True], ids=["missing", "directory"])
+@pytest.mark.parametrize("raise_error", [False, True])
+def test_find_dotenv_absolute_path_not_file(tmp_path, exists, raise_error):
+    dotenv_path = tmp_path / ".env"
+    if exists:
+        dotenv_path.mkdir()
+
+    with mock.patch("dotenv.main.os.getcwd", side_effect=FileNotFoundError):
+        if raise_error:
+            with pytest.raises(IOError, match="^File not found$"):
+                dotenv.find_dotenv(
+                    str(dotenv_path), raise_error_if_not_found=True, usecwd=True
+                )
+        else:
+            assert dotenv.find_dotenv(str(dotenv_path), usecwd=True) == ""
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="requires a removable working directory"
+)
+def test_find_dotenv_absolute_path_from_deleted_directory(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+    working_dir = tmp_path / "working"
+    working_dir.mkdir()
+    original_dir = os.getcwd()
+    try:
+        os.chdir(working_dir)
+        working_dir.rmdir()
+        assert dotenv.find_dotenv(str(dotenv_path), usecwd=True) == str(dotenv_path)
+    finally:
+        os.chdir(original_dir)
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="requires FIFO support")
+def test_find_dotenv_absolute_fifo_without_search(tmp_path):
+    dotenv_path = tmp_path / ".env"
+    os.mkfifo(dotenv_path)
+
+    with mock.patch("dotenv.main.os.getcwd", side_effect=FileNotFoundError):
+        assert dotenv.find_dotenv(str(dotenv_path), usecwd=True) == str(dotenv_path)
+
+
+@pytest.mark.parametrize("filename", ["/.env", "\\.env"])
+def test_find_dotenv_windows_rooted_path_keeps_search_drive(filename):
+    search_dir = "D:\\project"
+    expected = ntpath.join(search_dir, filename)
+    rooted_path = pathlib.PureWindowsPath(filename)
+    with (
+        mock.patch("dotenv.main.pathlib.PurePath", return_value=rooted_path),
+        mock.patch("dotenv.main.os.path.isabs", return_value=True),
+        mock.patch("dotenv.main.os.path.join", side_effect=ntpath.join),
+        mock.patch("dotenv.main.os.getcwd", return_value=search_dir),
+        mock.patch("dotenv.main._walk_to_root", return_value=iter([search_dir])),
+        mock.patch("dotenv.main._is_file_or_fifo", side_effect=lambda p: p == expected),
+    ):
+        result = dotenv.find_dotenv(filename, usecwd=True)
+
+    assert result == expected
 
 
 @pytest.mark.skipif(
