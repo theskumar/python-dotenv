@@ -12,9 +12,11 @@ environment variables. It helps in the development of applications following the
   - [Load configuration without altering the environment](#load-configuration-without-altering-the-environment)
   - [Parse configuration as a stream](#parse-configuration-as-a-stream)
   - [Load .env files in IPython](#load-env-files-in-ipython)
+  - [Disable load_dotenv](#disable-load_dotenv)
 - [Command-line Interface](#command-line-interface)
 - [File format](#file-format)
   - [Multiline values](#multiline-values)
+  - [Variable without a value](#variable-without-a-value)
   - [Variable expansion](#variable-expansion)
 - [Related Projects](#related-projects)
 - [Acknowledgements](#acknowledgements)
@@ -206,7 +208,7 @@ FOO
 ```
 
 It results in `dotenv_values` associating that variable name with the value
-`None` (e.g. `{"FOO": None}`. `load_dotenv`, on the other hand, simply ignores
+`None` (e.g. `{"FOO": None}`). `load_dotenv`, on the other hand, simply ignores
 such variables.
 
 This shouldn't be confused with `FOO=`, in which case the variable is associated
