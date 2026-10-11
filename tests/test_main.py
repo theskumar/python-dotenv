@@ -948,3 +948,39 @@ def test_dotenv_values_empty_value_with_inline_comment(string, expected):
     result = dotenv.dotenv_values(stream=io.StringIO(string))
 
     assert result == expected
+
+
+@pytest.mark.parametrize("operation", [dotenv.set_key, dotenv.unset_key])
+def test_rewrite_close_failure_leaves_no_temp_file(dotenv_path, operation):
+    dotenv_path.write_text("a=original\n")
+    real_temp_file = dotenv.main.tempfile.NamedTemporaryFile
+    close_error = OSError("flush failed")
+    handles = []
+
+    class FailingClose:
+        def __init__(self, *args, **kwargs):
+            self.file = real_temp_file(*args, **kwargs)
+            handles.append(self.file)
+
+        def __enter__(self):
+            return self.file.__enter__()
+
+        @property
+        def name(self):
+            return self.file.name
+
+        def __exit__(self, *args):
+            self.file.__exit__(*args)
+            raise close_error
+
+    with mock.patch("dotenv.main.tempfile.NamedTemporaryFile", FailingClose):
+        with pytest.raises(OSError) as excinfo:
+            if operation is dotenv.set_key:
+                operation(dotenv_path, "a", "replacement")
+            else:
+                operation(dotenv_path, "a")
+
+    assert excinfo.value is close_error
+    assert all(handle.closed for handle in handles)
+    assert dotenv_path.read_text() == "a=original\n"
+    assert list(dotenv_path.parent.glob(".tmp_*")) == []
