@@ -1,3 +1,5 @@
+import sys
+
 from IPython.core.magic import Magics, line_magic, magics_class  # type: ignore
 from IPython.core.magic_arguments import (
     argument,
@@ -35,6 +37,15 @@ class IPythonDotEnv(Magics):
         args = parse_argstring(self.dotenv, line)
         # Locate the .env file
         dotenv_path = args.dotenv_path
+        # IPython's POSIX parser keeps grouping quotes. On Windows they are
+        # already removed, and any remaining apostrophes are part of the path.
+        if (
+            sys.platform != "win32"
+            and len(dotenv_path) >= 2
+            and dotenv_path[0] == dotenv_path[-1]
+            and dotenv_path[0] in ("'", '"')
+        ):
+            dotenv_path = dotenv_path[1:-1]
         try:
             dotenv_path = find_dotenv(dotenv_path, True, True)
         except IOError:
