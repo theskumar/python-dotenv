@@ -898,6 +898,10 @@ def test_dotenv_values_file(dotenv_path):
         ({}, "b=\na=${b:-d}", True, {"a": "d", "b": ""}),
         ({"b": ""}, "a=${b:-d}", True, {"a": "d"}),
         ({}, "b=\na=${b}", True, {"a": "", "b": ""}),
+        # Bare declaration (no value, parses to None) with default:
+        # ${name:-default} treats it as unset/null and uses the default
+        ({}, "b\na=${b:-d}", True, {"a": "d", "b": None}),
+        ({}, "b\na=${b}", True, {"a": "", "b": None}),
         # With quotes
         ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),
         ({"b": "c"}, "a='${b}'", True, {"a": "c"}),

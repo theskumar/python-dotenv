@@ -65,7 +65,10 @@ class Variable(Atom):
         default = self.default if self.default is not None else ""
         result = env.get(self.name, default)
         if result is None:
-            return ""
+            # A bare declaration (e.g. `BASE` with no value) parses to None.
+            # POSIX: under ${name:-default} that is the null case, same as
+            # unset, so fall back to the default when one was given.
+            return default
         if result == "" and self.default is not None:
             # POSIX: ${name:-default} falls back to the default when name
             # is unset or empty (issue #715)
