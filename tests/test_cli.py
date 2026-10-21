@@ -415,3 +415,11 @@ def test_run_with_dotenv_and_command_flags(dotenv_path, tmp_path):
 
     check_process(result, exit_code=0)
     assert result.stdout.strip().startswith("dotenv, version")
+
+
+@pytest.mark.parametrize("key", ["APP NAME", "APP#NAME", "APP=NAME"])
+def test_set_quoted_key(cli, dotenv_path, key):
+    dotenv_path.write_text(f"'{key}'=old\nSAFE=untouched\n")
+    result = cli.invoke(dotenv_cli, ["--file", dotenv_path, "set", key, "new"])
+    assert result.exit_code == 0, result.output
+    assert dotenv.dotenv_values(dotenv_path) == {key: "new", "SAFE": "untouched"}
