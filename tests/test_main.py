@@ -954,7 +954,7 @@ def test_rewrite_fsyncs_before_replace(tmp_path):
     """rewrite() must fsync the temp file before os.replace (see #713)."""
     dotenv_path = tmp_path / ".env"
     dotenv_path.write_text("a=x\n")
-    calls = []
+    calls: list = []
     real_fsync = os.fsync
     real_replace = os.replace
 
