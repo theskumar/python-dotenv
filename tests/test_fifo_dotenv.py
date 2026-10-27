@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 import sys
@@ -31,9 +32,7 @@ def test_load_dotenv_from_fifo(tmp_path: pathlib.Path, monkeypatch):
     assert os.getenv("MY_PASSWORD") == "pipe-secret"
 
 
-
 def test_load_dotenv_from_devnull(caplog):
-    import logging
     with caplog.at_level(logging.INFO):
         ok = load_dotenv(dotenv_path=os.devnull, verbose=True)
 
