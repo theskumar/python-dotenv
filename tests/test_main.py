@@ -948,3 +948,30 @@ def test_dotenv_values_empty_value_with_inline_comment(string, expected):
     result = dotenv.dotenv_values(stream=io.StringIO(string))
 
     assert result == expected
+
+
+def test_rewrite_fsyncs_before_replace(tmp_path):
+    """rewrite() must fsync the temp file before os.replace (see #713)."""
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+    calls = []
+    real_fsync = os.fsync
+    real_replace = os.replace
+
+    def tracking_fsync(fd):
+        calls.append(("fsync", fd))
+        return real_fsync(fd)
+
+    def tracking_replace(src, dst):
+        calls.append(("replace", str(src), str(dst)))
+        return real_replace(src, dst)
+
+    with mock.patch("dotenv.main.os.fsync", side_effect=tracking_fsync):
+        with mock.patch("dotenv.main.os.replace", side_effect=tracking_replace):
+            dotenv.set_key(dotenv_path, "a", "y")
+
+    kinds = [c[0] for c in calls]
+    assert kinds[0] == "fsync", calls
+    assert kinds[1] == "replace", calls
+    assert kinds.count("fsync") >= 1, calls
+    assert dotenv_path.read_text() == "a='y'\n"
