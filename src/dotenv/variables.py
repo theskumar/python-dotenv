@@ -63,7 +63,9 @@ class Variable(Atom):
 
     def resolve(self, env: Mapping[str, Optional[str]]) -> str:
         default = self.default if self.default is not None else ""
-        result = env.get(self.name, default)
+        result = env.get(self.name)
+        if result is None or (result == "" and self.default is not None):
+            result = default
         return result if result is not None else ""
 
 
