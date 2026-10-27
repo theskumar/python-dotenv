@@ -207,12 +207,26 @@ def rewrite(
         except BaseException as err:
             error = err
 
+        if error is None:
+            # Force the new contents to stable storage before os.replace
+            # makes them visible (see #713).
+            dest.flush()
+            os.fsync(dest.fileno())
+
     if error is None:
         try:
             if original_mode is not None:
                 os.chmod(dest_path, original_mode)
 
             os.replace(dest_path, path)
+
+            if sys.platform != "win32":
+                # Make the rename itself durable.
+                dir_fd = os.open(os.path.dirname(os.path.abspath(path)), os.O_RDONLY)
+                try:
+                    os.fsync(dir_fd)
+                finally:
+                    os.close(dir_fd)
         except BaseException:
             _discard_temp_file(dest_path)
             raise
