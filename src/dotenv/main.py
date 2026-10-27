@@ -222,9 +222,7 @@ def rewrite(
 
             if sys.platform != "win32":
                 # Make the rename itself durable.
-                dir_fd = os.open(
-                    os.path.dirname(os.path.abspath(path)), os.O_RDONLY
-                )
+                dir_fd = os.open(os.path.dirname(os.path.abspath(path)), os.O_RDONLY)
                 try:
                     os.fsync(dir_fd)
                 finally:
