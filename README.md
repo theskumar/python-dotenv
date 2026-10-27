@@ -258,3 +258,4 @@ the support of these [awesome people][contributors].
 [contributors]: https://github.com/theskumar/python-dotenv/graphs/contributors
 [build_status_link]: https://github.com/theskumar/python-dotenv/actions/workflows/test.yml
 [build_status_badge]: https://github.com/theskumar/python-dotenv/actions/workflows/test.yml/badge.svg
+
