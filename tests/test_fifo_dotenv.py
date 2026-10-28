@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 import sys
@@ -29,3 +30,11 @@ def test_load_dotenv_from_fifo(tmp_path: pathlib.Path, monkeypatch):
 
     assert ok is True
     assert os.getenv("MY_PASSWORD") == "pipe-secret"
+
+
+def test_load_dotenv_from_devnull(caplog):
+    with caplog.at_level(logging.INFO):
+        ok = load_dotenv(dotenv_path=os.devnull, verbose=True)
+
+    assert ok is False
+    assert "could not find configuration file" not in caplog.text
