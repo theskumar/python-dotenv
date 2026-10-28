@@ -14,6 +14,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `set_key` and `unset_key` no longer leave a `.tmp_*` file behind on Windows when writing a read-only `.env` fails, and the error raised is the one from the failed write rather than from cleaning up the temporary file by [@MohammedAlkindi] in [#686]
 - `load_dotenv`, `dotenv_values`, `get_key`, `set_key`, `unset_key` and the CLI `--file` option now expand a leading `~` to the user's home directory by [@veeceey] in [#615]
 - `find_dotenv` and the IPython `%dotenv` magic now expand a leading `~` in the file name by [@theskumar] in [#714]
+- `unset_key` and `dotenv unset` no longer rewrite the `.env` file when the key isn't in it, so a symlinked `.env` stays a symlink and its line endings and permissions are left alone by [@PDGGK] in [#734]
 
 ## [1.2.4] - 2026-10-01
 
@@ -467,6 +468,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [#700]: https://github.com/theskumar/python-dotenv/pull/700
 [#711]: https://github.com/theskumar/python-dotenv/pull/711
 [#714]: https://github.com/theskumar/python-dotenv/pull/714
+[#734]: https://github.com/theskumar/python-dotenv/pull/734
 [790c5c0]: https://github.com/theskumar/python-dotenv/commit/790c5c02991100aa1bf41ee5330aca75edc51311
 
 <!-- contributors -->
@@ -477,6 +479,7 @@ os.PathLike]` instead of just `os.PathLike` (#347 by [@bbc2]).
 [@MohammedAlkindi]: https://github.com/MohammedAlkindi
 [@Nicals]: https://github.com/Nicals
 [@Nougat-Waffle]: https://github.com/Nougat-Waffle
+[@PDGGK]: https://github.com/PDGGK
 [@Qwerty-133]: https://github.com/Qwerty-133
 [@ReinerBRO]: https://github.com/ReinerBRO
 [@ROTl24]: https://github.com/ROTl24
