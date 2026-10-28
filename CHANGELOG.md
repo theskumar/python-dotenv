@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add opt-in command substitution via `$(command)` syntax, enabled with `execute_commands=True` on `load_dotenv()` and `dotenv_values()`, or `--execute-commands` on the CLI
+
 ### Fixed
 
 - Fix a package build deprecation warning caused by a non-string `license` value in `pyproject.toml` by [@kurtmckee] in [#648]

@@ -57,13 +57,26 @@ def enumerate_env() -> Optional[str]:
     type=click.BOOL,
     help="Whether to write the dot file as an executable bash script.",
 )
+@click.option(
+    "--execute-commands",
+    is_flag=True,
+    default=False,
+    help="Execute $(command) substitutions in values.",
+)
 @click.version_option(version=__version__)
 @click.pass_context
-def cli(ctx: click.Context, file: Any, quote: Any, export: Any) -> None:
+def cli(
+    ctx: click.Context, file: Any, quote: Any, export: Any, execute_commands: bool
+) -> None:
     """This script is used to set, get or unset values from a .env file."""
     if file is not None:
         file = os.path.expanduser(file)
-    ctx.obj = {"QUOTE": quote, "EXPORT": export, "FILE": file}
+    ctx.obj = {
+        "QUOTE": quote,
+        "EXPORT": export,
+        "FILE": file,
+        "EXECUTE_COMMANDS": execute_commands,
+    }
 
 
 @contextmanager
@@ -97,7 +110,9 @@ def list_values(ctx: click.Context, output_format: str) -> None:
     file = ctx.obj["FILE"]
 
     with stream_file(file) as stream:
-        values = dotenv_values(stream=stream)
+        values = dotenv_values(
+            stream=stream, execute_commands=ctx.obj["EXECUTE_COMMANDS"]
+        )
 
     if output_format == "json":
         click.echo(json.dumps(values, indent=2, sort_keys=True))
@@ -145,7 +160,9 @@ def get(ctx: click.Context, key: Any) -> None:
     file = ctx.obj["FILE"]
 
     with stream_file(file) as stream:
-        values = dotenv_values(stream=stream)
+        values = dotenv_values(
+            stream=stream, execute_commands=ctx.obj["EXECUTE_COMMANDS"]
+        )
 
     # Empty strings are valid values; only missing keys / bare keys (None) fail.
     if key not in values or values[key] is None:
@@ -199,7 +216,14 @@ def run(ctx: click.Context, override: bool, commandline: tuple[str, ...]) -> Non
         )
     dotenv_as_dict = {
         k: v
-        for (k, v) in DotEnv(file, override=override, encoding="utf-8").dict().items()
+        for (k, v) in DotEnv(
+            file,
+            override=override,
+            encoding="utf-8",
+            execute_commands=ctx.obj["EXECUTE_COMMANDS"],
+        )
+        .dict()
+        .items()
         if v is not None and (override or k not in os.environ)
     }
 
