@@ -254,6 +254,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b c ",
                     original=Original(string="a='b c '", line=1),
                     error=False,
+                    quote="'",
                 )
             ],
         ),
@@ -265,6 +266,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b c ",
                     original=Original(string='a="b c "', line=1),
                     error=False,
+                    quote='"',
                 )
             ],
         ),
@@ -298,6 +300,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\nc",
                     original=Original(string='a="b\nc"', line=1),
                     error=False,
+                    quote='"',
                 )
             ],
         ),
@@ -309,6 +312,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\nc",
                     original=Original(string="a='b\nc'", line=1),
                     error=False,
+                    quote="'",
                 )
             ],
         ),
@@ -320,6 +324,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\nc",
                     original=Original(string='a="b\nc"', line=1),
                     error=False,
+                    quote='"',
                 )
             ],
         ),
@@ -331,6 +336,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\nc",
                     original=Original(string='a="b\\nc"', line=1),
                     error=False,
+                    quote='"',
                 )
             ],
         ),
@@ -342,6 +348,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\\nc",
                     original=Original(string="a='b\\nc'", line=1),
                     error=False,
+                    quote="'",
                 )
             ],
         ),
@@ -353,6 +360,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value='b"c',
                     original=Original(string='a="b\\"c"', line=1),
                     error=False,
+                    quote='"',
                 )
             ],
         ),
@@ -364,6 +372,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b'c",
                     original=Original(string="a='b\\'c'", line=1),
                     error=False,
+                    quote="'",
                 )
             ],
         ),
@@ -375,6 +384,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\\c",
                     original=Original(string="a='b\\\\c'", line=1),
                     error=False,
+                    quote="'",
                 )
             ],
         ),
@@ -386,6 +396,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\\c",
                     original=Original(string='a="b\\\\c"', line=1),
                     error=False,
+                    quote='"',
                 )
             ],
         ),
@@ -399,12 +410,14 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\\",
                     original=Original(string="a='b\\\\'\n", line=1),
                     error=False,
+                    quote="'",
                 ),
                 Binding(
                     key="c",
                     value="d",
                     original=Original(string="c='d'", line=2),
                     error=False,
+                    quote="'",
                 ),
             ],
         ),
@@ -416,12 +429,14 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\\",
                     original=Original(string='a="b\\\\"\n', line=1),
                     error=False,
+                    quote='"',
                 ),
                 Binding(
                     key="c",
                     value="d",
                     original=Original(string='c="d"', line=2),
                     error=False,
+                    quote='"',
                 ),
             ],
         ),
@@ -433,6 +448,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\\'c",
                     original=Original(string="a='b\\\\\\'c'", line=1),
                     error=False,
+                    quote="'",
                 )
             ],
         ),
@@ -455,6 +471,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="à",
                     original=Original(string='a="à"', line=1),
                     error=False,
+                    quote='"',
                 )
             ],
         ),
@@ -664,6 +681,7 @@ from dotenv.parser import Binding, Original, parse_stream
                     value="b\nc",
                     original=Original(string='a="b\nc"\n', line=2),
                     error=False,
+                    quote='"',
                 ),
                 Binding(
                     key="d",
@@ -717,6 +735,7 @@ from dotenv.parser import Binding, Original, parse_stream
                         string='uglyKey[%$="S3cr3t_P4ssw#rD" #\n', line=1
                     ),
                     error=False,
+                    quote='"',
                 ),
                 Binding(
                     key="a",
