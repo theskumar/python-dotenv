@@ -344,6 +344,68 @@ def test_file_option_expands_user(tmp_path, args, expected_stdout, expected_cont
     assert sorted(tmp_path.iterdir()) == [home]
 
 
+def make_command(directory: Path, name: str, output: str) -> None:
+    """
+    Create a command named `name` in `directory` which prints `output`.
+    """
+
+    if sys.platform == "win32":
+        (directory / f"{name}.cmd").write_text(f"@echo {output}\n")
+    else:
+        path = directory / name
+        path.write_text(f"#!/bin/sh\necho {output}\n")
+        path.chmod(0o755)
+
+
+def test_run_with_path_from_env_file(tmp_path):
+    """
+    Check that the command is looked up in the `PATH` set by the .env file.
+    """
+
+    # We use two commands (one prints "x", the other "y").
+    dotenv_bin_dir = tmp_path / "dotenv-bin"
+    dotenv_bin_dir.mkdir()
+    make_command(directory=dotenv_bin_dir, name="dotenv-test-command", output="x")
+    start_bin_dir = tmp_path / "start-bin"
+    start_bin_dir.mkdir()
+    make_command(directory=start_bin_dir, name="dotenv-test-command", output="y")
+    start_env = {
+        **os.environ,
+        "PATH": os.pathsep.join([str(start_bin_dir), os.environ["PATH"]]),
+    }
+    # Unquoted, so that a Windows `PATH` ending with `\` isn't read as an escape.
+    (tmp_path / ".env").write_text(f"PATH={dotenv_bin_dir}{os.pathsep}${{PATH}}")
+
+    result = run_dotenv(["run", "dotenv-test-command"], cwd=tmp_path, env=start_env)
+
+    check_process(result, exit_code=0, stdout="x\n")
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific lookup")
+def test_run_python_uses_path_on_windows(dotenv_path, tmp_path):
+    """
+    Check that `dotenv run python` runs the first `python` in `PATH`, as with an
+    activated virtual environment (#373).
+
+    A fake `python` placed first in `PATH` prints "x", while the real interpreter
+    would run the `-c` code and print "y" instead. Without resolving the command
+    against `PATH`, Windows picks the real interpreter.
+    """
+
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    make_command(directory=bin_dir, name="python", output="x")  # Creates `python.cmd`.
+    env = {**os.environ, "PATH": os.pathsep.join([str(bin_dir), os.environ["PATH"]])}
+
+    result = run_dotenv(
+        ["--file", str(dotenv_path), "run", "python", "-c", "print('y')"],
+        cwd=tmp_path,
+        env=env,
+    )
+
+    check_process(result, exit_code=0, stdout="x\n")
+
+
 def test_run_without_cmd(tmp_path):
     result = run_dotenv(["run"], cwd=tmp_path)
 
