@@ -1,0 +1,5 @@
+# Tooling installed by `.github/workflows/test.yml`.
+tox==4.67.4
+tox-gh==1.9.1
+tox-uv==1.37.2
+uv==0.13.6
