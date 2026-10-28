@@ -8,6 +8,7 @@ from typing import (
     Optional,
     Pattern,
     Sequence,
+    Tuple,
 )
 
 
@@ -44,6 +45,10 @@ class Binding(NamedTuple):
     value: Optional[str]
     original: Original
     error: bool
+    # The quote character surrounding the value ("'", '"' or None for
+    # unquoted/empty values). Single-quoted values are literal: callers must
+    # not interpolate them.
+    quote: Optional[str] = None
 
 
 class Position:
@@ -127,18 +132,18 @@ def parse_unquoted_value(reader: Reader) -> str:
     return re.sub(r"\s+#.*", "", part).rstrip()
 
 
-def parse_value(reader: Reader) -> str:
+def parse_value(reader: Reader) -> Tuple[str, Optional[str]]:
     char = reader.peek(1)
     if char == "'":
         (value,) = reader.read_regex(_single_quoted_value)
-        return decode_escapes(_single_quote_escapes, value)
+        return decode_escapes(_single_quote_escapes, value), "'"
     elif char == '"':
         (value,) = reader.read_regex(_double_quoted_value)
-        return decode_escapes(_double_quote_escapes, value)
+        return decode_escapes(_double_quote_escapes, value), '"'
     elif char in ("", "\n", "\r"):
-        return ""
+        return "", None
     else:
-        return parse_unquoted_value(reader)
+        return parse_unquoted_value(reader), None
 
 
 def parse_binding(reader: Reader) -> Binding:
@@ -155,6 +160,7 @@ def parse_binding(reader: Reader) -> Binding:
         reader.read_regex(_export)
         key = parse_key(reader)
         reader.read_regex(_whitespace)
+        quote: Optional[str] = None
         if reader.peek(1) == "=":
             (equal_sign,) = reader.read_regex(_equal_sign)
             # If there is whitespace after `=` and the value starts with `#`,
@@ -164,7 +170,7 @@ def parse_binding(reader: Reader) -> Binding:
             if len(equal_sign) > 1 and reader.peek(1) == "#":
                 value: Optional[str] = ""
             else:
-                value = parse_value(reader)
+                value, quote = parse_value(reader)
         else:
             value = None
         reader.read_regex(_comment)
@@ -174,6 +180,7 @@ def parse_binding(reader: Reader) -> Binding:
             value=value,
             original=reader.get_marked(),
             error=False,
+            quote=quote,
         )
     except Error:
         reader.read_regex(_rest_of_line)
