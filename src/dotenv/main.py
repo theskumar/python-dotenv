@@ -81,22 +81,26 @@ class DotEnv:
         if self._dict is not None:
             return self._dict
 
-        raw_values = self.parse()
+        raw_values = list(self._parse_full())
 
         if self.interpolate:
             self._dict = OrderedDict(
                 resolve_variables(raw_values, override=self.override)
             )
         else:
-            self._dict = OrderedDict(raw_values)
+            self._dict = OrderedDict((key, value) for key, value, _ in raw_values)
 
         return self._dict
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
+        for key, value, _quote in self._parse_full():
+            yield key, value
+
+    def _parse_full(self) -> Iterator[Tuple[str, Optional[str], Optional[str]]]:
         with self._get_stream() as stream:
             for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
                 if mapping.key is not None:
-                    yield mapping.key, mapping.value
+                    yield mapping.key, mapping.value, mapping.quote
 
     def set_as_environment_variables(self) -> bool:
         """
@@ -331,14 +335,19 @@ def unset_key(
 
 
 def resolve_variables(
-    values: Iterable[Tuple[str, Optional[str]]],
+    values: Iterable[Tuple[str, Optional[str], Optional[str]]],
     override: bool,
 ) -> Mapping[str, Optional[str]]:
     new_values: Dict[str, Optional[str]] = {}
 
-    for name, value in values:
+    for name, value, quote in values:
         if value is None:
             result = None
+        elif quote == "'":
+            # Single-quoted values are literal (as in POSIX shells): they are
+            # stored and made available to later values verbatim, without
+            # variable expansion.
+            result = value
         else:
             atoms = parse_variables(value)
             env: Dict[str, Optional[str]] = {}
