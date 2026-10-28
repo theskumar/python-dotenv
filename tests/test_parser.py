@@ -481,6 +481,46 @@ from dotenv.parser import Binding, Original, parse_stream
             ],
         ),
         (
+            "a: b\r\nc=d",
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="a: b\r\n", line=1),
+                    error=True,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d", line=2),
+                    error=False,
+                ),
+            ],
+        ),
+        (
+            "a: b\r\nc=d\r\ne: f",
+            [
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="a: b\r\n", line=1),
+                    error=True,
+                ),
+                Binding(
+                    key="c",
+                    value="d",
+                    original=Original(string="c=d\r\n", line=2),
+                    error=False,
+                ),
+                Binding(
+                    key=None,
+                    value=None,
+                    original=Original(string="e: f", line=3),
+                    error=True,
+                ),
+            ],
+        ),
+        (
             "a=b\nc=d",
             [
                 Binding(
