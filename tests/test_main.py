@@ -44,6 +44,11 @@ def test_set_key_no_file(tmp_path):
         ("", "a", "b\\c", (True, "a", "b\\c"), "a='b\\\\c'\n"),
         ("", "a", "b\\", (True, "a", "b\\"), "a='b\\\\'\n"),
         ("", "a", "b\\'c", (True, "a", "b\\'c"), "a='b\\\\\\'c'\n"),
+        ("", "a", None, (True, "a", None), "a\n"),
+        ("a=b\n", "a", None, (True, "a", None), "a\n"),
+        ("a=b\nc=d", "a", None, (True, "a", None), "a\nc=d"),
+        ("a=b", "c", None, (True, "c", None), "a=b\nc\n"),
+        ("a\n", "a", "b", (True, "a", "b"), "a='b'\n"),
     ],
 )
 def test_set_key(dotenv_path, before, key, value, expected, after):
@@ -82,6 +87,27 @@ def test_set_key_round_trips(dotenv_path, value):
     assert dotenv.get_key(dotenv_path, "a") == value
     # A value that is mis-tokenized can swallow the lines that follow it.
     assert dotenv.get_key(dotenv_path, "b") == "sentinel"
+
+
+@pytest.mark.parametrize(
+    "quote_mode,export,after",
+    [
+        ("always", False, "a\n"),
+        ("auto", False, "a\n"),
+        ("never", False, "a\n"),
+        ("always", True, "export a\n"),
+    ],
+)
+def test_set_key_without_value(dotenv_path, quote_mode, export, after):
+    dotenv_path.write_text("")
+
+    result = dotenv.set_key(
+        dotenv_path, "a", None, quote_mode=quote_mode, export=export
+    )
+
+    assert result == (True, "a", None)
+    assert dotenv_path.read_text() == after
+    assert dotenv.dotenv_values(dotenv_path) == {"a": None}
 
 
 def test_set_key_encoding(dotenv_path):
