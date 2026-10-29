@@ -12,6 +12,7 @@ environment variables. It helps in the development of applications following the
   - [Load configuration without altering the environment](#load-configuration-without-altering-the-environment)
   - [Parse configuration as a stream](#parse-configuration-as-a-stream)
   - [Load .env files in IPython](#load-env-files-in-ipython)
+  - [Load .env files in pre-commit hooks](#load-env-files-in-pre-commit-hooks)
 - [Command-line Interface](#command-line-interface)
 - [File format](#file-format)
   - [Multiline values](#multiline-values)
@@ -138,6 +139,37 @@ Optional flags:
 
 - `-o` to override existing variables.
 - `-v` for increased verbosity.
+
+### Load .env files in pre-commit hooks
+
+For [pre-commit](https://pre-commit.com/) hooks using `language: python`, add
+`python-dotenv[cli]` to `additional_dependencies` and prefix the hook's `entry`
+with `dotenv run --`. This installs the CLI in the hook's isolated environment
+and loads variables for the command it runs.
+
+For example, with `APP_ENV=development` in a `.env` file at the repository root:
+
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: check-app-env
+        name: Check application environment
+        entry: dotenv run -- python -c "import os; assert os.environ['APP_ENV'] == 'development'"
+        language: python
+        additional_dependencies: ["python-dotenv[cli]"]
+        pass_filenames: false
+        always_run: true
+```
+
+Run `pre-commit run check-app-env --all-files` to try it. Replace the command
+after `--` with your own check. For an existing Python hook, keep its repository,
+revision, and hook ID, and override its entry with `dotenv run --` followed by
+the original command and arguments.
+
+`dotenv run` requires the `.env` file to exist and overrides existing environment
+variables by default. Use `dotenv run --no-override --` to preserve existing values.
+These variables apply to the wrapped command, not to other hooks or the parent shell.
 
 ### Disable load_dotenv
 
