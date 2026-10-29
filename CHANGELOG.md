@@ -22,6 +22,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `dotenv get` no longer exits with code 1 for empty string values (`KEY=`) by [@ShamikOfficial] in [#700]
 - An unquoted empty value followed by an inline comment (e.g. `KEY= # comment`) is now parsed as an empty string instead of the comment text by [@Noethix55555] in [#663]
 - `dotenv run --no-override` now expands variable references with the same precedence as `load_dotenv(override=False)`, so a value like `${BASE}/suffix` uses the existing `BASE` from the environment instead of the one from the `.env` file by [@ROTl24] in [#698]
+- Unreadable `.env` files no longer raise `PermissionError` during discovery or load; `find_dotenv` skips them and continues walking parent directories by [@00200200] in [#712]
 
 ## [1.2.3] - 2026-08-16
 

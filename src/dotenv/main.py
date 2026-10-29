@@ -64,8 +64,23 @@ class DotEnv:
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
         if self.dotenv_path and _is_file_or_fifo(self.dotenv_path):
-            with open(self.dotenv_path, encoding=self.encoding) as stream:
-                yield stream
+            if os.access(self.dotenv_path, os.R_OK):
+                try:
+                    stream = open(self.dotenv_path, encoding=self.encoding)
+                except PermissionError:
+                    # Race with permissions changing between the access check and
+                    # open, or sandboxes that block open despite os.access.
+                    pass
+                else:
+                    with stream:
+                        yield stream
+                    return
+            if self.verbose:
+                logger.info(
+                    "python-dotenv could not read configuration file %s.",
+                    self.dotenv_path,
+                )
+            yield io.StringIO("")
         elif self.stream is not None:
             yield self.stream
         else:
@@ -419,7 +434,7 @@ def find_dotenv(
 
     for dirname in _walk_to_root(path):
         check_path = os.path.join(dirname, filename)
-        if _is_file_or_fifo(check_path):
+        if _is_readable_file_or_fifo(check_path):
             return check_path
 
     if raise_error_if_not_found:
@@ -530,3 +545,13 @@ def _is_file_or_fifo(path: StrPath) -> bool:
         return False
 
     return stat.S_ISFIFO(st.st_mode)
+
+
+def _is_readable_file_or_fifo(path: StrPath) -> bool:
+    """
+    Return True if `path` is a readable regular file or FIFO.
+
+    Unreadable paths are treated as absent so discovery can continue walking
+    parent directories (e.g. firejail-blocked `.env` files).
+    """
+    return _is_file_or_fifo(path) and os.access(path, os.R_OK)
