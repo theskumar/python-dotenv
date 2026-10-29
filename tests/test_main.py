@@ -6,6 +6,7 @@ import stat
 import subprocess
 import sys
 import textwrap
+import threading
 from unittest import mock
 
 import pytest
@@ -863,6 +864,99 @@ def test_load_dotenv_in_current_dir(tmp_path):
         capture_output=True,
         text=True,
         check=True,
+    )
+
+    assert result.stdout == "b\n"
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_as_thread_target(tmp_path, monkeypatch):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=b")
+    monkeypatch.chdir(tmp_path)
+
+    thread = threading.Thread(target=dotenv.load_dotenv)
+    thread.start()
+    thread.join()
+
+    assert not thread.is_alive()
+    assert os.environ.get("a") == "b"
+
+
+def test_find_dotenv_from_module_named_threading(tmp_path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    dotenv_path = project_dir / ".env"
+    dotenv_path.write_text("a=b")
+    module_path = project_dir / "threading.py"
+    module_path.touch()
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    runner_path = elsewhere / "runner.py"
+    runner_path.write_text(
+        textwrap.dedent(
+            f"""
+            namespace = {{"__name__": "threading"}}
+            exec(
+                compile(
+                    "from dotenv import find_dotenv\\nresult = find_dotenv()\\n",
+                    {str(module_path)!r},
+                    "exec",
+                ),
+                namespace,
+            )
+            print(namespace["result"])
+            """
+        )
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(runner_path)],
+        cwd=elsewhere,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.stdout == f"{dotenv_path}\n"
+
+
+def test_load_dotenv_from_thread_wrapper_uses_wrapper_location(tmp_path):
+    project_dir = tmp_path / "project"
+    project_dir.mkdir()
+    (project_dir / ".env").write_text("a=b")
+    wrapper_path = project_dir / "wrapper.py"
+    wrapper_path.write_text(
+        "from dotenv import load_dotenv\n\ndef load():\n    load_dotenv()\n"
+    )
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    runner_path = elsewhere / "runner.py"
+    runner_path.write_text(
+        textwrap.dedent(
+            f"""
+            import os
+            import sys
+            import threading
+
+            sys.path.insert(0, {str(project_dir)!r})
+            from wrapper import load
+
+            os.environ.pop("a", None)
+            thread = threading.Thread(target=load)
+            thread.start()
+            thread.join()
+            print(os.environ["a"])
+            """
+        )
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(runner_path)],
+        cwd=elsewhere,
+        check=True,
+        capture_output=True,
+        text=True,
     )
 
     assert result.stdout == "b\n"
