@@ -341,12 +341,15 @@ def resolve_variables(
             result = None
         else:
             atoms = parse_variables(value)
+            # A variable without a value (`FOO`) is not set, so it must not
+            # hide the environment or a default when it is referenced.
+            file_values = {k: v for k, v in new_values.items() if v is not None}
             env: Dict[str, Optional[str]] = {}
             if override:
                 env.update(os.environ)  # type: ignore
-                env.update(new_values)
+                env.update(file_values)
             else:
-                env.update(new_values)
+                env.update(file_values)
                 env.update(os.environ)  # type: ignore
             result = "".join(atom.resolve(env) for atom in atoms)
 

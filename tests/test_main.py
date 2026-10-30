@@ -819,6 +819,20 @@ def test_load_dotenv_redefine_var_used_in_file_with_override(dotenv_path):
 @pytest.mark.skipif(
     sys.platform == "win32", reason="This test assumes case-sensitive variable names"
 )
+@pytest.mark.parametrize("override", [False, True])
+@mock.patch.dict(os.environ, {"a": "c"}, clear=True)
+def test_load_dotenv_var_without_value_used_in_file(dotenv_path, override):
+    dotenv_path.write_text('a\nb\nd="${a}"\ne="${b:-f}"')
+
+    result = dotenv.load_dotenv(dotenv_path, override=override)
+
+    assert result is True
+    assert os.environ == {"a": "c", "d": "c", "e": "f"}
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="This test assumes case-sensitive variable names"
+)
 @mock.patch.dict(os.environ, {}, clear=True)
 def test_load_dotenv_string_io_utf_8():
     stream = io.StringIO("a=à")
@@ -910,6 +924,10 @@ def test_dotenv_values_file(dotenv_path):
         ({"b": "c"}, "b=d\na=${b}", True, {"a": "d", "b": "d"}),
         ({}, "a=b\na=c\nd=${a}", True, {"a": "c", "d": "c"}),
         ({}, "a=b\nc=${a}\nd=e\nc=${d}", True, {"a": "b", "c": "e", "d": "e"}),
+        # Defined in file without a value
+        ({"b": "c"}, "b\na=${b}", True, {"a": "c", "b": None}),
+        ({}, "b\na=${b}", True, {"a": "", "b": None}),
+        ({}, "b\na=${b:-d}", True, {"a": "d", "b": None}),
     ],
 )
 def test_dotenv_values_string_io(env, string, interpolate, expected):
