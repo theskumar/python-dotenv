@@ -244,6 +244,9 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
         except FileNotFoundError:
             print(f"Command not found: {command[0]}", file=sys.stderr)
             sys.exit(1)
+        except PermissionError:
+            print(f"Permission denied: {command[0]}", file=sys.stderr)
+            sys.exit(1)
 
         _, _ = p.communicate()
 
@@ -253,4 +256,7 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
             os.execvpe(command[0], args=command, env=cmd_env)
         except FileNotFoundError:
             print(f"Command not found: {command[0]}", file=sys.stderr)
+            sys.exit(1)
+        except PermissionError:
+            print(f"Permission denied: {command[0]}", file=sys.stderr)
             sys.exit(1)
