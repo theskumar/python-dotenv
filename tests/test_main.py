@@ -948,3 +948,32 @@ def test_dotenv_values_empty_value_with_inline_comment(string, expected):
     result = dotenv.dotenv_values(stream=io.StringIO(string))
 
     assert result == expected
+
+
+@pytest.mark.parametrize("key", ["a b", "a#b", "a=b", "a\tb"])
+def test_set_key_quotes_keys_the_parser_cannot_read_unquoted(dotenv_path, key):
+    dotenv_path.write_text("")
+
+    dotenv.set_key(dotenv_path, key, "value")
+    dotenv.set_key(dotenv_path, "sentinel", "1")
+
+    assert dotenv.get_key(dotenv_path, key) == "value"
+    # A key the parser cannot read swallows its line and can break the next one.
+    assert dotenv.get_key(dotenv_path, "sentinel") == "1"
+
+
+def test_set_key_updates_a_quoted_key_in_place(dotenv_path):
+    dotenv_path.write_text("'a b'='old'\nc=1\n")
+
+    dotenv.set_key(dotenv_path, "a b", "new")
+
+    assert dotenv.get_key(dotenv_path, "a b") == "new"
+    assert dotenv_path.read_text() == "'a b'='new'\nc=1\n"
+
+
+@pytest.mark.parametrize("key", ["", "a b'c"])
+def test_set_key_rejects_keys_that_cannot_be_written(dotenv_path, key):
+    dotenv_path.write_text("")
+
+    with pytest.raises(ValueError):
+        dotenv.set_key(dotenv_path, key, "value")

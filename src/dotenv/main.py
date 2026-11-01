@@ -259,10 +259,20 @@ def set_key(
         value_out = f"'{escaped}'"
     else:
         value_out = value_to_set
-    if export:
-        line_out = f"export {key_to_set}={value_out}\n"
+    if not key_to_set:
+        raise ValueError("Invalid key: keys cannot be empty")
+    elif any(c.isspace() or c in "#=" for c in key_to_set):
+        # The unquoted key grammar ([^=#\s]+) cannot carry these, so the
+        # parser would drop the line; quoted keys can.
+        if "'" in key_to_set:
+            raise ValueError(f"Invalid key: {key_to_set!r} cannot be quoted")
+        key_out = f"'{key_to_set}'"
     else:
-        line_out = f"{key_to_set}={value_out}\n"
+        key_out = key_to_set
+    if export:
+        line_out = f"export {key_out}={value_out}\n"
+    else:
+        line_out = f"{key_out}={value_out}\n"
 
     with rewrite(dotenv_path, encoding=encoding, follow_symlinks=follow_symlinks) as (
         source,
