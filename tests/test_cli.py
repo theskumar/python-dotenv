@@ -372,6 +372,33 @@ def test_run_with_env_missing_and_invalid_cmd(tmp_path):
     assert "Invalid value for '-f'" in result.stderr
 
 
+def test_run_resolves_command_using_dotenv_path(tmp_path):
+    """
+    Check that the command is resolved against the PATH built by `dotenv run`,
+    not the one of the calling process.
+
+    The command below is only reachable through the PATH set in the .env file.
+    Windows' CreateProcess looks up executables using the environment of the
+    calling process and ignores the environment it is handed, so this used to
+    fail there while working everywhere else.
+    """
+
+    bindir = tmp_path / "bin"
+    bindir.mkdir()
+    if sys.platform == "win32":
+        (bindir / "dotenv-test-cmd.bat").write_text("@echo dotenv-test-ok\r\n")
+    else:
+        cmd = bindir / "dotenv-test-cmd"
+        cmd.write_text("#!/bin/sh\necho dotenv-test-ok\n")
+        cmd.chmod(0o755)
+
+    (tmp_path / ".env").write_text(f"PATH={bindir}\n")
+
+    result = run_dotenv(["run", "dotenv-test-cmd"], cwd=tmp_path)
+
+    check_process(result, exit_code=0, stdout="dotenv-test-ok\n")
+
+
 def test_run_with_version(tmp_path):
     result = run_dotenv(["--version"], cwd=tmp_path)
 

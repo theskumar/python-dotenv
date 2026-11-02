@@ -1,6 +1,7 @@
 import json
 import os
 import shlex
+import shutil
 import sys
 from contextlib import contextmanager
 from typing import IO, Any, Dict, Iterator, List, Optional
@@ -237,9 +238,20 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
     if sys.platform == "win32":
         # execvpe on Windows returns control immediately
         # rather than once the command has finished.
+        #
+        # CreateProcess looks in the application directory before PATH, so a
+        # bare command name resolves to the executable that started this
+        # process rather than the first one on PATH (a virtualenv's python,
+        # for instance). Resolve it against the environment we are about to
+        # pass, which is not necessarily ours.
         try:
             p = Popen(
-                command, universal_newlines=True, bufsize=0, shell=False, env=cmd_env
+                command,
+                universal_newlines=True,
+                bufsize=0,
+                shell=False,
+                env=cmd_env,
+                executable=shutil.which(command[0], path=cmd_env.get("PATH")),
             )
         except FileNotFoundError:
             print(f"Command not found: {command[0]}", file=sys.stderr)
