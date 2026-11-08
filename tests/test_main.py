@@ -764,6 +764,37 @@ def test_load_dotenv_no_file_verbose():
     )
 
 
+@pytest.mark.parametrize("verbose", [False, True])
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_directory_warns(tmp_path, verbose):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.load_dotenv(tmp_path, verbose=verbose)
+
+    assert result is False
+    assert os.environ == {}
+    mock_warning.assert_called_once_with(
+        "python-dotenv could not load configuration file %s: "
+        "it is a directory, not a file.",
+        tmp_path,
+    )
+
+
+def test_dotenv_values_directory_warns(tmp_path):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.dotenv_values(tmp_path)
+
+    assert result == {}
+    mock_warning.assert_called_once_with(
+        "python-dotenv could not load configuration file %s: "
+        "it is a directory, not a file.",
+        tmp_path,
+    )
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="This test assumes case-sensitive variable names"
 )
