@@ -769,16 +769,19 @@ def test_load_dotenv_no_file_verbose():
 def test_load_dotenv_directory_warns(tmp_path, verbose):
     logger = logging.getLogger("dotenv.main")
 
-    with mock.patch.object(logger, "warning") as mock_warning:
+    with (
+        mock.patch.object(logger, "warning") as mock_warning,
+        mock.patch.object(logger, "info") as mock_info,
+    ):
         result = dotenv.load_dotenv(tmp_path, verbose=verbose)
 
     assert result is False
     assert os.environ == {}
     mock_warning.assert_called_once_with(
-        "python-dotenv could not load configuration file %s: "
-        "it is a directory, not a file.",
+        "python-dotenv could not load configuration file %s: it is not a file.",
         tmp_path,
     )
+    mock_info.assert_not_called()
 
 
 def test_dotenv_values_directory_warns(tmp_path):
@@ -789,10 +792,23 @@ def test_dotenv_values_directory_warns(tmp_path):
 
     assert result == {}
     mock_warning.assert_called_once_with(
-        "python-dotenv could not load configuration file %s: "
-        "it is a directory, not a file.",
+        "python-dotenv could not load configuration file %s: it is not a file.",
         tmp_path,
     )
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_load_dotenv_directory_with_stream_loads(tmp_path):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.load_dotenv(
+            tmp_path, stream=io.StringIO("FOO=bar\n"), verbose=True
+        )
+
+    assert result is True
+    assert os.environ["FOO"] == "bar"
+    mock_warning.assert_not_called()
 
 
 @pytest.mark.skipif(

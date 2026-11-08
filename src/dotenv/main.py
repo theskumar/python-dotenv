@@ -72,7 +72,7 @@ class DotEnv:
             if self.dotenv_path and os.path.exists(self.dotenv_path):
                 logger.warning(
                     "python-dotenv could not load configuration file %s: "
-                    "it is a directory, not a file.",
+                    "it is not a file.",
                     self.dotenv_path,
                 )
             elif self.verbose:
