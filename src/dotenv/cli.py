@@ -1,6 +1,7 @@
 import json
 import os
 import shlex
+import shutil
 import sys
 from contextlib import contextmanager
 from typing import IO, Any, Dict, Iterator, List, Optional
@@ -235,11 +236,18 @@ def run_command(command: List[str], env: Dict[str, str]) -> None:
     cmd_env.update(env)
 
     if sys.platform == "win32":
-        # execvpe on Windows returns control immediately
-        # rather than once the command has finished.
+        # Resolve the command as suggested in Python's docs
+        # (https://docs.python.org/3/library/subprocess.html#popen-constructor).
+        executable = shutil.which(command[0], path=cmd_env.get("PATH"))
         try:
+            # `execvpe` on Windows returns control immediately.
             p = Popen(
-                command, universal_newlines=True, bufsize=0, shell=False, env=cmd_env
+                command,
+                executable=executable,
+                universal_newlines=True,
+                bufsize=0,
+                shell=False,
+                env=cmd_env,
             )
         except FileNotFoundError:
             print(f"Command not found: {command[0]}", file=sys.stderr)
