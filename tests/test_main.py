@@ -441,7 +441,9 @@ def test_empty_dotenv_dict_is_cached(tmp_path):
     dotenv_path.write_text("")
     dotenv_obj = DotEnv(dotenv_path)
 
-    with mock.patch.object(dotenv_obj, "parse", wraps=dotenv_obj.parse) as mock_parse:
+    with mock.patch.object(
+        dotenv_obj, "_parse_full", wraps=dotenv_obj._parse_full
+    ) as mock_parse:
         assert dotenv_obj.dict() == {}
         assert dotenv_obj.dict() == {}
 
@@ -894,9 +896,13 @@ def test_dotenv_values_file(dotenv_path):
         # Undefined
         ({}, "a=${b}", True, {"a": ""}),
         ({}, "a=${b:-d}", True, {"a": "d"}),
-        # With quotes
+        # With quotes (single quotes are literal, as in POSIX shells - #422)
         ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),
-        ({"b": "c"}, "a='${b}'", True, {"a": "c"}),
+        ({"b": "c"}, "a='${b}'", True, {"a": "${b}"}),
+        ({"b": "c"}, "a='${b}'", False, {"a": "${b}"}),
+        # Single-quoted values are still visible to later values verbatim
+        ({}, "b='c ${d}'\na=${b}", True, {"a": "c ${d}", "b": "c ${d}"}),
+        ({}, "a='x${b}y'", True, {"a": "x${b}y"}),
         # With surrounding text
         ({"b": "c"}, "a=x${b}y", True, {"a": "xcy"}),
         # Self-referential
