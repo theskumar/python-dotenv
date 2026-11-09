@@ -10,6 +10,8 @@ from typing import (
     Sequence,
 )
 
+from ._native import parse_bindings as _parse_native_bindings
+
 
 def make_regex(string: str, extra_flags: int = 0) -> Pattern[str]:
     return re.compile(string, re.UNICODE | extra_flags)
@@ -187,5 +189,17 @@ def parse_binding(reader: Reader) -> Binding:
 
 def parse_stream(stream: IO[str]) -> Iterator[Binding]:
     reader = Reader(stream)
+
+    native_bindings = _parse_native_bindings(reader.string)
+    if native_bindings is not None:
+        for key, value, original, line, error in native_bindings:
+            yield Binding(
+                key=key,
+                value=value,
+                original=Original(string=original, line=line),
+                error=error,
+            )
+        return
+
     while reader.has_next():
         yield parse_binding(reader)
