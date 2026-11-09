@@ -126,4 +126,7 @@ dmypy.json
 ### Python Patch ###
 .venv/
 
+# uv
+uv.lock
+
 # End of https://www.gitignore.io/api/python
