@@ -7,7 +7,17 @@ import sys
 import tempfile
 from collections import OrderedDict
 from contextlib import contextmanager
-from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
+from typing import (
+    IO,
+    Dict,
+    Iterable,
+    Iterator,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+    overload,
+)
 
 from .parser import Binding, parse_stream
 from .variables import parse_variables
@@ -221,19 +231,47 @@ def rewrite(
         raise error from None
 
 
+@overload
 def set_key(
     dotenv_path: StrPath,
     key_to_set: str,
     value_to_set: str,
+    quote_mode: str = ...,
+    export: bool = ...,
+    encoding: Optional[str] = ...,
+    follow_symlinks: bool = ...,
+) -> Tuple[Optional[bool], str, str]: ...
+
+
+@overload
+def set_key(
+    dotenv_path: StrPath,
+    key_to_set: str,
+    value_to_set: None,
+    quote_mode: str = ...,
+    export: bool = ...,
+    encoding: Optional[str] = ...,
+    follow_symlinks: bool = ...,
+) -> Tuple[Optional[bool], str, None]: ...
+
+
+def set_key(
+    dotenv_path: StrPath,
+    key_to_set: str,
+    value_to_set: Optional[str],
     quote_mode: str = "always",
     export: bool = False,
     encoding: Optional[str] = "utf-8",
     follow_symlinks: bool = False,
-) -> Tuple[Optional[bool], str, str]:
+) -> Tuple[Optional[bool], str, Optional[str]]:
     """
     Adds or Updates a key/value to the given .env
 
     The target .env file is created if it doesn't exist.
+
+    If `value_to_set` is `None`, the key is written without a value (e.g.
+    `FOO` instead of `FOO=...`), which `dotenv_values` reads back as `None` and
+    `load_dotenv` ignores.
 
     This function doesn't follow symlinks by default, to avoid accidentally
     modifying a file at a potentially untrusted path. If you don't need this
@@ -246,23 +284,23 @@ def set_key(
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
 
-    quote = quote_mode == "always" or (
+    if value_to_set is None:
+        assignment = ""
+    elif quote_mode == "always" or (
         quote_mode == "auto" and not value_to_set.isalnum()
-    )
-
-    if quote:
+    ):
         # The single-quoted-value parser decodes `\\` and `\'`, so both have to
         # be escaped here for the value to survive a write/read round-trip.
         # Backslashes first, otherwise the backslash added by the quote
         # escaping would be escaped in turn.
         escaped = value_to_set.replace("\\", "\\\\").replace("'", "\\'")
-        value_out = f"'{escaped}'"
+        assignment = f"='{escaped}'"
     else:
-        value_out = value_to_set
+        assignment = f"={value_to_set}"
     if export:
-        line_out = f"export {key_to_set}={value_out}\n"
+        line_out = f"export {key_to_set}{assignment}\n"
     else:
-        line_out = f"{key_to_set}={value_out}\n"
+        line_out = f"{key_to_set}{assignment}\n"
 
     with rewrite(dotenv_path, encoding=encoding, follow_symlinks=follow_symlinks) as (
         source,
