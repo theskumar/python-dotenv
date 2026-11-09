@@ -285,6 +285,10 @@ def set_key(
     return True, key_to_set, value_to_set
 
 
+class _KeyNotFound(Exception):
+    pass
+
+
 def unset_key(
     dotenv_path: StrPath,
     key_to_unset: str,
@@ -311,17 +315,21 @@ def unset_key(
         return None, key_to_unset
 
     removed = False
-    with rewrite(dotenv_path, encoding=encoding, follow_symlinks=follow_symlinks) as (
-        source,
-        dest,
-    ):
-        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
-            if mapping.key == key_to_unset:
-                removed = True
-            else:
-                dest.write(mapping.original.string)
-
-    if not removed:
+    try:
+        with rewrite(
+            dotenv_path, encoding=encoding, follow_symlinks=follow_symlinks
+        ) as (source, dest):
+            for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+                if mapping.key == key_to_unset:
+                    removed = True
+                else:
+                    dest.write(mapping.original.string)
+            if not removed:
+                # Abandon the rewrite: there is nothing to change, and replacing
+                # the file anyway would, for instance, turn a symlink into a
+                # regular file.
+                raise _KeyNotFound()
+    except _KeyNotFound:
         logger.warning(
             "Key %s not removed from %s - key doesn't exist.", key_to_unset, dotenv_path
         )

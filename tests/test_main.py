@@ -512,6 +512,41 @@ def test_unset_key_symlink_to_existing_file(tmp_path):
     assert symlink.read_text() == ""
 
 
+def test_unset_non_existent_value_leaves_file_untouched(dotenv_path):
+    dotenv_path.write_bytes(b"a=b\r\nc=d\r\n")
+    inode_before = dotenv_path.stat().st_ino
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        result = dotenv.unset_key(dotenv_path, "x")
+
+    assert result == (None, "x")
+    assert dotenv_path.read_bytes() == b"a=b\r\nc=d\r\n"
+    assert dotenv_path.stat().st_ino == inode_before
+    assert list(dotenv_path.parent.iterdir()) == [dotenv_path]
+    mock_warning.assert_called_once_with(
+        "Key %s not removed from %s - key doesn't exist.", "x", dotenv_path
+    )
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
+)
+def test_unset_key_symlink_non_existent_value(tmp_path):
+    target = tmp_path / "target.env"
+    target.write_text("a=x\n")
+    symlink = tmp_path / ".env"
+    symlink.symlink_to(target)
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning"):
+        result = dotenv.unset_key(symlink, "b")
+
+    assert result == (None, "b")
+    assert symlink.is_symlink()
+    assert target.read_text() == "a=x\n"
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
 )
