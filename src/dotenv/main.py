@@ -69,7 +69,13 @@ class DotEnv:
         elif self.stream is not None:
             yield self.stream
         else:
-            if self.verbose:
+            if self.dotenv_path and os.path.exists(self.dotenv_path):
+                logger.warning(
+                    "python-dotenv could not load configuration file %s: "
+                    "it is not a file.",
+                    self.dotenv_path,
+                )
+            elif self.verbose:
                 logger.info(
                     "python-dotenv could not find configuration file %s.",
                     self.dotenv_path or ".env",
