@@ -33,3 +33,10 @@ def test_parse_variables(value, expected):
     result = parse_variables(value)
 
     assert list(result) == expected
+
+
+def test_empty_value_uses_default():
+    assert Variable(name="b", default="d").resolve({"b": ""}) == "d"
+    assert Variable(name="b", default="d").resolve({}) == "d"
+    assert Variable(name="b", default="d").resolve({"b": "c"}) == "c"
+    assert Variable(name="b", default=None).resolve({"b": ""}) == ""
