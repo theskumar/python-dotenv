@@ -204,6 +204,8 @@ def rewrite(
         try:
             with source:
                 yield (source, dest)
+            dest.flush()
+            os.fsync(dest.fileno())
         except BaseException as err:
             error = err
 

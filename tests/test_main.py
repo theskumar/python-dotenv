@@ -126,6 +126,94 @@ def test_rewrite_closes_file_handle_on_lstat_failure(tmp_path):
     assert all(handle.closed for handle in opened_handles)
 
 
+@pytest.mark.parametrize(
+    "before,rewrite,after",
+    [
+        (None, lambda path: dotenv.set_key(path, "a", "é"), "a='é'\n"),
+        ("a=x\n", lambda path: dotenv.set_key(path, "a", "é"), "a='é'\n"),
+        ("a=x\nb=y\n", lambda path: dotenv.unset_key(path, "a"), "b=y\n"),
+    ],
+    ids=["set_key_new_file", "set_key", "unset_key"],
+)
+def test_rewrite_syncs_flushed_contents_before_replace(
+    tmp_path, before, rewrite, after
+):
+    dotenv_path = tmp_path / ".env"
+    if before is not None:
+        dotenv_path.write_text(before, encoding="utf-8")
+    real_fsync = os.fsync
+    real_replace = os.replace
+    calls = []
+
+    def fsync(fd):
+        [temp_path] = tmp_path.glob(".tmp_*")
+        assert os.path.samestat(os.fstat(fd), temp_path.stat())
+        # A separate reader sees the complete contents only after the flush.
+        assert temp_path.read_text(encoding="utf-8") == after
+        calls.append("fsync")
+        real_fsync(fd)
+
+    def replace(src, dst):
+        assert calls == ["fsync"]
+        calls.append("replace")
+        real_replace(src, dst)
+
+    with mock.patch("dotenv.main.os.fsync", side_effect=fsync):
+        with mock.patch("dotenv.main.os.replace", side_effect=replace):
+            rewrite(dotenv_path)
+
+    assert calls == ["fsync", "replace"]
+    assert dotenv_path.read_text(encoding="utf-8") == after
+    assert list(tmp_path.iterdir()) == [dotenv_path]
+
+
+@pytest.mark.parametrize(
+    "before,rewrite",
+    [
+        (None, lambda path: dotenv.set_key(path, "a", "y")),
+        ("a=x\n", lambda path: dotenv.set_key(path, "a", "y")),
+        ("a=x\n", lambda path: dotenv.unset_key(path, "a")),
+    ],
+    ids=["set_key_new_file", "set_key", "unset_key"],
+)
+def test_rewrite_fsync_failure_preserves_target(tmp_path, before, rewrite):
+    dotenv_path = tmp_path / ".env"
+    if before is not None:
+        dotenv_path.write_text(before)
+    sync_error = OSError("fsync failed")
+
+    with mock.patch("dotenv.main.os.fsync", side_effect=sync_error):
+        with mock.patch("dotenv.main.os.replace") as replace:
+            with pytest.raises(OSError) as exc_info:
+                rewrite(dotenv_path)
+
+    assert exc_info.value is sync_error
+    replace.assert_not_called()
+    if before is None:
+        assert not dotenv_path.exists()
+    else:
+        assert dotenv_path.read_text() == before
+    assert list(tmp_path.glob(".tmp_*")) == []
+
+
+def test_rewrite_does_not_sync_failed_writes(dotenv_path):
+    dotenv_path.write_text("a=x\n")
+    write_error = OSError("write failed")
+
+    with mock.patch("dotenv.main.os.fsync") as fsync:
+        with mock.patch("dotenv.main.os.replace") as replace:
+            with pytest.raises(OSError) as exc_info:
+                with dotenv.main.rewrite(dotenv_path, encoding="utf-8") as (_, dest):
+                    dest.write("a=y\n")
+                    raise write_error
+
+    assert exc_info.value is write_error
+    fsync.assert_not_called()
+    replace.assert_not_called()
+    assert dotenv_path.read_text() == "a=x\n"
+    assert list(dotenv_path.parent.glob(".tmp_*")) == []
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="symlinks require elevated privileges on Windows"
 )
