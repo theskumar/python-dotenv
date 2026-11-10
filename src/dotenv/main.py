@@ -387,6 +387,12 @@ def find_dotenv(
     Returns path to the file if found, or an empty string otherwise
     """
     filename = os.path.expanduser(filename)
+    if pathlib.PurePath(filename).is_absolute():
+        if _is_file_or_fifo(filename):
+            return filename
+        if raise_error_if_not_found:
+            raise IOError("File not found")
+        return ""
 
     def _is_interactive():
         """Decide whether this is running in a REPL or IPython notebook"""
