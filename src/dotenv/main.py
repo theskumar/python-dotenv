@@ -197,28 +197,27 @@ def rewrite(
         err.filename = os.fspath(path)
         raise
 
-    with temp_file as dest:
-        dest_path = pathlib.Path(dest.name)
-        error = None
+    dest_path = pathlib.Path(temp_file.name)
+    try:
+        with temp_file as dest:
+            error = None
 
-        try:
-            with source:
-                yield (source, dest)
-        except BaseException as err:
-            error = err
+            try:
+                with source:
+                    yield (source, dest)
+            except BaseException as err:
+                error = err
 
-    if error is None:
-        try:
-            if original_mode is not None:
-                os.chmod(dest_path, original_mode)
+        if error is not None:
+            raise error from None
 
-            os.replace(dest_path, path)
-        except BaseException:
-            _discard_temp_file(dest_path)
-            raise
-    else:
+        if original_mode is not None:
+            os.chmod(dest_path, original_mode)
+
+        os.replace(dest_path, path)
+    except BaseException:
         _discard_temp_file(dest_path)
-        raise error from None
+        raise
 
 
 def set_key(
