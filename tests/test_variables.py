@@ -33,3 +33,16 @@ def test_parse_variables(value, expected):
     result = parse_variables(value)
 
     assert list(result) == expected
+
+
+@pytest.mark.parametrize(
+    "env,default,expected",
+    [
+        ({"a": "b"}, "c", "b"),
+        ({}, "c", "c"),
+        ({"a": ""}, "c", ""),
+        ({"a": None}, "c", "c"),
+    ],
+)
+def test_variable_resolve(env, default, expected):
+    assert Variable(name="a", default=default).resolve(env) == expected

@@ -894,6 +894,9 @@ def test_dotenv_values_file(dotenv_path):
         # Undefined
         ({}, "a=${b}", True, {"a": ""}),
         ({}, "a=${b:-d}", True, {"a": "d"}),
+        # Declared without a value, but not empty
+        ({}, "b\na=${b:-d}", True, {"a": "d", "b": None}),
+        ({}, "b\na=${b}", True, {"a": "", "b": None}),
         # With quotes
         ({"b": "c"}, 'a="${b}"', True, {"a": "c"}),
         ({"b": "c"}, "a='${b}'", True, {"a": "c"}),
