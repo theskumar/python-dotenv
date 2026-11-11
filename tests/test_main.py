@@ -948,3 +948,52 @@ def test_dotenv_values_empty_value_with_inline_comment(string, expected):
     result = dotenv.dotenv_values(stream=io.StringIO(string))
 
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "key", ["APP NAME", "APP#NAME", "APP=NAME", " APP ", "APP\tNAME"]
+)
+@pytest.mark.parametrize("existing", [False, True])
+@pytest.mark.parametrize("quote_mode", ["always", "auto", "never"])
+def test_set_key_round_trips_quoted_keys(dotenv_path, key, existing, quote_mode):
+    before = f"'{key}'=old\n" if existing else ""
+    dotenv_path.write_text(before + "SAFE=untouched\n")
+
+    assert dotenv.set_key(dotenv_path, key, "new", quote_mode=quote_mode) == (
+        True,
+        key,
+        "new",
+    )
+    assert dotenv.dotenv_values(dotenv_path) == {key: "new", "SAFE": "untouched"}
+    assert dotenv.get_key(dotenv_path, key) == "new"
+
+
+@pytest.mark.parametrize("key", ["", "'APP", "APP NAME'", "APP#NAME'"])
+def test_set_key_rejects_unrepresentable_keys_without_modifying_file(dotenv_path, key):
+    original = "SAFE=untouched\n"
+    dotenv_path.write_text(original)
+    with pytest.raises(ValueError, match="key"):
+        dotenv.set_key(dotenv_path, key, "new")
+    assert dotenv_path.read_text() == original
+
+
+@pytest.mark.parametrize("key", ["APP", "APP'NAME", 'APP"NAME', "APP-NAME", "APP.NAME"])
+def test_set_key_preserves_unquoted_key_spelling(dotenv_path, key):
+    dotenv.set_key(dotenv_path, key, "new")
+    assert dotenv_path.read_text() == f"{key}='new'\n"
+    assert dotenv.dotenv_values(dotenv_path) == {key: "new"}
+
+
+@pytest.mark.parametrize("key", ["APP NAME", "APP#NAME", "APP=NAME"])
+def test_set_key_export_round_trips_quoted_keys(dotenv_path, key):
+    dotenv.set_key(dotenv_path, key, "new", export=True)
+    assert dotenv_path.read_text() == f"export '{key}'='new'\n"
+    assert dotenv.dotenv_values(dotenv_path) == {key: "new"}
+
+
+@pytest.mark.parametrize("key", ["", "APP NAME'"])
+def test_set_key_rejects_unrepresentable_keys_without_creating_file(tmp_path, key):
+    path = tmp_path / "missing.env"
+    with pytest.raises(ValueError, match="key"):
+        dotenv.set_key(path, key, "new")
+    assert not path.exists()

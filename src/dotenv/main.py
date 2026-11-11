@@ -2,6 +2,7 @@ import io
 import logging
 import os
 import pathlib
+import re
 import stat
 import sys
 import tempfile
@@ -234,6 +235,9 @@ def set_key(
     Adds or Updates a key/value to the given .env
 
     The target .env file is created if it doesn't exist.
+    Keys are quoted when required by the dotenv syntax, independently of
+    ``quote_mode``. A key that cannot be represented raises ``ValueError``
+    before the file is modified.
 
     This function doesn't follow symlinks by default, to avoid accidentally
     modifying a file at a potentially untrusted path. If you don't need this
@@ -245,6 +249,18 @@ def set_key(
         dotenv_path = pathlib.Path(dotenv_path).expanduser()
     if quote_mode not in ("always", "auto", "never"):
         raise ValueError(f"Unknown quote_mode: {quote_mode}")
+
+    # Keys may be single-quoted in dotenv files, independently of value quoting.
+    if (
+        key_to_set
+        and not key_to_set.startswith("'")
+        and re.fullmatch(r"[^=#\s]+", key_to_set)
+    ):
+        key_out = key_to_set
+    elif key_to_set and "'" not in key_to_set:
+        key_out = f"'{key_to_set}'"
+    else:
+        raise ValueError("Unsupported dotenv key")
 
     quote = quote_mode == "always" or (
         quote_mode == "auto" and not value_to_set.isalnum()
@@ -260,9 +276,9 @@ def set_key(
     else:
         value_out = value_to_set
     if export:
-        line_out = f"export {key_to_set}={value_out}\n"
+        line_out = f"export {key_out}={value_out}\n"
     else:
-        line_out = f"{key_to_set}={value_out}\n"
+        line_out = f"{key_out}={value_out}\n"
 
     with rewrite(dotenv_path, encoding=encoding, follow_symlinks=follow_symlinks) as (
         source,
