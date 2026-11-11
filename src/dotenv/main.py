@@ -197,15 +197,14 @@ def rewrite(
         err.filename = os.fspath(path)
         raise
 
-    with temp_file as dest:
-        dest_path = pathlib.Path(dest.name)
-        error = None
-
-        try:
+    dest_path = pathlib.Path(temp_file.name)
+    error = None
+    try:
+        with temp_file as dest:
             with source:
                 yield (source, dest)
-        except BaseException as err:
-            error = err
+    except BaseException as err:
+        error = err
 
     if error is None:
         try:
