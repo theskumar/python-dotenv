@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 from pathlib import Path
 from typing import Optional
@@ -404,6 +405,51 @@ def test_run_python_uses_path_on_windows(dotenv_path, tmp_path):
     )
 
     check_process(result, exit_code=0, stdout="x\n")
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific lookup")
+def test_run_does_not_fall_back_to_parent_path(tmp_path):
+    start_bin_dir = tmp_path / "start-bin"
+    start_bin_dir.mkdir()
+    dotenv_bin_dir = tmp_path / "dotenv-bin"
+    dotenv_bin_dir.mkdir()
+    command = "dotenv-test-parent-path-only.exe"
+    shutil.copyfile(
+        Path(os.environ["SYSTEMROOT"]) / "System32" / "cmd.exe",
+        start_bin_dir / command,
+    )
+    env = {
+        **os.environ,
+        "PATH": os.pathsep.join([str(start_bin_dir), os.environ["PATH"]]),
+    }
+    (tmp_path / ".env").write_text(f"PATH={dotenv_bin_dir}\n")
+
+    result = run_dotenv(
+        ["run", command, "/d", "/c", "echo unexpected-parent-path"],
+        cwd=tmp_path,
+        env=env,
+    )
+
+    check_process(result, exit_code=1, stdout="")
+    assert f"Command not found: {command}" in result.stderr
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific lookup")
+@pytest.mark.parametrize("absolute_path", [False, True])
+def test_run_without_path_on_windows(cli, dotenv_path, monkeypatch, absolute_path):
+    monkeypatch.delenv("PATH", raising=False)
+    command = (
+        str(Path(os.environ["SYSTEMROOT"]) / "System32" / "cmd.exe")
+        if absolute_path
+        else "cmd.exe"
+    )
+
+    result = cli.invoke(
+        dotenv_cli,
+        ["--file", str(dotenv_path), "run", command, "/d", "/c", "exit", "0"],
+    )
+
+    assert (result.exit_code, result.output) == (0, "")
 
 
 def test_run_without_cmd(tmp_path):
