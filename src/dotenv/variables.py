@@ -64,7 +64,9 @@ class Variable(Atom):
     def resolve(self, env: Mapping[str, Optional[str]]) -> str:
         default = self.default if self.default is not None else ""
         result = env.get(self.name, default)
-        return result if result is not None else ""
+        # A variable declared without a value (`FOO`) is unset, not empty, so
+        # a provided default applies to it just as it does to a missing name.
+        return result if result is not None else default
 
 
 def parse_variables(value: str) -> Iterator[Atom]:
