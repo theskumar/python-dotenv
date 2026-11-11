@@ -64,7 +64,12 @@ class DotEnv:
     @contextmanager
     def _get_stream(self) -> Iterator[IO[str]]:
         if self.dotenv_path and _is_file_or_fifo(self.dotenv_path):
-            with open(self.dotenv_path, encoding=self.encoding) as stream:
+            # newline="" disables universal newline translation so that a
+            # carriage return inside a (quoted) value is not rewritten to "\n"
+            # before parsing. The parser handles CRLF, CR and LF line endings
+            # itself, so reading a path now matches reading the same bytes from
+            # a stream.
+            with open(self.dotenv_path, encoding=self.encoding, newline="") as stream:
                 yield stream
         elif self.stream is not None:
             yield self.stream
@@ -168,7 +173,10 @@ def rewrite(
         path = os.path.realpath(path)
 
     try:
-        source: IO[str] = open(path, encoding=encoding)
+        # newline="" preserves the exact bytes of untouched lines (and of any
+        # carriage return inside a value) instead of letting universal-newline
+        # translation rewrite them before they are echoed back out.
+        source: IO[str] = open(path, encoding=encoding, newline="")
         try:
             path_stat = os.lstat(path)
             original_mode: Optional[int] = (
@@ -187,6 +195,7 @@ def rewrite(
         temp_file = tempfile.NamedTemporaryFile(
             mode="w",
             encoding=encoding,
+            newline="",
             delete=False,
             prefix=".tmp_",
             dir=os.path.dirname(os.path.abspath(path)),

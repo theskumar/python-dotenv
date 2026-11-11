@@ -71,6 +71,12 @@ def test_set_key(dotenv_path, before, key, value, expected, after):
         "a\\nb",
         "plain",
         "",
+        # A real newline or carriage return in the value must survive the
+        # write/read file round-trip and not be rewritten by universal-newline
+        # translation (a lone "\r" used to be read back as "\n").
+        "a\nb",
+        "a\rb",
+        "a\r\nb",
     ],
 )
 def test_set_key_round_trips(dotenv_path, value):
