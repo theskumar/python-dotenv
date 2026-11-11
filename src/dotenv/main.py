@@ -102,7 +102,7 @@ class DotEnv:
         """
         Load the current dotenv as system environment variable.
         """
-        if not self.dict():
+        if not any(value is not None for value in self.dict().values()):
             return False
 
         for k, v in self.dict().items():
