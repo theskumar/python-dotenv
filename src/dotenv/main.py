@@ -519,7 +519,7 @@ def dotenv_values(
 
 def _is_file_or_fifo(path: StrPath) -> bool:
     """
-    Return True if `path` exists and is either a regular file or a FIFO.
+    Return True if `path` exists and is either a regular file, a FIFO, or a character device.
     """
     if os.path.isfile(path):
         return True
@@ -529,4 +529,4 @@ def _is_file_or_fifo(path: StrPath) -> bool:
     except (FileNotFoundError, OSError):
         return False
 
-    return stat.S_ISFIFO(st.st_mode)
+    return stat.S_ISFIFO(st.st_mode) or stat.S_ISCHR(st.st_mode)
