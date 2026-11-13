@@ -377,12 +377,20 @@ def find_dotenv(
     filename: str = ".env",
     raise_error_if_not_found: bool = False,
     usecwd: bool = False,
+    start_dir: Optional[StrPath] = None,
 ) -> str:
     """
     Search in increasingly higher folders for the given file
 
-    A leading `~` in `filename` is expanded to the user's home directory, and
-    an absolute `filename` is returned as is if it exists.
+    The search starts from `start_dir` when it is given. Otherwise it starts
+    from the current working directory if `usecwd` is true or Python is
+    running interactively, and from the directory of the calling file in all
+    other cases. `start_dir` may also be a file, in which case its directory
+    is used, so `find_dotenv(start_dir=__file__)` searches upwards from the
+    calling module regardless of how it was invoked.
+
+    A leading `~` in `filename` or `start_dir` is expanded to the user's home
+    directory, and an absolute `filename` is returned as is if it exists.
 
     Returns path to the file if found, or an empty string otherwise
     """
@@ -401,7 +409,9 @@ def find_dotenv(
     def _is_debugger():
         return sys.gettrace() is not None
 
-    if usecwd or _is_interactive() or _is_debugger() or getattr(sys, "frozen", False):
+    if start_dir is not None:
+        path = os.path.abspath(os.path.expanduser(os.fspath(start_dir)))
+    elif usecwd or _is_interactive() or _is_debugger() or getattr(sys, "frozen", False):
         # Should work without __file__, e.g. in REPL or IPython notebook.
         path = os.getcwd()
     else:

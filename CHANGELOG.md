@@ -10,6 +10,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Add support for Python 3.15.
+- `find_dotenv` accepts a `start_dir` argument to choose the directory (or file) the upward search starts from, instead of inferring it from the caller (#494).
 
 ### Fixed
 
