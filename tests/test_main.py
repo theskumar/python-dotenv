@@ -617,6 +617,36 @@ def test_load_dotenv_existing_file(dotenv_path):
     assert os.environ == {"a": "b"}
 
 
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_unload_dotenv_removes_loaded_values(dotenv_path):
+    dotenv_path.write_text("a=b")
+    dotenv.load_dotenv(dotenv_path)
+
+    result = dotenv.unload_dotenv(dotenv_path)
+
+    assert result is True
+    assert "a" not in os.environ
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_unload_dotenv_keeps_changed_values(dotenv_path):
+    dotenv_path.write_text("a=b")
+    dotenv.load_dotenv(dotenv_path)
+    os.environ["a"] = "later"
+
+    result = dotenv.unload_dotenv(dotenv_path)
+
+    assert result is False
+    assert os.environ["a"] == "later"
+
+
+@mock.patch.dict(os.environ, {}, clear=True)
+def test_unload_dotenv_missing_file(tmp_path):
+    result = dotenv.unload_dotenv(tmp_path / "missing.env")
+
+    assert result is False
+
+
 @pytest.mark.parametrize(
     "flag_value",
     [

@@ -479,6 +479,35 @@ def load_dotenv(
     return dotenv.set_as_environment_variables()
 
 
+def unload_dotenv(
+    dotenv_path: Optional[StrPath] = None,
+    stream: Optional[IO[str]] = None,
+    encoding: Optional[str] = "utf-8",
+) -> bool:
+    """Remove variables defined in a `.env` file from `os.environ`.
+
+    Useful in tests so `load_dotenv()` does not leak into later cases.
+
+    A key is removed only when its current environment value still matches the
+    value from the file, so an explicit later assignment is left alone.
+
+    Returns True if at least one variable was removed.
+    """
+    values = dotenv_values(
+        dotenv_path=dotenv_path,
+        stream=stream,
+        encoding=encoding,
+    )
+    removed = False
+    for key, value in values.items():
+        if value is None:
+            continue
+        if os.environ.get(key) == value:
+            del os.environ[key]
+            removed = True
+    return removed
+
+
 def dotenv_values(
     dotenv_path: Optional[StrPath] = None,
     stream: Optional[IO[str]] = None,
