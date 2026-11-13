@@ -40,6 +40,26 @@ def test_list(
     assert (result.exit_code, result.output) == (0, expected)
 
 
+@pytest.mark.parametrize("command", [["list"], ["get", "KEY"]])
+def test_default_file_uses_current_directory(cli, tmp_path, monkeypatch, command):
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    first.mkdir()
+    second.mkdir()
+    (first / ".env").write_text("KEY=first\n")
+    (second / ".env").write_text("KEY=second\n")
+
+    for directory, value in [(first, "first"), (second, "second")]:
+        monkeypatch.chdir(directory)
+        result = cli.invoke(dotenv_cli, command)
+        expected = f"KEY={value}\n" if command == ["list"] else f"{value}\n"
+        assert (result.exit_code, result.output) == (0, expected)
+
+    result = cli.invoke(dotenv_cli, ["--file", first / ".env", *command])
+    expected = "KEY=first\n" if command == ["list"] else "first\n"
+    assert (result.exit_code, result.output) == (0, expected)
+
+
 def test_list_non_existent_file(cli):
     result = cli.invoke(dotenv_cli, ["--file", "nx_file", "list"])
 
