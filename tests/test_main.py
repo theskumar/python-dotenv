@@ -604,6 +604,77 @@ def test_find_dotenv_expands_user(tmp_path, monkeypatch):
     assert result == f"{home}/.env"
 
 
+def test_find_dotenv_start_dir_searches_upwards(tmp_path):
+    leaf = prepare_file_hierarchy(tmp_path)
+    dotenv_path = tmp_path / "child1" / ".env"
+    dotenv_path.write_text("a=b\n")
+
+    result = dotenv.find_dotenv(start_dir=leaf)
+
+    assert result == str(dotenv_path)
+
+
+def test_find_dotenv_start_dir_accepts_str_and_file(tmp_path):
+    leaf = prepare_file_hierarchy(tmp_path)
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=b\n")
+    module = leaf / "app.py"
+    module.write_text("")
+
+    assert dotenv.find_dotenv(start_dir=str(leaf)) == str(dotenv_path)
+    assert dotenv.find_dotenv(start_dir=module) == str(dotenv_path)
+
+
+def test_find_dotenv_start_dir_skips_caller_detection(tmp_path, monkeypatch):
+    (tmp_path / ".env").write_text("a=b\n")
+
+    def fail(*args, **kwargs):
+        raise AssertionError("caller frame inspected")
+
+    monkeypatch.setattr(sys, "_getframe", fail)
+
+    assert dotenv.find_dotenv(start_dir=tmp_path) == str(tmp_path / ".env")
+
+
+def test_find_dotenv_start_dir_takes_precedence_over_usecwd(tmp_path, monkeypatch):
+    cwd = tmp_path / "cwd"
+    cwd.mkdir()
+    (cwd / ".env").write_text("a=cwd\n")
+    start = tmp_path / "start"
+    start.mkdir()
+    (start / ".env").write_text("a=start\n")
+    monkeypatch.chdir(cwd)
+
+    result = dotenv.find_dotenv(usecwd=True, start_dir=start)
+
+    assert result == str(start / ".env")
+
+
+def test_find_dotenv_start_dir_expands_user(tmp_path, monkeypatch):
+    home = tmp_path / "home"
+    (home / "project").mkdir(parents=True)
+    (home / ".env").write_text("a=b\n")
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))
+
+    result = dotenv.find_dotenv(start_dir="~/project")
+
+    assert result == str(home / ".env")
+
+
+def test_find_dotenv_start_dir_not_found(tmp_path):
+    leaf = prepare_file_hierarchy(tmp_path)
+
+    assert dotenv.find_dotenv(start_dir=leaf) == ""
+    with pytest.raises(IOError):
+        dotenv.find_dotenv(start_dir=leaf, raise_error_if_not_found=True)
+
+
+def test_find_dotenv_start_dir_missing(tmp_path):
+    with pytest.raises(IOError, match="Starting path not found"):
+        dotenv.find_dotenv(start_dir=tmp_path / "does-not-exist")
+
+
 @pytest.mark.skipif(
     sys.platform == "win32", reason="This test assumes case-sensitive variable names"
 )
