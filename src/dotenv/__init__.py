@@ -1,3 +1,4 @@
+import shlex
 from typing import Any, Optional
 
 from .main import dotenv_values, find_dotenv, get_key, load_dotenv, set_key, unset_key
@@ -20,12 +21,15 @@ def get_cli_string(
 
     Useful for converting a arguments passed to a fabric task
     to be passed to a `local` or `run` command.
+
+    The path is quoted for use in a POSIX shell.
+    Shell variables and wildcards in the path are treated literally.
     """
     command = ["dotenv"]
     if quote:
         command.append(f"-q {quote}")
     if path:
-        command.append(f"-f {path}")
+        command.append(f"-f {shlex.quote(str(path))}")
     if action:
         command.append(action)
         if key:
