@@ -158,6 +158,28 @@ def _discard_temp_file(path: pathlib.Path) -> None:
             logger.warning("python-dotenv could not remove the temporary file %s", path)
 
 
+def _fsync_directory(path: StrPath) -> None:
+    """
+    Best-effort fsync of the directory containing `path` (POSIX only).
+
+    Makes the rename performed by `rewrite` itself durable. Any failure is
+    ignored: the file contents are already on disk at this point, and some
+    filesystems reject directory fsync.
+    """
+    if os.name != "posix":
+        return
+    try:
+        dir_fd = os.open(os.path.dirname(os.path.abspath(path)), os.O_RDONLY)
+    except OSError:
+        return
+    try:
+        os.fsync(dir_fd)
+    except OSError:
+        pass
+    finally:
+        os.close(dir_fd)
+
+
 @contextmanager
 def rewrite(
     path: StrPath,
@@ -197,14 +219,34 @@ def rewrite(
         err.filename = os.fspath(path)
         raise
 
-    with temp_file as dest:
-        dest_path = pathlib.Path(dest.name)
-        error = None
+    error = None
+    try:
+        with temp_file as dest:
+            dest_path = pathlib.Path(dest.name)
 
-        try:
-            with source:
-                yield (source, dest)
-        except BaseException as err:
+            try:
+                with source:
+                    yield (source, dest)
+            except BaseException as err:
+                error = err
+
+            if error is None:
+                # Flush the new contents to the OS and force them to disk
+                # before the rename, while the file is still open. Otherwise
+                # a power loss or kernel crash shortly after the rename
+                # could leave behind an empty or garbage .env.
+                try:
+                    dest.flush()
+                    os.fsync(dest.fileno())
+                except BaseException as err:
+                    # Route through the shared cleanup below so the
+                    # temporary file is discarded instead of left behind.
+                    error = err
+    except BaseException as err:
+        # A failure closing the temporary file must not skip the cleanup
+        # below: close() re-attempts the flush, so a persistent flush
+        # error is raised again here. Keep the original error.
+        if error is None:
             error = err
 
     if error is None:
@@ -216,6 +258,7 @@ def rewrite(
         except BaseException:
             _discard_temp_file(dest_path)
             raise
+        _fsync_directory(path)
     else:
         _discard_temp_file(dest_path)
         raise error from None
