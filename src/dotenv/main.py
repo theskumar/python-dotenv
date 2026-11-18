@@ -9,7 +9,7 @@ from collections import OrderedDict
 from contextlib import contextmanager
 from typing import IO, Dict, Iterable, Iterator, Mapping, Optional, Tuple, Union
 
-from .parser import Binding, parse_stream
+from .parser import Binding, Original, _newline, parse_stream
 from .variables import parse_variables
 
 # A type alias for a string path to be used for the paths in this file.
@@ -29,12 +29,24 @@ def _load_dotenv_disabled() -> bool:
     return value in {"1", "true", "t", "yes", "y"}
 
 
+def _statement_line(original: Original) -> int:
+    """
+    Return the line on which the statement in `original` starts.
+
+    `original.line` is where the chunk of text starts, which includes any
+    blank lines before the statement itself.
+    """
+    string = original.string
+    leading = string[: len(string) - len(string.lstrip())]
+    return original.line + len(_newline.findall(leading))
+
+
 def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
     for mapping in mappings:
         if mapping.error:
             logger.warning(
                 "python-dotenv could not parse statement starting at line %s",
-                mapping.original.line,
+                _statement_line(mapping.original),
             )
         yield mapping
 
