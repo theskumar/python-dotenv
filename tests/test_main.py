@@ -6,12 +6,14 @@ import stat
 import subprocess
 import sys
 import textwrap
+from contextlib import AbstractContextManager
+from typing import Any
 from unittest import mock
 
 import pytest
 
 import dotenv
-from dotenv.main import DotEnv
+from dotenv.main import DotEnv, _fsync_directory
 
 
 def test_set_key_no_file(tmp_path):
@@ -273,6 +275,126 @@ def test_set_key_read_only_directory(tmp_path):
 def windows_read_only_semantics(path):
     # On Windows, a file without the owner-write bit can't be replaced or deleted.
     return path.exists() and not path.stat().st_mode & stat.S_IWUSR
+
+
+@pytest.mark.parametrize(
+    "rewrite",
+    [
+        lambda path: dotenv.set_key(path, "a", "y"),
+        lambda path: dotenv.unset_key(path, "a"),
+    ],
+    ids=["set_key", "unset_key"],
+)
+def test_rewrite_fsyncs_before_replace(tmp_path, rewrite):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+    calls = []
+    real_fsync = os.fsync
+    real_replace = os.replace
+
+    def fsync(fd):
+        calls.append("fsync")
+        return real_fsync(fd)
+
+    def replace(src, dst):
+        calls.append("replace")
+        return real_replace(src, dst)
+
+    with mock.patch("dotenv.main.os.fsync", side_effect=fsync):
+        with mock.patch("dotenv.main.os.replace", side_effect=replace):
+            rewrite(dotenv_path)
+
+    assert calls.index("fsync") < calls.index("replace")
+
+
+@pytest.mark.skipif(os.name != "posix", reason="directory fsync is POSIX-only")
+def test_rewrite_ignores_directory_fsync_failure(tmp_path, monkeypatch):
+    def failing_open(*args, **kwargs):
+        raise OSError("directory fsync not supported")
+
+    monkeypatch.setattr(os, "open", failing_open)
+    _fsync_directory(tmp_path / ".env")
+
+
+@pytest.mark.skipif(os.name != "posix", reason="directory fsync is POSIX-only")
+def test_rewrite_ignores_directory_fsync_error(tmp_path):
+    calls = []
+
+    def failing_fsync(fd):
+        calls.append(fd)
+        raise OSError("EINVAL: directory fsync not supported")
+
+    with mock.patch("dotenv.main.os.fsync", side_effect=failing_fsync):
+        _fsync_directory(tmp_path / ".env")
+
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize(
+    "rewrite",
+    [
+        lambda path: dotenv.set_key(path, "a", "y"),
+        lambda path: dotenv.unset_key(path, "a"),
+    ],
+    ids=["set_key", "unset_key"],
+)
+@pytest.mark.parametrize("failure", ["flush", "fsync"])
+def test_rewrite_flush_or_fsync_failure_leaves_no_temp_file(tmp_path, rewrite, failure):
+    dotenv_path = tmp_path / ".env"
+    dotenv_path.write_text("a=x\n")
+
+    if failure == "fsync":
+        patch: AbstractContextManager[Any] = mock.patch(
+            "dotenv.main.os.fsync", side_effect=OSError("EIO")
+        )
+    else:
+        # TextIOWrapper.flush can't be patched (immutable type), so fail
+        # the flush by substituting a file whose flush() and close()
+        # both raise, as a real persistent flush failure would.
+        def failing_factory(*args, **kwargs):
+            return _FlushFailingFile(tmp_path / ".tmp_flushfail")
+
+        fake_tempfile = mock.Mock()
+        fake_tempfile.NamedTemporaryFile = failing_factory
+        patch = mock.patch("dotenv.main.tempfile", fake_tempfile)
+
+    with patch:
+        with pytest.raises(OSError):
+            rewrite(dotenv_path)
+
+    assert dotenv_path.read_text() == "a=x\n"
+    assert list(tmp_path.iterdir()) == [dotenv_path]
+
+
+class _FlushFailingFile:
+    """Stand-in for NamedTemporaryFile whose flush() fails persistently.
+
+    Like a real TextIOWrapper, close() re-attempts the flush and raises
+    again, so the `with` block exit also raises.
+    """
+
+    def __init__(self, name):
+        self.name = str(name)
+        self._buf = io.StringIO()
+
+    def write(self, data):
+        return self._buf.write(data)
+
+    def flush(self):
+        raise OSError("ENOSPC")
+
+    def close(self):
+        raise OSError("ENOSPC")
+
+    def fileno(self):
+        raise OSError("ENOSPC")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+        return False
 
 
 @pytest.mark.parametrize(
