@@ -932,6 +932,29 @@ def test_dotenv_values_file_stream(dotenv_path):
 
 
 @pytest.mark.parametrize(
+    "string,line",
+    [
+        ("x y", 1),
+        ("a=b\nx y", 2),
+        ("a=b\n\n\nx y\n", 4),
+        ("# comment\n\n  \nx y\n", 4),
+        ("a=b\r\n\r\nx y\r\n", 3),
+        ("a=b\r\rx y\r", 3),
+        ("a=b\n\nc='unterminated\nd=e\n", 3),
+    ],
+)
+def test_dotenv_values_invalid_line_warning_reports_statement_line(string, line):
+    logger = logging.getLogger("dotenv.main")
+
+    with mock.patch.object(logger, "warning") as mock_warning:
+        dotenv.dotenv_values(stream=io.StringIO(string))
+
+    mock_warning.assert_called_once_with(
+        "python-dotenv could not parse statement starting at line %s", line
+    )
+
+
+@pytest.mark.parametrize(
     "string,expected",
     [
         ("KEY= # comment", {"KEY": ""}),
