@@ -165,6 +165,14 @@ $ dotenv list --format=json
 $ dotenv run -- python foo.py
 ```
 
+By default, the CLI reads `.env` from the current working directory. It does
+not search parent directories. Use `--file` before the subcommand to choose
+another file:
+
+```shell
+$ dotenv --file .env.development run -- python foo.py
+```
+
 Run `dotenv --help` for more information about the options and subcommands.
 
 ## File format
