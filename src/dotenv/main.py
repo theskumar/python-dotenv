@@ -29,12 +29,14 @@ def _load_dotenv_disabled() -> bool:
     return value in {"1", "true", "t", "yes", "y"}
 
 
-def with_warn_for_invalid_lines(mappings: Iterator[Binding]) -> Iterator[Binding]:
-    for mapping in mappings:
+def _parse_stream_with_warnings(stream: IO[str]) -> Iterator[Binding]:
+    for mapping in parse_stream(stream):
         if mapping.error:
+            name = getattr(stream, "name", None)
             logger.warning(
-                "python-dotenv could not parse statement starting at line %s",
+                "python-dotenv could not parse statement starting at line %s%s",
                 mapping.original.line,
+                f" in {name}" if isinstance(name, str) else "",
             )
         yield mapping
 
@@ -94,7 +96,7 @@ class DotEnv:
 
     def parse(self) -> Iterator[Tuple[str, Optional[str]]]:
         with self._get_stream() as stream:
-            for mapping in with_warn_for_invalid_lines(parse_stream(stream)):
+            for mapping in _parse_stream_with_warnings(stream):
                 if mapping.key is not None:
                     yield mapping.key, mapping.value
 
@@ -270,7 +272,7 @@ def set_key(
     ):
         replaced = False
         missing_newline = False
-        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+        for mapping in _parse_stream_with_warnings(source):
             if mapping.key == key_to_set:
                 dest.write(line_out)
                 replaced = True
@@ -315,7 +317,7 @@ def unset_key(
         source,
         dest,
     ):
-        for mapping in with_warn_for_invalid_lines(parse_stream(source)):
+        for mapping in _parse_stream_with_warnings(source):
             if mapping.key == key_to_unset:
                 removed = True
             else:
