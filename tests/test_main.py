@@ -14,6 +14,23 @@ import dotenv
 from dotenv.main import DotEnv
 
 
+def test_parse_warning_identifies_file(dotenv_path, caplog):
+    dotenv_path.write_text("OK=yes\ninvalid statement=private\n")
+
+    assert dotenv.dotenv_values(dotenv_path) == {"OK": "yes"}
+    assert caplog.messages == [
+        f"python-dotenv could not parse statement starting at line 2 in {dotenv_path}"
+    ]
+
+
+def test_parse_warning_for_fallback_stream(tmp_path, caplog):
+    stream = io.StringIO("invalid statement=private\n")
+    assert dotenv.dotenv_values(tmp_path / "missing.env", stream=stream) == {}
+    assert caplog.messages == [
+        "python-dotenv could not parse statement starting at line 1"
+    ]
+
+
 def test_set_key_no_file(tmp_path):
     nx_path = tmp_path / "nx"
     logger = logging.getLogger("dotenv.main")
